@@ -1,0 +1,587 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccMV05aN.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"led.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "../Bsp/LED/led.c"
+  20              		.section	.text.LED_SetLeds,"ax",%progbits
+  21              		.align	1
+  22              		.global	LED_SetLeds
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	LED_SetLeds:
+  28              	.LVL0:
+  29              	.LFB240:
+   1:../Bsp/LED/led.c **** /**
+   2:../Bsp/LED/led.c ****  * @file    led.c
+   3:../Bsp/LED/led.c ****  * @brief   通用 LED 驱动实现
+   4:../Bsp/LED/led.c ****  */
+   5:../Bsp/LED/led.c **** 
+   6:../Bsp/LED/led.c **** #include "led.h"
+   7:../Bsp/LED/led.c **** #include <string.h>
+   8:../Bsp/LED/led.c **** 
+   9:../Bsp/LED/led.c **** /* ====== 私有变量 ====== */
+  10:../Bsp/LED/led.c **** 
+  11:../Bsp/LED/led.c **** static Led_Config_t s_configs[LED_MAX_COUNT];
+  12:../Bsp/LED/led.c **** static uint8_t      s_ledCount = 0;
+  13:../Bsp/LED/led.c **** static uint8_t      s_currentMask = 0;  /**< 当前 LED 状态位掩码 */
+  14:../Bsp/LED/led.c **** 
+  15:../Bsp/LED/led.c **** /* ====== 导出函数实现 ====== */
+  16:../Bsp/LED/led.c **** 
+  17:../Bsp/LED/led.c **** void LED_Init(const Led_Config_t *configs, uint8_t count)
+  18:../Bsp/LED/led.c **** {
+  19:../Bsp/LED/led.c ****     if (count > LED_MAX_COUNT)
+  20:../Bsp/LED/led.c ****         count = LED_MAX_COUNT;
+  21:../Bsp/LED/led.c **** 
+  22:../Bsp/LED/led.c ****     s_ledCount = count;
+  23:../Bsp/LED/led.c ****     memcpy(s_configs, configs, count * sizeof(Led_Config_t));
+  24:../Bsp/LED/led.c ****     s_currentMask = 0;
+  25:../Bsp/LED/led.c **** 
+  26:../Bsp/LED/led.c ****     /* 初始化时全部熄灭 */
+  27:../Bsp/LED/led.c ****     LED_SetLeds(0);
+  28:../Bsp/LED/led.c **** }
+  29:../Bsp/LED/led.c **** 
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccMV05aN.s 			page 2
+
+
+  30:../Bsp/LED/led.c **** void LED_SetLeds(uint8_t mask)
+  31:../Bsp/LED/led.c **** {
+  30              		.loc 1 31 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 31 1 is_stmt 0 view .LVU1
+  35 0000 38B5     		push	{r3, r4, r5, lr}
+  36              		.cfi_def_cfa_offset 16
+  37              		.cfi_offset 3, -16
+  38              		.cfi_offset 4, -12
+  39              		.cfi_offset 5, -8
+  40              		.cfi_offset 14, -4
+  41 0002 0546     		mov	r5, r0
+  32:../Bsp/LED/led.c ****     uint8_t i;
+  42              		.loc 1 32 5 is_stmt 1 view .LVU2
+  33:../Bsp/LED/led.c ****     s_currentMask = mask;
+  43              		.loc 1 33 5 view .LVU3
+  44              		.loc 1 33 19 is_stmt 0 view .LVU4
+  45 0004 134B     		ldr	r3, .L8
+  46 0006 1870     		strb	r0, [r3]
+  34:../Bsp/LED/led.c **** 
+  35:../Bsp/LED/led.c ****     for (i = 0; i < s_ledCount; i++)
+  47              		.loc 1 35 5 is_stmt 1 view .LVU5
+  48              	.LVL1:
+  49              		.loc 1 35 12 is_stmt 0 view .LVU6
+  50 0008 0024     		movs	r4, #0
+  51              		.loc 1 35 5 view .LVU7
+  52 000a 10E0     		b	.L2
+  53              	.LVL2:
+  54              	.L3:
+  55              	.LBB2:
+  36:../Bsp/LED/led.c ****     {
+  37:../Bsp/LED/led.c ****         const Led_Config_t *cfg = &s_configs[i];
+  38:../Bsp/LED/led.c ****         GPIO_PinState state;
+  39:../Bsp/LED/led.c **** 
+  40:../Bsp/LED/led.c ****         if (mask & (1 << i))
+  41:../Bsp/LED/led.c ****         {
+  42:../Bsp/LED/led.c ****             /* 点亮 */
+  43:../Bsp/LED/led.c ****             state = (cfg->onLevel == LED_ON_LOW) ? GPIO_PIN_RESET : GPIO_PIN_SET;
+  44:../Bsp/LED/led.c ****         }
+  45:../Bsp/LED/led.c ****         else
+  46:../Bsp/LED/led.c ****         {
+  47:../Bsp/LED/led.c ****             /* 熄灭 */
+  48:../Bsp/LED/led.c ****             state = (cfg->onLevel == LED_ON_LOW) ? GPIO_PIN_SET : GPIO_PIN_RESET;
+  56              		.loc 1 48 13 is_stmt 1 view .LVU8
+  57              		.loc 1 48 25 is_stmt 0 view .LVU9
+  58 000c 124B     		ldr	r3, .L8+4
+  59 000e 03EBC403 		add	r3, r3, r4, lsl #3
+  60 0012 9A79     		ldrb	r2, [r3, #6]	@ zero_extendqisi2
+  61              		.loc 1 48 65 view .LVU10
+  62 0014 B2FA82F2 		clz	r2, r2
+  63 0018 5209     		lsrs	r2, r2, #5
+  64              	.L4:
+  65              	.LVL3:
+  49:../Bsp/LED/led.c ****         }
+  50:../Bsp/LED/led.c **** 
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccMV05aN.s 			page 3
+
+
+  51:../Bsp/LED/led.c ****         HAL_GPIO_WritePin(cfg->port, cfg->pin, state);
+  66              		.loc 1 51 9 is_stmt 1 view .LVU11
+  67              		.loc 1 51 30 is_stmt 0 view .LVU12
+  68 001a 0F4B     		ldr	r3, .L8+4
+  69              		.loc 1 51 41 view .LVU13
+  70 001c 03EBCC01 		add	r1, r3, ip, lsl #3
+  71              		.loc 1 51 9 view .LVU14
+  72 0020 8988     		ldrh	r1, [r1, #4]
+  73 0022 53F83C00 		ldr	r0, [r3, ip, lsl #3]
+  74 0026 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  75              	.LVL4:
+  76              		.loc 1 51 9 view .LVU15
+  77              	.LBE2:
+  35:../Bsp/LED/led.c ****     {
+  78              		.loc 1 35 34 is_stmt 1 discriminator 2 view .LVU16
+  79 002a 0134     		adds	r4, r4, #1
+  80              	.LVL5:
+  35:../Bsp/LED/led.c ****     {
+  81              		.loc 1 35 34 is_stmt 0 discriminator 2 view .LVU17
+  82 002c E4B2     		uxtb	r4, r4
+  83              	.LVL6:
+  84              	.L2:
+  35:../Bsp/LED/led.c ****     {
+  85              		.loc 1 35 19 is_stmt 1 discriminator 1 view .LVU18
+  86 002e 0B4B     		ldr	r3, .L8+8
+  87 0030 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  88 0032 A342     		cmp	r3, r4
+  89 0034 0DD9     		bls	.L7
+  90              	.LBB3:
+  37:../Bsp/LED/led.c ****         GPIO_PinState state;
+  91              		.loc 1 37 9 view .LVU19
+  37:../Bsp/LED/led.c ****         GPIO_PinState state;
+  92              		.loc 1 37 45 is_stmt 0 view .LVU20
+  93 0036 A446     		mov	ip, r4
+  94              	.LVL7:
+  38:../Bsp/LED/led.c **** 
+  95              		.loc 1 38 9 is_stmt 1 view .LVU21
+  40:../Bsp/LED/led.c ****         {
+  96              		.loc 1 40 9 view .LVU22
+  40:../Bsp/LED/led.c ****         {
+  97              		.loc 1 40 13 is_stmt 0 view .LVU23
+  98 0038 45FA04F3 		asr	r3, r5, r4
+  40:../Bsp/LED/led.c ****         {
+  99              		.loc 1 40 12 view .LVU24
+ 100 003c 13F0010F 		tst	r3, #1
+ 101 0040 E4D0     		beq	.L3
+  43:../Bsp/LED/led.c ****         }
+ 102              		.loc 1 43 13 is_stmt 1 view .LVU25
+  43:../Bsp/LED/led.c ****         }
+ 103              		.loc 1 43 25 is_stmt 0 view .LVU26
+ 104 0042 054B     		ldr	r3, .L8+4
+ 105 0044 03EBC403 		add	r3, r3, r4, lsl #3
+ 106              	.LVL8:
+  43:../Bsp/LED/led.c ****         }
+ 107              		.loc 1 43 25 view .LVU27
+ 108 0048 9A79     		ldrb	r2, [r3, #6]	@ zero_extendqisi2
+  43:../Bsp/LED/led.c ****         }
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccMV05aN.s 			page 4
+
+
+ 109              		.loc 1 43 67 view .LVU28
+ 110 004a 003A     		subs	r2, r2, #0
+ 111 004c 18BF     		it	ne
+ 112 004e 0122     		movne	r2, #1
+ 113              	.LVL9:
+  43:../Bsp/LED/led.c ****         }
+ 114              		.loc 1 43 67 view .LVU29
+ 115 0050 E3E7     		b	.L4
+ 116              	.LVL10:
+ 117              	.L7:
+  43:../Bsp/LED/led.c ****         }
+ 118              		.loc 1 43 67 view .LVU30
+ 119              	.LBE3:
+  52:../Bsp/LED/led.c ****     }
+  53:../Bsp/LED/led.c **** }
+ 120              		.loc 1 53 1 view .LVU31
+ 121 0052 38BD     		pop	{r3, r4, r5, pc}
+ 122              	.LVL11:
+ 123              	.L9:
+ 124              		.loc 1 53 1 view .LVU32
+ 125              		.align	2
+ 126              	.L8:
+ 127 0054 00000000 		.word	s_currentMask
+ 128 0058 00000000 		.word	s_configs
+ 129 005c 00000000 		.word	s_ledCount
+ 130              		.cfi_endproc
+ 131              	.LFE240:
+ 133              		.section	.text.LED_Init,"ax",%progbits
+ 134              		.align	1
+ 135              		.global	LED_Init
+ 136              		.syntax unified
+ 137              		.thumb
+ 138              		.thumb_func
+ 140              	LED_Init:
+ 141              	.LVL12:
+ 142              	.LFB239:
+  18:../Bsp/LED/led.c ****     if (count > LED_MAX_COUNT)
+ 143              		.loc 1 18 1 is_stmt 1 view -0
+ 144              		.cfi_startproc
+ 145              		@ args = 0, pretend = 0, frame = 0
+ 146              		@ frame_needed = 0, uses_anonymous_args = 0
+  18:../Bsp/LED/led.c ****     if (count > LED_MAX_COUNT)
+ 147              		.loc 1 18 1 is_stmt 0 view .LVU34
+ 148 0000 08B5     		push	{r3, lr}
+ 149              		.cfi_def_cfa_offset 8
+ 150              		.cfi_offset 3, -8
+ 151              		.cfi_offset 14, -4
+  19:../Bsp/LED/led.c ****         count = LED_MAX_COUNT;
+ 152              		.loc 1 19 5 is_stmt 1 view .LVU35
+  19:../Bsp/LED/led.c ****         count = LED_MAX_COUNT;
+ 153              		.loc 1 19 8 is_stmt 0 view .LVU36
+ 154 0002 0729     		cmp	r1, #7
+ 155 0004 00D9     		bls	.L11
+  20:../Bsp/LED/led.c **** 
+ 156              		.loc 1 20 15 view .LVU37
+ 157 0006 0721     		movs	r1, #7
+ 158              	.LVL13:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccMV05aN.s 			page 5
+
+
+ 159              	.L11:
+  22:../Bsp/LED/led.c ****     memcpy(s_configs, configs, count * sizeof(Led_Config_t));
+ 160              		.loc 1 22 5 is_stmt 1 view .LVU38
+  22:../Bsp/LED/led.c ****     memcpy(s_configs, configs, count * sizeof(Led_Config_t));
+ 161              		.loc 1 22 16 is_stmt 0 view .LVU39
+ 162 0008 064B     		ldr	r3, .L14
+ 163 000a 1970     		strb	r1, [r3]
+  23:../Bsp/LED/led.c ****     s_currentMask = 0;
+ 164              		.loc 1 23 5 is_stmt 1 view .LVU40
+ 165 000c CA00     		lsls	r2, r1, #3
+ 166 000e 0146     		mov	r1, r0
+ 167              	.LVL14:
+  23:../Bsp/LED/led.c ****     s_currentMask = 0;
+ 168              		.loc 1 23 5 is_stmt 0 view .LVU41
+ 169 0010 0548     		ldr	r0, .L14+4
+ 170              	.LVL15:
+  23:../Bsp/LED/led.c ****     s_currentMask = 0;
+ 171              		.loc 1 23 5 view .LVU42
+ 172 0012 FFF7FEFF 		bl	memcpy
+ 173              	.LVL16:
+  24:../Bsp/LED/led.c **** 
+ 174              		.loc 1 24 5 is_stmt 1 view .LVU43
+  24:../Bsp/LED/led.c **** 
+ 175              		.loc 1 24 19 is_stmt 0 view .LVU44
+ 176 0016 0020     		movs	r0, #0
+ 177 0018 044B     		ldr	r3, .L14+8
+ 178 001a 1870     		strb	r0, [r3]
+  27:../Bsp/LED/led.c **** }
+ 179              		.loc 1 27 5 is_stmt 1 view .LVU45
+ 180 001c FFF7FEFF 		bl	LED_SetLeds
+ 181              	.LVL17:
+  28:../Bsp/LED/led.c **** 
+ 182              		.loc 1 28 1 is_stmt 0 view .LVU46
+ 183 0020 08BD     		pop	{r3, pc}
+ 184              	.L15:
+ 185 0022 00BF     		.align	2
+ 186              	.L14:
+ 187 0024 00000000 		.word	s_ledCount
+ 188 0028 00000000 		.word	s_configs
+ 189 002c 00000000 		.word	s_currentMask
+ 190              		.cfi_endproc
+ 191              	.LFE239:
+ 193              		.section	.text.LED_GetLeds,"ax",%progbits
+ 194              		.align	1
+ 195              		.global	LED_GetLeds
+ 196              		.syntax unified
+ 197              		.thumb
+ 198              		.thumb_func
+ 200              	LED_GetLeds:
+ 201              	.LFB241:
+  54:../Bsp/LED/led.c **** 
+  55:../Bsp/LED/led.c **** uint8_t LED_GetLeds(void)
+  56:../Bsp/LED/led.c **** {
+ 202              		.loc 1 56 1 is_stmt 1 view -0
+ 203              		.cfi_startproc
+ 204              		@ args = 0, pretend = 0, frame = 0
+ 205              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccMV05aN.s 			page 6
+
+
+ 206              		@ link register save eliminated.
+  57:../Bsp/LED/led.c ****     return s_currentMask;
+ 207              		.loc 1 57 5 view .LVU48
+  58:../Bsp/LED/led.c **** }
+ 208              		.loc 1 58 1 is_stmt 0 view .LVU49
+ 209 0000 014B     		ldr	r3, .L17
+ 210 0002 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 211 0004 7047     		bx	lr
+ 212              	.L18:
+ 213 0006 00BF     		.align	2
+ 214              	.L17:
+ 215 0008 00000000 		.word	s_currentMask
+ 216              		.cfi_endproc
+ 217              	.LFE241:
+ 219              		.section	.text.LED_On,"ax",%progbits
+ 220              		.align	1
+ 221              		.global	LED_On
+ 222              		.syntax unified
+ 223              		.thumb
+ 224              		.thumb_func
+ 226              	LED_On:
+ 227              	.LVL18:
+ 228              	.LFB242:
+  59:../Bsp/LED/led.c **** 
+  60:../Bsp/LED/led.c **** void LED_On(uint8_t index)
+  61:../Bsp/LED/led.c **** {
+ 229              		.loc 1 61 1 is_stmt 1 view -0
+ 230              		.cfi_startproc
+ 231              		@ args = 0, pretend = 0, frame = 0
+ 232              		@ frame_needed = 0, uses_anonymous_args = 0
+ 233              		.loc 1 61 1 is_stmt 0 view .LVU51
+ 234 0000 08B5     		push	{r3, lr}
+ 235              		.cfi_def_cfa_offset 8
+ 236              		.cfi_offset 3, -8
+ 237              		.cfi_offset 14, -4
+  62:../Bsp/LED/led.c ****     if (index >= s_ledCount)
+ 238              		.loc 1 62 5 is_stmt 1 view .LVU52
+ 239              		.loc 1 62 15 is_stmt 0 view .LVU53
+ 240 0002 074B     		ldr	r3, .L23
+ 241 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 242              		.loc 1 62 8 view .LVU54
+ 243 0006 8342     		cmp	r3, r0
+ 244 0008 00D8     		bhi	.L22
+ 245              	.LVL19:
+ 246              	.L19:
+  63:../Bsp/LED/led.c ****         return;
+  64:../Bsp/LED/led.c ****     s_currentMask |= (1 << index);
+  65:../Bsp/LED/led.c ****     LED_SetLeds(s_currentMask);
+  66:../Bsp/LED/led.c **** }
+ 247              		.loc 1 66 1 view .LVU55
+ 248 000a 08BD     		pop	{r3, pc}
+ 249              	.LVL20:
+ 250              	.L22:
+  64:../Bsp/LED/led.c ****     LED_SetLeds(s_currentMask);
+ 251              		.loc 1 64 5 is_stmt 1 view .LVU56
+  64:../Bsp/LED/led.c ****     LED_SetLeds(s_currentMask);
+ 252              		.loc 1 64 25 is_stmt 0 view .LVU57
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccMV05aN.s 			page 7
+
+
+ 253 000c 0123     		movs	r3, #1
+ 254 000e 8340     		lsls	r3, r3, r0
+  64:../Bsp/LED/led.c ****     LED_SetLeds(s_currentMask);
+ 255              		.loc 1 64 19 view .LVU58
+ 256 0010 044A     		ldr	r2, .L23+4
+ 257 0012 1078     		ldrb	r0, [r2]	@ zero_extendqisi2
+ 258              	.LVL21:
+  64:../Bsp/LED/led.c ****     LED_SetLeds(s_currentMask);
+ 259              		.loc 1 64 19 view .LVU59
+ 260 0014 1843     		orrs	r0, r0, r3
+ 261 0016 C0B2     		uxtb	r0, r0
+ 262 0018 1070     		strb	r0, [r2]
+  65:../Bsp/LED/led.c **** }
+ 263              		.loc 1 65 5 is_stmt 1 view .LVU60
+ 264 001a FFF7FEFF 		bl	LED_SetLeds
+ 265              	.LVL22:
+ 266 001e F4E7     		b	.L19
+ 267              	.L24:
+ 268              		.align	2
+ 269              	.L23:
+ 270 0020 00000000 		.word	s_ledCount
+ 271 0024 00000000 		.word	s_currentMask
+ 272              		.cfi_endproc
+ 273              	.LFE242:
+ 275              		.section	.text.LED_Off,"ax",%progbits
+ 276              		.align	1
+ 277              		.global	LED_Off
+ 278              		.syntax unified
+ 279              		.thumb
+ 280              		.thumb_func
+ 282              	LED_Off:
+ 283              	.LVL23:
+ 284              	.LFB243:
+  67:../Bsp/LED/led.c **** 
+  68:../Bsp/LED/led.c **** void LED_Off(uint8_t index)
+  69:../Bsp/LED/led.c **** {
+ 285              		.loc 1 69 1 view -0
+ 286              		.cfi_startproc
+ 287              		@ args = 0, pretend = 0, frame = 0
+ 288              		@ frame_needed = 0, uses_anonymous_args = 0
+ 289              		.loc 1 69 1 is_stmt 0 view .LVU62
+ 290 0000 08B5     		push	{r3, lr}
+ 291              		.cfi_def_cfa_offset 8
+ 292              		.cfi_offset 3, -8
+ 293              		.cfi_offset 14, -4
+  70:../Bsp/LED/led.c ****     if (index >= s_ledCount)
+ 294              		.loc 1 70 5 is_stmt 1 view .LVU63
+ 295              		.loc 1 70 15 is_stmt 0 view .LVU64
+ 296 0002 084B     		ldr	r3, .L29
+ 297 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 298              		.loc 1 70 8 view .LVU65
+ 299 0006 8342     		cmp	r3, r0
+ 300 0008 00D8     		bhi	.L28
+ 301              	.LVL24:
+ 302              	.L25:
+  71:../Bsp/LED/led.c ****         return;
+  72:../Bsp/LED/led.c ****     s_currentMask &= ~(1 << index);
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccMV05aN.s 			page 8
+
+
+  73:../Bsp/LED/led.c ****     LED_SetLeds(s_currentMask);
+  74:../Bsp/LED/led.c **** }
+ 303              		.loc 1 74 1 view .LVU66
+ 304 000a 08BD     		pop	{r3, pc}
+ 305              	.LVL25:
+ 306              	.L28:
+  72:../Bsp/LED/led.c ****     LED_SetLeds(s_currentMask);
+ 307              		.loc 1 72 5 is_stmt 1 view .LVU67
+  72:../Bsp/LED/led.c ****     LED_SetLeds(s_currentMask);
+ 308              		.loc 1 72 26 is_stmt 0 view .LVU68
+ 309 000c 0123     		movs	r3, #1
+ 310 000e 8340     		lsls	r3, r3, r0
+  72:../Bsp/LED/led.c ****     LED_SetLeds(s_currentMask);
+ 311              		.loc 1 72 19 view .LVU69
+ 312 0010 DB43     		mvns	r3, r3
+ 313 0012 5BB2     		sxtb	r3, r3
+ 314 0014 044A     		ldr	r2, .L29+4
+ 315 0016 1078     		ldrb	r0, [r2]	@ zero_extendqisi2
+ 316              	.LVL26:
+  72:../Bsp/LED/led.c ****     LED_SetLeds(s_currentMask);
+ 317              		.loc 1 72 19 view .LVU70
+ 318 0018 1840     		ands	r0, r0, r3
+ 319 001a 1070     		strb	r0, [r2]
+  73:../Bsp/LED/led.c **** }
+ 320              		.loc 1 73 5 is_stmt 1 view .LVU71
+ 321 001c FFF7FEFF 		bl	LED_SetLeds
+ 322              	.LVL27:
+ 323 0020 F3E7     		b	.L25
+ 324              	.L30:
+ 325 0022 00BF     		.align	2
+ 326              	.L29:
+ 327 0024 00000000 		.word	s_ledCount
+ 328 0028 00000000 		.word	s_currentMask
+ 329              		.cfi_endproc
+ 330              	.LFE243:
+ 332              		.section	.text.LED_Toggle,"ax",%progbits
+ 333              		.align	1
+ 334              		.global	LED_Toggle
+ 335              		.syntax unified
+ 336              		.thumb
+ 337              		.thumb_func
+ 339              	LED_Toggle:
+ 340              	.LVL28:
+ 341              	.LFB244:
+  75:../Bsp/LED/led.c **** 
+  76:../Bsp/LED/led.c **** void LED_Toggle(uint8_t index)
+  77:../Bsp/LED/led.c **** {
+ 342              		.loc 1 77 1 view -0
+ 343              		.cfi_startproc
+ 344              		@ args = 0, pretend = 0, frame = 0
+ 345              		@ frame_needed = 0, uses_anonymous_args = 0
+ 346              		.loc 1 77 1 is_stmt 0 view .LVU73
+ 347 0000 08B5     		push	{r3, lr}
+ 348              		.cfi_def_cfa_offset 8
+ 349              		.cfi_offset 3, -8
+ 350              		.cfi_offset 14, -4
+  78:../Bsp/LED/led.c ****     if (index >= s_ledCount)
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccMV05aN.s 			page 9
+
+
+ 351              		.loc 1 78 5 is_stmt 1 view .LVU74
+ 352              		.loc 1 78 15 is_stmt 0 view .LVU75
+ 353 0002 074B     		ldr	r3, .L35
+ 354 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 355              		.loc 1 78 8 view .LVU76
+ 356 0006 8342     		cmp	r3, r0
+ 357 0008 00D8     		bhi	.L34
+ 358              	.LVL29:
+ 359              	.L31:
+  79:../Bsp/LED/led.c ****         return;
+  80:../Bsp/LED/led.c ****     s_currentMask ^= (1 << index);
+  81:../Bsp/LED/led.c ****     LED_SetLeds(s_currentMask);
+  82:../Bsp/LED/led.c **** }
+ 360              		.loc 1 82 1 view .LVU77
+ 361 000a 08BD     		pop	{r3, pc}
+ 362              	.LVL30:
+ 363              	.L34:
+  80:../Bsp/LED/led.c ****     LED_SetLeds(s_currentMask);
+ 364              		.loc 1 80 5 is_stmt 1 view .LVU78
+  80:../Bsp/LED/led.c ****     LED_SetLeds(s_currentMask);
+ 365              		.loc 1 80 25 is_stmt 0 view .LVU79
+ 366 000c 0123     		movs	r3, #1
+ 367 000e 8340     		lsls	r3, r3, r0
+  80:../Bsp/LED/led.c ****     LED_SetLeds(s_currentMask);
+ 368              		.loc 1 80 19 view .LVU80
+ 369 0010 044A     		ldr	r2, .L35+4
+ 370 0012 1078     		ldrb	r0, [r2]	@ zero_extendqisi2
+ 371              	.LVL31:
+  80:../Bsp/LED/led.c ****     LED_SetLeds(s_currentMask);
+ 372              		.loc 1 80 19 view .LVU81
+ 373 0014 5840     		eors	r0, r0, r3
+ 374 0016 C0B2     		uxtb	r0, r0
+ 375 0018 1070     		strb	r0, [r2]
+  81:../Bsp/LED/led.c **** }
+ 376              		.loc 1 81 5 is_stmt 1 view .LVU82
+ 377 001a FFF7FEFF 		bl	LED_SetLeds
+ 378              	.LVL32:
+ 379 001e F4E7     		b	.L31
+ 380              	.L36:
+ 381              		.align	2
+ 382              	.L35:
+ 383 0020 00000000 		.word	s_ledCount
+ 384 0024 00000000 		.word	s_currentMask
+ 385              		.cfi_endproc
+ 386              	.LFE244:
+ 388              		.section	.bss.s_currentMask,"aw",%nobits
+ 391              	s_currentMask:
+ 392 0000 00       		.space	1
+ 393              		.section	.bss.s_ledCount,"aw",%nobits
+ 396              	s_ledCount:
+ 397 0000 00       		.space	1
+ 398              		.section	.bss.s_configs,"aw",%nobits
+ 399              		.align	2
+ 402              	s_configs:
+ 403 0000 00000000 		.space	56
+ 403      00000000 
+ 403      00000000 
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccMV05aN.s 			page 10
+
+
+ 403      00000000 
+ 403      00000000 
+ 404              		.text
+ 405              	.Letext0:
+ 406              		.file 2 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_default_t
+ 407              		.file 3 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h"
+ 408              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 409              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 410              		.file 6 "../Bsp/LED/led.h"
+ 411              		.file 7 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/string.h"
+ 412              		.file 8 "<built-in>"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccMV05aN.s 			page 11
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 led.c
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:21     .text.LED_SetLeds:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:27     .text.LED_SetLeds:00000000 LED_SetLeds
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:127    .text.LED_SetLeds:00000054 $d
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:391    .bss.s_currentMask:00000000 s_currentMask
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:402    .bss.s_configs:00000000 s_configs
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:396    .bss.s_ledCount:00000000 s_ledCount
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:134    .text.LED_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:140    .text.LED_Init:00000000 LED_Init
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:187    .text.LED_Init:00000024 $d
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:194    .text.LED_GetLeds:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:200    .text.LED_GetLeds:00000000 LED_GetLeds
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:215    .text.LED_GetLeds:00000008 $d
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:220    .text.LED_On:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:226    .text.LED_On:00000000 LED_On
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:270    .text.LED_On:00000020 $d
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:276    .text.LED_Off:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:282    .text.LED_Off:00000000 LED_Off
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:327    .text.LED_Off:00000024 $d
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:333    .text.LED_Toggle:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:339    .text.LED_Toggle:00000000 LED_Toggle
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:383    .text.LED_Toggle:00000020 $d
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:392    .bss.s_currentMask:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:397    .bss.s_ledCount:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccMV05aN.s:399    .bss.s_configs:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_WritePin
+memcpy

@@ -1,0 +1,4085 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"cmsis_os2.c"
+  16              		.text
+  17              		.section	.text.OS_Tick_GetCount,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  23              	OS_Tick_GetCount:
+  24              		@ args = 0, pretend = 0, frame = 0
+  25              		@ frame_needed = 0, uses_anonymous_args = 0
+  26              		@ link register save eliminated.
+  27 0000 4FF0E023 		mov	r3, #-536813568
+  28 0004 5869     		ldr	r0, [r3, #20]
+  29 0006 9B69     		ldr	r3, [r3, #24]
+  30 0008 C01A     		subs	r0, r0, r3
+  31 000a 7047     		bx	lr
+  33              		.section	.text.OS_Tick_GetOverflow,"ax",%progbits
+  34              		.align	1
+  35              		.syntax unified
+  36              		.thumb
+  37              		.thumb_func
+  39              	OS_Tick_GetOverflow:
+  40              		@ args = 0, pretend = 0, frame = 0
+  41              		@ frame_needed = 0, uses_anonymous_args = 0
+  42              		@ link register save eliminated.
+  43 0000 4FF0E023 		mov	r3, #-536813568
+  44 0004 1869     		ldr	r0, [r3, #16]
+  45 0006 C0F30040 		ubfx	r0, r0, #16, #1
+  46 000a 7047     		bx	lr
+  48              		.section	.text.OS_Tick_GetInterval,"ax",%progbits
+  49              		.align	1
+  50              		.syntax unified
+  51              		.thumb
+  52              		.thumb_func
+  54              	OS_Tick_GetInterval:
+  55              		@ args = 0, pretend = 0, frame = 0
+  56              		@ frame_needed = 0, uses_anonymous_args = 0
+  57              		@ link register save eliminated.
+  58 0000 4FF0E023 		mov	r3, #-536813568
+  59 0004 5869     		ldr	r0, [r3, #20]
+  60 0006 0130     		adds	r0, r0, #1
+  61 0008 7047     		bx	lr
+  63              		.section	.text.CreateBlock,"ax",%progbits
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 2
+
+
+  64              		.align	1
+  65              		.syntax unified
+  66              		.thumb
+  67              		.thumb_func
+  69              	CreateBlock:
+  70              		@ args = 0, pretend = 0, frame = 0
+  71              		@ frame_needed = 0, uses_anonymous_args = 0
+  72              		@ link register save eliminated.
+  73 0000 0346     		mov	r3, r0
+  74 0002 C269     		ldr	r2, [r0, #28]
+  75 0004 8169     		ldr	r1, [r0, #24]
+  76 0006 8A42     		cmp	r2, r1
+  77 0008 06D2     		bcs	.L6
+  78 000a 8068     		ldr	r0, [r0, #8]
+  79 000c 5969     		ldr	r1, [r3, #20]
+  80 000e 01FB0200 		mla	r0, r1, r2, r0
+  81 0012 0132     		adds	r2, r2, #1
+  82 0014 DA61     		str	r2, [r3, #28]
+  83 0016 7047     		bx	lr
+  84              	.L6:
+  85 0018 0020     		movs	r0, #0
+  86 001a 7047     		bx	lr
+  88              		.section	.text.AllocBlock,"ax",%progbits
+  89              		.align	1
+  90              		.syntax unified
+  91              		.thumb
+  92              		.thumb_func
+  94              	AllocBlock:
+  95              		@ args = 0, pretend = 0, frame = 0
+  96              		@ frame_needed = 0, uses_anonymous_args = 0
+  97              		@ link register save eliminated.
+  98 0000 0346     		mov	r3, r0
+  99 0002 0068     		ldr	r0, [r0]
+ 100 0004 08B1     		cbz	r0, .L7
+ 101 0006 0268     		ldr	r2, [r0]
+ 102 0008 1A60     		str	r2, [r3]
+ 103              	.L7:
+ 104 000a 7047     		bx	lr
+ 106              		.section	.text.FreeBlock,"ax",%progbits
+ 107              		.align	1
+ 108              		.syntax unified
+ 109              		.thumb
+ 110              		.thumb_func
+ 112              	FreeBlock:
+ 113              		@ args = 0, pretend = 0, frame = 0
+ 114              		@ frame_needed = 0, uses_anonymous_args = 0
+ 115              		@ link register save eliminated.
+ 116 0000 0368     		ldr	r3, [r0]
+ 117 0002 0B60     		str	r3, [r1]
+ 118 0004 0160     		str	r1, [r0]
+ 119 0006 7047     		bx	lr
+ 121              		.section	.text.TimerCallback,"ax",%progbits
+ 122              		.align	1
+ 123              		.syntax unified
+ 124              		.thumb
+ 125              		.thumb_func
+ 127              	TimerCallback:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 3
+
+
+ 128              		@ args = 0, pretend = 0, frame = 0
+ 129              		@ frame_needed = 0, uses_anonymous_args = 0
+ 130 0000 08B5     		push	{r3, lr}
+ 131 0002 FFF7FEFF 		bl	pvTimerGetTimerID
+ 132 0006 10B1     		cbz	r0, .L10
+ 133 0008 0268     		ldr	r2, [r0]
+ 134 000a 4068     		ldr	r0, [r0, #4]
+ 135 000c 9047     		blx	r2
+ 136              	.L10:
+ 137 000e 08BD     		pop	{r3, pc}
+ 139              		.section	.text.SysTick_Handler,"ax",%progbits
+ 140              		.align	1
+ 141              		.global	SysTick_Handler
+ 142              		.syntax unified
+ 143              		.thumb
+ 144              		.thumb_func
+ 146              	SysTick_Handler:
+ 147              		@ args = 0, pretend = 0, frame = 0
+ 148              		@ frame_needed = 0, uses_anonymous_args = 0
+ 149 0000 08B5     		push	{r3, lr}
+ 150 0002 4FF0E023 		mov	r3, #-536813568
+ 151 0006 1B69     		ldr	r3, [r3, #16]
+ 152 0008 FFF7FEFF 		bl	xTaskGetSchedulerState
+ 153 000c 0128     		cmp	r0, #1
+ 154 000e 00D1     		bne	.L16
+ 155              	.L13:
+ 156 0010 08BD     		pop	{r3, pc}
+ 157              	.L16:
+ 158 0012 FFF7FEFF 		bl	xPortSysTickHandler
+ 159 0016 FBE7     		b	.L13
+ 161              		.section	.text.osKernelInitialize,"ax",%progbits
+ 162              		.align	1
+ 163              		.global	osKernelInitialize
+ 164              		.syntax unified
+ 165              		.thumb
+ 166              		.thumb_func
+ 168              	osKernelInitialize:
+ 169              		@ args = 0, pretend = 0, frame = 0
+ 170              		@ frame_needed = 0, uses_anonymous_args = 0
+ 171              		@ link register save eliminated.
+ 172              		.syntax unified
+ 173              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 174 0000 EFF30583 		MRS r3, ipsr
+ 175              	@ 0 "" 2
+ 176              		.thumb
+ 177              		.syntax unified
+ 178 0004 2BB9     		cbnz	r3, .L19
+ 179 0006 064B     		ldr	r3, .L21
+ 180 0008 1868     		ldr	r0, [r3]
+ 181 000a 28B9     		cbnz	r0, .L20
+ 182 000c 0122     		movs	r2, #1
+ 183 000e 1A60     		str	r2, [r3]
+ 184 0010 7047     		bx	lr
+ 185              	.L19:
+ 186 0012 6FF00500 		mvn	r0, #5
+ 187 0016 7047     		bx	lr
+ 188              	.L20:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 4
+
+
+ 189 0018 4FF0FF30 		mov	r0, #-1
+ 190 001c 7047     		bx	lr
+ 191              	.L22:
+ 192 001e 00BF     		.align	2
+ 193              	.L21:
+ 194 0020 00000000 		.word	KernelState
+ 196              		.section	.rodata.osKernelGetInfo.str1.4,"aMS",%progbits,1
+ 197              		.align	2
+ 198              	.LC0:
+ 199 0000 46726565 		.ascii	"FreeRTOS V10.3.1\000"
+ 199      52544F53 
+ 199      20563130 
+ 199      2E332E31 
+ 199      00
+ 200              		.section	.text.osKernelGetInfo,"ax",%progbits
+ 201              		.align	1
+ 202              		.global	osKernelGetInfo
+ 203              		.syntax unified
+ 204              		.thumb
+ 205              		.thumb_func
+ 207              	osKernelGetInfo:
+ 208              		@ args = 0, pretend = 0, frame = 0
+ 209              		@ frame_needed = 0, uses_anonymous_args = 0
+ 210 0000 08B5     		push	{r3, lr}
+ 211 0002 0B46     		mov	r3, r1
+ 212 0004 18B1     		cbz	r0, .L24
+ 213 0006 0146     		mov	r1, r0
+ 214 0008 0648     		ldr	r0, .L29
+ 215 000a 0860     		str	r0, [r1]
+ 216 000c 4860     		str	r0, [r1, #4]
+ 217              	.L24:
+ 218 000e 3BB1     		cbz	r3, .L25
+ 219 0010 32B1     		cbz	r2, .L25
+ 220 0012 112A     		cmp	r2, #17
+ 221 0014 00D9     		bls	.L26
+ 222 0016 1122     		movs	r2, #17
+ 223              	.L26:
+ 224 0018 0349     		ldr	r1, .L29+4
+ 225 001a 1846     		mov	r0, r3
+ 226 001c FFF7FEFF 		bl	memcpy
+ 227              	.L25:
+ 228 0020 0020     		movs	r0, #0
+ 229 0022 08BD     		pop	{r3, pc}
+ 230              	.L30:
+ 231              		.align	2
+ 232              	.L29:
+ 233 0024 31F5F505 		.word	100005169
+ 234 0028 00000000 		.word	.LC0
+ 236              		.section	.text.osKernelGetState,"ax",%progbits
+ 237              		.align	1
+ 238              		.global	osKernelGetState
+ 239              		.syntax unified
+ 240              		.thumb
+ 241              		.thumb_func
+ 243              	osKernelGetState:
+ 244              		@ args = 0, pretend = 0, frame = 0
+ 245              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 5
+
+
+ 246 0000 08B5     		push	{r3, lr}
+ 247 0002 FFF7FEFF 		bl	xTaskGetSchedulerState
+ 248 0006 40B1     		cbz	r0, .L33
+ 249 0008 0346     		mov	r3, r0
+ 250 000a 0228     		cmp	r0, #2
+ 251 000c 06D0     		beq	.L31
+ 252 000e 044B     		ldr	r3, .L36
+ 253 0010 1B68     		ldr	r3, [r3]
+ 254 0012 012B     		cmp	r3, #1
+ 255 0014 02D0     		beq	.L31
+ 256 0016 0023     		movs	r3, #0
+ 257 0018 00E0     		b	.L31
+ 258              	.L33:
+ 259 001a 0323     		movs	r3, #3
+ 260              	.L31:
+ 261 001c 1846     		mov	r0, r3
+ 262 001e 08BD     		pop	{r3, pc}
+ 263              	.L37:
+ 264              		.align	2
+ 265              	.L36:
+ 266 0020 00000000 		.word	KernelState
+ 268              		.section	.text.osKernelStart,"ax",%progbits
+ 269              		.align	1
+ 270              		.global	osKernelStart
+ 271              		.syntax unified
+ 272              		.thumb
+ 273              		.thumb_func
+ 275              	osKernelStart:
+ 276              		@ args = 0, pretend = 0, frame = 0
+ 277              		@ frame_needed = 0, uses_anonymous_args = 0
+ 278              		.syntax unified
+ 279              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 280 0000 EFF30583 		MRS r3, ipsr
+ 281              	@ 0 "" 2
+ 282              		.thumb
+ 283              		.syntax unified
+ 284 0004 73B9     		cbnz	r3, .L40
+ 285 0006 0A4B     		ldr	r3, .L46
+ 286 0008 1B68     		ldr	r3, [r3]
+ 287 000a 012B     		cmp	r3, #1
+ 288 000c 0DD1     		bne	.L41
+ 289 000e 10B5     		push	{r4, lr}
+ 290 0010 0024     		movs	r4, #0
+ 291 0012 084B     		ldr	r3, .L46+4
+ 292 0014 DC77     		strb	r4, [r3, #31]
+ 293 0016 064B     		ldr	r3, .L46
+ 294 0018 0222     		movs	r2, #2
+ 295 001a 1A60     		str	r2, [r3]
+ 296 001c FFF7FEFF 		bl	vTaskStartScheduler
+ 297 0020 2046     		mov	r0, r4
+ 298 0022 10BD     		pop	{r4, pc}
+ 299              	.L40:
+ 300 0024 6FF00500 		mvn	r0, #5
+ 301 0028 7047     		bx	lr
+ 302              	.L41:
+ 303 002a 4FF0FF30 		mov	r0, #-1
+ 304 002e 7047     		bx	lr
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 6
+
+
+ 305              	.L47:
+ 306              		.align	2
+ 307              	.L46:
+ 308 0030 00000000 		.word	KernelState
+ 309 0034 00ED00E0 		.word	-536810240
+ 311              		.section	.text.osKernelLock,"ax",%progbits
+ 312              		.align	1
+ 313              		.global	osKernelLock
+ 314              		.syntax unified
+ 315              		.thumb
+ 316              		.thumb_func
+ 318              	osKernelLock:
+ 319              		@ args = 0, pretend = 0, frame = 0
+ 320              		@ frame_needed = 0, uses_anonymous_args = 0
+ 321 0000 08B5     		push	{r3, lr}
+ 322              		.syntax unified
+ 323              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 324 0002 EFF30583 		MRS r3, ipsr
+ 325              	@ 0 "" 2
+ 326              		.thumb
+ 327              		.syntax unified
+ 328 0006 43B9     		cbnz	r3, .L50
+ 329 0008 FFF7FEFF 		bl	xTaskGetSchedulerState
+ 330 000c 40B1     		cbz	r0, .L51
+ 331 000e 0228     		cmp	r0, #2
+ 332 0010 08D1     		bne	.L52
+ 333 0012 FFF7FEFF 		bl	vTaskSuspendAll
+ 334 0016 0020     		movs	r0, #0
+ 335              	.L48:
+ 336 0018 08BD     		pop	{r3, pc}
+ 337              	.L50:
+ 338 001a 6FF00500 		mvn	r0, #5
+ 339 001e FBE7     		b	.L48
+ 340              	.L51:
+ 341 0020 0120     		movs	r0, #1
+ 342 0022 F9E7     		b	.L48
+ 343              	.L52:
+ 344 0024 4FF0FF30 		mov	r0, #-1
+ 345 0028 F6E7     		b	.L48
+ 347              		.section	.text.osKernelUnlock,"ax",%progbits
+ 348              		.align	1
+ 349              		.global	osKernelUnlock
+ 350              		.syntax unified
+ 351              		.thumb
+ 352              		.thumb_func
+ 354              	osKernelUnlock:
+ 355              		@ args = 0, pretend = 0, frame = 0
+ 356              		@ frame_needed = 0, uses_anonymous_args = 0
+ 357 0000 08B5     		push	{r3, lr}
+ 358              		.syntax unified
+ 359              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 360 0002 EFF30583 		MRS r3, ipsr
+ 361              	@ 0 "" 2
+ 362              		.thumb
+ 363              		.syntax unified
+ 364 0006 7BB9     		cbnz	r3, .L57
+ 365 0008 FFF7FEFF 		bl	xTaskGetSchedulerState
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 7
+
+
+ 366 000c 18B1     		cbz	r0, .L56
+ 367 000e 0228     		cmp	r0, #2
+ 368 0010 0DD1     		bne	.L58
+ 369 0012 0020     		movs	r0, #0
+ 370              	.L54:
+ 371 0014 08BD     		pop	{r3, pc}
+ 372              	.L56:
+ 373 0016 FFF7FEFF 		bl	xTaskResumeAll
+ 374 001a 0128     		cmp	r0, #1
+ 375 001c FAD0     		beq	.L54
+ 376 001e FFF7FEFF 		bl	xTaskGetSchedulerState
+ 377 0022 38B1     		cbz	r0, .L59
+ 378 0024 0120     		movs	r0, #1
+ 379 0026 F5E7     		b	.L54
+ 380              	.L57:
+ 381 0028 6FF00500 		mvn	r0, #5
+ 382 002c F2E7     		b	.L54
+ 383              	.L58:
+ 384 002e 4FF0FF30 		mov	r0, #-1
+ 385 0032 EFE7     		b	.L54
+ 386              	.L59:
+ 387 0034 4FF0FF30 		mov	r0, #-1
+ 388 0038 ECE7     		b	.L54
+ 390              		.section	.text.osKernelRestoreLock,"ax",%progbits
+ 391              		.align	1
+ 392              		.global	osKernelRestoreLock
+ 393              		.syntax unified
+ 394              		.thumb
+ 395              		.thumb_func
+ 397              	osKernelRestoreLock:
+ 398              		@ args = 0, pretend = 0, frame = 0
+ 399              		@ frame_needed = 0, uses_anonymous_args = 0
+ 400 0000 10B5     		push	{r4, lr}
+ 401              		.syntax unified
+ 402              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 403 0002 EFF30583 		MRS r3, ipsr
+ 404              	@ 0 "" 2
+ 405              		.thumb
+ 406              		.syntax unified
+ 407 0006 C3B9     		cbnz	r3, .L65
+ 408 0008 0446     		mov	r4, r0
+ 409 000a FFF7FEFF 		bl	xTaskGetSchedulerState
+ 410 000e 08B1     		cbz	r0, .L63
+ 411 0010 0228     		cmp	r0, #2
+ 412 0012 15D1     		bne	.L66
+ 413              	.L63:
+ 414 0014 012C     		cmp	r4, #1
+ 415 0016 06D0     		beq	.L70
+ 416 0018 ACB9     		cbnz	r4, .L67
+ 417 001a FFF7FEFF 		bl	xTaskResumeAll
+ 418 001e 0128     		cmp	r0, #1
+ 419 0020 04D1     		bne	.L71
+ 420              	.L62:
+ 421 0022 2046     		mov	r0, r4
+ 422 0024 10BD     		pop	{r4, pc}
+ 423              	.L70:
+ 424 0026 FFF7FEFF 		bl	vTaskSuspendAll
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 8
+
+
+ 425 002a FAE7     		b	.L62
+ 426              	.L71:
+ 427 002c FFF7FEFF 		bl	xTaskGetSchedulerState
+ 428 0030 0228     		cmp	r0, #2
+ 429 0032 F6D0     		beq	.L62
+ 430 0034 4FF0FF34 		mov	r4, #-1
+ 431 0038 F3E7     		b	.L62
+ 432              	.L65:
+ 433 003a 6FF00504 		mvn	r4, #5
+ 434 003e F0E7     		b	.L62
+ 435              	.L66:
+ 436 0040 4FF0FF34 		mov	r4, #-1
+ 437 0044 EDE7     		b	.L62
+ 438              	.L67:
+ 439 0046 4FF0FF34 		mov	r4, #-1
+ 440 004a EAE7     		b	.L62
+ 442              		.section	.text.osKernelGetTickCount,"ax",%progbits
+ 443              		.align	1
+ 444              		.global	osKernelGetTickCount
+ 445              		.syntax unified
+ 446              		.thumb
+ 447              		.thumb_func
+ 449              	osKernelGetTickCount:
+ 450              		@ args = 0, pretend = 0, frame = 0
+ 451              		@ frame_needed = 0, uses_anonymous_args = 0
+ 452 0000 08B5     		push	{r3, lr}
+ 453              		.syntax unified
+ 454              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 455 0002 EFF30583 		MRS r3, ipsr
+ 456              	@ 0 "" 2
+ 457              		.thumb
+ 458              		.syntax unified
+ 459 0006 13B1     		cbz	r3, .L73
+ 460 0008 FFF7FEFF 		bl	xTaskGetTickCountFromISR
+ 461              	.L72:
+ 462 000c 08BD     		pop	{r3, pc}
+ 463              	.L73:
+ 464 000e FFF7FEFF 		bl	xTaskGetTickCount
+ 465 0012 FBE7     		b	.L72
+ 467              		.section	.text.osKernelGetTickFreq,"ax",%progbits
+ 468              		.align	1
+ 469              		.global	osKernelGetTickFreq
+ 470              		.syntax unified
+ 471              		.thumb
+ 472              		.thumb_func
+ 474              	osKernelGetTickFreq:
+ 475              		@ args = 0, pretend = 0, frame = 0
+ 476              		@ frame_needed = 0, uses_anonymous_args = 0
+ 477              		@ link register save eliminated.
+ 478 0000 4FF47A70 		mov	r0, #1000
+ 479 0004 7047     		bx	lr
+ 481              		.section	.text.osKernelGetSysTimerCount,"ax",%progbits
+ 482              		.align	1
+ 483              		.global	osKernelGetSysTimerCount
+ 484              		.syntax unified
+ 485              		.thumb
+ 486              		.thumb_func
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 9
+
+
+ 488              	osKernelGetSysTimerCount:
+ 489              		@ args = 0, pretend = 0, frame = 0
+ 490              		@ frame_needed = 0, uses_anonymous_args = 0
+ 491 0000 70B5     		push	{r4, r5, r6, lr}
+ 492              		.syntax unified
+ 493              	@ 1208 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 494 0002 EFF31083 		MRS r3, primask
+ 495              	@ 0 "" 2
+ 496              		.thumb
+ 497              		.syntax unified
+ 498 0006 23B9     		cbnz	r3, .L81
+ 499              		.syntax unified
+ 500              	@ 1287 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 501 0008 EFF31183 		MRS r3, basepri
+ 502              	@ 0 "" 2
+ 503              		.thumb
+ 504              		.syntax unified
+ 505 000c 9BB9     		cbnz	r3, .L82
+ 506 000e 0026     		movs	r6, #0
+ 507 0010 00E0     		b	.L78
+ 508              	.L81:
+ 509 0012 0126     		movs	r6, #1
+ 510              	.L78:
+ 511              		.syntax unified
+ 512              	@ 962 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 513 0014 72B6     		cpsid i
+ 514              	@ 0 "" 2
+ 515              		.thumb
+ 516              		.syntax unified
+ 517 0016 FFF7FEFF 		bl	xTaskGetTickCount
+ 518 001a 0546     		mov	r5, r0
+ 519 001c FFF7FEFF 		bl	OS_Tick_GetCount
+ 520 0020 0446     		mov	r4, r0
+ 521 0022 FFF7FEFF 		bl	OS_Tick_GetOverflow
+ 522 0026 40B9     		cbnz	r0, .L84
+ 523              	.L79:
+ 524 0028 FFF7FEFF 		bl	OS_Tick_GetInterval
+ 525 002c 05FB0040 		mla	r0, r5, r0, r4
+ 526 0030 06B9     		cbnz	r6, .L77
+ 527              		.syntax unified
+ 528              	@ 951 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 529 0032 62B6     		cpsie i
+ 530              	@ 0 "" 2
+ 531              		.thumb
+ 532              		.syntax unified
+ 533              	.L77:
+ 534 0034 70BD     		pop	{r4, r5, r6, pc}
+ 535              	.L82:
+ 536 0036 0126     		movs	r6, #1
+ 537 0038 ECE7     		b	.L78
+ 538              	.L84:
+ 539 003a FFF7FEFF 		bl	OS_Tick_GetCount
+ 540 003e 0446     		mov	r4, r0
+ 541 0040 0135     		adds	r5, r5, #1
+ 542 0042 F1E7     		b	.L79
+ 544              		.section	.text.osKernelGetSysTimerFreq,"ax",%progbits
+ 545              		.align	1
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 10
+
+
+ 546              		.global	osKernelGetSysTimerFreq
+ 547              		.syntax unified
+ 548              		.thumb
+ 549              		.thumb_func
+ 551              	osKernelGetSysTimerFreq:
+ 552              		@ args = 0, pretend = 0, frame = 0
+ 553              		@ frame_needed = 0, uses_anonymous_args = 0
+ 554              		@ link register save eliminated.
+ 555 0000 014B     		ldr	r3, .L86
+ 556 0002 1868     		ldr	r0, [r3]
+ 557 0004 7047     		bx	lr
+ 558              	.L87:
+ 559 0006 00BF     		.align	2
+ 560              	.L86:
+ 561 0008 00000000 		.word	SystemCoreClock
+ 563              		.section	.text.osThreadNew,"ax",%progbits
+ 564              		.align	1
+ 565              		.global	osThreadNew
+ 566              		.syntax unified
+ 567              		.thumb
+ 568              		.thumb_func
+ 570              	osThreadNew:
+ 571              		@ args = 0, pretend = 0, frame = 8
+ 572              		@ frame_needed = 0, uses_anonymous_args = 0
+ 573 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 574 0002 87B0     		sub	sp, sp, #28
+ 575 0004 0024     		movs	r4, #0
+ 576 0006 0594     		str	r4, [sp, #20]
+ 577              		.syntax unified
+ 578              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 579 0008 EFF30584 		MRS r4, ipsr
+ 580              	@ 0 "" 2
+ 581              		.thumb
+ 582              		.syntax unified
+ 583 000c 04BB     		cbnz	r4, .L89
+ 584 000e F8B1     		cbz	r0, .L89
+ 585 0010 002A     		cmp	r2, #0
+ 586 0012 34D0     		beq	.L96
+ 587 0014 1568     		ldr	r5, [r2]
+ 588 0016 9369     		ldr	r3, [r2, #24]
+ 589 0018 2BB1     		cbz	r3, .L97
+ 590 001a 1E46     		mov	r6, r3
+ 591 001c 013B     		subs	r3, r3, #1
+ 592 001e 372B     		cmp	r3, #55
+ 593 0020 02D9     		bls	.L91
+ 594 0022 0020     		movs	r0, #0
+ 595 0024 15E0     		b	.L88
+ 596              	.L97:
+ 597 0026 1826     		movs	r6, #24
+ 598              	.L91:
+ 599 0028 5368     		ldr	r3, [r2, #4]
+ 600 002a 13F0010F 		tst	r3, #1
+ 601 002e 3FD1     		bne	.L99
+ 602 0030 5469     		ldr	r4, [r2, #20]
+ 603 0032 84B1     		cbz	r4, .L100
+ 604 0034 4FEA940C 		lsr	ip, r4, #2
+ 605              	.L93:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 11
+
+
+ 606 0038 9368     		ldr	r3, [r2, #8]
+ 607 003a 2BB1     		cbz	r3, .L94
+ 608 003c D768     		ldr	r7, [r2, #12]
+ 609 003e 5B2F     		cmp	r7, #91
+ 610 0040 02D9     		bls	.L94
+ 611 0042 1769     		ldr	r7, [r2, #16]
+ 612 0044 07B1     		cbz	r7, .L94
+ 613 0046 84B9     		cbnz	r4, .L95
+ 614              	.L94:
+ 615 0048 43B1     		cbz	r3, .L105
+ 616 004a 4FF0FF33 		mov	r3, #-1
+ 617              	.L90:
+ 618 004e 0BB3     		cbz	r3, .L106
+ 619              	.L89:
+ 620 0050 0598     		ldr	r0, [sp, #20]
+ 621              	.L88:
+ 622 0052 07B0     		add	sp, sp, #28
+ 623              		@ sp needed
+ 624 0054 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 625              	.L100:
+ 626 0056 4FF0800C 		mov	ip, #128
+ 627 005a EDE7     		b	.L93
+ 628              	.L105:
+ 629 005c D368     		ldr	r3, [r2, #12]
+ 630 005e A3B9     		cbnz	r3, .L102
+ 631 0060 1369     		ldr	r3, [r2, #16]
+ 632 0062 ABB1     		cbz	r3, .L103
+ 633 0064 4FF0FF33 		mov	r3, #-1
+ 634 0068 F1E7     		b	.L90
+ 635              	.L95:
+ 636 006a 0293     		str	r3, [sp, #8]
+ 637 006c 0197     		str	r7, [sp, #4]
+ 638 006e 0096     		str	r6, [sp]
+ 639 0070 0B46     		mov	r3, r1
+ 640 0072 6246     		mov	r2, ip
+ 641 0074 2946     		mov	r1, r5
+ 642 0076 FFF7FEFF 		bl	xTaskCreateStatic
+ 643 007a 0590     		str	r0, [sp, #20]
+ 644 007c E8E7     		b	.L89
+ 645              	.L96:
+ 646 007e 1546     		mov	r5, r2
+ 647 0080 0023     		movs	r3, #0
+ 648 0082 1826     		movs	r6, #24
+ 649 0084 4FF0800C 		mov	ip, #128
+ 650 0088 E1E7     		b	.L90
+ 651              	.L102:
+ 652 008a 4FF0FF33 		mov	r3, #-1
+ 653 008e DEE7     		b	.L90
+ 654              	.L103:
+ 655 0090 0023     		movs	r3, #0
+ 656 0092 DCE7     		b	.L90
+ 657              	.L106:
+ 658 0094 05AB     		add	r3, sp, #20
+ 659 0096 0193     		str	r3, [sp, #4]
+ 660 0098 0096     		str	r6, [sp]
+ 661 009a 0B46     		mov	r3, r1
+ 662 009c 1FFA8CF2 		uxth	r2, ip
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 12
+
+
+ 663 00a0 2946     		mov	r1, r5
+ 664 00a2 FFF7FEFF 		bl	xTaskCreate
+ 665 00a6 0128     		cmp	r0, #1
+ 666 00a8 D2D0     		beq	.L89
+ 667 00aa 0023     		movs	r3, #0
+ 668 00ac 0593     		str	r3, [sp, #20]
+ 669 00ae CFE7     		b	.L89
+ 670              	.L99:
+ 671 00b0 0020     		movs	r0, #0
+ 672 00b2 CEE7     		b	.L88
+ 674              		.section	.text.osThreadGetName,"ax",%progbits
+ 675              		.align	1
+ 676              		.global	osThreadGetName
+ 677              		.syntax unified
+ 678              		.thumb
+ 679              		.thumb_func
+ 681              	osThreadGetName:
+ 682              		@ args = 0, pretend = 0, frame = 0
+ 683              		@ frame_needed = 0, uses_anonymous_args = 0
+ 684 0000 08B5     		push	{r3, lr}
+ 685              		.syntax unified
+ 686              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 687 0002 EFF30583 		MRS r3, ipsr
+ 688              	@ 0 "" 2
+ 689              		.thumb
+ 690              		.syntax unified
+ 691 0006 1BB9     		cbnz	r3, .L109
+ 692 0008 08B1     		cbz	r0, .L107
+ 693 000a FFF7FEFF 		bl	pcTaskGetName
+ 694              	.L107:
+ 695 000e 08BD     		pop	{r3, pc}
+ 696              	.L109:
+ 697 0010 0020     		movs	r0, #0
+ 698 0012 FCE7     		b	.L107
+ 700              		.section	.text.osThreadGetId,"ax",%progbits
+ 701              		.align	1
+ 702              		.global	osThreadGetId
+ 703              		.syntax unified
+ 704              		.thumb
+ 705              		.thumb_func
+ 707              	osThreadGetId:
+ 708              		@ args = 0, pretend = 0, frame = 0
+ 709              		@ frame_needed = 0, uses_anonymous_args = 0
+ 710 0000 08B5     		push	{r3, lr}
+ 711 0002 FFF7FEFF 		bl	xTaskGetCurrentTaskHandle
+ 712 0006 08BD     		pop	{r3, pc}
+ 714              		.section	.text.osThreadGetState,"ax",%progbits
+ 715              		.align	1
+ 716              		.global	osThreadGetState
+ 717              		.syntax unified
+ 718              		.thumb
+ 719              		.thumb_func
+ 721              	osThreadGetState:
+ 722              		@ args = 0, pretend = 0, frame = 0
+ 723              		@ frame_needed = 0, uses_anonymous_args = 0
+ 724 0000 08B5     		push	{r3, lr}
+ 725              		.syntax unified
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 13
+
+
+ 726              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 727 0002 EFF30583 		MRS r3, ipsr
+ 728              	@ 0 "" 2
+ 729              		.thumb
+ 730              		.syntax unified
+ 731 0006 93B9     		cbnz	r3, .L121
+ 732 0008 A0B1     		cbz	r0, .L122
+ 733 000a FFF7FEFF 		bl	eTaskGetState
+ 734 000e 0428     		cmp	r0, #4
+ 735 0010 0AD8     		bhi	.L116
+ 736 0012 DFE800F0 		tbb	[pc, r0]
+ 737              	.L118:
+ 738 0016 03       		.byte	(.L120-.L118)/2
+ 739 0017 12       		.byte	(.L123-.L118)/2
+ 740 0018 05       		.byte	(.L119-.L118)/2
+ 741 0019 05       		.byte	(.L119-.L118)/2
+ 742 001a 07       		.byte	(.L117-.L118)/2
+ 743 001b 00       		.p2align 1
+ 744              	.L120:
+ 745 001c 0220     		movs	r0, #2
+ 746 001e 00E0     		b	.L114
+ 747              	.L119:
+ 748 0020 0320     		movs	r0, #3
+ 749              	.L114:
+ 750 0022 08BD     		pop	{r3, pc}
+ 751              	.L117:
+ 752 0024 0420     		movs	r0, #4
+ 753 0026 FCE7     		b	.L114
+ 754              	.L116:
+ 755 0028 4FF0FF30 		mov	r0, #-1
+ 756 002c F9E7     		b	.L114
+ 757              	.L121:
+ 758 002e 4FF0FF30 		mov	r0, #-1
+ 759 0032 F6E7     		b	.L114
+ 760              	.L122:
+ 761 0034 4FF0FF30 		mov	r0, #-1
+ 762 0038 F3E7     		b	.L114
+ 763              	.L123:
+ 764 003a 0120     		movs	r0, #1
+ 765 003c F1E7     		b	.L114
+ 767              		.section	.text.osThreadGetStackSpace,"ax",%progbits
+ 768              		.align	1
+ 769              		.global	osThreadGetStackSpace
+ 770              		.syntax unified
+ 771              		.thumb
+ 772              		.thumb_func
+ 774              	osThreadGetStackSpace:
+ 775              		@ args = 0, pretend = 0, frame = 0
+ 776              		@ frame_needed = 0, uses_anonymous_args = 0
+ 777 0000 08B5     		push	{r3, lr}
+ 778 0002 0346     		mov	r3, r0
+ 779              		.syntax unified
+ 780              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 781 0004 EFF30580 		MRS r0, ipsr
+ 782              	@ 0 "" 2
+ 783              		.thumb
+ 784              		.syntax unified
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 14
+
+
+ 785 0008 28B9     		cbnz	r0, .L127
+ 786 000a 2BB1     		cbz	r3, .L125
+ 787 000c 1846     		mov	r0, r3
+ 788 000e FFF7FEFF 		bl	uxTaskGetStackHighWaterMark
+ 789 0012 8000     		lsls	r0, r0, #2
+ 790 0014 00E0     		b	.L125
+ 791              	.L127:
+ 792 0016 0020     		movs	r0, #0
+ 793              	.L125:
+ 794 0018 08BD     		pop	{r3, pc}
+ 796              		.section	.text.osThreadSetPriority,"ax",%progbits
+ 797              		.align	1
+ 798              		.global	osThreadSetPriority
+ 799              		.syntax unified
+ 800              		.thumb
+ 801              		.thumb_func
+ 803              	osThreadSetPriority:
+ 804              		@ args = 0, pretend = 0, frame = 0
+ 805              		@ frame_needed = 0, uses_anonymous_args = 0
+ 806 0000 08B5     		push	{r3, lr}
+ 807              		.syntax unified
+ 808              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 809 0002 EFF30583 		MRS r3, ipsr
+ 810              	@ 0 "" 2
+ 811              		.thumb
+ 812              		.syntax unified
+ 813 0006 43B9     		cbnz	r3, .L131
+ 814 0008 50B1     		cbz	r0, .L132
+ 815 000a 0029     		cmp	r1, #0
+ 816 000c 0BDD     		ble	.L133
+ 817 000e 3829     		cmp	r1, #56
+ 818 0010 0CDC     		bgt	.L134
+ 819 0012 FFF7FEFF 		bl	vTaskPrioritySet
+ 820 0016 0020     		movs	r0, #0
+ 821              	.L129:
+ 822 0018 08BD     		pop	{r3, pc}
+ 823              	.L131:
+ 824 001a 6FF00500 		mvn	r0, #5
+ 825 001e FBE7     		b	.L129
+ 826              	.L132:
+ 827 0020 6FF00300 		mvn	r0, #3
+ 828 0024 F8E7     		b	.L129
+ 829              	.L133:
+ 830 0026 6FF00300 		mvn	r0, #3
+ 831 002a F5E7     		b	.L129
+ 832              	.L134:
+ 833 002c 6FF00300 		mvn	r0, #3
+ 834 0030 F2E7     		b	.L129
+ 836              		.section	.text.osThreadGetPriority,"ax",%progbits
+ 837              		.align	1
+ 838              		.global	osThreadGetPriority
+ 839              		.syntax unified
+ 840              		.thumb
+ 841              		.thumb_func
+ 843              	osThreadGetPriority:
+ 844              		@ args = 0, pretend = 0, frame = 0
+ 845              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 15
+
+
+ 846 0000 08B5     		push	{r3, lr}
+ 847              		.syntax unified
+ 848              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 849 0002 EFF30583 		MRS r3, ipsr
+ 850              	@ 0 "" 2
+ 851              		.thumb
+ 852              		.syntax unified
+ 853 0006 1BB9     		cbnz	r3, .L138
+ 854 0008 28B1     		cbz	r0, .L139
+ 855 000a FFF7FEFF 		bl	uxTaskPriorityGet
+ 856              	.L136:
+ 857 000e 08BD     		pop	{r3, pc}
+ 858              	.L138:
+ 859 0010 4FF0FF30 		mov	r0, #-1
+ 860 0014 FBE7     		b	.L136
+ 861              	.L139:
+ 862 0016 4FF0FF30 		mov	r0, #-1
+ 863 001a F8E7     		b	.L136
+ 865              		.section	.text.osThreadYield,"ax",%progbits
+ 866              		.align	1
+ 867              		.global	osThreadYield
+ 868              		.syntax unified
+ 869              		.thumb
+ 870              		.thumb_func
+ 872              	osThreadYield:
+ 873              		@ args = 0, pretend = 0, frame = 0
+ 874              		@ frame_needed = 0, uses_anonymous_args = 0
+ 875              		@ link register save eliminated.
+ 876              		.syntax unified
+ 877              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 878 0000 EFF30583 		MRS r3, ipsr
+ 879              	@ 0 "" 2
+ 880              		.thumb
+ 881              		.syntax unified
+ 882 0004 5BB9     		cbnz	r3, .L143
+ 883 0006 4FF0E023 		mov	r3, #-536813568
+ 884 000a 4FF08052 		mov	r2, #268435456
+ 885 000e C3F8042D 		str	r2, [r3, #3332]
+ 886              		.syntax unified
+ 887              	@ 606 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c" 1
+ 888 0012 BFF34F8F 		dsb
+ 889              	@ 0 "" 2
+ 890              	@ 606 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c" 1
+ 891 0016 BFF36F8F 		isb
+ 892              	@ 0 "" 2
+ 893              		.thumb
+ 894              		.syntax unified
+ 895 001a 0020     		movs	r0, #0
+ 896 001c 7047     		bx	lr
+ 897              	.L143:
+ 898 001e 6FF00500 		mvn	r0, #5
+ 899 0022 7047     		bx	lr
+ 901              		.section	.text.osThreadSuspend,"ax",%progbits
+ 902              		.align	1
+ 903              		.global	osThreadSuspend
+ 904              		.syntax unified
+ 905              		.thumb
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 16
+
+
+ 906              		.thumb_func
+ 908              	osThreadSuspend:
+ 909              		@ args = 0, pretend = 0, frame = 0
+ 910              		@ frame_needed = 0, uses_anonymous_args = 0
+ 911 0000 08B5     		push	{r3, lr}
+ 912              		.syntax unified
+ 913              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 914 0002 EFF30583 		MRS r3, ipsr
+ 915              	@ 0 "" 2
+ 916              		.thumb
+ 917              		.syntax unified
+ 918 0006 23B9     		cbnz	r3, .L146
+ 919 0008 30B1     		cbz	r0, .L147
+ 920 000a FFF7FEFF 		bl	vTaskSuspend
+ 921 000e 0020     		movs	r0, #0
+ 922              	.L144:
+ 923 0010 08BD     		pop	{r3, pc}
+ 924              	.L146:
+ 925 0012 6FF00500 		mvn	r0, #5
+ 926 0016 FBE7     		b	.L144
+ 927              	.L147:
+ 928 0018 6FF00300 		mvn	r0, #3
+ 929 001c F8E7     		b	.L144
+ 931              		.section	.text.osThreadResume,"ax",%progbits
+ 932              		.align	1
+ 933              		.global	osThreadResume
+ 934              		.syntax unified
+ 935              		.thumb
+ 936              		.thumb_func
+ 938              	osThreadResume:
+ 939              		@ args = 0, pretend = 0, frame = 0
+ 940              		@ frame_needed = 0, uses_anonymous_args = 0
+ 941 0000 08B5     		push	{r3, lr}
+ 942              		.syntax unified
+ 943              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 944 0002 EFF30583 		MRS r3, ipsr
+ 945              	@ 0 "" 2
+ 946              		.thumb
+ 947              		.syntax unified
+ 948 0006 23B9     		cbnz	r3, .L151
+ 949 0008 30B1     		cbz	r0, .L152
+ 950 000a FFF7FEFF 		bl	vTaskResume
+ 951 000e 0020     		movs	r0, #0
+ 952              	.L149:
+ 953 0010 08BD     		pop	{r3, pc}
+ 954              	.L151:
+ 955 0012 6FF00500 		mvn	r0, #5
+ 956 0016 FBE7     		b	.L149
+ 957              	.L152:
+ 958 0018 6FF00300 		mvn	r0, #3
+ 959 001c F8E7     		b	.L149
+ 961              		.section	.text.osThreadExit,"ax",%progbits
+ 962              		.align	1
+ 963              		.global	osThreadExit
+ 964              		.syntax unified
+ 965              		.thumb
+ 966              		.thumb_func
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 17
+
+
+ 968              	osThreadExit:
+ 969              		@ Volatile: function does not return.
+ 970              		@ args = 0, pretend = 0, frame = 0
+ 971              		@ frame_needed = 0, uses_anonymous_args = 0
+ 972 0000 08B5     		push	{r3, lr}
+ 973 0002 0020     		movs	r0, #0
+ 974 0004 FFF7FEFF 		bl	vTaskDelete
+ 975              	.L155:
+ 976 0008 FEE7     		b	.L155
+ 978              		.section	.text.osThreadTerminate,"ax",%progbits
+ 979              		.align	1
+ 980              		.global	osThreadTerminate
+ 981              		.syntax unified
+ 982              		.thumb
+ 983              		.thumb_func
+ 985              	osThreadTerminate:
+ 986              		@ args = 0, pretend = 0, frame = 0
+ 987              		@ frame_needed = 0, uses_anonymous_args = 0
+ 988              		.syntax unified
+ 989              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 990 0000 EFF30583 		MRS r3, ipsr
+ 991              	@ 0 "" 2
+ 992              		.thumb
+ 993              		.syntax unified
+ 994 0004 5BB9     		cbnz	r3, .L159
+ 995 0006 10B5     		push	{r4, lr}
+ 996 0008 0446     		mov	r4, r0
+ 997 000a 58B1     		cbz	r0, .L160
+ 998 000c FFF7FEFF 		bl	eTaskGetState
+ 999 0010 0428     		cmp	r0, #4
+ 1000 0012 0AD0     		beq	.L161
+ 1001 0014 2046     		mov	r0, r4
+ 1002 0016 FFF7FEFF 		bl	vTaskDelete
+ 1003 001a 0020     		movs	r0, #0
+ 1004              	.L157:
+ 1005 001c 10BD     		pop	{r4, pc}
+ 1006              	.L159:
+ 1007 001e 6FF00500 		mvn	r0, #5
+ 1008 0022 7047     		bx	lr
+ 1009              	.L160:
+ 1010 0024 6FF00300 		mvn	r0, #3
+ 1011 0028 F8E7     		b	.L157
+ 1012              	.L161:
+ 1013 002a 6FF00200 		mvn	r0, #2
+ 1014 002e F5E7     		b	.L157
+ 1016              		.section	.text.osThreadGetCount,"ax",%progbits
+ 1017              		.align	1
+ 1018              		.global	osThreadGetCount
+ 1019              		.syntax unified
+ 1020              		.thumb
+ 1021              		.thumb_func
+ 1023              	osThreadGetCount:
+ 1024              		@ args = 0, pretend = 0, frame = 0
+ 1025              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1026 0000 08B5     		push	{r3, lr}
+ 1027              		.syntax unified
+ 1028              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 18
+
+
+ 1029 0002 EFF30583 		MRS r3, ipsr
+ 1030              	@ 0 "" 2
+ 1031              		.thumb
+ 1032              		.syntax unified
+ 1033 0006 0BB1     		cbz	r3, .L170
+ 1034 0008 0020     		movs	r0, #0
+ 1035              	.L166:
+ 1036 000a 08BD     		pop	{r3, pc}
+ 1037              	.L170:
+ 1038 000c FFF7FEFF 		bl	uxTaskGetNumberOfTasks
+ 1039 0010 FBE7     		b	.L166
+ 1041              		.section	.text.osThreadEnumerate,"ax",%progbits
+ 1042              		.align	1
+ 1043              		.global	osThreadEnumerate
+ 1044              		.syntax unified
+ 1045              		.thumb
+ 1046              		.thumb_func
+ 1048              	osThreadEnumerate:
+ 1049              		@ args = 0, pretend = 0, frame = 0
+ 1050              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1051 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 1052              		.syntax unified
+ 1053              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 1054 0004 EFF30584 		MRS r4, ipsr
+ 1055              	@ 0 "" 2
+ 1056              		.thumb
+ 1057              		.syntax unified
+ 1058 0008 4CBB     		cbnz	r4, .L176
+ 1059 000a 0646     		mov	r6, r0
+ 1060 000c 0D46     		mov	r5, r1
+ 1061 000e 38B3     		cbz	r0, .L171
+ 1062 0010 09B9     		cbnz	r1, .L180
+ 1063 0012 0C46     		mov	r4, r1
+ 1064 0014 24E0     		b	.L171
+ 1065              	.L180:
+ 1066 0016 FFF7FEFF 		bl	vTaskSuspendAll
+ 1067 001a FFF7FEFF 		bl	uxTaskGetNumberOfTasks
+ 1068 001e 8046     		mov	r8, r0
+ 1069 0020 00EBC000 		add	r0, r0, r0, lsl #3
+ 1070 0024 8000     		lsls	r0, r0, #2
+ 1071 0026 FFF7FEFF 		bl	pvPortMalloc
+ 1072 002a 0746     		mov	r7, r0
+ 1073 002c 80B1     		cbz	r0, .L178
+ 1074 002e 0022     		movs	r2, #0
+ 1075 0030 4146     		mov	r1, r8
+ 1076 0032 FFF7FEFF 		bl	uxTaskGetSystemState
+ 1077 0036 06E0     		b	.L174
+ 1078              	.L175:
+ 1079 0038 04EBC403 		add	r3, r4, r4, lsl #3
+ 1080 003c 57F82330 		ldr	r3, [r7, r3, lsl #2]
+ 1081 0040 46F82430 		str	r3, [r6, r4, lsl #2]
+ 1082 0044 0134     		adds	r4, r4, #1
+ 1083              	.L174:
+ 1084 0046 8442     		cmp	r4, r0
+ 1085 0048 03D2     		bcs	.L173
+ 1086 004a AC42     		cmp	r4, r5
+ 1087 004c F4D3     		bcc	.L175
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 19
+
+
+ 1088 004e 00E0     		b	.L173
+ 1089              	.L178:
+ 1090 0050 4446     		mov	r4, r8
+ 1091              	.L173:
+ 1092 0052 FFF7FEFF 		bl	xTaskResumeAll
+ 1093 0056 3846     		mov	r0, r7
+ 1094 0058 FFF7FEFF 		bl	vPortFree
+ 1095 005c 00E0     		b	.L171
+ 1096              	.L176:
+ 1097 005e 0024     		movs	r4, #0
+ 1098              	.L171:
+ 1099 0060 2046     		mov	r0, r4
+ 1100 0062 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 1102              		.section	.text.osThreadFlagsSet,"ax",%progbits
+ 1103              		.align	1
+ 1104              		.global	osThreadFlagsSet
+ 1105              		.syntax unified
+ 1106              		.thumb
+ 1107              		.thumb_func
+ 1109              	osThreadFlagsSet:
+ 1110              		@ args = 0, pretend = 0, frame = 8
+ 1111              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1112 0000 30B5     		push	{r4, r5, lr}
+ 1113 0002 85B0     		sub	sp, sp, #20
+ 1114 0004 20B3     		cbz	r0, .L182
+ 1115 0006 0446     		mov	r4, r0
+ 1116 0008 0029     		cmp	r1, #0
+ 1117 000a 21DB     		blt	.L182
+ 1118 000c 4FF0FF33 		mov	r3, #-1
+ 1119 0010 0393     		str	r3, [sp, #12]
+ 1120              		.syntax unified
+ 1121              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 1122 0012 EFF30583 		MRS r3, ipsr
+ 1123              	@ 0 "" 2
+ 1124              		.thumb
+ 1125              		.syntax unified
+ 1126 0016 0BB3     		cbz	r3, .L185
+ 1127 0018 0025     		movs	r5, #0
+ 1128 001a 0295     		str	r5, [sp, #8]
+ 1129 001c 02AB     		add	r3, sp, #8
+ 1130 001e 0093     		str	r3, [sp]
+ 1131 0020 2B46     		mov	r3, r5
+ 1132 0022 0122     		movs	r2, #1
+ 1133 0024 FFF7FEFF 		bl	xTaskGenericNotifyFromISR
+ 1134 0028 0095     		str	r5, [sp]
+ 1135 002a 03AB     		add	r3, sp, #12
+ 1136 002c 2A46     		mov	r2, r5
+ 1137 002e 2946     		mov	r1, r5
+ 1138 0030 2046     		mov	r0, r4
+ 1139 0032 FFF7FEFF 		bl	xTaskGenericNotifyFromISR
+ 1140 0036 029B     		ldr	r3, [sp, #8]
+ 1141 0038 6BB1     		cbz	r3, .L184
+ 1142 003a 4FF0E023 		mov	r3, #-536813568
+ 1143 003e 4FF08052 		mov	r2, #268435456
+ 1144 0042 C3F8042D 		str	r2, [r3, #3332]
+ 1145              		.syntax unified
+ 1146              	@ 746 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c" 1
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 20
+
+
+ 1147 0046 BFF34F8F 		dsb
+ 1148              	@ 0 "" 2
+ 1149              	@ 746 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c" 1
+ 1150 004a BFF36F8F 		isb
+ 1151              	@ 0 "" 2
+ 1152              		.thumb
+ 1153              		.syntax unified
+ 1154 004e 02E0     		b	.L184
+ 1155              	.L182:
+ 1156 0050 6FF00303 		mvn	r3, #3
+ 1157 0054 0393     		str	r3, [sp, #12]
+ 1158              	.L184:
+ 1159 0056 0398     		ldr	r0, [sp, #12]
+ 1160 0058 05B0     		add	sp, sp, #20
+ 1161              		@ sp needed
+ 1162 005a 30BD     		pop	{r4, r5, pc}
+ 1163              	.L185:
+ 1164 005c 0023     		movs	r3, #0
+ 1165 005e 0122     		movs	r2, #1
+ 1166 0060 FFF7FEFF 		bl	xTaskGenericNotify
+ 1167 0064 03AB     		add	r3, sp, #12
+ 1168 0066 0022     		movs	r2, #0
+ 1169 0068 1146     		mov	r1, r2
+ 1170 006a 2046     		mov	r0, r4
+ 1171 006c FFF7FEFF 		bl	xTaskGenericNotify
+ 1172 0070 F1E7     		b	.L184
+ 1174              		.section	.text.osThreadFlagsClear,"ax",%progbits
+ 1175              		.align	1
+ 1176              		.global	osThreadFlagsClear
+ 1177              		.syntax unified
+ 1178              		.thumb
+ 1179              		.thumb_func
+ 1181              	osThreadFlagsClear:
+ 1182              		@ args = 0, pretend = 0, frame = 8
+ 1183              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1184 0000 70B5     		push	{r4, r5, r6, lr}
+ 1185 0002 82B0     		sub	sp, sp, #8
+ 1186              		.syntax unified
+ 1187              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 1188 0004 EFF30583 		MRS r3, ipsr
+ 1189              	@ 0 "" 2
+ 1190              		.thumb
+ 1191              		.syntax unified
+ 1192 0008 EBB9     		cbnz	r3, .L189
+ 1193 000a 0446     		mov	r4, r0
+ 1194 000c 0028     		cmp	r0, #0
+ 1195 000e 1FDB     		blt	.L190
+ 1196 0010 FFF7FEFF 		bl	xTaskGetCurrentTaskHandle
+ 1197 0014 0646     		mov	r6, r0
+ 1198 0016 01AB     		add	r3, sp, #4
+ 1199 0018 0022     		movs	r2, #0
+ 1200 001a 1146     		mov	r1, r2
+ 1201 001c FFF7FEFF 		bl	xTaskGenericNotify
+ 1202 0020 0128     		cmp	r0, #1
+ 1203 0022 02D0     		beq	.L194
+ 1204 0024 4FF0FF35 		mov	r5, #-1
+ 1205 0028 0FE0     		b	.L187
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 21
+
+
+ 1206              	.L194:
+ 1207 002a 019D     		ldr	r5, [sp, #4]
+ 1208 002c 25EA0401 		bic	r1, r5, r4
+ 1209 0030 0191     		str	r1, [sp, #4]
+ 1210 0032 0023     		movs	r3, #0
+ 1211 0034 0322     		movs	r2, #3
+ 1212 0036 3046     		mov	r0, r6
+ 1213 0038 FFF7FEFF 		bl	xTaskGenericNotify
+ 1214 003c 0128     		cmp	r0, #1
+ 1215 003e 04D0     		beq	.L187
+ 1216 0040 4FF0FF35 		mov	r5, #-1
+ 1217 0044 01E0     		b	.L187
+ 1218              	.L189:
+ 1219 0046 6FF00505 		mvn	r5, #5
+ 1220              	.L187:
+ 1221 004a 2846     		mov	r0, r5
+ 1222 004c 02B0     		add	sp, sp, #8
+ 1223              		@ sp needed
+ 1224 004e 70BD     		pop	{r4, r5, r6, pc}
+ 1225              	.L190:
+ 1226 0050 6FF00305 		mvn	r5, #3
+ 1227 0054 F9E7     		b	.L187
+ 1229              		.section	.text.osThreadFlagsGet,"ax",%progbits
+ 1230              		.align	1
+ 1231              		.global	osThreadFlagsGet
+ 1232              		.syntax unified
+ 1233              		.thumb
+ 1234              		.thumb_func
+ 1236              	osThreadFlagsGet:
+ 1237              		@ args = 0, pretend = 0, frame = 8
+ 1238              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1239 0000 00B5     		push	{lr}
+ 1240 0002 83B0     		sub	sp, sp, #12
+ 1241              		.syntax unified
+ 1242              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 1243 0004 EFF30583 		MRS r3, ipsr
+ 1244              	@ 0 "" 2
+ 1245              		.thumb
+ 1246              		.syntax unified
+ 1247 0008 33B1     		cbz	r3, .L196
+ 1248 000a 6FF00503 		mvn	r3, #5
+ 1249 000e 0193     		str	r3, [sp, #4]
+ 1250              	.L197:
+ 1251 0010 0198     		ldr	r0, [sp, #4]
+ 1252 0012 03B0     		add	sp, sp, #12
+ 1253              		@ sp needed
+ 1254 0014 5DF804FB 		ldr	pc, [sp], #4
+ 1255              	.L196:
+ 1256 0018 FFF7FEFF 		bl	xTaskGetCurrentTaskHandle
+ 1257 001c 01AB     		add	r3, sp, #4
+ 1258 001e 0022     		movs	r2, #0
+ 1259 0020 1146     		mov	r1, r2
+ 1260 0022 FFF7FEFF 		bl	xTaskGenericNotify
+ 1261 0026 0128     		cmp	r0, #1
+ 1262 0028 F2D0     		beq	.L197
+ 1263 002a 4FF0FF33 		mov	r3, #-1
+ 1264 002e 0193     		str	r3, [sp, #4]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 22
+
+
+ 1265 0030 EEE7     		b	.L197
+ 1267              		.section	.text.osThreadFlagsWait,"ax",%progbits
+ 1268              		.align	1
+ 1269              		.global	osThreadFlagsWait
+ 1270              		.syntax unified
+ 1271              		.thumb
+ 1272              		.thumb_func
+ 1274              	osThreadFlagsWait:
+ 1275              		@ args = 0, pretend = 0, frame = 16
+ 1276              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1277 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 1278 0004 85B0     		sub	sp, sp, #20
+ 1279              		.syntax unified
+ 1280              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 1281 0006 EFF30583 		MRS r3, ipsr
+ 1282              	@ 0 "" 2
+ 1283              		.thumb
+ 1284              		.syntax unified
+ 1285 000a 0193     		str	r3, [sp, #4]
+ 1286 000c 002B     		cmp	r3, #0
+ 1287 000e 40D1     		bne	.L207
+ 1288 0010 8146     		mov	r9, r0
+ 1289 0012 8A46     		mov	r10, r1
+ 1290 0014 1746     		mov	r7, r2
+ 1291 0016 0028     		cmp	r0, #0
+ 1292 0018 41DB     		blt	.L208
+ 1293 001a 11F0020F 		tst	r1, #2
+ 1294 001e 06D0     		beq	.L209
+ 1295 0020 9846     		mov	r8, r3
+ 1296              	.L201:
+ 1297 0022 FFF7FEFF 		bl	xTaskGetTickCount
+ 1298 0026 8346     		mov	fp, r0
+ 1299 0028 3E46     		mov	r6, r7
+ 1300 002a 019D     		ldr	r5, [sp, #4]
+ 1301 002c 23E0     		b	.L206
+ 1302              	.L209:
+ 1303 002e 8046     		mov	r8, r0
+ 1304 0030 F7E7     		b	.L201
+ 1305              	.L216:
+ 1306 0032 05EA0905 		and	r5, r5, r9
+ 1307 0036 039B     		ldr	r3, [sp, #12]
+ 1308 0038 1D43     		orrs	r5, r5, r3
+ 1309 003a 1AF0010F 		tst	r10, #1
+ 1310 003e 0DD0     		beq	.L203
+ 1311 0040 39EA0503 		bics	r3, r9, r5
+ 1312 0044 27D0     		beq	.L199
+ 1313 0046 6FB3     		cbz	r7, .L215
+ 1314              	.L204:
+ 1315 0048 FFF7FEFF 		bl	xTaskGetTickCount
+ 1316 004c A0EB0B03 		sub	r3, r0, fp
+ 1317 0050 9E42     		cmp	r6, r3
+ 1318 0052 0BD3     		bcc	.L212
+ 1319 0054 ABEB0000 		sub	r0, fp, r0
+ 1320 0058 0644     		add	r6, r6, r0
+ 1321 005a 0BE0     		b	.L205
+ 1322              	.L203:
+ 1323 005c 19EA050F 		tst	r9, r5
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 23
+
+
+ 1324 0060 19D1     		bne	.L199
+ 1325 0062 002F     		cmp	r7, #0
+ 1326 0064 F0D1     		bne	.L204
+ 1327 0066 6FF00205 		mvn	r5, #2
+ 1328 006a 14E0     		b	.L199
+ 1329              	.L212:
+ 1330 006c 019E     		ldr	r6, [sp, #4]
+ 1331 006e 01E0     		b	.L205
+ 1332              	.L213:
+ 1333 0070 6FF00105 		mvn	r5, #1
+ 1334              	.L205:
+ 1335 0074 7CB1     		cbz	r4, .L199
+ 1336              	.L206:
+ 1337 0076 3346     		mov	r3, r6
+ 1338 0078 03AA     		add	r2, sp, #12
+ 1339 007a 4146     		mov	r1, r8
+ 1340 007c 0020     		movs	r0, #0
+ 1341 007e FFF7FEFF 		bl	xTaskNotifyWait
+ 1342 0082 0446     		mov	r4, r0
+ 1343 0084 0128     		cmp	r0, #1
+ 1344 0086 D4D0     		beq	.L216
+ 1345 0088 002F     		cmp	r7, #0
+ 1346 008a F1D1     		bne	.L213
+ 1347 008c 6FF00205 		mvn	r5, #2
+ 1348 0090 F0E7     		b	.L205
+ 1349              	.L207:
+ 1350 0092 6FF00505 		mvn	r5, #5
+ 1351              	.L199:
+ 1352 0096 2846     		mov	r0, r5
+ 1353 0098 05B0     		add	sp, sp, #20
+ 1354              		@ sp needed
+ 1355 009a BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 1356              	.L208:
+ 1357 009e 6FF00305 		mvn	r5, #3
+ 1358 00a2 F8E7     		b	.L199
+ 1359              	.L215:
+ 1360 00a4 6FF00205 		mvn	r5, #2
+ 1361 00a8 F5E7     		b	.L199
+ 1363              		.section	.text.osDelay,"ax",%progbits
+ 1364              		.align	1
+ 1365              		.global	osDelay
+ 1366              		.syntax unified
+ 1367              		.thumb
+ 1368              		.thumb_func
+ 1370              	osDelay:
+ 1371              		@ args = 0, pretend = 0, frame = 0
+ 1372              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1373 0000 08B5     		push	{r3, lr}
+ 1374              		.syntax unified
+ 1375              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 1376 0002 EFF30583 		MRS r3, ipsr
+ 1377              	@ 0 "" 2
+ 1378              		.thumb
+ 1379              		.syntax unified
+ 1380 0006 33B9     		cbnz	r3, .L219
+ 1381 0008 08B9     		cbnz	r0, .L222
+ 1382 000a 0020     		movs	r0, #0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 24
+
+
+ 1383              	.L217:
+ 1384 000c 08BD     		pop	{r3, pc}
+ 1385              	.L222:
+ 1386 000e FFF7FEFF 		bl	vTaskDelay
+ 1387 0012 0020     		movs	r0, #0
+ 1388 0014 FAE7     		b	.L217
+ 1389              	.L219:
+ 1390 0016 6FF00500 		mvn	r0, #5
+ 1391 001a F7E7     		b	.L217
+ 1393              		.section	.text.osDelayUntil,"ax",%progbits
+ 1394              		.align	1
+ 1395              		.global	osDelayUntil
+ 1396              		.syntax unified
+ 1397              		.thumb
+ 1398              		.thumb_func
+ 1400              	osDelayUntil:
+ 1401              		@ args = 0, pretend = 0, frame = 8
+ 1402              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1403              		.syntax unified
+ 1404              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 1405 0000 EFF30583 		MRS r3, ipsr
+ 1406              	@ 0 "" 2
+ 1407              		.thumb
+ 1408              		.syntax unified
+ 1409 0004 73B9     		cbnz	r3, .L225
+ 1410 0006 10B5     		push	{r4, lr}
+ 1411 0008 82B0     		sub	sp, sp, #8
+ 1412 000a 0446     		mov	r4, r0
+ 1413 000c FFF7FEFF 		bl	xTaskGetTickCount
+ 1414 0010 0190     		str	r0, [sp, #4]
+ 1415 0012 211A     		subs	r1, r4, r0
+ 1416 0014 0029     		cmp	r1, #0
+ 1417 0016 08DD     		ble	.L226
+ 1418 0018 01A8     		add	r0, sp, #4
+ 1419 001a FFF7FEFF 		bl	vTaskDelayUntil
+ 1420 001e 0020     		movs	r0, #0
+ 1421              	.L223:
+ 1422 0020 02B0     		add	sp, sp, #8
+ 1423              		@ sp needed
+ 1424 0022 10BD     		pop	{r4, pc}
+ 1425              	.L225:
+ 1426 0024 6FF00500 		mvn	r0, #5
+ 1427 0028 7047     		bx	lr
+ 1428              	.L226:
+ 1429 002a 6FF00300 		mvn	r0, #3
+ 1430 002e F7E7     		b	.L223
+ 1432              		.section	.text.osTimerNew,"ax",%progbits
+ 1433              		.align	1
+ 1434              		.global	osTimerNew
+ 1435              		.syntax unified
+ 1436              		.thumb
+ 1437              		.thumb_func
+ 1439              	osTimerNew:
+ 1440              		@ args = 0, pretend = 0, frame = 0
+ 1441              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1442 0000 2DE9F043 		push	{r4, r5, r6, r7, r8, r9, lr}
+ 1443 0004 83B0     		sub	sp, sp, #12
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 25
+
+
+ 1444              		.syntax unified
+ 1445              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 1446 0006 EFF30587 		MRS r7, ipsr
+ 1447              	@ 0 "" 2
+ 1448              		.thumb
+ 1449              		.syntax unified
+ 1450 000a 002F     		cmp	r7, #0
+ 1451 000c 43D1     		bne	.L239
+ 1452 000e 0646     		mov	r6, r0
+ 1453 0010 8946     		mov	r9, r1
+ 1454 0012 1546     		mov	r5, r2
+ 1455 0014 1C46     		mov	r4, r3
+ 1456 0016 0028     		cmp	r0, #0
+ 1457 0018 3FD0     		beq	.L240
+ 1458 001a 0820     		movs	r0, #8
+ 1459 001c FFF7FEFF 		bl	pvPortMalloc
+ 1460 0020 8046     		mov	r8, r0
+ 1461 0022 0028     		cmp	r0, #0
+ 1462 0024 3BD0     		beq	.L241
+ 1463 0026 0660     		str	r6, [r0]
+ 1464 0028 4560     		str	r5, [r0, #4]
+ 1465 002a B9F1000F 		cmp	r9, #0
+ 1466 002e 00D0     		beq	.L233
+ 1467 0030 0127     		movs	r7, #1
+ 1468              	.L233:
+ 1469 0032 04B3     		cbz	r4, .L243
+ 1470 0034 2068     		ldr	r0, [r4]
+ 1471 0036 A368     		ldr	r3, [r4, #8]
+ 1472 0038 13B1     		cbz	r3, .L235
+ 1473 003a E268     		ldr	r2, [r4, #12]
+ 1474 003c 2B2A     		cmp	r2, #43
+ 1475 003e 10D8     		bhi	.L236
+ 1476              	.L235:
+ 1477 0040 53B1     		cbz	r3, .L248
+ 1478 0042 4FF0FF33 		mov	r3, #-1
+ 1479              	.L234:
+ 1480 0046 DBB1     		cbz	r3, .L249
+ 1481 0048 0024     		movs	r4, #0
+ 1482              	.L238:
+ 1483 004a 4046     		mov	r0, r8
+ 1484 004c FFF7FEFF 		bl	vPortFree
+ 1485              	.L231:
+ 1486 0050 2046     		mov	r0, r4
+ 1487 0052 03B0     		add	sp, sp, #12
+ 1488              		@ sp needed
+ 1489 0054 BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
+ 1490              	.L248:
+ 1491 0058 E368     		ldr	r3, [r4, #12]
+ 1492 005a 7BB1     		cbz	r3, .L245
+ 1493 005c 4FF0FF33 		mov	r3, #-1
+ 1494 0060 F1E7     		b	.L234
+ 1495              	.L236:
+ 1496 0062 0193     		str	r3, [sp, #4]
+ 1497 0064 0F4B     		ldr	r3, .L250
+ 1498 0066 0093     		str	r3, [sp]
+ 1499 0068 4346     		mov	r3, r8
+ 1500 006a 3A46     		mov	r2, r7
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 26
+
+
+ 1501 006c 0121     		movs	r1, #1
+ 1502 006e FFF7FEFF 		bl	xTimerCreateStatic
+ 1503 0072 0446     		mov	r4, r0
+ 1504 0074 0CE0     		b	.L237
+ 1505              	.L243:
+ 1506 0076 2046     		mov	r0, r4
+ 1507 0078 0023     		movs	r3, #0
+ 1508 007a E4E7     		b	.L234
+ 1509              	.L245:
+ 1510 007c 0023     		movs	r3, #0
+ 1511 007e E2E7     		b	.L234
+ 1512              	.L249:
+ 1513 0080 084B     		ldr	r3, .L250
+ 1514 0082 0093     		str	r3, [sp]
+ 1515 0084 4346     		mov	r3, r8
+ 1516 0086 3A46     		mov	r2, r7
+ 1517 0088 0121     		movs	r1, #1
+ 1518 008a FFF7FEFF 		bl	xTimerCreate
+ 1519 008e 0446     		mov	r4, r0
+ 1520              	.L237:
+ 1521 0090 002C     		cmp	r4, #0
+ 1522 0092 DDD1     		bne	.L231
+ 1523 0094 D9E7     		b	.L238
+ 1524              	.L239:
+ 1525 0096 0024     		movs	r4, #0
+ 1526 0098 DAE7     		b	.L231
+ 1527              	.L240:
+ 1528 009a 0024     		movs	r4, #0
+ 1529 009c D8E7     		b	.L231
+ 1530              	.L241:
+ 1531 009e 0446     		mov	r4, r0
+ 1532 00a0 D6E7     		b	.L231
+ 1533              	.L251:
+ 1534 00a2 00BF     		.align	2
+ 1535              	.L250:
+ 1536 00a4 00000000 		.word	TimerCallback
+ 1538              		.section	.text.osTimerGetName,"ax",%progbits
+ 1539              		.align	1
+ 1540              		.global	osTimerGetName
+ 1541              		.syntax unified
+ 1542              		.thumb
+ 1543              		.thumb_func
+ 1545              	osTimerGetName:
+ 1546              		@ args = 0, pretend = 0, frame = 0
+ 1547              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1548 0000 08B5     		push	{r3, lr}
+ 1549              		.syntax unified
+ 1550              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 1551 0002 EFF30583 		MRS r3, ipsr
+ 1552              	@ 0 "" 2
+ 1553              		.thumb
+ 1554              		.syntax unified
+ 1555 0006 1BB9     		cbnz	r3, .L254
+ 1556 0008 08B1     		cbz	r0, .L252
+ 1557 000a FFF7FEFF 		bl	pcTimerGetName
+ 1558              	.L252:
+ 1559 000e 08BD     		pop	{r3, pc}
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 27
+
+
+ 1560              	.L254:
+ 1561 0010 0020     		movs	r0, #0
+ 1562 0012 FCE7     		b	.L252
+ 1564              		.section	.text.osTimerStart,"ax",%progbits
+ 1565              		.align	1
+ 1566              		.global	osTimerStart
+ 1567              		.syntax unified
+ 1568              		.thumb
+ 1569              		.thumb_func
+ 1571              	osTimerStart:
+ 1572              		@ args = 0, pretend = 0, frame = 0
+ 1573              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1574              		.syntax unified
+ 1575              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 1576 0000 EFF30583 		MRS r3, ipsr
+ 1577              	@ 0 "" 2
+ 1578              		.thumb
+ 1579              		.syntax unified
+ 1580 0004 6BB9     		cbnz	r3, .L259
+ 1581 0006 0A46     		mov	r2, r1
+ 1582 0008 70B1     		cbz	r0, .L260
+ 1583 000a 00B5     		push	{lr}
+ 1584 000c 83B0     		sub	sp, sp, #12
+ 1585 000e 0093     		str	r3, [sp]
+ 1586 0010 0421     		movs	r1, #4
+ 1587 0012 FFF7FEFF 		bl	xTimerGenericCommand
+ 1588 0016 0128     		cmp	r0, #1
+ 1589 0018 09D1     		bne	.L261
+ 1590 001a 0020     		movs	r0, #0
+ 1591              	.L257:
+ 1592 001c 03B0     		add	sp, sp, #12
+ 1593              		@ sp needed
+ 1594 001e 5DF804FB 		ldr	pc, [sp], #4
+ 1595              	.L259:
+ 1596 0022 6FF00500 		mvn	r0, #5
+ 1597 0026 7047     		bx	lr
+ 1598              	.L260:
+ 1599 0028 6FF00300 		mvn	r0, #3
+ 1600 002c 7047     		bx	lr
+ 1601              	.L261:
+ 1602 002e 6FF00200 		mvn	r0, #2
+ 1603 0032 F3E7     		b	.L257
+ 1605              		.section	.text.osTimerStop,"ax",%progbits
+ 1606              		.align	1
+ 1607              		.global	osTimerStop
+ 1608              		.syntax unified
+ 1609              		.thumb
+ 1610              		.thumb_func
+ 1612              	osTimerStop:
+ 1613              		@ args = 0, pretend = 0, frame = 0
+ 1614              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1615              		.syntax unified
+ 1616              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 1617 0000 EFF30583 		MRS r3, ipsr
+ 1618              	@ 0 "" 2
+ 1619              		.thumb
+ 1620              		.syntax unified
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 28
+
+
+ 1621 0004 93B9     		cbnz	r3, .L268
+ 1622 0006 10B5     		push	{r4, lr}
+ 1623 0008 82B0     		sub	sp, sp, #8
+ 1624 000a 0446     		mov	r4, r0
+ 1625 000c 88B1     		cbz	r0, .L269
+ 1626 000e FFF7FEFF 		bl	xTimerIsTimerActive
+ 1627 0012 88B1     		cbz	r0, .L270
+ 1628 0014 0022     		movs	r2, #0
+ 1629 0016 0092     		str	r2, [sp]
+ 1630 0018 1346     		mov	r3, r2
+ 1631 001a 0321     		movs	r1, #3
+ 1632 001c 2046     		mov	r0, r4
+ 1633 001e FFF7FEFF 		bl	xTimerGenericCommand
+ 1634 0022 0128     		cmp	r0, #1
+ 1635 0024 0BD1     		bne	.L271
+ 1636 0026 0020     		movs	r0, #0
+ 1637              	.L266:
+ 1638 0028 02B0     		add	sp, sp, #8
+ 1639              		@ sp needed
+ 1640 002a 10BD     		pop	{r4, pc}
+ 1641              	.L268:
+ 1642 002c 6FF00500 		mvn	r0, #5
+ 1643 0030 7047     		bx	lr
+ 1644              	.L269:
+ 1645 0032 6FF00300 		mvn	r0, #3
+ 1646 0036 F7E7     		b	.L266
+ 1647              	.L270:
+ 1648 0038 6FF00200 		mvn	r0, #2
+ 1649 003c F4E7     		b	.L266
+ 1650              	.L271:
+ 1651 003e 4FF0FF30 		mov	r0, #-1
+ 1652 0042 F1E7     		b	.L266
+ 1654              		.section	.text.osTimerIsRunning,"ax",%progbits
+ 1655              		.align	1
+ 1656              		.global	osTimerIsRunning
+ 1657              		.syntax unified
+ 1658              		.thumb
+ 1659              		.thumb_func
+ 1661              	osTimerIsRunning:
+ 1662              		@ args = 0, pretend = 0, frame = 0
+ 1663              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1664 0000 08B5     		push	{r3, lr}
+ 1665 0002 0346     		mov	r3, r0
+ 1666              		.syntax unified
+ 1667              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 1668 0004 EFF30580 		MRS r0, ipsr
+ 1669              	@ 0 "" 2
+ 1670              		.thumb
+ 1671              		.syntax unified
+ 1672 0008 20B9     		cbnz	r0, .L278
+ 1673 000a 23B1     		cbz	r3, .L276
+ 1674 000c 1846     		mov	r0, r3
+ 1675 000e FFF7FEFF 		bl	xTimerIsTimerActive
+ 1676 0012 00E0     		b	.L276
+ 1677              	.L278:
+ 1678 0014 0020     		movs	r0, #0
+ 1679              	.L276:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 29
+
+
+ 1680 0016 08BD     		pop	{r3, pc}
+ 1682              		.section	.text.osTimerDelete,"ax",%progbits
+ 1683              		.align	1
+ 1684              		.global	osTimerDelete
+ 1685              		.syntax unified
+ 1686              		.thumb
+ 1687              		.thumb_func
+ 1689              	osTimerDelete:
+ 1690              		@ args = 0, pretend = 0, frame = 0
+ 1691              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1692              		.syntax unified
+ 1693              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 1694 0000 EFF30583 		MRS r3, ipsr
+ 1695              	@ 0 "" 2
+ 1696              		.thumb
+ 1697              		.syntax unified
+ 1698 0004 ABB9     		cbnz	r3, .L282
+ 1699 0006 30B5     		push	{r4, r5, lr}
+ 1700 0008 83B0     		sub	sp, sp, #12
+ 1701 000a 0446     		mov	r4, r0
+ 1702 000c A0B1     		cbz	r0, .L283
+ 1703 000e FFF7FEFF 		bl	pvTimerGetTimerID
+ 1704 0012 0546     		mov	r5, r0
+ 1705 0014 0022     		movs	r2, #0
+ 1706 0016 0092     		str	r2, [sp]
+ 1707 0018 1346     		mov	r3, r2
+ 1708 001a 0521     		movs	r1, #5
+ 1709 001c 2046     		mov	r0, r4
+ 1710 001e FFF7FEFF 		bl	xTimerGenericCommand
+ 1711 0022 0128     		cmp	r0, #1
+ 1712 0024 0BD1     		bne	.L284
+ 1713 0026 2846     		mov	r0, r5
+ 1714 0028 FFF7FEFF 		bl	vPortFree
+ 1715 002c 0020     		movs	r0, #0
+ 1716              	.L280:
+ 1717 002e 03B0     		add	sp, sp, #12
+ 1718              		@ sp needed
+ 1719 0030 30BD     		pop	{r4, r5, pc}
+ 1720              	.L282:
+ 1721 0032 6FF00500 		mvn	r0, #5
+ 1722 0036 7047     		bx	lr
+ 1723              	.L283:
+ 1724 0038 6FF00300 		mvn	r0, #3
+ 1725 003c F7E7     		b	.L280
+ 1726              	.L284:
+ 1727 003e 6FF00200 		mvn	r0, #2
+ 1728 0042 F4E7     		b	.L280
+ 1730              		.section	.text.osEventFlagsNew,"ax",%progbits
+ 1731              		.align	1
+ 1732              		.global	osEventFlagsNew
+ 1733              		.syntax unified
+ 1734              		.thumb
+ 1735              		.thumb_func
+ 1737              	osEventFlagsNew:
+ 1738              		@ args = 0, pretend = 0, frame = 0
+ 1739              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1740 0000 08B5     		push	{r3, lr}
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 30
+
+
+ 1741              		.syntax unified
+ 1742              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 1743 0002 EFF30583 		MRS r3, ipsr
+ 1744              	@ 0 "" 2
+ 1745              		.thumb
+ 1746              		.syntax unified
+ 1747 0006 CBB9     		cbnz	r3, .L294
+ 1748 0008 A0B1     		cbz	r0, .L295
+ 1749 000a 8368     		ldr	r3, [r0, #8]
+ 1750 000c 13B1     		cbz	r3, .L292
+ 1751 000e C268     		ldr	r2, [r0, #12]
+ 1752 0010 1F2A     		cmp	r2, #31
+ 1753 0012 0BD8     		bhi	.L293
+ 1754              	.L292:
+ 1755 0014 2BB1     		cbz	r3, .L300
+ 1756 0016 4FF0FF33 		mov	r3, #-1
+ 1757              	.L291:
+ 1758 001a 8BB9     		cbnz	r3, .L298
+ 1759 001c FFF7FEFF 		bl	xEventGroupCreate
+ 1760              	.L289:
+ 1761 0020 08BD     		pop	{r3, pc}
+ 1762              	.L300:
+ 1763 0022 C368     		ldr	r3, [r0, #12]
+ 1764 0024 43B1     		cbz	r3, .L297
+ 1765 0026 4FF0FF33 		mov	r3, #-1
+ 1766 002a F6E7     		b	.L291
+ 1767              	.L293:
+ 1768 002c 1846     		mov	r0, r3
+ 1769 002e FFF7FEFF 		bl	xEventGroupCreateStatic
+ 1770 0032 F5E7     		b	.L289
+ 1771              	.L295:
+ 1772 0034 0023     		movs	r3, #0
+ 1773 0036 F0E7     		b	.L291
+ 1774              	.L297:
+ 1775 0038 0023     		movs	r3, #0
+ 1776 003a EEE7     		b	.L291
+ 1777              	.L294:
+ 1778 003c 0020     		movs	r0, #0
+ 1779 003e EFE7     		b	.L289
+ 1780              	.L298:
+ 1781 0040 0020     		movs	r0, #0
+ 1782 0042 EDE7     		b	.L289
+ 1784              		.section	.text.osEventFlagsSet,"ax",%progbits
+ 1785              		.align	1
+ 1786              		.global	osEventFlagsSet
+ 1787              		.syntax unified
+ 1788              		.thumb
+ 1789              		.thumb_func
+ 1791              	osEventFlagsSet:
+ 1792              		@ args = 0, pretend = 0, frame = 8
+ 1793              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1794 0000 F8B1     		cbz	r0, .L304
+ 1795 0002 10B5     		push	{r4, lr}
+ 1796 0004 82B0     		sub	sp, sp, #8
+ 1797 0006 0C46     		mov	r4, r1
+ 1798 0008 B1F1807F 		cmp	r1, #16777216
+ 1799 000c 1CD2     		bcs	.L305
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 31
+
+
+ 1800              		.syntax unified
+ 1801              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 1802 000e EFF30582 		MRS r2, ipsr
+ 1803              	@ 0 "" 2
+ 1804              		.thumb
+ 1805              		.syntax unified
+ 1806 0012 9AB1     		cbz	r2, .L303
+ 1807 0014 0022     		movs	r2, #0
+ 1808 0016 0192     		str	r2, [sp, #4]
+ 1809 0018 01AA     		add	r2, sp, #4
+ 1810 001a FFF7FEFF 		bl	xEventGroupSetBitsFromISR
+ 1811 001e B8B1     		cbz	r0, .L306
+ 1812 0020 019B     		ldr	r3, [sp, #4]
+ 1813 0022 C3B1     		cbz	r3, .L307
+ 1814 0024 4FF0E023 		mov	r3, #-536813568
+ 1815 0028 4FF08052 		mov	r2, #268435456
+ 1816 002c C3F8042D 		str	r2, [r3, #3332]
+ 1817              		.syntax unified
+ 1818              	@ 1170 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c" 1
+ 1819 0030 BFF34F8F 		dsb
+ 1820              	@ 0 "" 2
+ 1821              	@ 1170 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c" 1
+ 1822 0034 BFF36F8F 		isb
+ 1823              	@ 0 "" 2
+ 1824              		.thumb
+ 1825              		.syntax unified
+ 1826 0038 2046     		mov	r0, r4
+ 1827 003a 07E0     		b	.L301
+ 1828              	.L303:
+ 1829 003c FFF7FEFF 		bl	xEventGroupSetBits
+ 1830 0040 04E0     		b	.L301
+ 1831              	.L304:
+ 1832 0042 6FF00300 		mvn	r0, #3
+ 1833 0046 7047     		bx	lr
+ 1834              	.L305:
+ 1835 0048 6FF00300 		mvn	r0, #3
+ 1836              	.L301:
+ 1837 004c 02B0     		add	sp, sp, #8
+ 1838              		@ sp needed
+ 1839 004e 10BD     		pop	{r4, pc}
+ 1840              	.L306:
+ 1841 0050 6FF00200 		mvn	r0, #2
+ 1842 0054 FAE7     		b	.L301
+ 1843              	.L307:
+ 1844 0056 2046     		mov	r0, r4
+ 1845 0058 F8E7     		b	.L301
+ 1847              		.section	.text.osEventFlagsClear,"ax",%progbits
+ 1848              		.align	1
+ 1849              		.global	osEventFlagsClear
+ 1850              		.syntax unified
+ 1851              		.thumb
+ 1852              		.thumb_func
+ 1854              	osEventFlagsClear:
+ 1855              		@ args = 0, pretend = 0, frame = 0
+ 1856              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1857 0000 70B5     		push	{r4, r5, r6, lr}
+ 1858 0002 B0B1     		cbz	r0, .L315
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 32
+
+
+ 1859 0004 0C46     		mov	r4, r1
+ 1860 0006 0646     		mov	r6, r0
+ 1861 0008 B1F1807F 		cmp	r1, #16777216
+ 1862 000c 14D2     		bcs	.L316
+ 1863              		.syntax unified
+ 1864              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 1865 000e EFF30583 		MRS r3, ipsr
+ 1866              	@ 0 "" 2
+ 1867              		.thumb
+ 1868              		.syntax unified
+ 1869 0012 53B1     		cbz	r3, .L314
+ 1870 0014 FFF7FEFF 		bl	xEventGroupGetBitsFromISR
+ 1871 0018 0546     		mov	r5, r0
+ 1872 001a 2146     		mov	r1, r4
+ 1873 001c 3046     		mov	r0, r6
+ 1874 001e FFF7FEFF 		bl	xEventGroupClearBitsFromISR
+ 1875 0022 58B9     		cbnz	r0, .L312
+ 1876 0024 6FF00205 		mvn	r5, #2
+ 1877 0028 08E0     		b	.L312
+ 1878              	.L314:
+ 1879 002a FFF7FEFF 		bl	xEventGroupClearBits
+ 1880 002e 0546     		mov	r5, r0
+ 1881 0030 04E0     		b	.L312
+ 1882              	.L315:
+ 1883 0032 6FF00305 		mvn	r5, #3
+ 1884 0036 01E0     		b	.L312
+ 1885              	.L316:
+ 1886 0038 6FF00305 		mvn	r5, #3
+ 1887              	.L312:
+ 1888 003c 2846     		mov	r0, r5
+ 1889 003e 70BD     		pop	{r4, r5, r6, pc}
+ 1891              		.section	.text.osEventFlagsGet,"ax",%progbits
+ 1892              		.align	1
+ 1893              		.global	osEventFlagsGet
+ 1894              		.syntax unified
+ 1895              		.thumb
+ 1896              		.thumb_func
+ 1898              	osEventFlagsGet:
+ 1899              		@ args = 0, pretend = 0, frame = 0
+ 1900              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1901 0000 50B1     		cbz	r0, .L322
+ 1902 0002 08B5     		push	{r3, lr}
+ 1903              		.syntax unified
+ 1904              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 1905 0004 EFF30582 		MRS r2, ipsr
+ 1906              	@ 0 "" 2
+ 1907              		.thumb
+ 1908              		.syntax unified
+ 1909 0008 12B1     		cbz	r2, .L321
+ 1910 000a FFF7FEFF 		bl	xEventGroupGetBitsFromISR
+ 1911              	.L319:
+ 1912 000e 08BD     		pop	{r3, pc}
+ 1913              	.L321:
+ 1914 0010 0021     		movs	r1, #0
+ 1915 0012 FFF7FEFF 		bl	xEventGroupClearBits
+ 1916 0016 FAE7     		b	.L319
+ 1917              	.L322:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 33
+
+
+ 1918 0018 0020     		movs	r0, #0
+ 1919 001a 7047     		bx	lr
+ 1921              		.section	.text.osEventFlagsWait,"ax",%progbits
+ 1922              		.align	1
+ 1923              		.global	osEventFlagsWait
+ 1924              		.syntax unified
+ 1925              		.thumb
+ 1926              		.thumb_func
+ 1928              	osEventFlagsWait:
+ 1929              		@ args = 0, pretend = 0, frame = 0
+ 1930              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1931 0000 40B3     		cbz	r0, .L332
+ 1932 0002 70B5     		push	{r4, r5, r6, lr}
+ 1933 0004 82B0     		sub	sp, sp, #8
+ 1934 0006 0C46     		mov	r4, r1
+ 1935 0008 1D46     		mov	r5, r3
+ 1936 000a 8446     		mov	ip, r0
+ 1937 000c B1F1807F 		cmp	r1, #16777216
+ 1938 0010 23D2     		bcs	.L333
+ 1939              		.syntax unified
+ 1940              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 1941 0012 EFF30583 		MRS r3, ipsr
+ 1942              	@ 0 "" 2
+ 1943              		.thumb
+ 1944              		.syntax unified
+ 1945 0016 23BB     		cbnz	r3, .L334
+ 1946 0018 12F00106 		ands	r6, r2, #1
+ 1947 001c 10D0     		beq	.L335
+ 1948 001e 0123     		movs	r3, #1
+ 1949              	.L329:
+ 1950 0020 12F0020F 		tst	r2, #2
+ 1951 0024 0ED0     		beq	.L336
+ 1952 0026 0022     		movs	r2, #0
+ 1953              	.L330:
+ 1954 0028 0095     		str	r5, [sp]
+ 1955 002a 2146     		mov	r1, r4
+ 1956 002c 6046     		mov	r0, ip
+ 1957 002e FFF7FEFF 		bl	xEventGroupWaitBits
+ 1958 0032 4EB1     		cbz	r6, .L331
+ 1959 0034 8443     		bics	r4, r4, r0
+ 1960 0036 12D0     		beq	.L327
+ 1961 0038 B5B1     		cbz	r5, .L337
+ 1962 003a 6FF00100 		mvn	r0, #1
+ 1963 003e 0EE0     		b	.L327
+ 1964              	.L335:
+ 1965 0040 0023     		movs	r3, #0
+ 1966 0042 EDE7     		b	.L329
+ 1967              	.L336:
+ 1968 0044 0122     		movs	r2, #1
+ 1969 0046 EFE7     		b	.L330
+ 1970              	.L331:
+ 1971 0048 0442     		tst	r4, r0
+ 1972 004a 08D1     		bne	.L327
+ 1973 004c 7DB1     		cbz	r5, .L338
+ 1974 004e 6FF00100 		mvn	r0, #1
+ 1975 0052 04E0     		b	.L327
+ 1976              	.L332:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 34
+
+
+ 1977 0054 6FF00300 		mvn	r0, #3
+ 1978 0058 7047     		bx	lr
+ 1979              	.L333:
+ 1980 005a 6FF00300 		mvn	r0, #3
+ 1981              	.L327:
+ 1982 005e 02B0     		add	sp, sp, #8
+ 1983              		@ sp needed
+ 1984 0060 70BD     		pop	{r4, r5, r6, pc}
+ 1985              	.L334:
+ 1986 0062 6FF00500 		mvn	r0, #5
+ 1987 0066 FAE7     		b	.L327
+ 1988              	.L337:
+ 1989 0068 6FF00200 		mvn	r0, #2
+ 1990 006c F7E7     		b	.L327
+ 1991              	.L338:
+ 1992 006e 6FF00200 		mvn	r0, #2
+ 1993 0072 F4E7     		b	.L327
+ 1995              		.section	.text.osEventFlagsDelete,"ax",%progbits
+ 1996              		.align	1
+ 1997              		.global	osEventFlagsDelete
+ 1998              		.syntax unified
+ 1999              		.thumb
+ 2000              		.thumb_func
+ 2002              	osEventFlagsDelete:
+ 2003              		@ args = 0, pretend = 0, frame = 0
+ 2004              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2005 0000 08B5     		push	{r3, lr}
+ 2006              		.syntax unified
+ 2007              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 2008 0002 EFF30583 		MRS r3, ipsr
+ 2009              	@ 0 "" 2
+ 2010              		.thumb
+ 2011              		.syntax unified
+ 2012 0006 23B9     		cbnz	r3, .L345
+ 2013 0008 30B1     		cbz	r0, .L346
+ 2014 000a FFF7FEFF 		bl	vEventGroupDelete
+ 2015 000e 0020     		movs	r0, #0
+ 2016              	.L343:
+ 2017 0010 08BD     		pop	{r3, pc}
+ 2018              	.L345:
+ 2019 0012 6FF00500 		mvn	r0, #5
+ 2020 0016 FBE7     		b	.L343
+ 2021              	.L346:
+ 2022 0018 6FF00300 		mvn	r0, #3
+ 2023 001c F8E7     		b	.L343
+ 2025              		.section	.text.osMutexNew,"ax",%progbits
+ 2026              		.align	1
+ 2027              		.global	osMutexNew
+ 2028              		.syntax unified
+ 2029              		.thumb
+ 2030              		.thumb_func
+ 2032              	osMutexNew:
+ 2033              		@ args = 0, pretend = 0, frame = 0
+ 2034              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2035 0000 70B5     		push	{r4, r5, r6, lr}
+ 2036              		.syntax unified
+ 2037              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 35
+
+
+ 2038 0002 EFF30586 		MRS r6, ipsr
+ 2039              	@ 0 "" 2
+ 2040              		.thumb
+ 2041              		.syntax unified
+ 2042 0006 002E     		cmp	r6, #0
+ 2043 0008 3ED1     		bne	.L358
+ 2044 000a 0446     		mov	r4, r0
+ 2045 000c 08B3     		cbz	r0, .L359
+ 2046 000e 4368     		ldr	r3, [r0, #4]
+ 2047 0010 13F00106 		ands	r6, r3, #1
+ 2048 0014 00D0     		beq	.L350
+ 2049 0016 0126     		movs	r6, #1
+ 2050              	.L350:
+ 2051 0018 13F0080F 		tst	r3, #8
+ 2052 001c 37D1     		bne	.L360
+ 2053 001e 54B3     		cbz	r4, .L361
+ 2054 0020 A168     		ldr	r1, [r4, #8]
+ 2055 0022 11B1     		cbz	r1, .L352
+ 2056 0024 E368     		ldr	r3, [r4, #12]
+ 2057 0026 4F2B     		cmp	r3, #79
+ 2058 0028 1AD8     		bhi	.L353
+ 2059              	.L352:
+ 2060 002a A1B1     		cbz	r1, .L366
+ 2061 002c 4FF0FF33 		mov	r3, #-1
+ 2062              	.L351:
+ 2063 0030 7BBB     		cbnz	r3, .L364
+ 2064 0032 26B3     		cbz	r6, .L356
+ 2065 0034 0420     		movs	r0, #4
+ 2066 0036 FFF7FEFF 		bl	xQueueCreateMutex
+ 2067 003a 0546     		mov	r5, r0
+ 2068              	.L355:
+ 2069 003c 2DB3     		cbz	r5, .L348
+ 2070 003e 04B1     		cbz	r4, .L357
+ 2071 0040 2468     		ldr	r4, [r4]
+ 2072              	.L357:
+ 2073 0042 2146     		mov	r1, r4
+ 2074 0044 2846     		mov	r0, r5
+ 2075 0046 FFF7FEFF 		bl	vQueueAddToRegistry
+ 2076 004a F6B1     		cbz	r6, .L348
+ 2077 004c 45F00105 		orr	r5, r5, #1
+ 2078 0050 1BE0     		b	.L348
+ 2079              	.L359:
+ 2080 0052 3346     		mov	r3, r6
+ 2081 0054 E0E7     		b	.L350
+ 2082              	.L366:
+ 2083 0056 E368     		ldr	r3, [r4, #12]
+ 2084 0058 7BB1     		cbz	r3, .L363
+ 2085 005a 4FF0FF33 		mov	r3, #-1
+ 2086 005e E7E7     		b	.L351
+ 2087              	.L353:
+ 2088 0060 26B1     		cbz	r6, .L354
+ 2089 0062 0420     		movs	r0, #4
+ 2090 0064 FFF7FEFF 		bl	xQueueCreateMutexStatic
+ 2091 0068 0546     		mov	r5, r0
+ 2092 006a E7E7     		b	.L355
+ 2093              	.L354:
+ 2094 006c 0120     		movs	r0, #1
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 36
+
+
+ 2095 006e FFF7FEFF 		bl	xQueueCreateMutexStatic
+ 2096 0072 0546     		mov	r5, r0
+ 2097 0074 E2E7     		b	.L355
+ 2098              	.L361:
+ 2099 0076 0023     		movs	r3, #0
+ 2100 0078 DAE7     		b	.L351
+ 2101              	.L363:
+ 2102 007a 0023     		movs	r3, #0
+ 2103 007c D8E7     		b	.L351
+ 2104              	.L356:
+ 2105 007e 0120     		movs	r0, #1
+ 2106 0080 FFF7FEFF 		bl	xQueueCreateMutex
+ 2107 0084 0546     		mov	r5, r0
+ 2108 0086 D9E7     		b	.L355
+ 2109              	.L358:
+ 2110 0088 0025     		movs	r5, #0
+ 2111              	.L348:
+ 2112 008a 2846     		mov	r0, r5
+ 2113 008c 70BD     		pop	{r4, r5, r6, pc}
+ 2114              	.L360:
+ 2115 008e 0025     		movs	r5, #0
+ 2116 0090 FBE7     		b	.L348
+ 2117              	.L364:
+ 2118 0092 0025     		movs	r5, #0
+ 2119 0094 F9E7     		b	.L348
+ 2121              		.section	.text.osMutexAcquire,"ax",%progbits
+ 2122              		.align	1
+ 2123              		.global	osMutexAcquire
+ 2124              		.syntax unified
+ 2125              		.thumb
+ 2126              		.thumb_func
+ 2128              	osMutexAcquire:
+ 2129              		@ args = 0, pretend = 0, frame = 0
+ 2130              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2131              		.syntax unified
+ 2132              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 2133 0000 EFF30582 		MRS r2, ipsr
+ 2134              	@ 0 "" 2
+ 2135              		.thumb
+ 2136              		.syntax unified
+ 2137 0004 DAB9     		cbnz	r2, .L370
+ 2138 0006 10B5     		push	{r4, lr}
+ 2139 0008 0346     		mov	r3, r0
+ 2140 000a 0C46     		mov	r4, r1
+ 2141 000c 20F00100 		bic	r0, r0, #1
+ 2142 0010 03F00101 		and	r1, r3, #1
+ 2143 0014 012B     		cmp	r3, #1
+ 2144 0016 15D9     		bls	.L371
+ 2145 0018 41B1     		cbz	r1, .L369
+ 2146 001a 2146     		mov	r1, r4
+ 2147 001c FFF7FEFF 		bl	xQueueTakeMutexRecursive
+ 2148 0020 0128     		cmp	r0, #1
+ 2149 0022 12D0     		beq	.L372
+ 2150 0024 9CB1     		cbz	r4, .L373
+ 2151 0026 6FF00100 		mvn	r0, #1
+ 2152 002a 0FE0     		b	.L367
+ 2153              	.L369:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 37
+
+
+ 2154 002c 2146     		mov	r1, r4
+ 2155 002e FFF7FEFF 		bl	xQueueSemaphoreTake
+ 2156 0032 0128     		cmp	r0, #1
+ 2157 0034 0ED0     		beq	.L374
+ 2158 0036 7CB1     		cbz	r4, .L375
+ 2159 0038 6FF00100 		mvn	r0, #1
+ 2160 003c 06E0     		b	.L367
+ 2161              	.L370:
+ 2162 003e 6FF00500 		mvn	r0, #5
+ 2163 0042 7047     		bx	lr
+ 2164              	.L371:
+ 2165 0044 6FF00300 		mvn	r0, #3
+ 2166 0048 00E0     		b	.L367
+ 2167              	.L372:
+ 2168 004a 0020     		movs	r0, #0
+ 2169              	.L367:
+ 2170 004c 10BD     		pop	{r4, pc}
+ 2171              	.L373:
+ 2172 004e 6FF00200 		mvn	r0, #2
+ 2173 0052 FBE7     		b	.L367
+ 2174              	.L374:
+ 2175 0054 0020     		movs	r0, #0
+ 2176 0056 F9E7     		b	.L367
+ 2177              	.L375:
+ 2178 0058 6FF00200 		mvn	r0, #2
+ 2179 005c F6E7     		b	.L367
+ 2181              		.section	.text.osMutexRelease,"ax",%progbits
+ 2182              		.align	1
+ 2183              		.global	osMutexRelease
+ 2184              		.syntax unified
+ 2185              		.thumb
+ 2186              		.thumb_func
+ 2188              	osMutexRelease:
+ 2189              		@ args = 0, pretend = 0, frame = 0
+ 2190              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2191              		.syntax unified
+ 2192              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 2193 0000 EFF30582 		MRS r2, ipsr
+ 2194              	@ 0 "" 2
+ 2195              		.thumb
+ 2196              		.syntax unified
+ 2197 0004 BAB9     		cbnz	r2, .L383
+ 2198 0006 08B5     		push	{r3, lr}
+ 2199 0008 0346     		mov	r3, r0
+ 2200 000a 20F00100 		bic	r0, r0, #1
+ 2201 000e 03F00101 		and	r1, r3, #1
+ 2202 0012 012B     		cmp	r3, #1
+ 2203 0014 12D9     		bls	.L384
+ 2204 0016 29B1     		cbz	r1, .L382
+ 2205 0018 FFF7FEFF 		bl	xQueueGiveMutexRecursive
+ 2206 001c 0128     		cmp	r0, #1
+ 2207 001e 10D1     		bne	.L385
+ 2208 0020 0020     		movs	r0, #0
+ 2209              	.L380:
+ 2210 0022 08BD     		pop	{r3, pc}
+ 2211              	.L382:
+ 2212 0024 0023     		movs	r3, #0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 38
+
+
+ 2213 0026 1A46     		mov	r2, r3
+ 2214 0028 1946     		mov	r1, r3
+ 2215 002a FFF7FEFF 		bl	xQueueGenericSend
+ 2216 002e 0128     		cmp	r0, #1
+ 2217 0030 0AD1     		bne	.L386
+ 2218 0032 0020     		movs	r0, #0
+ 2219 0034 F5E7     		b	.L380
+ 2220              	.L383:
+ 2221 0036 6FF00500 		mvn	r0, #5
+ 2222 003a 7047     		bx	lr
+ 2223              	.L384:
+ 2224 003c 6FF00300 		mvn	r0, #3
+ 2225 0040 EFE7     		b	.L380
+ 2226              	.L385:
+ 2227 0042 6FF00200 		mvn	r0, #2
+ 2228 0046 ECE7     		b	.L380
+ 2229              	.L386:
+ 2230 0048 6FF00200 		mvn	r0, #2
+ 2231 004c E9E7     		b	.L380
+ 2233              		.section	.text.osMutexGetOwner,"ax",%progbits
+ 2234              		.align	1
+ 2235              		.global	osMutexGetOwner
+ 2236              		.syntax unified
+ 2237              		.thumb
+ 2238              		.thumb_func
+ 2240              	osMutexGetOwner:
+ 2241              		@ args = 0, pretend = 0, frame = 0
+ 2242              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2243              		.syntax unified
+ 2244              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 2245 0000 EFF30582 		MRS r2, ipsr
+ 2246              	@ 0 "" 2
+ 2247              		.thumb
+ 2248              		.syntax unified
+ 2249 0004 42B9     		cbnz	r2, .L393
+ 2250 0006 08B5     		push	{r3, lr}
+ 2251 0008 0346     		mov	r3, r0
+ 2252 000a 20F00100 		bic	r0, r0, #1
+ 2253 000e 012B     		cmp	r3, #1
+ 2254 0010 04D9     		bls	.L394
+ 2255 0012 FFF7FEFF 		bl	xQueueGetMutexHolder
+ 2256              	.L391:
+ 2257 0016 08BD     		pop	{r3, pc}
+ 2258              	.L393:
+ 2259 0018 0020     		movs	r0, #0
+ 2260 001a 7047     		bx	lr
+ 2261              	.L394:
+ 2262 001c 0020     		movs	r0, #0
+ 2263 001e FAE7     		b	.L391
+ 2265              		.section	.text.osMutexDelete,"ax",%progbits
+ 2266              		.align	1
+ 2267              		.global	osMutexDelete
+ 2268              		.syntax unified
+ 2269              		.thumb
+ 2270              		.thumb_func
+ 2272              	osMutexDelete:
+ 2273              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 39
+
+
+ 2274              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2275              		.syntax unified
+ 2276              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 2277 0000 EFF30583 		MRS r3, ipsr
+ 2278              	@ 0 "" 2
+ 2279              		.thumb
+ 2280              		.syntax unified
+ 2281 0004 63B9     		cbnz	r3, .L401
+ 2282 0006 10B5     		push	{r4, lr}
+ 2283 0008 20F00104 		bic	r4, r0, #1
+ 2284 000c 0128     		cmp	r0, #1
+ 2285 000e 0AD9     		bls	.L402
+ 2286 0010 2046     		mov	r0, r4
+ 2287 0012 FFF7FEFF 		bl	vQueueUnregisterQueue
+ 2288 0016 2046     		mov	r0, r4
+ 2289 0018 FFF7FEFF 		bl	vQueueDelete
+ 2290 001c 0020     		movs	r0, #0
+ 2291              	.L399:
+ 2292 001e 10BD     		pop	{r4, pc}
+ 2293              	.L401:
+ 2294 0020 6FF00500 		mvn	r0, #5
+ 2295 0024 7047     		bx	lr
+ 2296              	.L402:
+ 2297 0026 6FF00300 		mvn	r0, #3
+ 2298 002a F8E7     		b	.L399
+ 2300              		.section	.text.osSemaphoreNew,"ax",%progbits
+ 2301              		.align	1
+ 2302              		.global	osSemaphoreNew
+ 2303              		.syntax unified
+ 2304              		.thumb
+ 2305              		.thumb_func
+ 2307              	osSemaphoreNew:
+ 2308              		@ args = 0, pretend = 0, frame = 0
+ 2309              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2310 0000 70B5     		push	{r4, r5, r6, lr}
+ 2311 0002 82B0     		sub	sp, sp, #8
+ 2312              		.syntax unified
+ 2313              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 2314 0004 EFF30583 		MRS r3, ipsr
+ 2315              	@ 0 "" 2
+ 2316              		.thumb
+ 2317              		.syntax unified
+ 2318 0008 002B     		cmp	r3, #0
+ 2319 000a 48D1     		bne	.L417
+ 2320 000c 0E46     		mov	r6, r1
+ 2321 000e 1446     		mov	r4, r2
+ 2322 0010 0028     		cmp	r0, #0
+ 2323 0012 48D0     		beq	.L418
+ 2324 0014 8842     		cmp	r0, r1
+ 2325 0016 48D3     		bcc	.L419
+ 2326 0018 4AB1     		cbz	r2, .L420
+ 2327 001a 9568     		ldr	r5, [r2, #8]
+ 2328 001c 15B1     		cbz	r5, .L410
+ 2329 001e D368     		ldr	r3, [r2, #12]
+ 2330 0020 4F2B     		cmp	r3, #79
+ 2331 0022 14D8     		bhi	.L421
+ 2332              	.L410:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 40
+
+
+ 2333 0024 002D     		cmp	r5, #0
+ 2334 0026 42D1     		bne	.L422
+ 2335 0028 E368     		ldr	r3, [r4, #12]
+ 2336 002a 0BB1     		cbz	r3, .L409
+ 2337 002c 38E0     		b	.L407
+ 2338              	.L420:
+ 2339 002e 0023     		movs	r3, #0
+ 2340              	.L409:
+ 2341 0030 0128     		cmp	r0, #1
+ 2342 0032 0ED0     		beq	.L424
+ 2343 0034 6BBB     		cbnz	r3, .L425
+ 2344 0036 3146     		mov	r1, r6
+ 2345 0038 FFF7FEFF 		bl	xQueueCreateCountingSemaphore
+ 2346 003c 0546     		mov	r5, r0
+ 2347              	.L414:
+ 2348 003e 7DB3     		cbz	r5, .L407
+ 2349 0040 04B1     		cbz	r4, .L416
+ 2350 0042 2468     		ldr	r4, [r4]
+ 2351              	.L416:
+ 2352 0044 2146     		mov	r1, r4
+ 2353 0046 2846     		mov	r0, r5
+ 2354 0048 FFF7FEFF 		bl	vQueueAddToRegistry
+ 2355 004c 28E0     		b	.L407
+ 2356              	.L421:
+ 2357 004e 0123     		movs	r3, #1
+ 2358 0050 EEE7     		b	.L409
+ 2359              	.L424:
+ 2360 0052 ABB9     		cbnz	r3, .L426
+ 2361 0054 0322     		movs	r2, #3
+ 2362 0056 0021     		movs	r1, #0
+ 2363 0058 0120     		movs	r0, #1
+ 2364 005a FFF7FEFF 		bl	xQueueGenericCreate
+ 2365 005e 0546     		mov	r5, r0
+ 2366              	.L413:
+ 2367 0060 F5B1     		cbz	r5, .L407
+ 2368 0062 002E     		cmp	r6, #0
+ 2369 0064 EBD0     		beq	.L414
+ 2370 0066 0023     		movs	r3, #0
+ 2371 0068 1A46     		mov	r2, r3
+ 2372 006a 1946     		mov	r1, r3
+ 2373 006c 2846     		mov	r0, r5
+ 2374 006e FFF7FEFF 		bl	xQueueGenericSend
+ 2375 0072 0128     		cmp	r0, #1
+ 2376 0074 E3D0     		beq	.L414
+ 2377 0076 2846     		mov	r0, r5
+ 2378 0078 FFF7FEFF 		bl	vQueueDelete
+ 2379 007c 0025     		movs	r5, #0
+ 2380 007e 0FE0     		b	.L407
+ 2381              	.L426:
+ 2382 0080 A368     		ldr	r3, [r4, #8]
+ 2383 0082 0322     		movs	r2, #3
+ 2384 0084 0092     		str	r2, [sp]
+ 2385 0086 0022     		movs	r2, #0
+ 2386 0088 1146     		mov	r1, r2
+ 2387 008a FFF7FEFF 		bl	xQueueGenericCreateStatic
+ 2388 008e 0546     		mov	r5, r0
+ 2389 0090 E6E7     		b	.L413
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 41
+
+
+ 2390              	.L425:
+ 2391 0092 A268     		ldr	r2, [r4, #8]
+ 2392 0094 3146     		mov	r1, r6
+ 2393 0096 FFF7FEFF 		bl	xQueueCreateCountingSemaphoreStatic
+ 2394 009a 0546     		mov	r5, r0
+ 2395 009c CFE7     		b	.L414
+ 2396              	.L417:
+ 2397 009e 0025     		movs	r5, #0
+ 2398              	.L407:
+ 2399 00a0 2846     		mov	r0, r5
+ 2400 00a2 02B0     		add	sp, sp, #8
+ 2401              		@ sp needed
+ 2402 00a4 70BD     		pop	{r4, r5, r6, pc}
+ 2403              	.L418:
+ 2404 00a6 0025     		movs	r5, #0
+ 2405 00a8 FAE7     		b	.L407
+ 2406              	.L419:
+ 2407 00aa 0025     		movs	r5, #0
+ 2408 00ac F8E7     		b	.L407
+ 2409              	.L422:
+ 2410 00ae 0025     		movs	r5, #0
+ 2411 00b0 F6E7     		b	.L407
+ 2413              		.section	.text.osSemaphoreAcquire,"ax",%progbits
+ 2414              		.align	1
+ 2415              		.global	osSemaphoreAcquire
+ 2416              		.syntax unified
+ 2417              		.thumb
+ 2418              		.thumb_func
+ 2420              	osSemaphoreAcquire:
+ 2421              		@ args = 0, pretend = 0, frame = 8
+ 2422              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2423 0000 20B3     		cbz	r0, .L430
+ 2424 0002 10B5     		push	{r4, lr}
+ 2425 0004 82B0     		sub	sp, sp, #8
+ 2426 0006 0C46     		mov	r4, r1
+ 2427              		.syntax unified
+ 2428              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 2429 0008 EFF30583 		MRS r3, ipsr
+ 2430              	@ 0 "" 2
+ 2431              		.thumb
+ 2432              		.syntax unified
+ 2433 000c B3B1     		cbz	r3, .L429
+ 2434 000e 01BB     		cbnz	r1, .L431
+ 2435 0010 0021     		movs	r1, #0
+ 2436 0012 0191     		str	r1, [sp, #4]
+ 2437 0014 01AA     		add	r2, sp, #4
+ 2438 0016 FFF7FEFF 		bl	xQueueReceiveFromISR
+ 2439 001a 0128     		cmp	r0, #1
+ 2440 001c 1CD1     		bne	.L432
+ 2441 001e 0198     		ldr	r0, [sp, #4]
+ 2442 0020 50B1     		cbz	r0, .L427
+ 2443 0022 4FF0E023 		mov	r3, #-536813568
+ 2444 0026 4FF08052 		mov	r2, #268435456
+ 2445 002a C3F8042D 		str	r2, [r3, #3332]
+ 2446              		.syntax unified
+ 2447              	@ 1604 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c" 1
+ 2448 002e BFF34F8F 		dsb
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 42
+
+
+ 2449              	@ 0 "" 2
+ 2450              	@ 1604 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c" 1
+ 2451 0032 BFF36F8F 		isb
+ 2452              	@ 0 "" 2
+ 2453              		.thumb
+ 2454              		.syntax unified
+ 2455 0036 0020     		movs	r0, #0
+ 2456              	.L427:
+ 2457 0038 02B0     		add	sp, sp, #8
+ 2458              		@ sp needed
+ 2459 003a 10BD     		pop	{r4, pc}
+ 2460              	.L429:
+ 2461 003c FFF7FEFF 		bl	xQueueSemaphoreTake
+ 2462 0040 0128     		cmp	r0, #1
+ 2463 0042 0CD0     		beq	.L433
+ 2464 0044 6CB1     		cbz	r4, .L434
+ 2465 0046 6FF00100 		mvn	r0, #1
+ 2466 004a F5E7     		b	.L427
+ 2467              	.L430:
+ 2468 004c 6FF00300 		mvn	r0, #3
+ 2469 0050 7047     		bx	lr
+ 2470              	.L431:
+ 2471 0052 6FF00300 		mvn	r0, #3
+ 2472 0056 EFE7     		b	.L427
+ 2473              	.L432:
+ 2474 0058 6FF00200 		mvn	r0, #2
+ 2475 005c ECE7     		b	.L427
+ 2476              	.L433:
+ 2477 005e 0020     		movs	r0, #0
+ 2478 0060 EAE7     		b	.L427
+ 2479              	.L434:
+ 2480 0062 6FF00200 		mvn	r0, #2
+ 2481 0066 E7E7     		b	.L427
+ 2483              		.section	.text.osSemaphoreRelease,"ax",%progbits
+ 2484              		.align	1
+ 2485              		.global	osSemaphoreRelease
+ 2486              		.syntax unified
+ 2487              		.thumb
+ 2488              		.thumb_func
+ 2490              	osSemaphoreRelease:
+ 2491              		@ args = 0, pretend = 0, frame = 8
+ 2492              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2493 0000 20B3     		cbz	r0, .L442
+ 2494 0002 00B5     		push	{lr}
+ 2495 0004 83B0     		sub	sp, sp, #12
+ 2496              		.syntax unified
+ 2497              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 2498 0006 EFF30583 		MRS r3, ipsr
+ 2499              	@ 0 "" 2
+ 2500              		.thumb
+ 2501              		.syntax unified
+ 2502 000a A3B1     		cbz	r3, .L441
+ 2503 000c 0023     		movs	r3, #0
+ 2504 000e 0193     		str	r3, [sp, #4]
+ 2505 0010 01A9     		add	r1, sp, #4
+ 2506 0012 FFF7FEFF 		bl	xQueueGiveFromISR
+ 2507 0016 0128     		cmp	r0, #1
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 43
+
+
+ 2508 0018 1BD1     		bne	.L443
+ 2509 001a 0198     		ldr	r0, [sp, #4]
+ 2510 001c 98B1     		cbz	r0, .L439
+ 2511 001e 4FF0E023 		mov	r3, #-536813568
+ 2512 0022 4FF08052 		mov	r2, #268435456
+ 2513 0026 C3F8042D 		str	r2, [r3, #3332]
+ 2514              		.syntax unified
+ 2515              	@ 1637 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c" 1
+ 2516 002a BFF34F8F 		dsb
+ 2517              	@ 0 "" 2
+ 2518              	@ 1637 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c" 1
+ 2519 002e BFF36F8F 		isb
+ 2520              	@ 0 "" 2
+ 2521              		.thumb
+ 2522              		.syntax unified
+ 2523 0032 0020     		movs	r0, #0
+ 2524 0034 07E0     		b	.L439
+ 2525              	.L441:
+ 2526 0036 0023     		movs	r3, #0
+ 2527 0038 1A46     		mov	r2, r3
+ 2528 003a 1946     		mov	r1, r3
+ 2529 003c FFF7FEFF 		bl	xQueueGenericSend
+ 2530 0040 0128     		cmp	r0, #1
+ 2531 0042 09D1     		bne	.L444
+ 2532 0044 0020     		movs	r0, #0
+ 2533              	.L439:
+ 2534 0046 03B0     		add	sp, sp, #12
+ 2535              		@ sp needed
+ 2536 0048 5DF804FB 		ldr	pc, [sp], #4
+ 2537              	.L442:
+ 2538 004c 6FF00300 		mvn	r0, #3
+ 2539 0050 7047     		bx	lr
+ 2540              	.L443:
+ 2541 0052 6FF00200 		mvn	r0, #2
+ 2542 0056 F6E7     		b	.L439
+ 2543              	.L444:
+ 2544 0058 6FF00200 		mvn	r0, #2
+ 2545 005c F3E7     		b	.L439
+ 2547              		.section	.text.osSemaphoreGetCount,"ax",%progbits
+ 2548              		.align	1
+ 2549              		.global	osSemaphoreGetCount
+ 2550              		.syntax unified
+ 2551              		.thumb
+ 2552              		.thumb_func
+ 2554              	osSemaphoreGetCount:
+ 2555              		@ args = 0, pretend = 0, frame = 0
+ 2556              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2557 0000 48B1     		cbz	r0, .L452
+ 2558 0002 08B5     		push	{r3, lr}
+ 2559              		.syntax unified
+ 2560              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 2561 0004 EFF30582 		MRS r2, ipsr
+ 2562              	@ 0 "" 2
+ 2563              		.thumb
+ 2564              		.syntax unified
+ 2565 0008 12B1     		cbz	r2, .L451
+ 2566 000a FFF7FEFF 		bl	uxQueueMessagesWaitingFromISR
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 44
+
+
+ 2567              	.L449:
+ 2568 000e 08BD     		pop	{r3, pc}
+ 2569              	.L451:
+ 2570 0010 FFF7FEFF 		bl	uxQueueMessagesWaiting
+ 2571 0014 FBE7     		b	.L449
+ 2572              	.L452:
+ 2573 0016 0020     		movs	r0, #0
+ 2574 0018 7047     		bx	lr
+ 2576              		.section	.text.osSemaphoreDelete,"ax",%progbits
+ 2577              		.align	1
+ 2578              		.global	osSemaphoreDelete
+ 2579              		.syntax unified
+ 2580              		.thumb
+ 2581              		.thumb_func
+ 2583              	osSemaphoreDelete:
+ 2584              		@ args = 0, pretend = 0, frame = 0
+ 2585              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2586              		.syntax unified
+ 2587              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 2588 0000 EFF30583 		MRS r3, ipsr
+ 2589              	@ 0 "" 2
+ 2590              		.thumb
+ 2591              		.syntax unified
+ 2592 0004 4BB9     		cbnz	r3, .L459
+ 2593 0006 10B5     		push	{r4, lr}
+ 2594 0008 0446     		mov	r4, r0
+ 2595 000a 48B1     		cbz	r0, .L460
+ 2596 000c FFF7FEFF 		bl	vQueueUnregisterQueue
+ 2597 0010 2046     		mov	r0, r4
+ 2598 0012 FFF7FEFF 		bl	vQueueDelete
+ 2599 0016 0020     		movs	r0, #0
+ 2600              	.L457:
+ 2601 0018 10BD     		pop	{r4, pc}
+ 2602              	.L459:
+ 2603 001a 6FF00500 		mvn	r0, #5
+ 2604 001e 7047     		bx	lr
+ 2605              	.L460:
+ 2606 0020 6FF00300 		mvn	r0, #3
+ 2607 0024 F8E7     		b	.L457
+ 2609              		.section	.text.osMessageQueueNew,"ax",%progbits
+ 2610              		.align	1
+ 2611              		.global	osMessageQueueNew
+ 2612              		.syntax unified
+ 2613              		.thumb
+ 2614              		.thumb_func
+ 2616              	osMessageQueueNew:
+ 2617              		@ args = 0, pretend = 0, frame = 0
+ 2618              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2619 0000 70B5     		push	{r4, r5, r6, lr}
+ 2620 0002 82B0     		sub	sp, sp, #8
+ 2621              		.syntax unified
+ 2622              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 2623 0004 EFF30583 		MRS r3, ipsr
+ 2624              	@ 0 "" 2
+ 2625              		.thumb
+ 2626              		.syntax unified
+ 2627 0008 002B     		cmp	r3, #0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 45
+
+
+ 2628 000a 3AD1     		bne	.L472
+ 2629 000c 1446     		mov	r4, r2
+ 2630 000e 0028     		cmp	r0, #0
+ 2631 0010 3BD0     		beq	.L473
+ 2632 0012 0029     		cmp	r1, #0
+ 2633 0014 3BD0     		beq	.L474
+ 2634 0016 6AB3     		cbz	r2, .L475
+ 2635 0018 9368     		ldr	r3, [r2, #8]
+ 2636 001a 4BB1     		cbz	r3, .L468
+ 2637 001c D268     		ldr	r2, [r2, #12]
+ 2638 001e 4F2A     		cmp	r2, #79
+ 2639 0020 06D9     		bls	.L468
+ 2640 0022 2269     		ldr	r2, [r4, #16]
+ 2641 0024 22B1     		cbz	r2, .L468
+ 2642 0026 01FB00F5 		mul	r5, r1, r0
+ 2643 002a 6669     		ldr	r6, [r4, #20]
+ 2644 002c AE42     		cmp	r6, r5
+ 2645 002e 1BD2     		bcs	.L469
+ 2646              	.L468:
+ 2647 0030 73B1     		cbz	r3, .L482
+ 2648 0032 4FF0FF33 		mov	r3, #-1
+ 2649              	.L467:
+ 2650 0036 63BB     		cbnz	r3, .L480
+ 2651 0038 0022     		movs	r2, #0
+ 2652 003a FFF7FEFF 		bl	xQueueGenericCreate
+ 2653 003e 0546     		mov	r5, r0
+ 2654              	.L470:
+ 2655 0040 05B3     		cbz	r5, .L465
+ 2656 0042 04B1     		cbz	r4, .L471
+ 2657 0044 2468     		ldr	r4, [r4]
+ 2658              	.L471:
+ 2659 0046 2146     		mov	r1, r4
+ 2660 0048 2846     		mov	r0, r5
+ 2661 004a FFF7FEFF 		bl	vQueueAddToRegistry
+ 2662 004e 19E0     		b	.L465
+ 2663              	.L482:
+ 2664 0050 E368     		ldr	r3, [r4, #12]
+ 2665 0052 8BB9     		cbnz	r3, .L477
+ 2666 0054 2369     		ldr	r3, [r4, #16]
+ 2667 0056 13B1     		cbz	r3, .L483
+ 2668 0058 4FF0FF33 		mov	r3, #-1
+ 2669 005c EBE7     		b	.L467
+ 2670              	.L483:
+ 2671 005e 6369     		ldr	r3, [r4, #20]
+ 2672 0060 6BB1     		cbz	r3, .L479
+ 2673 0062 4FF0FF33 		mov	r3, #-1
+ 2674 0066 E6E7     		b	.L467
+ 2675              	.L469:
+ 2676 0068 0025     		movs	r5, #0
+ 2677 006a 0095     		str	r5, [sp]
+ 2678 006c FFF7FEFF 		bl	xQueueGenericCreateStatic
+ 2679 0070 0546     		mov	r5, r0
+ 2680 0072 E5E7     		b	.L470
+ 2681              	.L475:
+ 2682 0074 0023     		movs	r3, #0
+ 2683 0076 DEE7     		b	.L467
+ 2684              	.L477:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 46
+
+
+ 2685 0078 4FF0FF33 		mov	r3, #-1
+ 2686 007c DBE7     		b	.L467
+ 2687              	.L479:
+ 2688 007e 0023     		movs	r3, #0
+ 2689 0080 D9E7     		b	.L467
+ 2690              	.L472:
+ 2691 0082 0025     		movs	r5, #0
+ 2692              	.L465:
+ 2693 0084 2846     		mov	r0, r5
+ 2694 0086 02B0     		add	sp, sp, #8
+ 2695              		@ sp needed
+ 2696 0088 70BD     		pop	{r4, r5, r6, pc}
+ 2697              	.L473:
+ 2698 008a 0025     		movs	r5, #0
+ 2699 008c FAE7     		b	.L465
+ 2700              	.L474:
+ 2701 008e 0025     		movs	r5, #0
+ 2702 0090 F8E7     		b	.L465
+ 2703              	.L480:
+ 2704 0092 0025     		movs	r5, #0
+ 2705 0094 F6E7     		b	.L465
+ 2707              		.section	.text.osMessageQueuePut,"ax",%progbits
+ 2708              		.align	1
+ 2709              		.global	osMessageQueuePut
+ 2710              		.syntax unified
+ 2711              		.thumb
+ 2712              		.thumb_func
+ 2714              	osMessageQueuePut:
+ 2715              		@ args = 0, pretend = 0, frame = 8
+ 2716              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2717 0000 10B5     		push	{r4, lr}
+ 2718 0002 82B0     		sub	sp, sp, #8
+ 2719 0004 1C46     		mov	r4, r3
+ 2720              		.syntax unified
+ 2721              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 2722 0006 EFF30583 		MRS r3, ipsr
+ 2723              	@ 0 "" 2
+ 2724              		.thumb
+ 2725              		.syntax unified
+ 2726 000a C3B1     		cbz	r3, .L485
+ 2727 000c 18B3     		cbz	r0, .L487
+ 2728 000e 29B3     		cbz	r1, .L488
+ 2729 0010 3CBB     		cbnz	r4, .L489
+ 2730 0012 0023     		movs	r3, #0
+ 2731 0014 0193     		str	r3, [sp, #4]
+ 2732 0016 01AA     		add	r2, sp, #4
+ 2733 0018 FFF7FEFF 		bl	xQueueGenericSendFromISR
+ 2734 001c 0128     		cmp	r0, #1
+ 2735 001e 23D1     		bne	.L490
+ 2736 0020 0198     		ldr	r0, [sp, #4]
+ 2737 0022 50B1     		cbz	r0, .L484
+ 2738 0024 4FF0E023 		mov	r3, #-536813568
+ 2739 0028 4FF08052 		mov	r2, #268435456
+ 2740 002c C3F8042D 		str	r2, [r3, #3332]
+ 2741              		.syntax unified
+ 2742              	@ 1769 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c" 1
+ 2743 0030 BFF34F8F 		dsb
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 47
+
+
+ 2744              	@ 0 "" 2
+ 2745              	@ 1769 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c" 1
+ 2746 0034 BFF36F8F 		isb
+ 2747              	@ 0 "" 2
+ 2748              		.thumb
+ 2749              		.syntax unified
+ 2750 0038 0020     		movs	r0, #0
+ 2751              	.L484:
+ 2752 003a 02B0     		add	sp, sp, #8
+ 2753              		@ sp needed
+ 2754 003c 10BD     		pop	{r4, pc}
+ 2755              	.L485:
+ 2756 003e B0B1     		cbz	r0, .L491
+ 2757 0040 C1B1     		cbz	r1, .L492
+ 2758 0042 0023     		movs	r3, #0
+ 2759 0044 2246     		mov	r2, r4
+ 2760 0046 FFF7FEFF 		bl	xQueueGenericSend
+ 2761 004a 0128     		cmp	r0, #1
+ 2762 004c 15D0     		beq	.L493
+ 2763 004e B4B1     		cbz	r4, .L494
+ 2764 0050 6FF00100 		mvn	r0, #1
+ 2765 0054 F1E7     		b	.L484
+ 2766              	.L487:
+ 2767 0056 6FF00300 		mvn	r0, #3
+ 2768 005a EEE7     		b	.L484
+ 2769              	.L488:
+ 2770 005c 6FF00300 		mvn	r0, #3
+ 2771 0060 EBE7     		b	.L484
+ 2772              	.L489:
+ 2773 0062 6FF00300 		mvn	r0, #3
+ 2774 0066 E8E7     		b	.L484
+ 2775              	.L490:
+ 2776 0068 6FF00200 		mvn	r0, #2
+ 2777 006c E5E7     		b	.L484
+ 2778              	.L491:
+ 2779 006e 6FF00300 		mvn	r0, #3
+ 2780 0072 E2E7     		b	.L484
+ 2781              	.L492:
+ 2782 0074 6FF00300 		mvn	r0, #3
+ 2783 0078 DFE7     		b	.L484
+ 2784              	.L493:
+ 2785 007a 0020     		movs	r0, #0
+ 2786 007c DDE7     		b	.L484
+ 2787              	.L494:
+ 2788 007e 6FF00200 		mvn	r0, #2
+ 2789 0082 DAE7     		b	.L484
+ 2791              		.section	.text.osMessageQueueGet,"ax",%progbits
+ 2792              		.align	1
+ 2793              		.global	osMessageQueueGet
+ 2794              		.syntax unified
+ 2795              		.thumb
+ 2796              		.thumb_func
+ 2798              	osMessageQueueGet:
+ 2799              		@ args = 0, pretend = 0, frame = 8
+ 2800              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2801 0000 10B5     		push	{r4, lr}
+ 2802 0002 82B0     		sub	sp, sp, #8
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 48
+
+
+ 2803 0004 1C46     		mov	r4, r3
+ 2804              		.syntax unified
+ 2805              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 2806 0006 EFF30583 		MRS r3, ipsr
+ 2807              	@ 0 "" 2
+ 2808              		.thumb
+ 2809              		.syntax unified
+ 2810 000a C3B1     		cbz	r3, .L497
+ 2811 000c 10B3     		cbz	r0, .L499
+ 2812 000e 21B3     		cbz	r1, .L500
+ 2813 0010 34BB     		cbnz	r4, .L501
+ 2814 0012 0023     		movs	r3, #0
+ 2815 0014 0193     		str	r3, [sp, #4]
+ 2816 0016 01AA     		add	r2, sp, #4
+ 2817 0018 FFF7FEFF 		bl	xQueueReceiveFromISR
+ 2818 001c 0128     		cmp	r0, #1
+ 2819 001e 22D1     		bne	.L502
+ 2820 0020 0198     		ldr	r0, [sp, #4]
+ 2821 0022 50B1     		cbz	r0, .L496
+ 2822 0024 4FF0E023 		mov	r3, #-536813568
+ 2823 0028 4FF08052 		mov	r2, #268435456
+ 2824 002c C3F8042D 		str	r2, [r3, #3332]
+ 2825              		.syntax unified
+ 2826              	@ 1810 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c" 1
+ 2827 0030 BFF34F8F 		dsb
+ 2828              	@ 0 "" 2
+ 2829              	@ 1810 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c" 1
+ 2830 0034 BFF36F8F 		isb
+ 2831              	@ 0 "" 2
+ 2832              		.thumb
+ 2833              		.syntax unified
+ 2834 0038 0020     		movs	r0, #0
+ 2835              	.L496:
+ 2836 003a 02B0     		add	sp, sp, #8
+ 2837              		@ sp needed
+ 2838 003c 10BD     		pop	{r4, pc}
+ 2839              	.L497:
+ 2840 003e A8B1     		cbz	r0, .L503
+ 2841 0040 B9B1     		cbz	r1, .L504
+ 2842 0042 2246     		mov	r2, r4
+ 2843 0044 FFF7FEFF 		bl	xQueueReceive
+ 2844 0048 0128     		cmp	r0, #1
+ 2845 004a 15D0     		beq	.L505
+ 2846 004c B4B1     		cbz	r4, .L506
+ 2847 004e 6FF00100 		mvn	r0, #1
+ 2848 0052 F2E7     		b	.L496
+ 2849              	.L499:
+ 2850 0054 6FF00300 		mvn	r0, #3
+ 2851 0058 EFE7     		b	.L496
+ 2852              	.L500:
+ 2853 005a 6FF00300 		mvn	r0, #3
+ 2854 005e ECE7     		b	.L496
+ 2855              	.L501:
+ 2856 0060 6FF00300 		mvn	r0, #3
+ 2857 0064 E9E7     		b	.L496
+ 2858              	.L502:
+ 2859 0066 6FF00200 		mvn	r0, #2
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 49
+
+
+ 2860 006a E6E7     		b	.L496
+ 2861              	.L503:
+ 2862 006c 6FF00300 		mvn	r0, #3
+ 2863 0070 E3E7     		b	.L496
+ 2864              	.L504:
+ 2865 0072 6FF00300 		mvn	r0, #3
+ 2866 0076 E0E7     		b	.L496
+ 2867              	.L505:
+ 2868 0078 0020     		movs	r0, #0
+ 2869 007a DEE7     		b	.L496
+ 2870              	.L506:
+ 2871 007c 6FF00200 		mvn	r0, #2
+ 2872 0080 DBE7     		b	.L496
+ 2874              		.section	.text.osMessageQueueGetCapacity,"ax",%progbits
+ 2875              		.align	1
+ 2876              		.global	osMessageQueueGetCapacity
+ 2877              		.syntax unified
+ 2878              		.thumb
+ 2879              		.thumb_func
+ 2881              	osMessageQueueGetCapacity:
+ 2882              		@ args = 0, pretend = 0, frame = 0
+ 2883              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2884              		@ link register save eliminated.
+ 2885 0000 08B1     		cbz	r0, .L510
+ 2886 0002 C06B     		ldr	r0, [r0, #60]
+ 2887 0004 7047     		bx	lr
+ 2888              	.L510:
+ 2889 0006 0020     		movs	r0, #0
+ 2890 0008 7047     		bx	lr
+ 2892              		.section	.text.osMessageQueueGetMsgSize,"ax",%progbits
+ 2893              		.align	1
+ 2894              		.global	osMessageQueueGetMsgSize
+ 2895              		.syntax unified
+ 2896              		.thumb
+ 2897              		.thumb_func
+ 2899              	osMessageQueueGetMsgSize:
+ 2900              		@ args = 0, pretend = 0, frame = 0
+ 2901              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2902              		@ link register save eliminated.
+ 2903 0000 08B1     		cbz	r0, .L513
+ 2904 0002 006C     		ldr	r0, [r0, #64]
+ 2905 0004 7047     		bx	lr
+ 2906              	.L513:
+ 2907 0006 0020     		movs	r0, #0
+ 2908 0008 7047     		bx	lr
+ 2910              		.section	.text.osMessageQueueGetCount,"ax",%progbits
+ 2911              		.align	1
+ 2912              		.global	osMessageQueueGetCount
+ 2913              		.syntax unified
+ 2914              		.thumb
+ 2915              		.thumb_func
+ 2917              	osMessageQueueGetCount:
+ 2918              		@ args = 0, pretend = 0, frame = 0
+ 2919              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2920 0000 48B1     		cbz	r0, .L517
+ 2921 0002 08B5     		push	{r3, lr}
+ 2922              		.syntax unified
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 50
+
+
+ 2923              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 2924 0004 EFF30582 		MRS r2, ipsr
+ 2925              	@ 0 "" 2
+ 2926              		.thumb
+ 2927              		.syntax unified
+ 2928 0008 12B1     		cbz	r2, .L516
+ 2929 000a FFF7FEFF 		bl	uxQueueMessagesWaitingFromISR
+ 2930              	.L514:
+ 2931 000e 08BD     		pop	{r3, pc}
+ 2932              	.L516:
+ 2933 0010 FFF7FEFF 		bl	uxQueueMessagesWaiting
+ 2934 0014 FBE7     		b	.L514
+ 2935              	.L517:
+ 2936 0016 0020     		movs	r0, #0
+ 2937 0018 7047     		bx	lr
+ 2939              		.section	.text.osMessageQueueGetSpace,"ax",%progbits
+ 2940              		.align	1
+ 2941              		.global	osMessageQueueGetSpace
+ 2942              		.syntax unified
+ 2943              		.thumb
+ 2944              		.thumb_func
+ 2946              	osMessageQueueGetSpace:
+ 2947              		@ args = 0, pretend = 0, frame = 0
+ 2948              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2949 0000 B0B1     		cbz	r0, .L525
+ 2950 0002 08B5     		push	{r3, lr}
+ 2951              		.syntax unified
+ 2952              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 2953 0004 EFF30583 		MRS r3, ipsr
+ 2954              	@ 0 "" 2
+ 2955              		.thumb
+ 2956              		.syntax unified
+ 2957 0008 7BB1     		cbz	r3, .L524
+ 2958              		.syntax unified
+ 2959              	@ 211 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 2960 000a EFF31181 			mrs r1, basepri											
+ 2961 000e 4FF05003 		mov r3, #80												
+ 2962 0012 83F31188 		msr basepri, r3											
+ 2963 0016 BFF36F8F 		isb														
+ 2964 001a BFF34F8F 		dsb														
+ 2965              	
+ 2966              	@ 0 "" 2
+ 2967              		.thumb
+ 2968              		.syntax unified
+ 2969 001e C36B     		ldr	r3, [r0, #60]
+ 2970 0020 806B     		ldr	r0, [r0, #56]
+ 2971 0022 181A     		subs	r0, r3, r0
+ 2972              		.syntax unified
+ 2973              	@ 229 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 2974 0024 81F31188 			msr basepri, r1	
+ 2975              	@ 0 "" 2
+ 2976              		.thumb
+ 2977              		.syntax unified
+ 2978              	.L522:
+ 2979 0028 08BD     		pop	{r3, pc}
+ 2980              	.L524:
+ 2981 002a FFF7FEFF 		bl	uxQueueSpacesAvailable
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 51
+
+
+ 2982 002e FBE7     		b	.L522
+ 2983              	.L525:
+ 2984 0030 0020     		movs	r0, #0
+ 2985 0032 7047     		bx	lr
+ 2987              		.section	.text.osMessageQueueReset,"ax",%progbits
+ 2988              		.align	1
+ 2989              		.global	osMessageQueueReset
+ 2990              		.syntax unified
+ 2991              		.thumb
+ 2992              		.thumb_func
+ 2994              	osMessageQueueReset:
+ 2995              		@ args = 0, pretend = 0, frame = 0
+ 2996              		@ frame_needed = 0, uses_anonymous_args = 0
+ 2997 0000 08B5     		push	{r3, lr}
+ 2998              		.syntax unified
+ 2999              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 3000 0002 EFF30583 		MRS r3, ipsr
+ 3001              	@ 0 "" 2
+ 3002              		.thumb
+ 3003              		.syntax unified
+ 3004 0006 2BB9     		cbnz	r3, .L532
+ 3005 0008 38B1     		cbz	r0, .L533
+ 3006 000a 0021     		movs	r1, #0
+ 3007 000c FFF7FEFF 		bl	xQueueGenericReset
+ 3008 0010 0020     		movs	r0, #0
+ 3009              	.L530:
+ 3010 0012 08BD     		pop	{r3, pc}
+ 3011              	.L532:
+ 3012 0014 6FF00500 		mvn	r0, #5
+ 3013 0018 FBE7     		b	.L530
+ 3014              	.L533:
+ 3015 001a 6FF00300 		mvn	r0, #3
+ 3016 001e F8E7     		b	.L530
+ 3018              		.section	.text.osMessageQueueDelete,"ax",%progbits
+ 3019              		.align	1
+ 3020              		.global	osMessageQueueDelete
+ 3021              		.syntax unified
+ 3022              		.thumb
+ 3023              		.thumb_func
+ 3025              	osMessageQueueDelete:
+ 3026              		@ args = 0, pretend = 0, frame = 0
+ 3027              		@ frame_needed = 0, uses_anonymous_args = 0
+ 3028              		.syntax unified
+ 3029              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 3030 0000 EFF30583 		MRS r3, ipsr
+ 3031              	@ 0 "" 2
+ 3032              		.thumb
+ 3033              		.syntax unified
+ 3034 0004 4BB9     		cbnz	r3, .L537
+ 3035 0006 10B5     		push	{r4, lr}
+ 3036 0008 0446     		mov	r4, r0
+ 3037 000a 48B1     		cbz	r0, .L538
+ 3038 000c FFF7FEFF 		bl	vQueueUnregisterQueue
+ 3039 0010 2046     		mov	r0, r4
+ 3040 0012 FFF7FEFF 		bl	vQueueDelete
+ 3041 0016 0020     		movs	r0, #0
+ 3042              	.L535:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 52
+
+
+ 3043 0018 10BD     		pop	{r4, pc}
+ 3044              	.L537:
+ 3045 001a 6FF00500 		mvn	r0, #5
+ 3046 001e 7047     		bx	lr
+ 3047              	.L538:
+ 3048 0020 6FF00300 		mvn	r0, #3
+ 3049 0024 F8E7     		b	.L535
+ 3051              		.section	.text.osMemoryPoolNew,"ax",%progbits
+ 3052              		.align	1
+ 3053              		.global	osMemoryPoolNew
+ 3054              		.syntax unified
+ 3055              		.thumb
+ 3056              		.thumb_func
+ 3058              	osMemoryPoolNew:
+ 3059              		@ args = 0, pretend = 0, frame = 0
+ 3060              		@ frame_needed = 0, uses_anonymous_args = 0
+ 3061 0000 2DE9F84F 		push	{r3, r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 3062              		.syntax unified
+ 3063              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 3064 0004 EFF30583 		MRS r3, ipsr
+ 3065              	@ 0 "" 2
+ 3066              		.thumb
+ 3067              		.syntax unified
+ 3068 0008 002B     		cmp	r3, #0
+ 3069 000a 40F08480 		bne	.L555
+ 3070 000e 0646     		mov	r6, r0
+ 3071 0010 0F46     		mov	r7, r1
+ 3072 0012 1546     		mov	r5, r2
+ 3073 0014 0028     		cmp	r0, #0
+ 3074 0016 00F08280 		beq	.L556
+ 3075 001a 0029     		cmp	r1, #0
+ 3076 001c 00F08180 		beq	.L557
+ 3077 0020 C81C     		adds	r0, r1, #3
+ 3078 0022 20F00300 		bic	r0, r0, #3
+ 3079 0026 06FB00F8 		mul	r8, r6, r0
+ 3080 002a 002A     		cmp	r2, #0
+ 3081 002c 60D0     		beq	.L558
+ 3082 002e D2F800A0 		ldr	r10, [r2]
+ 3083 0032 9468     		ldr	r4, [r2, #8]
+ 3084 0034 14B1     		cbz	r4, .L546
+ 3085 0036 D368     		ldr	r3, [r2, #12]
+ 3086 0038 732B     		cmp	r3, #115
+ 3087 003a 13D8     		bhi	.L559
+ 3088              	.L546:
+ 3089 003c 6CB1     		cbz	r4, .L568
+ 3090 003e 4FF0FF39 		mov	r9, #-1
+ 3091              	.L547:
+ 3092 0042 2B69     		ldr	r3, [r5, #16]
+ 3093 0044 A3B1     		cbz	r3, .L569
+ 3094              	.L548:
+ 3095 0046 CBB1     		cbz	r3, .L563
+ 3096 0048 13F0030F 		tst	r3, #3
+ 3097 004c 19D1     		bne	.L564
+ 3098 004e 6B69     		ldr	r3, [r5, #20]
+ 3099 0050 4345     		cmp	r3, r8
+ 3100 0052 4AD2     		bcs	.L565
+ 3101 0054 4FF0FF3B 		mov	fp, #-1
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 53
+
+
+ 3102 0058 15E0     		b	.L549
+ 3103              	.L568:
+ 3104 005a EB68     		ldr	r3, [r5, #12]
+ 3105 005c 2BB1     		cbz	r3, .L561
+ 3106 005e 4FF0FF39 		mov	r9, #-1
+ 3107 0062 EEE7     		b	.L547
+ 3108              	.L559:
+ 3109 0064 4FF00109 		mov	r9, #1
+ 3110 0068 EBE7     		b	.L547
+ 3111              	.L561:
+ 3112 006a 4FF00009 		mov	r9, #0
+ 3113 006e E8E7     		b	.L547
+ 3114              	.L569:
+ 3115 0070 6A69     		ldr	r2, [r5, #20]
+ 3116 0072 002A     		cmp	r2, #0
+ 3117 0074 E7D1     		bne	.L548
+ 3118 0076 4FF0000B 		mov	fp, #0
+ 3119 007a 04E0     		b	.L549
+ 3120              	.L563:
+ 3121 007c 4FF0FF3B 		mov	fp, #-1
+ 3122 0080 01E0     		b	.L549
+ 3123              	.L564:
+ 3124 0082 4FF0FF3B 		mov	fp, #-1
+ 3125              	.L549:
+ 3126 0086 B9F1000F 		cmp	r9, #0
+ 3127 008a 03D1     		bne	.L550
+ 3128              	.L545:
+ 3129 008c 7420     		movs	r0, #116
+ 3130 008e FFF7FEFF 		bl	pvPortMalloc
+ 3131 0092 0446     		mov	r4, r0
+ 3132              	.L550:
+ 3133 0094 002C     		cmp	r4, #0
+ 3134 0096 35D0     		beq	.L551
+ 3135 0098 04F12402 		add	r2, r4, #36
+ 3136 009c 3146     		mov	r1, r6
+ 3137 009e 3046     		mov	r0, r6
+ 3138 00a0 FFF7FEFF 		bl	xQueueCreateCountingSemaphoreStatic
+ 3139 00a4 6060     		str	r0, [r4, #4]
+ 3140 00a6 20B1     		cbz	r0, .L552
+ 3141 00a8 BBF1000F 		cmp	fp, #0
+ 3142 00ac 25D0     		beq	.L570
+ 3143 00ae 2B69     		ldr	r3, [r5, #16]
+ 3144 00b0 A360     		str	r3, [r4, #8]
+ 3145              	.L552:
+ 3146 00b2 A368     		ldr	r3, [r4, #8]
+ 3147 00b4 33B3     		cbz	r3, .L551
+ 3148 00b6 0023     		movs	r3, #0
+ 3149 00b8 2360     		str	r3, [r4]
+ 3150 00ba C4F80C80 		str	r8, [r4, #12]
+ 3151 00be C4F810A0 		str	r10, [r4, #16]
+ 3152 00c2 6761     		str	r7, [r4, #20]
+ 3153 00c4 A661     		str	r6, [r4, #24]
+ 3154 00c6 E361     		str	r3, [r4, #28]
+ 3155 00c8 184B     		ldr	r3, .L571
+ 3156 00ca 2362     		str	r3, [r4, #32]
+ 3157 00cc B9F1000F 		cmp	r9, #0
+ 3158 00d0 03D1     		bne	.L554
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 54
+
+
+ 3159 00d2 236A     		ldr	r3, [r4, #32]
+ 3160 00d4 43F00103 		orr	r3, r3, #1
+ 3161 00d8 2362     		str	r3, [r4, #32]
+ 3162              	.L554:
+ 3163 00da BBF1000F 		cmp	fp, #0
+ 3164 00de 1BD1     		bne	.L543
+ 3165 00e0 236A     		ldr	r3, [r4, #32]
+ 3166 00e2 43F00203 		orr	r3, r3, #2
+ 3167 00e6 2362     		str	r3, [r4, #32]
+ 3168 00e8 16E0     		b	.L543
+ 3169              	.L565:
+ 3170 00ea 4FF0010B 		mov	fp, #1
+ 3171 00ee CAE7     		b	.L549
+ 3172              	.L558:
+ 3173 00f0 9246     		mov	r10, r2
+ 3174 00f2 4FF0000B 		mov	fp, #0
+ 3175 00f6 D946     		mov	r9, fp
+ 3176 00f8 C8E7     		b	.L545
+ 3177              	.L570:
+ 3178 00fa 4046     		mov	r0, r8
+ 3179 00fc FFF7FEFF 		bl	pvPortMalloc
+ 3180 0100 A060     		str	r0, [r4, #8]
+ 3181 0102 D6E7     		b	.L552
+ 3182              	.L551:
+ 3183 0104 B9F1000F 		cmp	r9, #0
+ 3184 0108 0DD1     		bne	.L566
+ 3185 010a 2CB1     		cbz	r4, .L543
+ 3186 010c 2046     		mov	r0, r4
+ 3187 010e FFF7FEFF 		bl	vPortFree
+ 3188 0112 0024     		movs	r4, #0
+ 3189 0114 00E0     		b	.L543
+ 3190              	.L555:
+ 3191 0116 0024     		movs	r4, #0
+ 3192              	.L543:
+ 3193 0118 2046     		mov	r0, r4
+ 3194 011a BDE8F88F 		pop	{r3, r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 3195              	.L556:
+ 3196 011e 0024     		movs	r4, #0
+ 3197 0120 FAE7     		b	.L543
+ 3198              	.L557:
+ 3199 0122 0024     		movs	r4, #0
+ 3200 0124 F8E7     		b	.L543
+ 3201              	.L566:
+ 3202 0126 0024     		movs	r4, #0
+ 3203 0128 F6E7     		b	.L543
+ 3204              	.L572:
+ 3205 012a 00BF     		.align	2
+ 3206              	.L571:
+ 3207 012c 0000ED5E 		.word	1592590336
+ 3209              		.section	.text.osMemoryPoolGetName,"ax",%progbits
+ 3210              		.align	1
+ 3211              		.global	osMemoryPoolGetName
+ 3212              		.syntax unified
+ 3213              		.thumb
+ 3214              		.thumb_func
+ 3216              	osMemoryPoolGetName:
+ 3217              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 55
+
+
+ 3218              		@ frame_needed = 0, uses_anonymous_args = 0
+ 3219              		@ link register save eliminated.
+ 3220              		.syntax unified
+ 3221              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 3222 0000 EFF30583 		MRS r3, ipsr
+ 3223              	@ 0 "" 2
+ 3224              		.thumb
+ 3225              		.syntax unified
+ 3226 0004 13B9     		cbnz	r3, .L575
+ 3227 0006 10B1     		cbz	r0, .L573
+ 3228 0008 0069     		ldr	r0, [r0, #16]
+ 3229 000a 7047     		bx	lr
+ 3230              	.L575:
+ 3231 000c 0020     		movs	r0, #0
+ 3232              	.L573:
+ 3233 000e 7047     		bx	lr
+ 3235              		.section	.text.osMemoryPoolAlloc,"ax",%progbits
+ 3236              		.align	1
+ 3237              		.global	osMemoryPoolAlloc
+ 3238              		.syntax unified
+ 3239              		.thumb
+ 3240              		.thumb_func
+ 3242              	osMemoryPoolAlloc:
+ 3243              		@ args = 0, pretend = 0, frame = 0
+ 3244              		@ frame_needed = 0, uses_anonymous_args = 0
+ 3245 0000 70B5     		push	{r4, r5, r6, lr}
+ 3246 0002 0446     		mov	r4, r0
+ 3247 0004 0028     		cmp	r0, #0
+ 3248 0006 46D0     		beq	.L582
+ 3249 0008 026A     		ldr	r2, [r0, #32]
+ 3250 000a 284B     		ldr	r3, .L594
+ 3251 000c 9343     		bics	r3, r3, r2
+ 3252 000e 44D1     		bne	.L583
+ 3253              		.syntax unified
+ 3254              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 3255 0010 EFF30583 		MRS r3, ipsr
+ 3256              	@ 0 "" 2
+ 3257              		.thumb
+ 3258              		.syntax unified
+ 3259 0014 2BB3     		cbz	r3, .L579
+ 3260 0016 0029     		cmp	r1, #0
+ 3261 0018 42D1     		bne	.L584
+ 3262 001a 0022     		movs	r2, #0
+ 3263 001c 1146     		mov	r1, r2
+ 3264 001e 4068     		ldr	r0, [r0, #4]
+ 3265 0020 FFF7FEFF 		bl	xQueueReceiveFromISR
+ 3266 0024 0128     		cmp	r0, #1
+ 3267 0026 3DD1     		bne	.L585
+ 3268 0028 226A     		ldr	r2, [r4, #32]
+ 3269 002a 204B     		ldr	r3, .L594
+ 3270 002c 9343     		bics	r3, r3, r2
+ 3271 002e 01D0     		beq	.L590
+ 3272 0030 0025     		movs	r5, #0
+ 3273 0032 33E0     		b	.L577
+ 3274              	.L590:
+ 3275              		.syntax unified
+ 3276              	@ 211 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 56
+
+
+ 3277 0034 EFF31186 			mrs r6, basepri											
+ 3278 0038 4FF05003 		mov r3, #80												
+ 3279 003c 83F31188 		msr basepri, r3											
+ 3280 0040 BFF36F8F 		isb														
+ 3281 0044 BFF34F8F 		dsb														
+ 3282              	
+ 3283              	@ 0 "" 2
+ 3284              		.thumb
+ 3285              		.syntax unified
+ 3286 0048 2046     		mov	r0, r4
+ 3287 004a FFF7FEFF 		bl	AllocBlock
+ 3288 004e 0546     		mov	r5, r0
+ 3289 0050 10B1     		cbz	r0, .L591
+ 3290              	.L580:
+ 3291              		.syntax unified
+ 3292              	@ 229 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 3293 0052 86F31188 			msr basepri, r6	
+ 3294              	@ 0 "" 2
+ 3295              		.thumb
+ 3296              		.syntax unified
+ 3297 0056 21E0     		b	.L577
+ 3298              	.L591:
+ 3299 0058 2046     		mov	r0, r4
+ 3300 005a FFF7FEFF 		bl	CreateBlock
+ 3301 005e 0546     		mov	r5, r0
+ 3302 0060 F7E7     		b	.L580
+ 3303              	.L579:
+ 3304 0062 4068     		ldr	r0, [r0, #4]
+ 3305 0064 FFF7FEFF 		bl	xQueueSemaphoreTake
+ 3306 0068 0128     		cmp	r0, #1
+ 3307 006a 1DD1     		bne	.L587
+ 3308 006c 226A     		ldr	r2, [r4, #32]
+ 3309 006e 0F4B     		ldr	r3, .L594
+ 3310 0070 9343     		bics	r3, r3, r2
+ 3311 0072 01D0     		beq	.L592
+ 3312 0074 0025     		movs	r5, #0
+ 3313 0076 11E0     		b	.L577
+ 3314              	.L592:
+ 3315 0078 FFF7FEFF 		bl	vPortEnterCritical
+ 3316 007c 2046     		mov	r0, r4
+ 3317 007e FFF7FEFF 		bl	AllocBlock
+ 3318 0082 0546     		mov	r5, r0
+ 3319 0084 10B1     		cbz	r0, .L593
+ 3320              	.L581:
+ 3321 0086 FFF7FEFF 		bl	vPortExitCritical
+ 3322 008a 07E0     		b	.L577
+ 3323              	.L593:
+ 3324 008c 2046     		mov	r0, r4
+ 3325 008e FFF7FEFF 		bl	CreateBlock
+ 3326 0092 0546     		mov	r5, r0
+ 3327 0094 F7E7     		b	.L581
+ 3328              	.L582:
+ 3329 0096 0546     		mov	r5, r0
+ 3330 0098 00E0     		b	.L577
+ 3331              	.L583:
+ 3332 009a 0025     		movs	r5, #0
+ 3333              	.L577:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 57
+
+
+ 3334 009c 2846     		mov	r0, r5
+ 3335 009e 70BD     		pop	{r4, r5, r6, pc}
+ 3336              	.L584:
+ 3337 00a0 0025     		movs	r5, #0
+ 3338 00a2 FBE7     		b	.L577
+ 3339              	.L585:
+ 3340 00a4 0025     		movs	r5, #0
+ 3341 00a6 F9E7     		b	.L577
+ 3342              	.L587:
+ 3343 00a8 0025     		movs	r5, #0
+ 3344 00aa F7E7     		b	.L577
+ 3345              	.L595:
+ 3346              		.align	2
+ 3347              	.L594:
+ 3348 00ac 0000ED5E 		.word	1592590336
+ 3350              		.section	.text.osMemoryPoolFree,"ax",%progbits
+ 3351              		.align	1
+ 3352              		.global	osMemoryPoolFree
+ 3353              		.syntax unified
+ 3354              		.thumb
+ 3355              		.thumb_func
+ 3357              	osMemoryPoolFree:
+ 3358              		@ args = 0, pretend = 0, frame = 8
+ 3359              		@ frame_needed = 0, uses_anonymous_args = 0
+ 3360 0000 0028     		cmp	r0, #0
+ 3361 0002 55D0     		beq	.L599
+ 3362 0004 70B5     		push	{r4, r5, r6, lr}
+ 3363 0006 82B0     		sub	sp, sp, #8
+ 3364 0008 0D46     		mov	r5, r1
+ 3365 000a 0446     		mov	r4, r0
+ 3366 000c 0029     		cmp	r1, #0
+ 3367 000e 52D0     		beq	.L600
+ 3368 0010 026A     		ldr	r2, [r0, #32]
+ 3369 0012 324B     		ldr	r3, .L610
+ 3370 0014 9343     		bics	r3, r3, r2
+ 3371 0016 51D1     		bne	.L601
+ 3372 0018 8368     		ldr	r3, [r0, #8]
+ 3373 001a 8B42     		cmp	r3, r1
+ 3374 001c 51D8     		bhi	.L602
+ 3375 001e C268     		ldr	r2, [r0, #12]
+ 3376 0020 013A     		subs	r2, r2, #1
+ 3377 0022 1344     		add	r3, r3, r2
+ 3378 0024 8B42     		cmp	r3, r1
+ 3379 0026 4FD3     		bcc	.L603
+ 3380              		.syntax unified
+ 3381              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 3382 0028 EFF30583 		MRS r3, ipsr
+ 3383              	@ 0 "" 2
+ 3384              		.thumb
+ 3385              		.syntax unified
+ 3386 002c 4BB3     		cbz	r3, .L598
+ 3387 002e 4068     		ldr	r0, [r0, #4]
+ 3388 0030 FFF7FEFF 		bl	uxQueueMessagesWaitingFromISR
+ 3389 0034 A369     		ldr	r3, [r4, #24]
+ 3390 0036 9842     		cmp	r0, r3
+ 3391 0038 49D0     		beq	.L604
+ 3392              		.syntax unified
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 58
+
+
+ 3393              	@ 211 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 3394 003a EFF31186 			mrs r6, basepri											
+ 3395 003e 4FF05003 		mov r3, #80												
+ 3396 0042 83F31188 		msr basepri, r3											
+ 3397 0046 BFF36F8F 		isb														
+ 3398 004a BFF34F8F 		dsb														
+ 3399              	
+ 3400              	@ 0 "" 2
+ 3401              		.thumb
+ 3402              		.syntax unified
+ 3403 004e 2946     		mov	r1, r5
+ 3404 0050 2046     		mov	r0, r4
+ 3405 0052 FFF7FEFF 		bl	FreeBlock
+ 3406              		.syntax unified
+ 3407              	@ 229 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 3408 0056 86F31188 			msr basepri, r6	
+ 3409              	@ 0 "" 2
+ 3410              		.thumb
+ 3411              		.syntax unified
+ 3412 005a 0023     		movs	r3, #0
+ 3413 005c 0193     		str	r3, [sp, #4]
+ 3414 005e 01A9     		add	r1, sp, #4
+ 3415 0060 6068     		ldr	r0, [r4, #4]
+ 3416 0062 FFF7FEFF 		bl	xQueueGiveFromISR
+ 3417 0066 0198     		ldr	r0, [sp, #4]
+ 3418 0068 00B3     		cbz	r0, .L596
+ 3419 006a 4FF0E023 		mov	r3, #-536813568
+ 3420 006e 4FF08052 		mov	r2, #268435456
+ 3421 0072 C3F8042D 		str	r2, [r3, #3332]
+ 3422              		.syntax unified
+ 3423              	@ 2181 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c" 1
+ 3424 0076 BFF34F8F 		dsb
+ 3425              	@ 0 "" 2
+ 3426              	@ 2181 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c" 1
+ 3427 007a BFF36F8F 		isb
+ 3428              	@ 0 "" 2
+ 3429              		.thumb
+ 3430              		.syntax unified
+ 3431 007e 0020     		movs	r0, #0
+ 3432 0080 14E0     		b	.L596
+ 3433              	.L598:
+ 3434 0082 4068     		ldr	r0, [r0, #4]
+ 3435 0084 FFF7FEFF 		bl	uxQueueMessagesWaiting
+ 3436 0088 A369     		ldr	r3, [r4, #24]
+ 3437 008a 9842     		cmp	r0, r3
+ 3438 008c 22D0     		beq	.L605
+ 3439 008e FFF7FEFF 		bl	vPortEnterCritical
+ 3440 0092 2946     		mov	r1, r5
+ 3441 0094 2046     		mov	r0, r4
+ 3442 0096 FFF7FEFF 		bl	FreeBlock
+ 3443 009a FFF7FEFF 		bl	vPortExitCritical
+ 3444 009e 0023     		movs	r3, #0
+ 3445 00a0 1A46     		mov	r2, r3
+ 3446 00a2 1946     		mov	r1, r3
+ 3447 00a4 6068     		ldr	r0, [r4, #4]
+ 3448 00a6 FFF7FEFF 		bl	xQueueGenericSend
+ 3449 00aa 0020     		movs	r0, #0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 59
+
+
+ 3450              	.L596:
+ 3451 00ac 02B0     		add	sp, sp, #8
+ 3452              		@ sp needed
+ 3453 00ae 70BD     		pop	{r4, r5, r6, pc}
+ 3454              	.L599:
+ 3455 00b0 6FF00300 		mvn	r0, #3
+ 3456 00b4 7047     		bx	lr
+ 3457              	.L600:
+ 3458 00b6 6FF00300 		mvn	r0, #3
+ 3459 00ba F7E7     		b	.L596
+ 3460              	.L601:
+ 3461 00bc 6FF00200 		mvn	r0, #2
+ 3462 00c0 F4E7     		b	.L596
+ 3463              	.L602:
+ 3464 00c2 6FF00300 		mvn	r0, #3
+ 3465 00c6 F1E7     		b	.L596
+ 3466              	.L603:
+ 3467 00c8 6FF00300 		mvn	r0, #3
+ 3468 00cc EEE7     		b	.L596
+ 3469              	.L604:
+ 3470 00ce 6FF00200 		mvn	r0, #2
+ 3471 00d2 EBE7     		b	.L596
+ 3472              	.L605:
+ 3473 00d4 6FF00200 		mvn	r0, #2
+ 3474 00d8 E8E7     		b	.L596
+ 3475              	.L611:
+ 3476 00da 00BF     		.align	2
+ 3477              	.L610:
+ 3478 00dc 0000ED5E 		.word	1592590336
+ 3480              		.section	.text.osMemoryPoolGetCapacity,"ax",%progbits
+ 3481              		.align	1
+ 3482              		.global	osMemoryPoolGetCapacity
+ 3483              		.syntax unified
+ 3484              		.thumb
+ 3485              		.thumb_func
+ 3487              	osMemoryPoolGetCapacity:
+ 3488              		@ args = 0, pretend = 0, frame = 0
+ 3489              		@ frame_needed = 0, uses_anonymous_args = 0
+ 3490              		@ link register save eliminated.
+ 3491 0000 38B1     		cbz	r0, .L614
+ 3492 0002 016A     		ldr	r1, [r0, #32]
+ 3493 0004 044B     		ldr	r3, .L617
+ 3494 0006 8B43     		bics	r3, r3, r1
+ 3495 0008 01D0     		beq	.L616
+ 3496 000a 0020     		movs	r0, #0
+ 3497 000c 7047     		bx	lr
+ 3498              	.L616:
+ 3499 000e 8069     		ldr	r0, [r0, #24]
+ 3500 0010 7047     		bx	lr
+ 3501              	.L614:
+ 3502 0012 0020     		movs	r0, #0
+ 3503 0014 7047     		bx	lr
+ 3504              	.L618:
+ 3505 0016 00BF     		.align	2
+ 3506              	.L617:
+ 3507 0018 0000ED5E 		.word	1592590336
+ 3509              		.section	.text.osMemoryPoolGetBlockSize,"ax",%progbits
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 60
+
+
+ 3510              		.align	1
+ 3511              		.global	osMemoryPoolGetBlockSize
+ 3512              		.syntax unified
+ 3513              		.thumb
+ 3514              		.thumb_func
+ 3516              	osMemoryPoolGetBlockSize:
+ 3517              		@ args = 0, pretend = 0, frame = 0
+ 3518              		@ frame_needed = 0, uses_anonymous_args = 0
+ 3519              		@ link register save eliminated.
+ 3520 0000 38B1     		cbz	r0, .L621
+ 3521 0002 016A     		ldr	r1, [r0, #32]
+ 3522 0004 044B     		ldr	r3, .L624
+ 3523 0006 8B43     		bics	r3, r3, r1
+ 3524 0008 01D0     		beq	.L623
+ 3525 000a 0020     		movs	r0, #0
+ 3526 000c 7047     		bx	lr
+ 3527              	.L623:
+ 3528 000e 4069     		ldr	r0, [r0, #20]
+ 3529 0010 7047     		bx	lr
+ 3530              	.L621:
+ 3531 0012 0020     		movs	r0, #0
+ 3532 0014 7047     		bx	lr
+ 3533              	.L625:
+ 3534 0016 00BF     		.align	2
+ 3535              	.L624:
+ 3536 0018 0000ED5E 		.word	1592590336
+ 3538              		.section	.text.osMemoryPoolGetCount,"ax",%progbits
+ 3539              		.align	1
+ 3540              		.global	osMemoryPoolGetCount
+ 3541              		.syntax unified
+ 3542              		.thumb
+ 3543              		.thumb_func
+ 3545              	osMemoryPoolGetCount:
+ 3546              		@ args = 0, pretend = 0, frame = 0
+ 3547              		@ frame_needed = 0, uses_anonymous_args = 0
+ 3548 0000 A0B1     		cbz	r0, .L630
+ 3549 0002 10B5     		push	{r4, lr}
+ 3550 0004 0446     		mov	r4, r0
+ 3551 0006 026A     		ldr	r2, [r0, #32]
+ 3552 0008 094B     		ldr	r3, .L637
+ 3553 000a 9343     		bics	r3, r3, r2
+ 3554 000c 01D0     		beq	.L636
+ 3555 000e 0020     		movs	r0, #0
+ 3556              	.L626:
+ 3557 0010 10BD     		pop	{r4, pc}
+ 3558              	.L636:
+ 3559              		.syntax unified
+ 3560              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 3561 0012 EFF30583 		MRS r3, ipsr
+ 3562              	@ 0 "" 2
+ 3563              		.thumb
+ 3564              		.syntax unified
+ 3565 0016 2BB1     		cbz	r3, .L628
+ 3566 0018 4068     		ldr	r0, [r0, #4]
+ 3567 001a FFF7FEFF 		bl	uxQueueMessagesWaitingFromISR
+ 3568              	.L629:
+ 3569 001e A369     		ldr	r3, [r4, #24]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 61
+
+
+ 3570 0020 181A     		subs	r0, r3, r0
+ 3571 0022 F5E7     		b	.L626
+ 3572              	.L628:
+ 3573 0024 4068     		ldr	r0, [r0, #4]
+ 3574 0026 FFF7FEFF 		bl	uxQueueMessagesWaiting
+ 3575 002a F8E7     		b	.L629
+ 3576              	.L630:
+ 3577 002c 0020     		movs	r0, #0
+ 3578 002e 7047     		bx	lr
+ 3579              	.L638:
+ 3580              		.align	2
+ 3581              	.L637:
+ 3582 0030 0000ED5E 		.word	1592590336
+ 3584              		.section	.text.osMemoryPoolGetSpace,"ax",%progbits
+ 3585              		.align	1
+ 3586              		.global	osMemoryPoolGetSpace
+ 3587              		.syntax unified
+ 3588              		.thumb
+ 3589              		.thumb_func
+ 3591              	osMemoryPoolGetSpace:
+ 3592              		@ args = 0, pretend = 0, frame = 0
+ 3593              		@ frame_needed = 0, uses_anonymous_args = 0
+ 3594 0000 88B1     		cbz	r0, .L642
+ 3595 0002 08B5     		push	{r3, lr}
+ 3596 0004 016A     		ldr	r1, [r0, #32]
+ 3597 0006 094B     		ldr	r3, .L649
+ 3598 0008 8B43     		bics	r3, r3, r1
+ 3599 000a 01D0     		beq	.L648
+ 3600 000c 0020     		movs	r0, #0
+ 3601              	.L639:
+ 3602 000e 08BD     		pop	{r3, pc}
+ 3603              	.L648:
+ 3604              		.syntax unified
+ 3605              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 3606 0010 EFF30583 		MRS r3, ipsr
+ 3607              	@ 0 "" 2
+ 3608              		.thumb
+ 3609              		.syntax unified
+ 3610 0014 1BB1     		cbz	r3, .L641
+ 3611 0016 4068     		ldr	r0, [r0, #4]
+ 3612 0018 FFF7FEFF 		bl	uxQueueMessagesWaitingFromISR
+ 3613 001c F7E7     		b	.L639
+ 3614              	.L641:
+ 3615 001e 4068     		ldr	r0, [r0, #4]
+ 3616 0020 FFF7FEFF 		bl	uxQueueMessagesWaiting
+ 3617 0024 F3E7     		b	.L639
+ 3618              	.L642:
+ 3619 0026 0020     		movs	r0, #0
+ 3620 0028 7047     		bx	lr
+ 3621              	.L650:
+ 3622 002a 00BF     		.align	2
+ 3623              	.L649:
+ 3624 002c 0000ED5E 		.word	1592590336
+ 3626              		.section	.text.osMemoryPoolDelete,"ax",%progbits
+ 3627              		.align	1
+ 3628              		.global	osMemoryPoolDelete
+ 3629              		.syntax unified
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 62
+
+
+ 3630              		.thumb
+ 3631              		.thumb_func
+ 3633              	osMemoryPoolDelete:
+ 3634              		@ args = 0, pretend = 0, frame = 0
+ 3635              		@ frame_needed = 0, uses_anonymous_args = 0
+ 3636 0000 50B3     		cbz	r0, .L656
+ 3637 0002 10B5     		push	{r4, lr}
+ 3638 0004 0446     		mov	r4, r0
+ 3639              		.syntax unified
+ 3640              	@ 1031 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 3641 0006 EFF30583 		MRS r3, ipsr
+ 3642              	@ 0 "" 2
+ 3643              		.thumb
+ 3644              		.syntax unified
+ 3645 000a 43BB     		cbnz	r3, .L657
+ 3646 000c FFF7FEFF 		bl	vPortEnterCritical
+ 3647 0010 236A     		ldr	r3, [r4, #32]
+ 3648 0012 03F00303 		and	r3, r3, #3
+ 3649 0016 2362     		str	r3, [r4, #32]
+ 3650              	.L653:
+ 3651 0018 0023     		movs	r3, #0
+ 3652 001a 1A46     		mov	r2, r3
+ 3653 001c 1946     		mov	r1, r3
+ 3654 001e 6068     		ldr	r0, [r4, #4]
+ 3655 0020 FFF7FEFF 		bl	xQueueGenericSend
+ 3656 0024 0128     		cmp	r0, #1
+ 3657 0026 F7D0     		beq	.L653
+ 3658 0028 0023     		movs	r3, #0
+ 3659 002a 2360     		str	r3, [r4]
+ 3660 002c 6361     		str	r3, [r4, #20]
+ 3661 002e A361     		str	r3, [r4, #24]
+ 3662 0030 236A     		ldr	r3, [r4, #32]
+ 3663 0032 13F0020F 		tst	r3, #2
+ 3664 0036 07D1     		bne	.L662
+ 3665              	.L654:
+ 3666 0038 236A     		ldr	r3, [r4, #32]
+ 3667 003a 13F0010F 		tst	r3, #1
+ 3668 003e 07D1     		bne	.L663
+ 3669              	.L655:
+ 3670 0040 FFF7FEFF 		bl	vPortExitCritical
+ 3671 0044 0020     		movs	r0, #0
+ 3672              	.L651:
+ 3673 0046 10BD     		pop	{r4, pc}
+ 3674              	.L662:
+ 3675 0048 A068     		ldr	r0, [r4, #8]
+ 3676 004a FFF7FEFF 		bl	vPortFree
+ 3677 004e F3E7     		b	.L654
+ 3678              	.L663:
+ 3679 0050 2046     		mov	r0, r4
+ 3680 0052 FFF7FEFF 		bl	vPortFree
+ 3681 0056 F3E7     		b	.L655
+ 3682              	.L656:
+ 3683 0058 6FF00300 		mvn	r0, #3
+ 3684 005c 7047     		bx	lr
+ 3685              	.L657:
+ 3686 005e 6FF00500 		mvn	r0, #5
+ 3687 0062 F0E7     		b	.L651
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 63
+
+
+ 3689              		.section	.text.vApplicationGetIdleTaskMemory,"ax",%progbits
+ 3690              		.align	1
+ 3691              		.weak	vApplicationGetIdleTaskMemory
+ 3692              		.syntax unified
+ 3693              		.thumb
+ 3694              		.thumb_func
+ 3696              	vApplicationGetIdleTaskMemory:
+ 3697              		@ args = 0, pretend = 0, frame = 0
+ 3698              		@ frame_needed = 0, uses_anonymous_args = 0
+ 3699              		@ link register save eliminated.
+ 3700 0000 034B     		ldr	r3, .L665
+ 3701 0002 0360     		str	r3, [r0]
+ 3702 0004 034B     		ldr	r3, .L665+4
+ 3703 0006 0B60     		str	r3, [r1]
+ 3704 0008 8023     		movs	r3, #128
+ 3705 000a 1360     		str	r3, [r2]
+ 3706 000c 7047     		bx	lr
+ 3707              	.L666:
+ 3708 000e 00BF     		.align	2
+ 3709              	.L665:
+ 3710 0010 00000000 		.word	Idle_TCB.3
+ 3711 0014 00000000 		.word	Idle_Stack.2
+ 3713              		.section	.text.vApplicationGetTimerTaskMemory,"ax",%progbits
+ 3714              		.align	1
+ 3715              		.weak	vApplicationGetTimerTaskMemory
+ 3716              		.syntax unified
+ 3717              		.thumb
+ 3718              		.thumb_func
+ 3720              	vApplicationGetTimerTaskMemory:
+ 3721              		@ args = 0, pretend = 0, frame = 0
+ 3722              		@ frame_needed = 0, uses_anonymous_args = 0
+ 3723              		@ link register save eliminated.
+ 3724 0000 034B     		ldr	r3, .L668
+ 3725 0002 0360     		str	r3, [r0]
+ 3726 0004 034B     		ldr	r3, .L668+4
+ 3727 0006 0B60     		str	r3, [r1]
+ 3728 0008 4FF48073 		mov	r3, #256
+ 3729 000c 1360     		str	r3, [r2]
+ 3730 000e 7047     		bx	lr
+ 3731              	.L669:
+ 3732              		.align	2
+ 3733              	.L668:
+ 3734 0010 00000000 		.word	Timer_TCB.1
+ 3735 0014 00000000 		.word	Timer_Stack.0
+ 3737              		.section	.bss.Timer_Stack.0,"aw",%nobits
+ 3738              		.align	2
+ 3741              	Timer_Stack.0:
+ 3742 0000 00000000 		.space	1024
+ 3742      00000000 
+ 3742      00000000 
+ 3742      00000000 
+ 3742      00000000 
+ 3743              		.section	.bss.Timer_TCB.1,"aw",%nobits
+ 3744              		.align	2
+ 3747              	Timer_TCB.1:
+ 3748 0000 00000000 		.space	92
+ 3748      00000000 
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 64
+
+
+ 3748      00000000 
+ 3748      00000000 
+ 3748      00000000 
+ 3749              		.section	.bss.Idle_Stack.2,"aw",%nobits
+ 3750              		.align	2
+ 3753              	Idle_Stack.2:
+ 3754 0000 00000000 		.space	512
+ 3754      00000000 
+ 3754      00000000 
+ 3754      00000000 
+ 3754      00000000 
+ 3755              		.section	.bss.Idle_TCB.3,"aw",%nobits
+ 3756              		.align	2
+ 3759              	Idle_TCB.3:
+ 3760 0000 00000000 		.space	92
+ 3760      00000000 
+ 3760      00000000 
+ 3760      00000000 
+ 3760      00000000 
+ 3761              		.section	.bss.KernelState,"aw",%nobits
+ 3762              		.align	2
+ 3765              	KernelState:
+ 3766 0000 00000000 		.space	4
+ 3767              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 65
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 cmsis_os2.c
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:18     .text.OS_Tick_GetCount:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:23     .text.OS_Tick_GetCount:00000000 OS_Tick_GetCount
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:34     .text.OS_Tick_GetOverflow:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:39     .text.OS_Tick_GetOverflow:00000000 OS_Tick_GetOverflow
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:49     .text.OS_Tick_GetInterval:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:54     .text.OS_Tick_GetInterval:00000000 OS_Tick_GetInterval
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:64     .text.CreateBlock:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:69     .text.CreateBlock:00000000 CreateBlock
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:89     .text.AllocBlock:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:94     .text.AllocBlock:00000000 AllocBlock
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:107    .text.FreeBlock:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:112    .text.FreeBlock:00000000 FreeBlock
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:122    .text.TimerCallback:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:127    .text.TimerCallback:00000000 TimerCallback
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:140    .text.SysTick_Handler:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:146    .text.SysTick_Handler:00000000 SysTick_Handler
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:162    .text.osKernelInitialize:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:168    .text.osKernelInitialize:00000000 osKernelInitialize
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:194    .text.osKernelInitialize:00000020 $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3765   .bss.KernelState:00000000 KernelState
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:197    .rodata.osKernelGetInfo.str1.4:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:201    .text.osKernelGetInfo:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:207    .text.osKernelGetInfo:00000000 osKernelGetInfo
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:233    .text.osKernelGetInfo:00000024 $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:237    .text.osKernelGetState:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:243    .text.osKernelGetState:00000000 osKernelGetState
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:266    .text.osKernelGetState:00000020 $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:269    .text.osKernelStart:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:275    .text.osKernelStart:00000000 osKernelStart
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:308    .text.osKernelStart:00000030 $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:312    .text.osKernelLock:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:318    .text.osKernelLock:00000000 osKernelLock
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:348    .text.osKernelUnlock:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:354    .text.osKernelUnlock:00000000 osKernelUnlock
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:391    .text.osKernelRestoreLock:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:397    .text.osKernelRestoreLock:00000000 osKernelRestoreLock
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:443    .text.osKernelGetTickCount:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:449    .text.osKernelGetTickCount:00000000 osKernelGetTickCount
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:468    .text.osKernelGetTickFreq:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:474    .text.osKernelGetTickFreq:00000000 osKernelGetTickFreq
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:482    .text.osKernelGetSysTimerCount:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:488    .text.osKernelGetSysTimerCount:00000000 osKernelGetSysTimerCount
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:545    .text.osKernelGetSysTimerFreq:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:551    .text.osKernelGetSysTimerFreq:00000000 osKernelGetSysTimerFreq
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:561    .text.osKernelGetSysTimerFreq:00000008 $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:564    .text.osThreadNew:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:570    .text.osThreadNew:00000000 osThreadNew
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:675    .text.osThreadGetName:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:681    .text.osThreadGetName:00000000 osThreadGetName
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:701    .text.osThreadGetId:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:707    .text.osThreadGetId:00000000 osThreadGetId
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:715    .text.osThreadGetState:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:721    .text.osThreadGetState:00000000 osThreadGetState
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:738    .text.osThreadGetState:00000016 $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:768    .text.osThreadGetStackSpace:00000000 $t
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 66
+
+
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:774    .text.osThreadGetStackSpace:00000000 osThreadGetStackSpace
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:797    .text.osThreadSetPriority:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:803    .text.osThreadSetPriority:00000000 osThreadSetPriority
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:837    .text.osThreadGetPriority:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:843    .text.osThreadGetPriority:00000000 osThreadGetPriority
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:866    .text.osThreadYield:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:872    .text.osThreadYield:00000000 osThreadYield
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:902    .text.osThreadSuspend:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:908    .text.osThreadSuspend:00000000 osThreadSuspend
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:932    .text.osThreadResume:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:938    .text.osThreadResume:00000000 osThreadResume
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:962    .text.osThreadExit:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:968    .text.osThreadExit:00000000 osThreadExit
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:979    .text.osThreadTerminate:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:985    .text.osThreadTerminate:00000000 osThreadTerminate
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1017   .text.osThreadGetCount:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1023   .text.osThreadGetCount:00000000 osThreadGetCount
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1042   .text.osThreadEnumerate:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1048   .text.osThreadEnumerate:00000000 osThreadEnumerate
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1103   .text.osThreadFlagsSet:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1109   .text.osThreadFlagsSet:00000000 osThreadFlagsSet
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1175   .text.osThreadFlagsClear:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1181   .text.osThreadFlagsClear:00000000 osThreadFlagsClear
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1230   .text.osThreadFlagsGet:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1236   .text.osThreadFlagsGet:00000000 osThreadFlagsGet
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1268   .text.osThreadFlagsWait:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1274   .text.osThreadFlagsWait:00000000 osThreadFlagsWait
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1364   .text.osDelay:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1370   .text.osDelay:00000000 osDelay
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1394   .text.osDelayUntil:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1400   .text.osDelayUntil:00000000 osDelayUntil
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1433   .text.osTimerNew:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1439   .text.osTimerNew:00000000 osTimerNew
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1536   .text.osTimerNew:000000a4 $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1539   .text.osTimerGetName:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1545   .text.osTimerGetName:00000000 osTimerGetName
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1565   .text.osTimerStart:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1571   .text.osTimerStart:00000000 osTimerStart
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1606   .text.osTimerStop:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1612   .text.osTimerStop:00000000 osTimerStop
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1655   .text.osTimerIsRunning:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1661   .text.osTimerIsRunning:00000000 osTimerIsRunning
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1683   .text.osTimerDelete:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1689   .text.osTimerDelete:00000000 osTimerDelete
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1731   .text.osEventFlagsNew:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1737   .text.osEventFlagsNew:00000000 osEventFlagsNew
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1785   .text.osEventFlagsSet:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1791   .text.osEventFlagsSet:00000000 osEventFlagsSet
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1848   .text.osEventFlagsClear:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1854   .text.osEventFlagsClear:00000000 osEventFlagsClear
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1892   .text.osEventFlagsGet:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1898   .text.osEventFlagsGet:00000000 osEventFlagsGet
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1922   .text.osEventFlagsWait:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1928   .text.osEventFlagsWait:00000000 osEventFlagsWait
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:1996   .text.osEventFlagsDelete:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2002   .text.osEventFlagsDelete:00000000 osEventFlagsDelete
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2026   .text.osMutexNew:00000000 $t
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 67
+
+
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2032   .text.osMutexNew:00000000 osMutexNew
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2122   .text.osMutexAcquire:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2128   .text.osMutexAcquire:00000000 osMutexAcquire
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2182   .text.osMutexRelease:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2188   .text.osMutexRelease:00000000 osMutexRelease
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2234   .text.osMutexGetOwner:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2240   .text.osMutexGetOwner:00000000 osMutexGetOwner
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2266   .text.osMutexDelete:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2272   .text.osMutexDelete:00000000 osMutexDelete
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2301   .text.osSemaphoreNew:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2307   .text.osSemaphoreNew:00000000 osSemaphoreNew
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2414   .text.osSemaphoreAcquire:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2420   .text.osSemaphoreAcquire:00000000 osSemaphoreAcquire
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2484   .text.osSemaphoreRelease:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2490   .text.osSemaphoreRelease:00000000 osSemaphoreRelease
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2548   .text.osSemaphoreGetCount:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2554   .text.osSemaphoreGetCount:00000000 osSemaphoreGetCount
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2577   .text.osSemaphoreDelete:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2583   .text.osSemaphoreDelete:00000000 osSemaphoreDelete
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2610   .text.osMessageQueueNew:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2616   .text.osMessageQueueNew:00000000 osMessageQueueNew
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2708   .text.osMessageQueuePut:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2714   .text.osMessageQueuePut:00000000 osMessageQueuePut
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2792   .text.osMessageQueueGet:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2798   .text.osMessageQueueGet:00000000 osMessageQueueGet
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2875   .text.osMessageQueueGetCapacity:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2881   .text.osMessageQueueGetCapacity:00000000 osMessageQueueGetCapacity
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2893   .text.osMessageQueueGetMsgSize:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2899   .text.osMessageQueueGetMsgSize:00000000 osMessageQueueGetMsgSize
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2911   .text.osMessageQueueGetCount:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2917   .text.osMessageQueueGetCount:00000000 osMessageQueueGetCount
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2940   .text.osMessageQueueGetSpace:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2946   .text.osMessageQueueGetSpace:00000000 osMessageQueueGetSpace
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2988   .text.osMessageQueueReset:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:2994   .text.osMessageQueueReset:00000000 osMessageQueueReset
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3019   .text.osMessageQueueDelete:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3025   .text.osMessageQueueDelete:00000000 osMessageQueueDelete
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3052   .text.osMemoryPoolNew:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3058   .text.osMemoryPoolNew:00000000 osMemoryPoolNew
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3207   .text.osMemoryPoolNew:0000012c $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3210   .text.osMemoryPoolGetName:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3216   .text.osMemoryPoolGetName:00000000 osMemoryPoolGetName
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3236   .text.osMemoryPoolAlloc:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3242   .text.osMemoryPoolAlloc:00000000 osMemoryPoolAlloc
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3348   .text.osMemoryPoolAlloc:000000ac $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3351   .text.osMemoryPoolFree:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3357   .text.osMemoryPoolFree:00000000 osMemoryPoolFree
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3478   .text.osMemoryPoolFree:000000dc $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3481   .text.osMemoryPoolGetCapacity:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3487   .text.osMemoryPoolGetCapacity:00000000 osMemoryPoolGetCapacity
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3507   .text.osMemoryPoolGetCapacity:00000018 $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3510   .text.osMemoryPoolGetBlockSize:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3516   .text.osMemoryPoolGetBlockSize:00000000 osMemoryPoolGetBlockSize
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3536   .text.osMemoryPoolGetBlockSize:00000018 $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3539   .text.osMemoryPoolGetCount:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3545   .text.osMemoryPoolGetCount:00000000 osMemoryPoolGetCount
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3582   .text.osMemoryPoolGetCount:00000030 $d
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 68
+
+
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3585   .text.osMemoryPoolGetSpace:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3591   .text.osMemoryPoolGetSpace:00000000 osMemoryPoolGetSpace
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3624   .text.osMemoryPoolGetSpace:0000002c $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3627   .text.osMemoryPoolDelete:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3633   .text.osMemoryPoolDelete:00000000 osMemoryPoolDelete
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3690   .text.vApplicationGetIdleTaskMemory:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3696   .text.vApplicationGetIdleTaskMemory:00000000 vApplicationGetIdleTaskMemory
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3710   .text.vApplicationGetIdleTaskMemory:00000010 $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3759   .bss.Idle_TCB.3:00000000 Idle_TCB.3
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3753   .bss.Idle_Stack.2:00000000 Idle_Stack.2
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3714   .text.vApplicationGetTimerTaskMemory:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3720   .text.vApplicationGetTimerTaskMemory:00000000 vApplicationGetTimerTaskMemory
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3734   .text.vApplicationGetTimerTaskMemory:00000010 $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3747   .bss.Timer_TCB.1:00000000 Timer_TCB.1
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3741   .bss.Timer_Stack.0:00000000 Timer_Stack.0
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3738   .bss.Timer_Stack.0:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3744   .bss.Timer_TCB.1:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3750   .bss.Idle_Stack.2:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3756   .bss.Idle_TCB.3:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:3762   .bss.KernelState:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:743    .text.osThreadGetState:0000001b $d
+C:\Users\fish\AppData\Local\Temp\ccqxEyol.s:743    .text.osThreadGetState:0000001c $t
+
+UNDEFINED SYMBOLS
+pvTimerGetTimerID
+xTaskGetSchedulerState
+xPortSysTickHandler
+memcpy
+vTaskStartScheduler
+vTaskSuspendAll
+xTaskResumeAll
+xTaskGetTickCountFromISR
+xTaskGetTickCount
+SystemCoreClock
+xTaskCreateStatic
+xTaskCreate
+pcTaskGetName
+xTaskGetCurrentTaskHandle
+eTaskGetState
+uxTaskGetStackHighWaterMark
+vTaskPrioritySet
+uxTaskPriorityGet
+vTaskSuspend
+vTaskResume
+vTaskDelete
+uxTaskGetNumberOfTasks
+pvPortMalloc
+uxTaskGetSystemState
+vPortFree
+xTaskGenericNotifyFromISR
+xTaskGenericNotify
+xTaskNotifyWait
+vTaskDelay
+vTaskDelayUntil
+xTimerCreateStatic
+xTimerCreate
+pcTimerGetName
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccqxEyol.s 			page 69
+
+
+xTimerGenericCommand
+xTimerIsTimerActive
+xEventGroupCreate
+xEventGroupCreateStatic
+xEventGroupSetBitsFromISR
+xEventGroupSetBits
+xEventGroupGetBitsFromISR
+xEventGroupClearBitsFromISR
+xEventGroupClearBits
+xEventGroupWaitBits
+vEventGroupDelete
+xQueueCreateMutex
+vQueueAddToRegistry
+xQueueCreateMutexStatic
+xQueueTakeMutexRecursive
+xQueueSemaphoreTake
+xQueueGiveMutexRecursive
+xQueueGenericSend
+xQueueGetMutexHolder
+vQueueUnregisterQueue
+vQueueDelete
+xQueueCreateCountingSemaphore
+xQueueGenericCreate
+xQueueGenericCreateStatic
+xQueueCreateCountingSemaphoreStatic
+xQueueReceiveFromISR
+xQueueGiveFromISR
+uxQueueMessagesWaitingFromISR
+uxQueueMessagesWaiting
+xQueueGenericSendFromISR
+xQueueReceive
+uxQueueSpacesAvailable
+xQueueGenericReset
+vPortEnterCritical
+vPortExitCritical

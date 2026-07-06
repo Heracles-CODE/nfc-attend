@@ -1,0 +1,864 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"freertos.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/freertos.c"
+  20              		.section	.rodata.StartKeyLedTask.str1.4,"aMS",%progbits,1
+  21              		.align	2
+  22              	.LC0:
+  23 0000 4B657920 		.ascii	"Key & LED Demo Started\015\000"
+  23      26204C45 
+  23      44204465 
+  23      6D6F2053 
+  23      74617274 
+  24              		.align	2
+  25              	.LC1:
+  26 0018 4B313A20 		.ascii	"K1: All LEDs ON\015\000"
+  26      416C6C20 
+  26      4C454473 
+  26      204F4E0D 
+  26      00
+  27 0029 000000   		.align	2
+  28              	.LC2:
+  29 002c 4B343A20 		.ascii	"K4: All LEDs OFF\015\000"
+  29      416C6C20 
+  29      4C454473 
+  29      204F4646 
+  29      0D00
+  30 003e 0000     		.align	2
+  31              	.LC3:
+  32 0040 4B323A20 		.ascii	"K2: LED count=%d (mask=0x%02X)\015\012\000"
+  32      4C454420 
+  32      636F756E 
+  32      743D2564 
+  32      20286D61 
+  33 0061 000000   		.align	2
+  34              	.LC4:
+  35 0064 4B333A20 		.ascii	"K3: LED count=%d (mask=0x%02X)\015\012\000"
+  35      4C454420 
+  35      636F756E 
+  35      743D2564 
+  35      20286D61 
+  36 0085 000000   		.align	2
+  37              	.LC5:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s 			page 2
+
+
+  38 0088 4B353A20 		.ascii	"K5: Toggle L1 (mask=0x%02X)\015\012\000"
+  38      546F6767 
+  38      6C65204C 
+  38      3120286D 
+  38      61736B3D 
+  39 00a6 0000     		.align	2
+  40              	.LC6:
+  41 00a8 4B363A20 		.ascii	"K6: Toggle L2 (mask=0x%02X)\015\012\000"
+  41      546F6767 
+  41      6C65204C 
+  41      3220286D 
+  41      61736B3D 
+  42              		.section	.text.StartKeyLedTask,"ax",%progbits
+  43              		.align	1
+  44              		.global	StartKeyLedTask
+  45              		.syntax unified
+  46              		.thumb
+  47              		.thumb_func
+  49              	StartKeyLedTask:
+  50              	.LVL0:
+  51              	.LFB247:
+   1:Core/Src/freertos.c **** /* USER CODE BEGIN Header */
+   2:Core/Src/freertos.c **** /**
+   3:Core/Src/freertos.c ****   ******************************************************************************
+   4:Core/Src/freertos.c ****   * File Name          : freertos.c
+   5:Core/Src/freertos.c ****   * Description        : Code for freertos applications - 按键 & LED 示例
+   6:Core/Src/freertos.c ****   ******************************************************************************
+   7:Core/Src/freertos.c ****   * @attention
+   8:Core/Src/freertos.c ****   *
+   9:Core/Src/freertos.c ****   * Copyright (c) 2026 STMicroelectronics.
+  10:Core/Src/freertos.c ****   * All rights reserved.
+  11:Core/Src/freertos.c ****   *
+  12:Core/Src/freertos.c ****   * This software is licensed under terms that can be found in the LICENSE file
+  13:Core/Src/freertos.c ****   * in the root directory of this software component.
+  14:Core/Src/freertos.c ****   * If no LICENSE file comes with this software, it is provided AS-IS.
+  15:Core/Src/freertos.c ****   *
+  16:Core/Src/freertos.c ****   ******************************************************************************
+  17:Core/Src/freertos.c ****   */
+  18:Core/Src/freertos.c **** /* USER CODE END Header */
+  19:Core/Src/freertos.c **** 
+  20:Core/Src/freertos.c **** /* Includes ------------------------------------------------------------------*/
+  21:Core/Src/freertos.c **** #include "FreeRTOS.h"
+  22:Core/Src/freertos.c **** #include "task.h"
+  23:Core/Src/freertos.c **** #include "main.h"
+  24:Core/Src/freertos.c **** #include "cmsis_os.h"
+  25:Core/Src/freertos.c **** #include "usart.h"
+  26:Core/Src/freertos.c **** #include "key.h"
+  27:Core/Src/freertos.c **** #include "led.h"
+  28:Core/Src/freertos.c **** #include "uart_drv.h"
+  29:Core/Src/freertos.c **** #include <stdio.h>
+  30:Core/Src/freertos.c **** #include <string.h>
+  31:Core/Src/freertos.c **** 
+  32:Core/Src/freertos.c **** /* Private includes ----------------------------------------------------------*/
+  33:Core/Src/freertos.c **** /* USER CODE BEGIN Includes */
+  34:Core/Src/freertos.c **** 
+  35:Core/Src/freertos.c **** /* USER CODE END Includes */
+  36:Core/Src/freertos.c **** 
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s 			page 3
+
+
+  37:Core/Src/freertos.c **** /* Private typedef -----------------------------------------------------------*/
+  38:Core/Src/freertos.c **** /* USER CODE BEGIN PTD */
+  39:Core/Src/freertos.c **** 
+  40:Core/Src/freertos.c **** /* USER CODE END PTD */
+  41:Core/Src/freertos.c **** 
+  42:Core/Src/freertos.c **** /* Private define ------------------------------------------------------------*/
+  43:Core/Src/freertos.c **** /* USER CODE BEGIN PD */
+  44:Core/Src/freertos.c **** /* 按键索引定义 */
+  45:Core/Src/freertos.c **** #define KEY_K1  0
+  46:Core/Src/freertos.c **** #define KEY_K2  1
+  47:Core/Src/freertos.c **** #define KEY_K3  2
+  48:Core/Src/freertos.c **** #define KEY_K4  3
+  49:Core/Src/freertos.c **** #define KEY_K5  4
+  50:Core/Src/freertos.c **** #define KEY_K6  5
+  51:Core/Src/freertos.c **** /* USER CODE END PD */
+  52:Core/Src/freertos.c **** 
+  53:Core/Src/freertos.c **** /* Private macro -------------------------------------------------------------*/
+  54:Core/Src/freertos.c **** /* USER CODE BEGIN PM */
+  55:Core/Src/freertos.c **** 
+  56:Core/Src/freertos.c **** /* USER CODE END PM */
+  57:Core/Src/freertos.c **** 
+  58:Core/Src/freertos.c **** /* Private variables ---------------------------------------------------------*/
+  59:Core/Src/freertos.c **** /* USER CODE BEGIN Variables */
+  60:Core/Src/freertos.c **** /* 串口驱动实例(用于printf调试输出) */
+  61:Core/Src/freertos.c **** static UartDrv_t g_uart1Drv;
+  62:Core/Src/freertos.c **** 
+  63:Core/Src/freertos.c **** /* 按键配置: K1~K4 上拉低有效, K5~K6 下拉高有效 */
+  64:Core/Src/freertos.c **** static const Key_Config_t keyConfigs[6] = {
+  65:Core/Src/freertos.c ****     { K1_GPIO_Port, K1_Pin, KEY_ACTIVE_LOW  },  /* K1 */
+  66:Core/Src/freertos.c ****     { K2_GPIO_Port, K2_Pin, KEY_ACTIVE_LOW  },  /* K2 */
+  67:Core/Src/freertos.c ****     { K3_GPIO_Port, K3_Pin, KEY_ACTIVE_LOW  },  /* K3 */
+  68:Core/Src/freertos.c ****     { K4_GPIO_Port, K4_Pin, KEY_ACTIVE_LOW  },  /* K4 */
+  69:Core/Src/freertos.c ****     { K5_GPIO_Port, K5_Pin, KEY_ACTIVE_HIGH },  /* K5 */
+  70:Core/Src/freertos.c ****     { K6_GPIO_Port, K6_Pin, KEY_ACTIVE_HIGH },  /* K6 */
+  71:Core/Src/freertos.c **** };
+  72:Core/Src/freertos.c **** 
+  73:Core/Src/freertos.c **** /* LED 配置: L1~L7 低电平点亮 (灌电流) */
+  74:Core/Src/freertos.c **** static const Led_Config_t ledConfigs[7] = {
+  75:Core/Src/freertos.c ****     { L1_GPIO_Port, L1_Pin, LED_ON_LOW },  /* L1 */
+  76:Core/Src/freertos.c ****     { L2_GPIO_Port, L2_Pin, LED_ON_LOW },  /* L2 */
+  77:Core/Src/freertos.c ****     { L3_GPIO_Port, L3_Pin, LED_ON_LOW },  /* L3 */
+  78:Core/Src/freertos.c ****     { L4_GPIO_Port, L4_Pin, LED_ON_LOW },  /* L4 */
+  79:Core/Src/freertos.c ****     { L5_GPIO_Port, L5_Pin, LED_ON_LOW },  /* L5 */
+  80:Core/Src/freertos.c ****     { L6_GPIO_Port, L6_Pin, LED_ON_LOW },  /* L6 */
+  81:Core/Src/freertos.c ****     { L7_GPIO_Port, L7_Pin, LED_ON_LOW },  /* L7 */
+  82:Core/Src/freertos.c **** };
+  83:Core/Src/freertos.c **** /* USER CODE END Variables */
+  84:Core/Src/freertos.c **** 
+  85:Core/Src/freertos.c **** /* Definitions for keyLedTask */
+  86:Core/Src/freertos.c **** osThreadId_t keyLedTaskHandle;
+  87:Core/Src/freertos.c **** const osThreadAttr_t keyLedTask_attributes = {
+  88:Core/Src/freertos.c ****   .name = "keyLedTask",
+  89:Core/Src/freertos.c ****   .stack_size = 512 * 4,
+  90:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityNormal,
+  91:Core/Src/freertos.c **** };
+  92:Core/Src/freertos.c **** 
+  93:Core/Src/freertos.c **** /* Private function prototypes -----------------------------------------------*/
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s 			page 4
+
+
+  94:Core/Src/freertos.c **** /* USER CODE BEGIN FunctionPrototypes */
+  95:Core/Src/freertos.c **** 
+  96:Core/Src/freertos.c **** /* USER CODE END FunctionPrototypes */
+  97:Core/Src/freertos.c **** 
+  98:Core/Src/freertos.c **** void StartKeyLedTask(void *argument);
+  99:Core/Src/freertos.c **** 
+ 100:Core/Src/freertos.c **** void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+ 101:Core/Src/freertos.c **** 
+ 102:Core/Src/freertos.c **** /**
+ 103:Core/Src/freertos.c ****   * @brief  FreeRTOS initialization
+ 104:Core/Src/freertos.c ****   * @param  None
+ 105:Core/Src/freertos.c ****   * @retval None
+ 106:Core/Src/freertos.c ****   */
+ 107:Core/Src/freertos.c **** void MX_FREERTOS_Init(void) {
+ 108:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
+ 109:Core/Src/freertos.c **** 
+ 110:Core/Src/freertos.c ****   /* USER CODE END Init */
+ 111:Core/Src/freertos.c **** 
+ 112:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_MUTEX */
+ 113:Core/Src/freertos.c ****   /* add mutexes, ... */
+ 114:Core/Src/freertos.c ****   /* USER CODE END RTOS_MUTEX */
+ 115:Core/Src/freertos.c **** 
+ 116:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_SEMAPHORES */
+ 117:Core/Src/freertos.c ****   /* add semaphores, ... */
+ 118:Core/Src/freertos.c ****   /* USER CODE END RTOS_SEMAPHORES */
+ 119:Core/Src/freertos.c **** 
+ 120:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_TIMERS */
+ 121:Core/Src/freertos.c ****   /* start timers, add new ones, ... */
+ 122:Core/Src/freertos.c ****   /* USER CODE END RTOS_TIMERS */
+ 123:Core/Src/freertos.c **** 
+ 124:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_QUEUES */
+ 125:Core/Src/freertos.c ****   /* add queues, ... */
+ 126:Core/Src/freertos.c ****   /* USER CODE END RTOS_QUEUES */
+ 127:Core/Src/freertos.c **** 
+ 128:Core/Src/freertos.c ****   /* Create the thread(s) */
+ 129:Core/Src/freertos.c ****   /* creation of keyLedTask */
+ 130:Core/Src/freertos.c ****   keyLedTaskHandle = osThreadNew(StartKeyLedTask, NULL, &keyLedTask_attributes);
+ 131:Core/Src/freertos.c **** 
+ 132:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_THREADS */
+ 133:Core/Src/freertos.c ****   /* add threads, ... */
+ 134:Core/Src/freertos.c ****   /* USER CODE END RTOS_THREADS */
+ 135:Core/Src/freertos.c **** 
+ 136:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_EVENTS */
+ 137:Core/Src/freertos.c ****   /* add events, ... */
+ 138:Core/Src/freertos.c ****   /* USER CODE END RTOS_EVENTS */
+ 139:Core/Src/freertos.c **** 
+ 140:Core/Src/freertos.c **** }
+ 141:Core/Src/freertos.c **** 
+ 142:Core/Src/freertos.c **** /* USER CODE BEGIN Header_StartKeyLedTask */
+ 143:Core/Src/freertos.c **** /**
+ 144:Core/Src/freertos.c ****   * @brief  按键 & LED 示例任务
+ 145:Core/Src/freertos.c ****   *         - K1: 点亮所有 LED
+ 146:Core/Src/freertos.c ****   *         - K4: 熄灭所有 LED
+ 147:Core/Src/freertos.c ****   *         - K2: 亮灯个数加 1 (支持连按)
+ 148:Core/Src/freertos.c ****   *         - K3: 亮灯个数减 1 (支持连按)
+ 149:Core/Src/freertos.c ****   *         - K5: 翻转 L1
+ 150:Core/Src/freertos.c ****   *         - K6: 翻转 L2
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s 			page 5
+
+
+ 151:Core/Src/freertos.c ****   * @param  argument: Not used
+ 152:Core/Src/freertos.c ****   * @retval None
+ 153:Core/Src/freertos.c ****   */
+ 154:Core/Src/freertos.c **** /* USER CODE END Header_StartKeyLedTask */
+ 155:Core/Src/freertos.c **** void StartKeyLedTask(void *argument)
+ 156:Core/Src/freertos.c **** {
+  52              		.loc 1 156 1 view -0
+  53              		.cfi_startproc
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 0, uses_anonymous_args = 0
+  56              		.loc 1 156 1 is_stmt 0 view .LVU1
+  57 0000 38B5     		push	{r3, r4, r5, lr}
+  58              	.LCFI0:
+  59              		.cfi_def_cfa_offset 16
+  60              		.cfi_offset 3, -16
+  61              		.cfi_offset 4, -12
+  62              		.cfi_offset 5, -8
+  63              		.cfi_offset 14, -4
+ 157:Core/Src/freertos.c ****   /* USER CODE BEGIN StartKeyLedTask */
+ 158:Core/Src/freertos.c ****   uint8_t ledCount = 0;   /* 亮灯个数 (0~7) */
+  64              		.loc 1 158 3 is_stmt 1 view .LVU2
+  65              	.LVL1:
+ 159:Core/Src/freertos.c ****   uint8_t ledMask = 0;    /* 当前 LED 状态掩码 */
+  66              		.loc 1 159 3 view .LVU3
+ 160:Core/Src/freertos.c **** 
+ 161:Core/Src/freertos.c ****   /* 初始化按键驱动 */
+ 162:Core/Src/freertos.c ****   Key_Init(keyConfigs, 6);
+  67              		.loc 1 162 3 view .LVU4
+  68 0002 0621     		movs	r1, #6
+  69 0004 4648     		ldr	r0, .L20
+  70              	.LVL2:
+  71              		.loc 1 162 3 is_stmt 0 view .LVU5
+  72 0006 FFF7FEFF 		bl	Key_Init
+  73              	.LVL3:
+ 163:Core/Src/freertos.c **** 
+ 164:Core/Src/freertos.c ****   /* 初始化 LED 驱动 (初始化后全灭) */
+ 165:Core/Src/freertos.c ****   LED_Init(ledConfigs, 7);
+  74              		.loc 1 165 3 is_stmt 1 view .LVU6
+  75 000a 0721     		movs	r1, #7
+  76 000c 4548     		ldr	r0, .L20+4
+  77 000e FFF7FEFF 		bl	LED_Init
+  78              	.LVL4:
+ 166:Core/Src/freertos.c ****   LED_SetLeds(0x00);
+  79              		.loc 1 166 3 view .LVU7
+  80 0012 0020     		movs	r0, #0
+  81 0014 FFF7FEFF 		bl	LED_SetLeds
+  82              	.LVL5:
+ 167:Core/Src/freertos.c **** 
+ 168:Core/Src/freertos.c ****   /* 初始化串口驱动并设置printf调试输出口 */
+ 169:Core/Src/freertos.c ****   UartDrv_Init(&g_uart1Drv, &huart1);
+  83              		.loc 1 169 3 view .LVU8
+  84 0018 434C     		ldr	r4, .L20+8
+  85 001a 4449     		ldr	r1, .L20+12
+  86 001c 2046     		mov	r0, r4
+  87 001e FFF7FEFF 		bl	UartDrv_Init
+  88              	.LVL6:
+ 170:Core/Src/freertos.c ****   UartDrv_SetDebugPort(&g_uart1Drv);
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s 			page 6
+
+
+  89              		.loc 1 170 3 view .LVU9
+  90 0022 2046     		mov	r0, r4
+  91 0024 FFF7FEFF 		bl	UartDrv_SetDebugPort
+  92              	.LVL7:
+ 171:Core/Src/freertos.c **** 
+ 172:Core/Src/freertos.c ****   printf("Key & LED Demo Started\r\n");
+  93              		.loc 1 172 3 view .LVU10
+  94 0028 4148     		ldr	r0, .L20+16
+  95 002a FFF7FEFF 		bl	puts
+  96              	.LVL8:
+ 158:Core/Src/freertos.c ****   uint8_t ledMask = 0;    /* 当前 LED 状态掩码 */
+  97              		.loc 1 158 11 is_stmt 0 view .LVU11
+  98 002e 0024     		movs	r4, #0
+  99 0030 48E0     		b	.L11
+ 100              	.LVL9:
+ 101              	.L15:
+ 173:Core/Src/freertos.c **** 
+ 174:Core/Src/freertos.c ****   /* Infinite loop */
+ 175:Core/Src/freertos.c ****   for(;;)
+ 176:Core/Src/freertos.c ****   {
+ 177:Core/Src/freertos.c ****     /* 按键扫描 (每 10ms 调用一次) */
+ 178:Core/Src/freertos.c ****     Key_Scan();
+ 179:Core/Src/freertos.c **** 
+ 180:Core/Src/freertos.c ****     /* ---- K1: 点亮所有 LED ---- */
+ 181:Core/Src/freertos.c ****     if (Key_IsShortPressed(KEY_K1))
+ 182:Core/Src/freertos.c ****     {
+ 183:Core/Src/freertos.c ****       ledMask = 0x7F;  /* L1~L7 全亮 */
+ 102              		.loc 1 183 7 is_stmt 1 view .LVU12
+ 184:Core/Src/freertos.c ****       LED_SetLeds(ledMask);
+ 103              		.loc 1 184 7 view .LVU13
+ 104 0032 7F20     		movs	r0, #127
+ 105 0034 FFF7FEFF 		bl	LED_SetLeds
+ 106              	.LVL10:
+ 185:Core/Src/freertos.c ****       ledCount = 7;
+ 107              		.loc 1 185 7 view .LVU14
+ 186:Core/Src/freertos.c ****       printf("K1: All LEDs ON\r\n");
+ 108              		.loc 1 186 7 view .LVU15
+ 109 0038 3E48     		ldr	r0, .L20+20
+ 110 003a FFF7FEFF 		bl	puts
+ 111              	.LVL11:
+ 185:Core/Src/freertos.c ****       ledCount = 7;
+ 112              		.loc 1 185 16 is_stmt 0 view .LVU16
+ 113 003e 0724     		movs	r4, #7
+ 114 0040 47E0     		b	.L2
+ 115              	.LVL12:
+ 116              	.L16:
+ 187:Core/Src/freertos.c ****     }
+ 188:Core/Src/freertos.c **** 
+ 189:Core/Src/freertos.c ****     /* ---- K4: 熄灭所有 LED ---- */
+ 190:Core/Src/freertos.c ****     if (Key_IsShortPressed(KEY_K4))
+ 191:Core/Src/freertos.c ****     {
+ 192:Core/Src/freertos.c ****       ledMask = 0x00;
+ 117              		.loc 1 192 7 is_stmt 1 view .LVU17
+ 193:Core/Src/freertos.c ****       LED_SetLeds(ledMask);
+ 118              		.loc 1 193 7 view .LVU18
+ 119 0042 0020     		movs	r0, #0
+ 120 0044 FFF7FEFF 		bl	LED_SetLeds
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s 			page 7
+
+
+ 121              	.LVL13:
+ 194:Core/Src/freertos.c ****       ledCount = 0;
+ 122              		.loc 1 194 7 view .LVU19
+ 195:Core/Src/freertos.c ****       printf("K4: All LEDs OFF\r\n");
+ 123              		.loc 1 195 7 view .LVU20
+ 124 0048 3B48     		ldr	r0, .L20+24
+ 125 004a FFF7FEFF 		bl	puts
+ 126              	.LVL14:
+ 194:Core/Src/freertos.c ****       ledCount = 0;
+ 127              		.loc 1 194 16 is_stmt 0 view .LVU21
+ 128 004e 0024     		movs	r4, #0
+ 129 0050 44E0     		b	.L3
+ 130              	.LVL15:
+ 131              	.L17:
+ 196:Core/Src/freertos.c ****     }
+ 197:Core/Src/freertos.c **** 
+ 198:Core/Src/freertos.c ****     /* ---- K2: 亮灯个数加 1 (短按+长按连发) ---- */
+ 199:Core/Src/freertos.c ****     if (Key_IsShortPressed(KEY_K2) || Key_IsRepeat(KEY_K2))
+ 132              		.loc 1 199 39 discriminator 1 view .LVU22
+ 133 0052 0120     		movs	r0, #1
+ 134 0054 FFF7FEFF 		bl	Key_IsRepeat
+ 135              	.LVL16:
+ 136              		.loc 1 199 36 discriminator 1 view .LVU23
+ 137 0058 0028     		cmp	r0, #0
+ 138 005a 46D0     		beq	.L5
+ 139 005c 43E0     		b	.L4
+ 140              	.L18:
+ 200:Core/Src/freertos.c ****     {
+ 201:Core/Src/freertos.c ****       if (ledCount < 7)
+ 202:Core/Src/freertos.c ****       {
+ 203:Core/Src/freertos.c ****         ledCount++;
+ 141              		.loc 1 203 9 is_stmt 1 view .LVU24
+ 142              		.loc 1 203 17 is_stmt 0 view .LVU25
+ 143 005e 0134     		adds	r4, r4, #1
+ 144              	.LVL17:
+ 145              		.loc 1 203 17 view .LVU26
+ 146 0060 E4B2     		uxtb	r4, r4
+ 147              	.LVL18:
+ 204:Core/Src/freertos.c ****         ledMask = (1 << ledCount) - 1;  /* 前 N 个 LED 亮 */
+ 148              		.loc 1 204 9 is_stmt 1 view .LVU27
+ 149              		.loc 1 204 22 is_stmt 0 view .LVU28
+ 150 0062 0125     		movs	r5, #1
+ 151 0064 A540     		lsls	r5, r5, r4
+ 152              		.loc 1 204 35 view .LVU29
+ 153 0066 EDB2     		uxtb	r5, r5
+ 154              		.loc 1 204 17 view .LVU30
+ 155 0068 013D     		subs	r5, r5, #1
+ 156 006a EDB2     		uxtb	r5, r5
+ 157              	.LVL19:
+ 205:Core/Src/freertos.c ****         LED_SetLeds(ledMask);
+ 158              		.loc 1 205 9 is_stmt 1 view .LVU31
+ 159 006c 2846     		mov	r0, r5
+ 160 006e FFF7FEFF 		bl	LED_SetLeds
+ 161              	.LVL20:
+ 206:Core/Src/freertos.c ****         printf("K2: LED count=%d (mask=0x%02X)\r\n", ledCount, ledMask);
+ 162              		.loc 1 206 9 view .LVU32
+ 163 0072 2A46     		mov	r2, r5
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s 			page 8
+
+
+ 164 0074 2146     		mov	r1, r4
+ 165 0076 3148     		ldr	r0, .L20+28
+ 166 0078 FFF7FEFF 		bl	printf
+ 167              	.LVL21:
+ 168 007c 35E0     		b	.L5
+ 169              	.LVL22:
+ 170              	.L19:
+ 207:Core/Src/freertos.c ****       }
+ 208:Core/Src/freertos.c ****     }
+ 209:Core/Src/freertos.c **** 
+ 210:Core/Src/freertos.c ****     /* ---- K3: 亮灯个数减 1 (短按+长按连发) ---- */
+ 211:Core/Src/freertos.c ****     if (Key_IsShortPressed(KEY_K3) || Key_IsRepeat(KEY_K3))
+ 171              		.loc 1 211 39 is_stmt 0 discriminator 1 view .LVU33
+ 172 007e 0220     		movs	r0, #2
+ 173 0080 FFF7FEFF 		bl	Key_IsRepeat
+ 174              	.LVL23:
+ 175              		.loc 1 211 36 discriminator 1 view .LVU34
+ 176 0084 48B1     		cbz	r0, .L7
+ 177 0086 35E0     		b	.L6
+ 178              	.LVL24:
+ 179              	.L12:
+ 212:Core/Src/freertos.c ****     {
+ 213:Core/Src/freertos.c ****       if (ledCount > 0)
+ 214:Core/Src/freertos.c ****       {
+ 215:Core/Src/freertos.c ****         ledCount--;
+ 216:Core/Src/freertos.c ****         ledMask = (ledCount == 0) ? 0 : ((1 << ledCount) - 1);
+ 180              		.loc 1 216 17 discriminator 2 view .LVU35
+ 181 0088 2546     		mov	r5, r4
+ 182              	.L8:
+ 183              	.LVL25:
+ 217:Core/Src/freertos.c ****         LED_SetLeds(ledMask);
+ 184              		.loc 1 217 9 is_stmt 1 view .LVU36
+ 185 008a 2846     		mov	r0, r5
+ 186 008c FFF7FEFF 		bl	LED_SetLeds
+ 187              	.LVL26:
+ 218:Core/Src/freertos.c ****         printf("K3: LED count=%d (mask=0x%02X)\r\n", ledCount, ledMask);
+ 188              		.loc 1 218 9 view .LVU37
+ 189 0090 2A46     		mov	r2, r5
+ 190 0092 2146     		mov	r1, r4
+ 191 0094 2A48     		ldr	r0, .L20+32
+ 192 0096 FFF7FEFF 		bl	printf
+ 193              	.LVL27:
+ 194              	.L7:
+ 219:Core/Src/freertos.c ****       }
+ 220:Core/Src/freertos.c ****     }
+ 221:Core/Src/freertos.c **** 
+ 222:Core/Src/freertos.c ****     /* ---- K5: 翻转 L1 ---- */
+ 223:Core/Src/freertos.c ****     if (Key_IsShortPressed(KEY_K5))
+ 195              		.loc 1 223 5 view .LVU38
+ 196              		.loc 1 223 9 is_stmt 0 view .LVU39
+ 197 009a 0420     		movs	r0, #4
+ 198 009c FFF7FEFF 		bl	Key_IsShortPressed
+ 199              	.LVL28:
+ 200              		.loc 1 223 8 discriminator 1 view .LVU40
+ 201 00a0 0028     		cmp	r0, #0
+ 202 00a2 33D1     		bne	.L14
+ 203              	.L9:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s 			page 9
+
+
+ 224:Core/Src/freertos.c ****     {
+ 225:Core/Src/freertos.c ****       LED_Toggle(0);  /* L1 */
+ 226:Core/Src/freertos.c ****       ledMask = LED_GetLeds();
+ 227:Core/Src/freertos.c ****       printf("K5: Toggle L1 (mask=0x%02X)\r\n", ledMask);
+ 228:Core/Src/freertos.c ****     }
+ 229:Core/Src/freertos.c **** 
+ 230:Core/Src/freertos.c ****     /* ---- K6: 翻转 L2 ---- */
+ 231:Core/Src/freertos.c ****     if (Key_IsShortPressed(KEY_K6))
+ 204              		.loc 1 231 5 is_stmt 1 view .LVU41
+ 205              		.loc 1 231 9 is_stmt 0 view .LVU42
+ 206 00a4 0520     		movs	r0, #5
+ 207 00a6 FFF7FEFF 		bl	Key_IsShortPressed
+ 208              	.LVL29:
+ 209              		.loc 1 231 8 discriminator 1 view .LVU43
+ 210 00aa 40B1     		cbz	r0, .L10
+ 232:Core/Src/freertos.c ****     {
+ 233:Core/Src/freertos.c ****       LED_Toggle(1);  /* L2 */
+ 211              		.loc 1 233 7 is_stmt 1 view .LVU44
+ 212 00ac 0120     		movs	r0, #1
+ 213 00ae FFF7FEFF 		bl	LED_Toggle
+ 214              	.LVL30:
+ 234:Core/Src/freertos.c ****       ledMask = LED_GetLeds();
+ 215              		.loc 1 234 7 view .LVU45
+ 216              		.loc 1 234 17 is_stmt 0 view .LVU46
+ 217 00b2 FFF7FEFF 		bl	LED_GetLeds
+ 218              	.LVL31:
+ 219 00b6 0146     		mov	r1, r0
+ 220              	.LVL32:
+ 235:Core/Src/freertos.c ****       printf("K6: Toggle L2 (mask=0x%02X)\r\n", ledMask);
+ 221              		.loc 1 235 7 is_stmt 1 view .LVU47
+ 222 00b8 2248     		ldr	r0, .L20+36
+ 223 00ba FFF7FEFF 		bl	printf
+ 224              	.LVL33:
+ 225              	.L10:
+ 236:Core/Src/freertos.c ****     }
+ 237:Core/Src/freertos.c **** 
+ 238:Core/Src/freertos.c ****     osDelay(KEY_SCAN_INTERVAL_MS);  /* 10ms 扫描周期 */
+ 226              		.loc 1 238 5 view .LVU48
+ 227 00be 0A20     		movs	r0, #10
+ 228 00c0 FFF7FEFF 		bl	osDelay
+ 229              	.LVL34:
+ 175:Core/Src/freertos.c ****   {
+ 230              		.loc 1 175 3 view .LVU49
+ 231              	.L11:
+ 175:Core/Src/freertos.c ****   {
+ 232              		.loc 1 175 3 view .LVU50
+ 178:Core/Src/freertos.c **** 
+ 233              		.loc 1 178 5 view .LVU51
+ 234 00c4 FFF7FEFF 		bl	Key_Scan
+ 235              	.LVL35:
+ 181:Core/Src/freertos.c ****     {
+ 236              		.loc 1 181 5 view .LVU52
+ 181:Core/Src/freertos.c ****     {
+ 237              		.loc 1 181 9 is_stmt 0 view .LVU53
+ 238 00c8 0020     		movs	r0, #0
+ 239 00ca FFF7FEFF 		bl	Key_IsShortPressed
+ 240              	.LVL36:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s 			page 10
+
+
+ 181:Core/Src/freertos.c ****     {
+ 241              		.loc 1 181 8 discriminator 1 view .LVU54
+ 242 00ce 0028     		cmp	r0, #0
+ 243 00d0 AFD1     		bne	.L15
+ 244              	.LVL37:
+ 245              	.L2:
+ 190:Core/Src/freertos.c ****     {
+ 246              		.loc 1 190 5 is_stmt 1 view .LVU55
+ 190:Core/Src/freertos.c ****     {
+ 247              		.loc 1 190 9 is_stmt 0 view .LVU56
+ 248 00d2 0320     		movs	r0, #3
+ 249 00d4 FFF7FEFF 		bl	Key_IsShortPressed
+ 250              	.LVL38:
+ 190:Core/Src/freertos.c ****     {
+ 251              		.loc 1 190 8 discriminator 1 view .LVU57
+ 252 00d8 0028     		cmp	r0, #0
+ 253 00da B2D1     		bne	.L16
+ 254              	.LVL39:
+ 255              	.L3:
+ 199:Core/Src/freertos.c ****     {
+ 256              		.loc 1 199 5 is_stmt 1 view .LVU58
+ 199:Core/Src/freertos.c ****     {
+ 257              		.loc 1 199 9 is_stmt 0 view .LVU59
+ 258 00dc 0120     		movs	r0, #1
+ 259 00de FFF7FEFF 		bl	Key_IsShortPressed
+ 260              	.LVL40:
+ 199:Core/Src/freertos.c ****     {
+ 261              		.loc 1 199 8 discriminator 1 view .LVU60
+ 262 00e2 0028     		cmp	r0, #0
+ 263 00e4 B5D0     		beq	.L17
+ 264              	.L4:
+ 201:Core/Src/freertos.c ****       {
+ 265              		.loc 1 201 7 is_stmt 1 view .LVU61
+ 201:Core/Src/freertos.c ****       {
+ 266              		.loc 1 201 10 is_stmt 0 view .LVU62
+ 267 00e6 062C     		cmp	r4, #6
+ 268 00e8 B9D9     		bls	.L18
+ 269              	.L5:
+ 211:Core/Src/freertos.c ****     {
+ 270              		.loc 1 211 5 is_stmt 1 view .LVU63
+ 211:Core/Src/freertos.c ****     {
+ 271              		.loc 1 211 9 is_stmt 0 view .LVU64
+ 272 00ea 0220     		movs	r0, #2
+ 273 00ec FFF7FEFF 		bl	Key_IsShortPressed
+ 274              	.LVL41:
+ 211:Core/Src/freertos.c ****     {
+ 275              		.loc 1 211 8 discriminator 1 view .LVU65
+ 276 00f0 0028     		cmp	r0, #0
+ 277 00f2 C4D0     		beq	.L19
+ 278              	.L6:
+ 213:Core/Src/freertos.c ****       {
+ 279              		.loc 1 213 7 is_stmt 1 view .LVU66
+ 213:Core/Src/freertos.c ****       {
+ 280              		.loc 1 213 10 is_stmt 0 view .LVU67
+ 281 00f4 002C     		cmp	r4, #0
+ 282 00f6 D0D0     		beq	.L7
+ 215:Core/Src/freertos.c ****         ledMask = (ledCount == 0) ? 0 : ((1 << ledCount) - 1);
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s 			page 11
+
+
+ 283              		.loc 1 215 9 is_stmt 1 view .LVU68
+ 215:Core/Src/freertos.c ****         ledMask = (ledCount == 0) ? 0 : ((1 << ledCount) - 1);
+ 284              		.loc 1 215 17 is_stmt 0 view .LVU69
+ 285 00f8 013C     		subs	r4, r4, #1
+ 286              	.LVL42:
+ 216:Core/Src/freertos.c ****         LED_SetLeds(ledMask);
+ 287              		.loc 1 216 9 is_stmt 1 view .LVU70
+ 216:Core/Src/freertos.c ****         LED_SetLeds(ledMask);
+ 288              		.loc 1 216 17 is_stmt 0 view .LVU71
+ 289 00fa 14F0FF04 		ands	r4, r4, #255
+ 290              	.LVL43:
+ 216:Core/Src/freertos.c ****         LED_SetLeds(ledMask);
+ 291              		.loc 1 216 17 view .LVU72
+ 292 00fe C3D0     		beq	.L12
+ 216:Core/Src/freertos.c ****         LED_SetLeds(ledMask);
+ 293              		.loc 1 216 45 discriminator 1 view .LVU73
+ 294 0100 0125     		movs	r5, #1
+ 295 0102 A540     		lsls	r5, r5, r4
+ 216:Core/Src/freertos.c ****         LED_SetLeds(ledMask);
+ 296              		.loc 1 216 58 discriminator 1 view .LVU74
+ 297 0104 EDB2     		uxtb	r5, r5
+ 216:Core/Src/freertos.c ****         LED_SetLeds(ledMask);
+ 298              		.loc 1 216 17 discriminator 1 view .LVU75
+ 299 0106 013D     		subs	r5, r5, #1
+ 300 0108 EDB2     		uxtb	r5, r5
+ 301 010a BEE7     		b	.L8
+ 302              	.LVL44:
+ 303              	.L14:
+ 225:Core/Src/freertos.c ****       ledMask = LED_GetLeds();
+ 304              		.loc 1 225 7 is_stmt 1 view .LVU76
+ 305 010c 0020     		movs	r0, #0
+ 306 010e FFF7FEFF 		bl	LED_Toggle
+ 307              	.LVL45:
+ 226:Core/Src/freertos.c ****       printf("K5: Toggle L1 (mask=0x%02X)\r\n", ledMask);
+ 308              		.loc 1 226 7 view .LVU77
+ 226:Core/Src/freertos.c ****       printf("K5: Toggle L1 (mask=0x%02X)\r\n", ledMask);
+ 309              		.loc 1 226 17 is_stmt 0 view .LVU78
+ 310 0112 FFF7FEFF 		bl	LED_GetLeds
+ 311              	.LVL46:
+ 312 0116 0146     		mov	r1, r0
+ 313              	.LVL47:
+ 227:Core/Src/freertos.c ****     }
+ 314              		.loc 1 227 7 is_stmt 1 view .LVU79
+ 315 0118 0B48     		ldr	r0, .L20+40
+ 316 011a FFF7FEFF 		bl	printf
+ 317              	.LVL48:
+ 227:Core/Src/freertos.c ****     }
+ 318              		.loc 1 227 7 is_stmt 0 view .LVU80
+ 319 011e C1E7     		b	.L9
+ 320              	.L21:
+ 321              		.align	2
+ 322              	.L20:
+ 323 0120 00000000 		.word	keyConfigs
+ 324 0124 00000000 		.word	ledConfigs
+ 325 0128 00000000 		.word	g_uart1Drv
+ 326 012c 00000000 		.word	huart1
+ 327 0130 00000000 		.word	.LC0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s 			page 12
+
+
+ 328 0134 18000000 		.word	.LC1
+ 329 0138 2C000000 		.word	.LC2
+ 330 013c 40000000 		.word	.LC3
+ 331 0140 64000000 		.word	.LC4
+ 332 0144 A8000000 		.word	.LC6
+ 333 0148 88000000 		.word	.LC5
+ 334              		.cfi_endproc
+ 335              	.LFE247:
+ 337              		.section	.text.MX_FREERTOS_Init,"ax",%progbits
+ 338              		.align	1
+ 339              		.global	MX_FREERTOS_Init
+ 340              		.syntax unified
+ 341              		.thumb
+ 342              		.thumb_func
+ 344              	MX_FREERTOS_Init:
+ 345              	.LFB246:
+ 107:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
+ 346              		.loc 1 107 29 is_stmt 1 view -0
+ 347              		.cfi_startproc
+ 348              		@ args = 0, pretend = 0, frame = 0
+ 349              		@ frame_needed = 0, uses_anonymous_args = 0
+ 350 0000 08B5     		push	{r3, lr}
+ 351              	.LCFI1:
+ 352              		.cfi_def_cfa_offset 8
+ 353              		.cfi_offset 3, -8
+ 354              		.cfi_offset 14, -4
+ 130:Core/Src/freertos.c **** 
+ 355              		.loc 1 130 3 view .LVU82
+ 130:Core/Src/freertos.c **** 
+ 356              		.loc 1 130 22 is_stmt 0 view .LVU83
+ 357 0002 044A     		ldr	r2, .L24
+ 358 0004 0021     		movs	r1, #0
+ 359 0006 0448     		ldr	r0, .L24+4
+ 360 0008 FFF7FEFF 		bl	osThreadNew
+ 361              	.LVL49:
+ 130:Core/Src/freertos.c **** 
+ 362              		.loc 1 130 20 discriminator 1 view .LVU84
+ 363 000c 034B     		ldr	r3, .L24+8
+ 364 000e 1860     		str	r0, [r3]
+ 140:Core/Src/freertos.c **** 
+ 365              		.loc 1 140 1 view .LVU85
+ 366 0010 08BD     		pop	{r3, pc}
+ 367              	.L25:
+ 368 0012 00BF     		.align	2
+ 369              	.L24:
+ 370 0014 00000000 		.word	keyLedTask_attributes
+ 371 0018 00000000 		.word	StartKeyLedTask
+ 372 001c 00000000 		.word	keyLedTaskHandle
+ 373              		.cfi_endproc
+ 374              	.LFE246:
+ 376              		.global	keyLedTask_attributes
+ 377              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 378              		.align	2
+ 379              	.LC7:
+ 380 0000 6B65794C 		.ascii	"keyLedTask\000"
+ 380      65645461 
+ 380      736B00
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s 			page 13
+
+
+ 381              		.section	.rodata.keyLedTask_attributes,"a"
+ 382              		.align	2
+ 385              	keyLedTask_attributes:
+ 386 0000 00000000 		.word	.LC7
+ 387 0004 00000000 		.space	16
+ 387      00000000 
+ 387      00000000 
+ 387      00000000 
+ 388 0014 00080000 		.word	2048
+ 389 0018 18000000 		.word	24
+ 390 001c 00000000 		.space	8
+ 390      00000000 
+ 391              		.global	keyLedTaskHandle
+ 392              		.section	.bss.keyLedTaskHandle,"aw",%nobits
+ 393              		.align	2
+ 396              	keyLedTaskHandle:
+ 397 0000 00000000 		.space	4
+ 398              		.section	.rodata.ledConfigs,"a"
+ 399              		.align	2
+ 402              	ledConfigs:
+ 403 0000 00100240 		.word	1073876992
+ 404 0004 0001     		.short	256
+ 405 0006 00       		.byte	0
+ 406 0007 00       		.space	1
+ 407 0008 00100240 		.word	1073876992
+ 408 000c 0002     		.short	512
+ 409 000e 00       		.byte	0
+ 410 000f 00       		.space	1
+ 411 0010 00100240 		.word	1073876992
+ 412 0014 0004     		.short	1024
+ 413 0016 00       		.byte	0
+ 414 0017 00       		.space	1
+ 415 0018 00100240 		.word	1073876992
+ 416 001c 0008     		.short	2048
+ 417 001e 00       		.byte	0
+ 418 001f 00       		.space	1
+ 419 0020 00100240 		.word	1073876992
+ 420 0024 0010     		.short	4096
+ 421 0026 00       		.byte	0
+ 422 0027 00       		.space	1
+ 423 0028 00100240 		.word	1073876992
+ 424 002c 0020     		.short	8192
+ 425 002e 00       		.byte	0
+ 426 002f 00       		.space	1
+ 427 0030 00100240 		.word	1073876992
+ 428 0034 0040     		.short	16384
+ 429 0036 00       		.byte	0
+ 430 0037 00       		.space	1
+ 431              		.section	.rodata.keyConfigs,"a"
+ 432              		.align	2
+ 435              	keyConfigs:
+ 436 0000 00100240 		.word	1073876992
+ 437 0004 0200     		.short	2
+ 438 0006 00       		.byte	0
+ 439 0007 00       		.space	1
+ 440 0008 00100240 		.word	1073876992
+ 441 000c 0400     		.short	4
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s 			page 14
+
+
+ 442 000e 00       		.byte	0
+ 443 000f 00       		.space	1
+ 444 0010 00100240 		.word	1073876992
+ 445 0014 0800     		.short	8
+ 446 0016 00       		.byte	0
+ 447 0017 00       		.space	1
+ 448 0018 00100240 		.word	1073876992
+ 449 001c 1000     		.short	16
+ 450 001e 00       		.byte	0
+ 451 001f 00       		.space	1
+ 452 0020 00100240 		.word	1073876992
+ 453 0024 2000     		.short	32
+ 454 0026 01       		.byte	1
+ 455 0027 00       		.space	1
+ 456 0028 00100240 		.word	1073876992
+ 457 002c 4000     		.short	64
+ 458 002e 01       		.byte	1
+ 459 002f 00       		.space	1
+ 460              		.section	.bss.g_uart1Drv,"aw",%nobits
+ 461              		.align	2
+ 464              	g_uart1Drv:
+ 465 0000 00000000 		.space	536
+ 465      00000000 
+ 465      00000000 
+ 465      00000000 
+ 465      00000000 
+ 466              		.text
+ 467              	.Letext0:
+ 468              		.file 2 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_default_t
+ 469              		.file 3 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h"
+ 470              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 471              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 472              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 473              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
+ 474              		.file 8 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 475              		.file 9 "../Bsp/Key/key.h"
+ 476              		.file 10 "../Bsp/LED/led.h"
+ 477              		.file 11 "../Bsp/UartDrv/uart_drv.h"
+ 478              		.file 12 "Core/Inc/usart.h"
+ 479              		.file 13 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/stdio.h"
+ 480              		.file 14 "<built-in>"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s 			page 15
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 freertos.c
+C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s:21     .rodata.StartKeyLedTask.str1.4:00000000 $d
+C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s:43     .text.StartKeyLedTask:00000000 $t
+C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s:49     .text.StartKeyLedTask:00000000 StartKeyLedTask
+C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s:323    .text.StartKeyLedTask:00000120 $d
+C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s:435    .rodata.keyConfigs:00000000 keyConfigs
+C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s:402    .rodata.ledConfigs:00000000 ledConfigs
+C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s:464    .bss.g_uart1Drv:00000000 g_uart1Drv
+C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s:338    .text.MX_FREERTOS_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s:344    .text.MX_FREERTOS_Init:00000000 MX_FREERTOS_Init
+C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s:370    .text.MX_FREERTOS_Init:00000014 $d
+C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s:385    .rodata.keyLedTask_attributes:00000000 keyLedTask_attributes
+C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s:396    .bss.keyLedTaskHandle:00000000 keyLedTaskHandle
+C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s:378    .rodata.str1.4:00000000 $d
+C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s:382    .rodata.keyLedTask_attributes:00000000 $d
+C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s:393    .bss.keyLedTaskHandle:00000000 $d
+C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s:399    .rodata.ledConfigs:00000000 $d
+C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s:432    .rodata.keyConfigs:00000000 $d
+C:\Users\fish\AppData\Local\Temp\cc37tFEJ.s:461    .bss.g_uart1Drv:00000000 $d
+
+UNDEFINED SYMBOLS
+Key_Init
+LED_Init
+LED_SetLeds
+UartDrv_Init
+UartDrv_SetDebugPort
+puts
+Key_IsRepeat
+printf
+Key_IsShortPressed
+LED_Toggle
+LED_GetLeds
+osDelay
+Key_Scan
+huart1
+osThreadNew

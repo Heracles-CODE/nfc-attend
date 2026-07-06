@@ -1,0 +1,770 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"event_groups.c"
+  16              		.text
+  17              		.section	.text.prvTestWaitCondition,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  23              	prvTestWaitCondition:
+  24              		@ args = 0, pretend = 0, frame = 0
+  25              		@ frame_needed = 0, uses_anonymous_args = 0
+  26              		@ link register save eliminated.
+  27 0000 1AB9     		cbnz	r2, .L2
+  28 0002 0842     		tst	r0, r1
+  29 0004 05D1     		bne	.L4
+  30 0006 1046     		mov	r0, r2
+  31 0008 7047     		bx	lr
+  32              	.L2:
+  33 000a 8143     		bics	r1, r1, r0
+  34 000c 03D0     		beq	.L5
+  35 000e 0020     		movs	r0, #0
+  36 0010 7047     		bx	lr
+  37              	.L4:
+  38 0012 0120     		movs	r0, #1
+  39 0014 7047     		bx	lr
+  40              	.L5:
+  41 0016 0120     		movs	r0, #1
+  42 0018 7047     		bx	lr
+  44              		.section	.text.xEventGroupCreateStatic,"ax",%progbits
+  45              		.align	1
+  46              		.global	xEventGroupCreateStatic
+  47              		.syntax unified
+  48              		.thumb
+  49              		.thumb_func
+  51              	xEventGroupCreateStatic:
+  52              		@ args = 0, pretend = 0, frame = 8
+  53              		@ frame_needed = 0, uses_anonymous_args = 0
+  54 0000 80B1     		cbz	r0, .L13
+  55 0002 10B5     		push	{r4, lr}
+  56 0004 82B0     		sub	sp, sp, #8
+  57 0006 0446     		mov	r4, r0
+  58 0008 2023     		movs	r3, #32
+  59 000a 0193     		str	r3, [sp, #4]
+  60 000c 019B     		ldr	r3, [sp, #4]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s 			page 2
+
+
+  61 000e 202B     		cmp	r3, #32
+  62 0010 11D0     		beq	.L9
+  63              		.syntax unified
+  64              	@ 195 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+  65 0012 4FF05003 			mov r3, #80												
+  66 0016 83F31188 		msr basepri, r3											
+  67 001a BFF36F8F 		isb														
+  68 001e BFF34F8F 		dsb														
+  69              	
+  70              	@ 0 "" 2
+  71              		.thumb
+  72              		.syntax unified
+  73              	.L10:
+  74 0022 FEE7     		b	.L10
+  75              	.L13:
+  76              		.syntax unified
+  77              	@ 195 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+  78 0024 4FF05003 			mov r3, #80												
+  79 0028 83F31188 		msr basepri, r3											
+  80 002c BFF36F8F 		isb														
+  81 0030 BFF34F8F 		dsb														
+  82              	
+  83              	@ 0 "" 2
+  84              		.thumb
+  85              		.syntax unified
+  86              	.L8:
+  87 0034 FEE7     		b	.L8
+  88              	.L9:
+  89 0036 0023     		movs	r3, #0
+  90 0038 40F8043B 		str	r3, [r0], #4
+  91 003c FFF7FEFF 		bl	vListInitialise
+  92 0040 0123     		movs	r3, #1
+  93 0042 2377     		strb	r3, [r4, #28]
+  94 0044 2046     		mov	r0, r4
+  95 0046 02B0     		add	sp, sp, #8
+  96              		@ sp needed
+  97 0048 10BD     		pop	{r4, pc}
+  99              		.section	.text.xEventGroupCreate,"ax",%progbits
+ 100              		.align	1
+ 101              		.global	xEventGroupCreate
+ 102              		.syntax unified
+ 103              		.thumb
+ 104              		.thumb_func
+ 106              	xEventGroupCreate:
+ 107              		@ args = 0, pretend = 0, frame = 0
+ 108              		@ frame_needed = 0, uses_anonymous_args = 0
+ 109 0000 38B5     		push	{r3, r4, r5, lr}
+ 110 0002 2020     		movs	r0, #32
+ 111 0004 FFF7FEFF 		bl	pvPortMalloc
+ 112 0008 0446     		mov	r4, r0
+ 113 000a 28B1     		cbz	r0, .L14
+ 114 000c 0025     		movs	r5, #0
+ 115 000e 40F8045B 		str	r5, [r0], #4
+ 116 0012 FFF7FEFF 		bl	vListInitialise
+ 117 0016 2577     		strb	r5, [r4, #28]
+ 118              	.L14:
+ 119 0018 2046     		mov	r0, r4
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s 			page 3
+
+
+ 120 001a 38BD     		pop	{r3, r4, r5, pc}
+ 122              		.section	.text.xEventGroupWaitBits,"ax",%progbits
+ 123              		.align	1
+ 124              		.global	xEventGroupWaitBits
+ 125              		.syntax unified
+ 126              		.thumb
+ 127              		.thumb_func
+ 129              	xEventGroupWaitBits:
+ 130              		@ args = 4, pretend = 0, frame = 0
+ 131              		@ frame_needed = 0, uses_anonymous_args = 0
+ 132 0000 88B1     		cbz	r0, .L38
+ 133 0002 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 134 0006 0C46     		mov	r4, r1
+ 135 0008 1646     		mov	r6, r2
+ 136 000a 1D46     		mov	r5, r3
+ 137 000c 0746     		mov	r7, r0
+ 138 000e B1F1807F 		cmp	r1, #16777216
+ 139 0012 11D3     		bcc	.L20
+ 140              		.syntax unified
+ 141              	@ 195 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 142 0014 4FF05003 			mov r3, #80												
+ 143 0018 83F31188 		msr basepri, r3											
+ 144 001c BFF36F8F 		isb														
+ 145 0020 BFF34F8F 		dsb														
+ 146              	
+ 147              	@ 0 "" 2
+ 148              		.thumb
+ 149              		.syntax unified
+ 150              	.L21:
+ 151 0024 FEE7     		b	.L21
+ 152              	.L38:
+ 153              		.syntax unified
+ 154              	@ 195 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 155 0026 4FF05003 			mov r3, #80												
+ 156 002a 83F31188 		msr basepri, r3											
+ 157 002e BFF36F8F 		isb														
+ 158 0032 BFF34F8F 		dsb														
+ 159              	
+ 160              	@ 0 "" 2
+ 161              		.thumb
+ 162              		.syntax unified
+ 163              	.L19:
+ 164 0036 FEE7     		b	.L19
+ 165              	.L20:
+ 166 0038 41B9     		cbnz	r1, .L22
+ 167              		.syntax unified
+ 168              	@ 195 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 169 003a 4FF05003 			mov r3, #80												
+ 170 003e 83F31188 		msr basepri, r3											
+ 171 0042 BFF36F8F 		isb														
+ 172 0046 BFF34F8F 		dsb														
+ 173              	
+ 174              	@ 0 "" 2
+ 175              		.thumb
+ 176              		.syntax unified
+ 177              	.L23:
+ 178 004a FEE7     		b	.L23
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s 			page 4
+
+
+ 179              	.L22:
+ 180 004c FFF7FEFF 		bl	xTaskGetSchedulerState
+ 181 0050 50B9     		cbnz	r0, .L24
+ 182 0052 069B     		ldr	r3, [sp, #24]
+ 183 0054 43B1     		cbz	r3, .L24
+ 184              		.syntax unified
+ 185              	@ 195 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 186 0056 4FF05003 			mov r3, #80												
+ 187 005a 83F31188 		msr basepri, r3											
+ 188 005e BFF36F8F 		isb														
+ 189 0062 BFF34F8F 		dsb														
+ 190              	
+ 191              	@ 0 "" 2
+ 192              		.thumb
+ 193              		.syntax unified
+ 194              	.L25:
+ 195 0066 FEE7     		b	.L25
+ 196              	.L24:
+ 197 0068 FFF7FEFF 		bl	vTaskSuspendAll
+ 198 006c D7F80080 		ldr	r8, [r7]
+ 199 0070 2A46     		mov	r2, r5
+ 200 0072 2146     		mov	r1, r4
+ 201 0074 4046     		mov	r0, r8
+ 202 0076 FFF7FEFF 		bl	prvTestWaitCondition
+ 203 007a F8B1     		cbz	r0, .L26
+ 204 007c 8EB3     		cbz	r6, .L34
+ 205 007e 28EA0403 		bic	r3, r8, r4
+ 206 0082 3B60     		str	r3, [r7]
+ 207 0084 0023     		movs	r3, #0
+ 208 0086 0693     		str	r3, [sp, #24]
+ 209              	.L27:
+ 210 0088 FFF7FEFF 		bl	xTaskResumeAll
+ 211 008c 069B     		ldr	r3, [sp, #24]
+ 212 008e 93B1     		cbz	r3, .L17
+ 213 0090 48B9     		cbnz	r0, .L31
+ 214 0092 4FF0E023 		mov	r3, #-536813568
+ 215 0096 4FF08052 		mov	r2, #268435456
+ 216 009a C3F8042D 		str	r2, [r3, #3332]
+ 217              		.syntax unified
+ 218              	@ 403 "Middlewares/Third_Party/FreeRTOS/Source/event_groups.c" 1
+ 219 009e BFF34F8F 		dsb
+ 220              	@ 0 "" 2
+ 221              	@ 403 "Middlewares/Third_Party/FreeRTOS/Source/event_groups.c" 1
+ 222 00a2 BFF36F8F 		isb
+ 223              	@ 0 "" 2
+ 224              		.thumb
+ 225              		.syntax unified
+ 226              	.L31:
+ 227 00a6 FFF7FEFF 		bl	uxTaskResetEventItemValue
+ 228 00aa 8046     		mov	r8, r0
+ 229 00ac 10F0007F 		tst	r0, #33554432
+ 230 00b0 1AD0     		beq	.L39
+ 231              	.L32:
+ 232 00b2 28F07F48 		bic	r8, r8, #-16777216
+ 233              	.L17:
+ 234 00b6 4046     		mov	r0, r8
+ 235 00b8 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s 			page 5
+
+
+ 236              	.L26:
+ 237 00bc 069B     		ldr	r3, [sp, #24]
+ 238 00be 002B     		cmp	r3, #0
+ 239 00c0 E2D0     		beq	.L27
+ 240 00c2 5EB9     		cbnz	r6, .L35
+ 241 00c4 0021     		movs	r1, #0
+ 242              	.L28:
+ 243 00c6 0DB1     		cbz	r5, .L29
+ 244 00c8 41F08061 		orr	r1, r1, #67108864
+ 245              	.L29:
+ 246 00cc 069A     		ldr	r2, [sp, #24]
+ 247 00ce 2143     		orrs	r1, r1, r4
+ 248 00d0 381D     		adds	r0, r7, #4
+ 249 00d2 FFF7FEFF 		bl	vTaskPlaceOnUnorderedEventList
+ 250 00d6 4FF00008 		mov	r8, #0
+ 251 00da D5E7     		b	.L27
+ 252              	.L35:
+ 253 00dc 4FF08071 		mov	r1, #16777216
+ 254 00e0 F1E7     		b	.L28
+ 255              	.L34:
+ 256 00e2 0023     		movs	r3, #0
+ 257 00e4 0693     		str	r3, [sp, #24]
+ 258 00e6 CFE7     		b	.L27
+ 259              	.L39:
+ 260 00e8 FFF7FEFF 		bl	vPortEnterCritical
+ 261 00ec D7F80080 		ldr	r8, [r7]
+ 262 00f0 2A46     		mov	r2, r5
+ 263 00f2 2146     		mov	r1, r4
+ 264 00f4 4046     		mov	r0, r8
+ 265 00f6 FFF7FEFF 		bl	prvTestWaitCondition
+ 266 00fa 18B1     		cbz	r0, .L33
+ 267 00fc 16B1     		cbz	r6, .L33
+ 268 00fe 28EA0404 		bic	r4, r8, r4
+ 269 0102 3C60     		str	r4, [r7]
+ 270              	.L33:
+ 271 0104 FFF7FEFF 		bl	vPortExitCritical
+ 272 0108 D3E7     		b	.L32
+ 274              		.section	.text.xEventGroupClearBits,"ax",%progbits
+ 275              		.align	1
+ 276              		.global	xEventGroupClearBits
+ 277              		.syntax unified
+ 278              		.thumb
+ 279              		.thumb_func
+ 281              	xEventGroupClearBits:
+ 282              		@ args = 0, pretend = 0, frame = 0
+ 283              		@ frame_needed = 0, uses_anonymous_args = 0
+ 284 0000 70B1     		cbz	r0, .L47
+ 285 0002 70B5     		push	{r4, r5, r6, lr}
+ 286 0004 0C46     		mov	r4, r1
+ 287 0006 0546     		mov	r5, r0
+ 288 0008 B1F1807F 		cmp	r1, #16777216
+ 289 000c 11D3     		bcc	.L43
+ 290              		.syntax unified
+ 291              	@ 195 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 292 000e 4FF05003 			mov r3, #80												
+ 293 0012 83F31188 		msr basepri, r3											
+ 294 0016 BFF36F8F 		isb														
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s 			page 6
+
+
+ 295 001a BFF34F8F 		dsb														
+ 296              	
+ 297              	@ 0 "" 2
+ 298              		.thumb
+ 299              		.syntax unified
+ 300              	.L44:
+ 301 001e FEE7     		b	.L44
+ 302              	.L47:
+ 303              		.syntax unified
+ 304              	@ 195 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 305 0020 4FF05003 			mov r3, #80												
+ 306 0024 83F31188 		msr basepri, r3											
+ 307 0028 BFF36F8F 		isb														
+ 308 002c BFF34F8F 		dsb														
+ 309              	
+ 310              	@ 0 "" 2
+ 311              		.thumb
+ 312              		.syntax unified
+ 313              	.L42:
+ 314 0030 FEE7     		b	.L42
+ 315              	.L43:
+ 316 0032 FFF7FEFF 		bl	vPortEnterCritical
+ 317 0036 2E68     		ldr	r6, [r5]
+ 318 0038 26EA0404 		bic	r4, r6, r4
+ 319 003c 2C60     		str	r4, [r5]
+ 320 003e FFF7FEFF 		bl	vPortExitCritical
+ 321 0042 3046     		mov	r0, r6
+ 322 0044 70BD     		pop	{r4, r5, r6, pc}
+ 324              		.section	.text.vEventGroupClearBitsCallback,"ax",%progbits
+ 325              		.align	1
+ 326              		.global	vEventGroupClearBitsCallback
+ 327              		.syntax unified
+ 328              		.thumb
+ 329              		.thumb_func
+ 331              	vEventGroupClearBitsCallback:
+ 332              		@ args = 0, pretend = 0, frame = 0
+ 333              		@ frame_needed = 0, uses_anonymous_args = 0
+ 334 0000 08B5     		push	{r3, lr}
+ 335 0002 FFF7FEFF 		bl	xEventGroupClearBits
+ 336 0006 08BD     		pop	{r3, pc}
+ 338              		.section	.text.xEventGroupClearBitsFromISR,"ax",%progbits
+ 339              		.align	1
+ 340              		.global	xEventGroupClearBitsFromISR
+ 341              		.syntax unified
+ 342              		.thumb
+ 343              		.thumb_func
+ 345              	xEventGroupClearBitsFromISR:
+ 346              		@ args = 0, pretend = 0, frame = 0
+ 347              		@ frame_needed = 0, uses_anonymous_args = 0
+ 348 0000 08B5     		push	{r3, lr}
+ 349 0002 0A46     		mov	r2, r1
+ 350 0004 0023     		movs	r3, #0
+ 351 0006 0146     		mov	r1, r0
+ 352 0008 0148     		ldr	r0, .L52
+ 353 000a FFF7FEFF 		bl	xTimerPendFunctionCallFromISR
+ 354 000e 08BD     		pop	{r3, pc}
+ 355              	.L53:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s 			page 7
+
+
+ 356              		.align	2
+ 357              	.L52:
+ 358 0010 00000000 		.word	vEventGroupClearBitsCallback
+ 360              		.section	.text.xEventGroupGetBitsFromISR,"ax",%progbits
+ 361              		.align	1
+ 362              		.global	xEventGroupGetBitsFromISR
+ 363              		.syntax unified
+ 364              		.thumb
+ 365              		.thumb_func
+ 367              	xEventGroupGetBitsFromISR:
+ 368              		@ args = 0, pretend = 0, frame = 0
+ 369              		@ frame_needed = 0, uses_anonymous_args = 0
+ 370              		@ link register save eliminated.
+ 371              		.syntax unified
+ 372              	@ 211 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 373 0000 EFF31183 			mrs r3, basepri											
+ 374 0004 4FF05002 		mov r2, #80												
+ 375 0008 82F31188 		msr basepri, r2											
+ 376 000c BFF36F8F 		isb														
+ 377 0010 BFF34F8F 		dsb														
+ 378              	
+ 379              	@ 0 "" 2
+ 380              		.thumb
+ 381              		.syntax unified
+ 382 0014 0068     		ldr	r0, [r0]
+ 383              		.syntax unified
+ 384              	@ 229 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 385 0016 83F31188 			msr basepri, r3	
+ 386              	@ 0 "" 2
+ 387              		.thumb
+ 388              		.syntax unified
+ 389 001a 7047     		bx	lr
+ 391              		.section	.text.xEventGroupSetBits,"ax",%progbits
+ 392              		.align	1
+ 393              		.global	xEventGroupSetBits
+ 394              		.syntax unified
+ 395              		.thumb
+ 396              		.thumb_func
+ 398              	xEventGroupSetBits:
+ 399              		@ args = 0, pretend = 0, frame = 0
+ 400              		@ frame_needed = 0, uses_anonymous_args = 0
+ 401 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 402 0002 68B1     		cbz	r0, .L67
+ 403 0004 0D46     		mov	r5, r1
+ 404 0006 0446     		mov	r4, r0
+ 405 0008 B1F1807F 		cmp	r1, #16777216
+ 406 000c 11D3     		bcc	.L58
+ 407              		.syntax unified
+ 408              	@ 195 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 409 000e 4FF05003 			mov r3, #80												
+ 410 0012 83F31188 		msr basepri, r3											
+ 411 0016 BFF36F8F 		isb														
+ 412 001a BFF34F8F 		dsb														
+ 413              	
+ 414              	@ 0 "" 2
+ 415              		.thumb
+ 416              		.syntax unified
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s 			page 8
+
+
+ 417              	.L59:
+ 418 001e FEE7     		b	.L59
+ 419              	.L67:
+ 420              		.syntax unified
+ 421              	@ 195 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 422 0020 4FF05003 			mov r3, #80												
+ 423 0024 83F31188 		msr basepri, r3											
+ 424 0028 BFF36F8F 		isb														
+ 425 002c BFF34F8F 		dsb														
+ 426              	
+ 427              	@ 0 "" 2
+ 428              		.thumb
+ 429              		.syntax unified
+ 430              	.L57:
+ 431 0030 FEE7     		b	.L57
+ 432              	.L58:
+ 433 0032 00F10C06 		add	r6, r0, #12
+ 434 0036 FFF7FEFF 		bl	vTaskSuspendAll
+ 435 003a 2069     		ldr	r0, [r4, #16]
+ 436 003c 2368     		ldr	r3, [r4]
+ 437 003e 2B43     		orrs	r3, r3, r5
+ 438 0040 2360     		str	r3, [r4]
+ 439 0042 0027     		movs	r7, #0
+ 440 0044 0AE0     		b	.L60
+ 441              	.L61:
+ 442 0046 2168     		ldr	r1, [r4]
+ 443 0048 32EA0101 		bics	r1, r2, r1
+ 444 004c 05D1     		bne	.L63
+ 445 004e 11E0     		b	.L62
+ 446              	.L64:
+ 447 0050 2168     		ldr	r1, [r4]
+ 448 0052 41F00071 		orr	r1, r1, #33554432
+ 449 0056 FFF7FEFF 		bl	vTaskRemoveFromUnorderedEventList
+ 450              	.L63:
+ 451 005a 2846     		mov	r0, r5
+ 452              	.L60:
+ 453 005c B042     		cmp	r0, r6
+ 454 005e 0ED0     		beq	.L68
+ 455 0060 4568     		ldr	r5, [r0, #4]
+ 456 0062 0368     		ldr	r3, [r0]
+ 457 0064 23F07F42 		bic	r2, r3, #-16777216
+ 458 0068 13F0806F 		tst	r3, #67108864
+ 459 006c EBD1     		bne	.L61
+ 460 006e 2168     		ldr	r1, [r4]
+ 461 0070 1142     		tst	r1, r2
+ 462 0072 F2D0     		beq	.L63
+ 463              	.L62:
+ 464 0074 13F0807F 		tst	r3, #16777216
+ 465 0078 EAD0     		beq	.L64
+ 466 007a 1743     		orrs	r7, r7, r2
+ 467 007c E8E7     		b	.L64
+ 468              	.L68:
+ 469 007e 2368     		ldr	r3, [r4]
+ 470 0080 23EA0703 		bic	r3, r3, r7
+ 471 0084 2360     		str	r3, [r4]
+ 472 0086 FFF7FEFF 		bl	xTaskResumeAll
+ 473 008a 2068     		ldr	r0, [r4]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s 			page 9
+
+
+ 474 008c F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 476              		.section	.text.xEventGroupSync,"ax",%progbits
+ 477              		.align	1
+ 478              		.global	xEventGroupSync
+ 479              		.syntax unified
+ 480              		.thumb
+ 481              		.thumb_func
+ 483              	xEventGroupSync:
+ 484              		@ args = 0, pretend = 0, frame = 0
+ 485              		@ frame_needed = 0, uses_anonymous_args = 0
+ 486 0000 B2F1807F 		cmp	r2, #16777216
+ 487 0004 08D3     		bcc	.L70
+ 488              		.syntax unified
+ 489              	@ 195 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 490 0006 4FF05003 			mov r3, #80												
+ 491 000a 83F31188 		msr basepri, r3											
+ 492 000e BFF36F8F 		isb														
+ 493 0012 BFF34F8F 		dsb														
+ 494              	
+ 495              	@ 0 "" 2
+ 496              		.thumb
+ 497              		.syntax unified
+ 498              	.L71:
+ 499 0016 FEE7     		b	.L71
+ 500              	.L70:
+ 501 0018 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 502 001c 0746     		mov	r7, r0
+ 503 001e 0D46     		mov	r5, r1
+ 504 0020 1446     		mov	r4, r2
+ 505 0022 1E46     		mov	r6, r3
+ 506 0024 42B9     		cbnz	r2, .L72
+ 507              		.syntax unified
+ 508              	@ 195 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 509 0026 4FF05003 			mov r3, #80												
+ 510 002a 83F31188 		msr basepri, r3											
+ 511 002e BFF36F8F 		isb														
+ 512 0032 BFF34F8F 		dsb														
+ 513              	
+ 514              	@ 0 "" 2
+ 515              		.thumb
+ 516              		.syntax unified
+ 517              	.L73:
+ 518 0036 FEE7     		b	.L73
+ 519              	.L72:
+ 520 0038 FFF7FEFF 		bl	xTaskGetSchedulerState
+ 521 003c 48B9     		cbnz	r0, .L74
+ 522 003e 46B1     		cbz	r6, .L74
+ 523              		.syntax unified
+ 524              	@ 195 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 525 0040 4FF05003 			mov r3, #80												
+ 526 0044 83F31188 		msr basepri, r3											
+ 527 0048 BFF36F8F 		isb														
+ 528 004c BFF34F8F 		dsb														
+ 529              	
+ 530              	@ 0 "" 2
+ 531              		.thumb
+ 532              		.syntax unified
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s 			page 10
+
+
+ 533              	.L75:
+ 534 0050 FEE7     		b	.L75
+ 535              	.L74:
+ 536 0052 FFF7FEFF 		bl	vTaskSuspendAll
+ 537 0056 D7F80080 		ldr	r8, [r7]
+ 538 005a 2946     		mov	r1, r5
+ 539 005c 3846     		mov	r0, r7
+ 540 005e FFF7FEFF 		bl	xEventGroupSetBits
+ 541 0062 48EA0505 		orr	r5, r8, r5
+ 542 0066 34EA0503 		bics	r3, r4, r5
+ 543 006a 1AD0     		beq	.L85
+ 544 006c FEB9     		cbnz	r6, .L86
+ 545 006e 3D68     		ldr	r5, [r7]
+ 546              	.L77:
+ 547 0070 FFF7FEFF 		bl	xTaskResumeAll
+ 548 0074 96B1     		cbz	r6, .L69
+ 549 0076 48B9     		cbnz	r0, .L80
+ 550 0078 4FF0E023 		mov	r3, #-536813568
+ 551 007c 4FF08052 		mov	r2, #268435456
+ 552 0080 C3F8042D 		str	r2, [r3, #3332]
+ 553              		.syntax unified
+ 554              	@ 255 "Middlewares/Third_Party/FreeRTOS/Source/event_groups.c" 1
+ 555 0084 BFF34F8F 		dsb
+ 556              	@ 0 "" 2
+ 557              	@ 255 "Middlewares/Third_Party/FreeRTOS/Source/event_groups.c" 1
+ 558 0088 BFF36F8F 		isb
+ 559              	@ 0 "" 2
+ 560              		.thumb
+ 561              		.syntax unified
+ 562              	.L80:
+ 563 008c FFF7FEFF 		bl	uxTaskResetEventItemValue
+ 564 0090 0546     		mov	r5, r0
+ 565 0092 10F0007F 		tst	r0, #33554432
+ 566 0096 12D0     		beq	.L87
+ 567              	.L81:
+ 568 0098 25F07F45 		bic	r5, r5, #-16777216
+ 569              	.L69:
+ 570 009c 2846     		mov	r0, r5
+ 571 009e BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 572              	.L85:
+ 573 00a2 3B68     		ldr	r3, [r7]
+ 574 00a4 23EA0403 		bic	r3, r3, r4
+ 575 00a8 3B60     		str	r3, [r7]
+ 576 00aa 0026     		movs	r6, #0
+ 577 00ac E0E7     		b	.L77
+ 578              	.L86:
+ 579 00ae 3246     		mov	r2, r6
+ 580 00b0 44F0A061 		orr	r1, r4, #83886080
+ 581 00b4 381D     		adds	r0, r7, #4
+ 582 00b6 FFF7FEFF 		bl	vTaskPlaceOnUnorderedEventList
+ 583 00ba 0025     		movs	r5, #0
+ 584 00bc D8E7     		b	.L77
+ 585              	.L87:
+ 586 00be FFF7FEFF 		bl	vPortEnterCritical
+ 587 00c2 3D68     		ldr	r5, [r7]
+ 588 00c4 34EA0503 		bics	r3, r4, r5
+ 589 00c8 02D0     		beq	.L88
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s 			page 11
+
+
+ 590              	.L82:
+ 591 00ca FFF7FEFF 		bl	vPortExitCritical
+ 592 00ce E3E7     		b	.L81
+ 593              	.L88:
+ 594 00d0 25EA0404 		bic	r4, r5, r4
+ 595 00d4 3C60     		str	r4, [r7]
+ 596 00d6 F8E7     		b	.L82
+ 598              		.section	.text.vEventGroupSetBitsCallback,"ax",%progbits
+ 599              		.align	1
+ 600              		.global	vEventGroupSetBitsCallback
+ 601              		.syntax unified
+ 602              		.thumb
+ 603              		.thumb_func
+ 605              	vEventGroupSetBitsCallback:
+ 606              		@ args = 0, pretend = 0, frame = 0
+ 607              		@ frame_needed = 0, uses_anonymous_args = 0
+ 608 0000 08B5     		push	{r3, lr}
+ 609 0002 FFF7FEFF 		bl	xEventGroupSetBits
+ 610 0006 08BD     		pop	{r3, pc}
+ 612              		.section	.text.vEventGroupDelete,"ax",%progbits
+ 613              		.align	1
+ 614              		.global	vEventGroupDelete
+ 615              		.syntax unified
+ 616              		.thumb
+ 617              		.thumb_func
+ 619              	vEventGroupDelete:
+ 620              		@ args = 0, pretend = 0, frame = 0
+ 621              		@ frame_needed = 0, uses_anonymous_args = 0
+ 622 0000 10B5     		push	{r4, lr}
+ 623 0002 0446     		mov	r4, r0
+ 624 0004 FFF7FEFF 		bl	vTaskSuspendAll
+ 625              	.L92:
+ 626 0008 6368     		ldr	r3, [r4, #4]
+ 627 000a 93B1     		cbz	r3, .L98
+ 628 000c 2069     		ldr	r0, [r4, #16]
+ 629 000e 04F10C03 		add	r3, r4, #12
+ 630 0012 9842     		cmp	r0, r3
+ 631 0014 04D0     		beq	.L99
+ 632 0016 4FF00071 		mov	r1, #33554432
+ 633 001a FFF7FEFF 		bl	vTaskRemoveFromUnorderedEventList
+ 634 001e F3E7     		b	.L92
+ 635              	.L99:
+ 636              		.syntax unified
+ 637              	@ 195 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h" 1
+ 638 0020 4FF05003 			mov r3, #80												
+ 639 0024 83F31188 		msr basepri, r3											
+ 640 0028 BFF36F8F 		isb														
+ 641 002c BFF34F8F 		dsb														
+ 642              	
+ 643              	@ 0 "" 2
+ 644              		.thumb
+ 645              		.syntax unified
+ 646              	.L94:
+ 647 0030 FEE7     		b	.L94
+ 648              	.L98:
+ 649 0032 237F     		ldrb	r3, [r4, #28]	@ zero_extendqisi2
+ 650 0034 13B1     		cbz	r3, .L100
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s 			page 12
+
+
+ 651              	.L96:
+ 652 0036 FFF7FEFF 		bl	xTaskResumeAll
+ 653 003a 10BD     		pop	{r4, pc}
+ 654              	.L100:
+ 655 003c 2046     		mov	r0, r4
+ 656 003e FFF7FEFF 		bl	vPortFree
+ 657 0042 F8E7     		b	.L96
+ 659              		.section	.text.xEventGroupSetBitsFromISR,"ax",%progbits
+ 660              		.align	1
+ 661              		.global	xEventGroupSetBitsFromISR
+ 662              		.syntax unified
+ 663              		.thumb
+ 664              		.thumb_func
+ 666              	xEventGroupSetBitsFromISR:
+ 667              		@ args = 0, pretend = 0, frame = 0
+ 668              		@ frame_needed = 0, uses_anonymous_args = 0
+ 669 0000 08B5     		push	{r3, lr}
+ 670 0002 1346     		mov	r3, r2
+ 671 0004 0A46     		mov	r2, r1
+ 672 0006 0146     		mov	r1, r0
+ 673 0008 0148     		ldr	r0, .L103
+ 674 000a FFF7FEFF 		bl	xTimerPendFunctionCallFromISR
+ 675 000e 08BD     		pop	{r3, pc}
+ 676              	.L104:
+ 677              		.align	2
+ 678              	.L103:
+ 679 0010 00000000 		.word	vEventGroupSetBitsCallback
+ 681              		.section	.text.uxEventGroupGetNumber,"ax",%progbits
+ 682              		.align	1
+ 683              		.global	uxEventGroupGetNumber
+ 684              		.syntax unified
+ 685              		.thumb
+ 686              		.thumb_func
+ 688              	uxEventGroupGetNumber:
+ 689              		@ args = 0, pretend = 0, frame = 0
+ 690              		@ frame_needed = 0, uses_anonymous_args = 0
+ 691              		@ link register save eliminated.
+ 692 0000 08B1     		cbz	r0, .L107
+ 693 0002 8069     		ldr	r0, [r0, #24]
+ 694 0004 7047     		bx	lr
+ 695              	.L107:
+ 696 0006 0020     		movs	r0, #0
+ 697 0008 7047     		bx	lr
+ 699              		.section	.text.vEventGroupSetNumber,"ax",%progbits
+ 700              		.align	1
+ 701              		.global	vEventGroupSetNumber
+ 702              		.syntax unified
+ 703              		.thumb
+ 704              		.thumb_func
+ 706              	vEventGroupSetNumber:
+ 707              		@ args = 0, pretend = 0, frame = 0
+ 708              		@ frame_needed = 0, uses_anonymous_args = 0
+ 709              		@ link register save eliminated.
+ 710 0000 8161     		str	r1, [r0, #24]
+ 711 0002 7047     		bx	lr
+ 713              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s 			page 13
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 event_groups.c
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:18     .text.prvTestWaitCondition:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:23     .text.prvTestWaitCondition:00000000 prvTestWaitCondition
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:45     .text.xEventGroupCreateStatic:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:51     .text.xEventGroupCreateStatic:00000000 xEventGroupCreateStatic
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:100    .text.xEventGroupCreate:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:106    .text.xEventGroupCreate:00000000 xEventGroupCreate
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:123    .text.xEventGroupWaitBits:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:129    .text.xEventGroupWaitBits:00000000 xEventGroupWaitBits
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:275    .text.xEventGroupClearBits:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:281    .text.xEventGroupClearBits:00000000 xEventGroupClearBits
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:325    .text.vEventGroupClearBitsCallback:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:331    .text.vEventGroupClearBitsCallback:00000000 vEventGroupClearBitsCallback
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:339    .text.xEventGroupClearBitsFromISR:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:345    .text.xEventGroupClearBitsFromISR:00000000 xEventGroupClearBitsFromISR
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:358    .text.xEventGroupClearBitsFromISR:00000010 $d
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:361    .text.xEventGroupGetBitsFromISR:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:367    .text.xEventGroupGetBitsFromISR:00000000 xEventGroupGetBitsFromISR
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:392    .text.xEventGroupSetBits:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:398    .text.xEventGroupSetBits:00000000 xEventGroupSetBits
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:477    .text.xEventGroupSync:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:483    .text.xEventGroupSync:00000000 xEventGroupSync
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:599    .text.vEventGroupSetBitsCallback:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:605    .text.vEventGroupSetBitsCallback:00000000 vEventGroupSetBitsCallback
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:613    .text.vEventGroupDelete:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:619    .text.vEventGroupDelete:00000000 vEventGroupDelete
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:660    .text.xEventGroupSetBitsFromISR:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:666    .text.xEventGroupSetBitsFromISR:00000000 xEventGroupSetBitsFromISR
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:679    .text.xEventGroupSetBitsFromISR:00000010 $d
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:682    .text.uxEventGroupGetNumber:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:688    .text.uxEventGroupGetNumber:00000000 uxEventGroupGetNumber
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:700    .text.vEventGroupSetNumber:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccs2s6mx.s:706    .text.vEventGroupSetNumber:00000000 vEventGroupSetNumber
+
+UNDEFINED SYMBOLS
+vListInitialise
+pvPortMalloc
+xTaskGetSchedulerState
+vTaskSuspendAll
+xTaskResumeAll
+uxTaskResetEventItemValue
+vTaskPlaceOnUnorderedEventList
+vPortEnterCritical
+vPortExitCritical
+xTimerPendFunctionCallFromISR
+vTaskRemoveFromUnorderedEventList
+vPortFree

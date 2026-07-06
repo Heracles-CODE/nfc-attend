@@ -1,0 +1,730 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccf7v11h.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"stm32f4xx_hal_dac.c"
+  16              		.text
+  17              		.section	.text.HAL_DAC_MspInit,"ax",%progbits
+  18              		.align	1
+  19              		.weak	HAL_DAC_MspInit
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	HAL_DAC_MspInit:
+  25              		@ args = 0, pretend = 0, frame = 0
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27              		@ link register save eliminated.
+  28 0000 7047     		bx	lr
+  30              		.section	.text.HAL_DAC_Init,"ax",%progbits
+  31              		.align	1
+  32              		.global	HAL_DAC_Init
+  33              		.syntax unified
+  34              		.thumb
+  35              		.thumb_func
+  37              	HAL_DAC_Init:
+  38              		@ args = 0, pretend = 0, frame = 0
+  39              		@ frame_needed = 0, uses_anonymous_args = 0
+  40 0000 70B1     		cbz	r0, .L5
+  41 0002 10B5     		push	{r4, lr}
+  42 0004 0446     		mov	r4, r0
+  43 0006 0379     		ldrb	r3, [r0, #4]	@ zero_extendqisi2
+  44 0008 33B1     		cbz	r3, .L10
+  45              	.L4:
+  46 000a 0223     		movs	r3, #2
+  47 000c 2371     		strb	r3, [r4, #4]
+  48 000e 0020     		movs	r0, #0
+  49 0010 2061     		str	r0, [r4, #16]
+  50 0012 0123     		movs	r3, #1
+  51 0014 2371     		strb	r3, [r4, #4]
+  52 0016 10BD     		pop	{r4, pc}
+  53              	.L10:
+  54 0018 4371     		strb	r3, [r0, #5]
+  55 001a FFF7FEFF 		bl	HAL_DAC_MspInit
+  56 001e F4E7     		b	.L4
+  57              	.L5:
+  58 0020 0120     		movs	r0, #1
+  59 0022 7047     		bx	lr
+  61              		.section	.text.HAL_DAC_MspDeInit,"ax",%progbits
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccf7v11h.s 			page 2
+
+
+  62              		.align	1
+  63              		.weak	HAL_DAC_MspDeInit
+  64              		.syntax unified
+  65              		.thumb
+  66              		.thumb_func
+  68              	HAL_DAC_MspDeInit:
+  69              		@ args = 0, pretend = 0, frame = 0
+  70              		@ frame_needed = 0, uses_anonymous_args = 0
+  71              		@ link register save eliminated.
+  72 0000 7047     		bx	lr
+  74              		.section	.text.HAL_DAC_DeInit,"ax",%progbits
+  75              		.align	1
+  76              		.global	HAL_DAC_DeInit
+  77              		.syntax unified
+  78              		.thumb
+  79              		.thumb_func
+  81              	HAL_DAC_DeInit:
+  82              		@ args = 0, pretend = 0, frame = 0
+  83              		@ frame_needed = 0, uses_anonymous_args = 0
+  84 0000 50B1     		cbz	r0, .L14
+  85 0002 10B5     		push	{r4, lr}
+  86 0004 0446     		mov	r4, r0
+  87 0006 0223     		movs	r3, #2
+  88 0008 0371     		strb	r3, [r0, #4]
+  89 000a FFF7FEFF 		bl	HAL_DAC_MspDeInit
+  90 000e 0020     		movs	r0, #0
+  91 0010 2061     		str	r0, [r4, #16]
+  92 0012 2071     		strb	r0, [r4, #4]
+  93 0014 6071     		strb	r0, [r4, #5]
+  94 0016 10BD     		pop	{r4, pc}
+  95              	.L14:
+  96 0018 0120     		movs	r0, #1
+  97 001a 7047     		bx	lr
+  99              		.section	.text.HAL_DAC_Start,"ax",%progbits
+ 100              		.align	1
+ 101              		.global	HAL_DAC_Start
+ 102              		.syntax unified
+ 103              		.thumb
+ 104              		.thumb_func
+ 106              	HAL_DAC_Start:
+ 107              		@ args = 0, pretend = 0, frame = 0
+ 108              		@ frame_needed = 0, uses_anonymous_args = 0
+ 109              		@ link register save eliminated.
+ 110 0000 88B3     		cbz	r0, .L23
+ 111 0002 0346     		mov	r3, r0
+ 112 0004 4279     		ldrb	r2, [r0, #5]	@ zero_extendqisi2
+ 113 0006 012A     		cmp	r2, #1
+ 114 0008 2FD0     		beq	.L24
+ 115 000a 10B4     		push	{r4}
+ 116 000c 0122     		movs	r2, #1
+ 117 000e 4271     		strb	r2, [r0, #5]
+ 118 0010 0220     		movs	r0, #2
+ 119 0012 1871     		strb	r0, [r3, #4]
+ 120 0014 1C68     		ldr	r4, [r3]
+ 121 0016 2068     		ldr	r0, [r4]
+ 122 0018 01F0100C 		and	ip, r1, #16
+ 123 001c 02FA0CF2 		lsl	r2, r2, ip
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccf7v11h.s 			page 3
+
+
+ 124 0020 0243     		orrs	r2, r2, r0
+ 125 0022 2260     		str	r2, [r4]
+ 126 0024 89B9     		cbnz	r1, .L21
+ 127 0026 1968     		ldr	r1, [r3]
+ 128 0028 0A68     		ldr	r2, [r1]
+ 129 002a 02F03C02 		and	r2, r2, #60
+ 130 002e 3C2A     		cmp	r2, #60
+ 131 0030 06D0     		beq	.L29
+ 132              	.L22:
+ 133 0032 0122     		movs	r2, #1
+ 134 0034 1A71     		strb	r2, [r3, #4]
+ 135 0036 0020     		movs	r0, #0
+ 136 0038 5871     		strb	r0, [r3, #5]
+ 137 003a 5DF8044B 		ldr	r4, [sp], #4
+ 138 003e 7047     		bx	lr
+ 139              	.L29:
+ 140 0040 4A68     		ldr	r2, [r1, #4]
+ 141 0042 42F00102 		orr	r2, r2, #1
+ 142 0046 4A60     		str	r2, [r1, #4]
+ 143 0048 F3E7     		b	.L22
+ 144              	.L21:
+ 145 004a 1868     		ldr	r0, [r3]
+ 146 004c 0168     		ldr	r1, [r0]
+ 147 004e 01F47011 		and	r1, r1, #3932160
+ 148 0052 3C22     		movs	r2, #60
+ 149 0054 02FA0CF2 		lsl	r2, r2, ip
+ 150 0058 9142     		cmp	r1, r2
+ 151 005a EAD1     		bne	.L22
+ 152 005c 4268     		ldr	r2, [r0, #4]
+ 153 005e 42F00202 		orr	r2, r2, #2
+ 154 0062 4260     		str	r2, [r0, #4]
+ 155 0064 E5E7     		b	.L22
+ 156              	.L23:
+ 157 0066 0120     		movs	r0, #1
+ 158 0068 7047     		bx	lr
+ 159              	.L24:
+ 160 006a 0220     		movs	r0, #2
+ 161 006c 7047     		bx	lr
+ 163              		.section	.text.HAL_DAC_Stop,"ax",%progbits
+ 164              		.align	1
+ 165              		.global	HAL_DAC_Stop
+ 166              		.syntax unified
+ 167              		.thumb
+ 168              		.thumb_func
+ 170              	HAL_DAC_Stop:
+ 171              		@ args = 0, pretend = 0, frame = 0
+ 172              		@ frame_needed = 0, uses_anonymous_args = 0
+ 173              		@ link register save eliminated.
+ 174 0000 80B1     		cbz	r0, .L32
+ 175 0002 10B4     		push	{r4}
+ 176 0004 0246     		mov	r2, r0
+ 177 0006 0468     		ldr	r4, [r0]
+ 178 0008 2368     		ldr	r3, [r4]
+ 179 000a 01F01001 		and	r1, r1, #16
+ 180 000e 0120     		movs	r0, #1
+ 181 0010 00FA01F1 		lsl	r1, r0, r1
+ 182 0014 23EA0103 		bic	r3, r3, r1
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccf7v11h.s 			page 4
+
+
+ 183 0018 2360     		str	r3, [r4]
+ 184 001a 1071     		strb	r0, [r2, #4]
+ 185 001c 0020     		movs	r0, #0
+ 186 001e 5DF8044B 		ldr	r4, [sp], #4
+ 187 0022 7047     		bx	lr
+ 188              	.L32:
+ 189 0024 0120     		movs	r0, #1
+ 190 0026 7047     		bx	lr
+ 192              		.section	.text.HAL_DAC_Start_DMA,"ax",%progbits
+ 193              		.align	1
+ 194              		.global	HAL_DAC_Start_DMA
+ 195              		.syntax unified
+ 196              		.thumb
+ 197              		.thumb_func
+ 199              	HAL_DAC_Start_DMA:
+ 200              		@ args = 4, pretend = 0, frame = 0
+ 201              		@ frame_needed = 0, uses_anonymous_args = 0
+ 202 0000 70B5     		push	{r4, r5, r6, lr}
+ 203 0002 0D46     		mov	r5, r1
+ 204 0004 1146     		mov	r1, r2
+ 205 0006 049A     		ldr	r2, [sp, #16]
+ 206 0008 0028     		cmp	r0, #0
+ 207 000a 61D0     		beq	.L50
+ 208 000c 0446     		mov	r4, r0
+ 209 000e 4079     		ldrb	r0, [r0, #5]	@ zero_extendqisi2
+ 210 0010 0128     		cmp	r0, #1
+ 211 0012 5FD0     		beq	.L51
+ 212 0014 0120     		movs	r0, #1
+ 213 0016 6071     		strb	r0, [r4, #5]
+ 214 0018 0220     		movs	r0, #2
+ 215 001a 2071     		strb	r0, [r4, #4]
+ 216 001c 002D     		cmp	r5, #0
+ 217 001e 2FD1     		bne	.L39
+ 218 0020 A068     		ldr	r0, [r4, #8]
+ 219 0022 2D4E     		ldr	r6, .L55
+ 220 0024 C663     		str	r6, [r0, #60]
+ 221 0026 A068     		ldr	r0, [r4, #8]
+ 222 0028 2C4E     		ldr	r6, .L55+4
+ 223 002a 0664     		str	r6, [r0, #64]
+ 224 002c A068     		ldr	r0, [r4, #8]
+ 225 002e 2C4E     		ldr	r6, .L55+8
+ 226 0030 C664     		str	r6, [r0, #76]
+ 227 0032 2668     		ldr	r6, [r4]
+ 228 0034 3068     		ldr	r0, [r6]
+ 229 0036 40F48050 		orr	r0, r0, #4096
+ 230 003a 3060     		str	r0, [r6]
+ 231 003c 22B1     		cbz	r2, .L40
+ 232 003e 042A     		cmp	r2, #4
+ 233 0040 1BD0     		beq	.L41
+ 234 0042 2268     		ldr	r2, [r4]
+ 235 0044 1032     		adds	r2, r2, #16
+ 236 0046 01E0     		b	.L43
+ 237              	.L40:
+ 238 0048 2268     		ldr	r2, [r4]
+ 239 004a 0832     		adds	r2, r2, #8
+ 240              	.L43:
+ 241 004c 002D     		cmp	r5, #0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccf7v11h.s 			page 5
+
+
+ 242 004e 31D1     		bne	.L47
+ 243 0050 2668     		ldr	r6, [r4]
+ 244 0052 3068     		ldr	r0, [r6]
+ 245 0054 40F40050 		orr	r0, r0, #8192
+ 246 0058 3060     		str	r0, [r6]
+ 247 005a A068     		ldr	r0, [r4, #8]
+ 248 005c FFF7FEFF 		bl	HAL_DMA_Start_IT
+ 249              	.L48:
+ 250 0060 0023     		movs	r3, #0
+ 251 0062 6371     		strb	r3, [r4, #5]
+ 252 0064 0028     		cmp	r0, #0
+ 253 0066 2ED1     		bne	.L49
+ 254 0068 2168     		ldr	r1, [r4]
+ 255 006a 0B68     		ldr	r3, [r1]
+ 256 006c 05F01005 		and	r5, r5, #16
+ 257 0070 0122     		movs	r2, #1
+ 258 0072 AA40     		lsls	r2, r2, r5
+ 259 0074 1343     		orrs	r3, r3, r2
+ 260 0076 0B60     		str	r3, [r1]
+ 261              	.L38:
+ 262 0078 70BD     		pop	{r4, r5, r6, pc}
+ 263              	.L41:
+ 264 007a 2268     		ldr	r2, [r4]
+ 265 007c 0C32     		adds	r2, r2, #12
+ 266 007e E5E7     		b	.L43
+ 267              	.L39:
+ 268 0080 E068     		ldr	r0, [r4, #12]
+ 269 0082 184E     		ldr	r6, .L55+12
+ 270 0084 C663     		str	r6, [r0, #60]
+ 271 0086 E068     		ldr	r0, [r4, #12]
+ 272 0088 174E     		ldr	r6, .L55+16
+ 273 008a 0664     		str	r6, [r0, #64]
+ 274 008c E068     		ldr	r0, [r4, #12]
+ 275 008e 174E     		ldr	r6, .L55+20
+ 276 0090 C664     		str	r6, [r0, #76]
+ 277 0092 2668     		ldr	r6, [r4]
+ 278 0094 3068     		ldr	r0, [r6]
+ 279 0096 40F08050 		orr	r0, r0, #268435456
+ 280 009a 3060     		str	r0, [r6]
+ 281 009c 22B1     		cbz	r2, .L44
+ 282 009e 042A     		cmp	r2, #4
+ 283 00a0 05D0     		beq	.L45
+ 284 00a2 2268     		ldr	r2, [r4]
+ 285 00a4 1C32     		adds	r2, r2, #28
+ 286 00a6 D1E7     		b	.L43
+ 287              	.L44:
+ 288 00a8 2268     		ldr	r2, [r4]
+ 289 00aa 1432     		adds	r2, r2, #20
+ 290 00ac CEE7     		b	.L43
+ 291              	.L45:
+ 292 00ae 2268     		ldr	r2, [r4]
+ 293 00b0 1832     		adds	r2, r2, #24
+ 294 00b2 CBE7     		b	.L43
+ 295              	.L47:
+ 296 00b4 2668     		ldr	r6, [r4]
+ 297 00b6 3068     		ldr	r0, [r6]
+ 298 00b8 40F00050 		orr	r0, r0, #536870912
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccf7v11h.s 			page 6
+
+
+ 299 00bc 3060     		str	r0, [r6]
+ 300 00be E068     		ldr	r0, [r4, #12]
+ 301 00c0 FFF7FEFF 		bl	HAL_DMA_Start_IT
+ 302 00c4 CCE7     		b	.L48
+ 303              	.L49:
+ 304 00c6 2369     		ldr	r3, [r4, #16]
+ 305 00c8 43F00403 		orr	r3, r3, #4
+ 306 00cc 2361     		str	r3, [r4, #16]
+ 307 00ce D3E7     		b	.L38
+ 308              	.L50:
+ 309 00d0 0120     		movs	r0, #1
+ 310 00d2 D1E7     		b	.L38
+ 311              	.L51:
+ 312 00d4 0220     		movs	r0, #2
+ 313 00d6 CFE7     		b	.L38
+ 314              	.L56:
+ 315              		.align	2
+ 316              	.L55:
+ 317 00d8 00000000 		.word	DAC_DMAConvCpltCh1
+ 318 00dc 00000000 		.word	DAC_DMAHalfConvCpltCh1
+ 319 00e0 00000000 		.word	DAC_DMAErrorCh1
+ 320 00e4 00000000 		.word	DAC_DMAConvCpltCh2
+ 321 00e8 00000000 		.word	DAC_DMAHalfConvCpltCh2
+ 322 00ec 00000000 		.word	DAC_DMAErrorCh2
+ 324              		.section	.text.HAL_DAC_Stop_DMA,"ax",%progbits
+ 325              		.align	1
+ 326              		.global	HAL_DAC_Stop_DMA
+ 327              		.syntax unified
+ 328              		.thumb
+ 329              		.thumb_func
+ 331              	HAL_DAC_Stop_DMA:
+ 332              		@ args = 0, pretend = 0, frame = 0
+ 333              		@ frame_needed = 0, uses_anonymous_args = 0
+ 334 0000 50B3     		cbz	r0, .L61
+ 335 0002 10B5     		push	{r4, lr}
+ 336 0004 0446     		mov	r4, r0
+ 337 0006 0068     		ldr	r0, [r0]
+ 338 0008 0368     		ldr	r3, [r0]
+ 339 000a 01F0100C 		and	ip, r1, #16
+ 340 000e 4FF48052 		mov	r2, #4096
+ 341 0012 02FA0CF2 		lsl	r2, r2, ip
+ 342 0016 23EA0203 		bic	r3, r3, r2
+ 343 001a 0360     		str	r3, [r0]
+ 344 001c 2068     		ldr	r0, [r4]
+ 345 001e 0368     		ldr	r3, [r0]
+ 346 0020 0122     		movs	r2, #1
+ 347 0022 02FA0CF2 		lsl	r2, r2, ip
+ 348 0026 23EA0203 		bic	r3, r3, r2
+ 349 002a 0360     		str	r3, [r0]
+ 350 002c 59B9     		cbnz	r1, .L59
+ 351 002e A068     		ldr	r0, [r4, #8]
+ 352 0030 FFF7FEFF 		bl	HAL_DMA_Abort
+ 353 0034 2268     		ldr	r2, [r4]
+ 354 0036 1368     		ldr	r3, [r2]
+ 355 0038 23F40053 		bic	r3, r3, #8192
+ 356 003c 1360     		str	r3, [r2]
+ 357              	.L60:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccf7v11h.s 			page 7
+
+
+ 358 003e 0123     		movs	r3, #1
+ 359 0040 2371     		strb	r3, [r4, #4]
+ 360 0042 0020     		movs	r0, #0
+ 361 0044 10BD     		pop	{r4, pc}
+ 362              	.L59:
+ 363 0046 E068     		ldr	r0, [r4, #12]
+ 364 0048 FFF7FEFF 		bl	HAL_DMA_Abort
+ 365 004c 2268     		ldr	r2, [r4]
+ 366 004e 1368     		ldr	r3, [r2]
+ 367 0050 23F00053 		bic	r3, r3, #536870912
+ 368 0054 1360     		str	r3, [r2]
+ 369 0056 F2E7     		b	.L60
+ 370              	.L61:
+ 371 0058 0120     		movs	r0, #1
+ 372 005a 7047     		bx	lr
+ 374              		.section	.text.HAL_DAC_SetValue,"ax",%progbits
+ 375              		.align	1
+ 376              		.global	HAL_DAC_SetValue
+ 377              		.syntax unified
+ 378              		.thumb
+ 379              		.thumb_func
+ 381              	HAL_DAC_SetValue:
+ 382              		@ args = 0, pretend = 0, frame = 8
+ 383              		@ frame_needed = 0, uses_anonymous_args = 0
+ 384              		@ link register save eliminated.
+ 385 0000 10B4     		push	{r4}
+ 386 0002 83B0     		sub	sp, sp, #12
+ 387 0004 0024     		movs	r4, #0
+ 388 0006 0194     		str	r4, [sp, #4]
+ 389 0008 90B1     		cbz	r0, .L70
+ 390 000a 0068     		ldr	r0, [r0]
+ 391 000c 0190     		str	r0, [sp, #4]
+ 392 000e 51B9     		cbnz	r1, .L68
+ 393 0010 0199     		ldr	r1, [sp, #4]
+ 394 0012 0A44     		add	r2, r2, r1
+ 395 0014 0832     		adds	r2, r2, #8
+ 396 0016 0192     		str	r2, [sp, #4]
+ 397              	.L69:
+ 398 0018 019A     		ldr	r2, [sp, #4]
+ 399 001a 1360     		str	r3, [r2]
+ 400 001c 0020     		movs	r0, #0
+ 401              	.L67:
+ 402 001e 03B0     		add	sp, sp, #12
+ 403              		@ sp needed
+ 404 0020 5DF8044B 		ldr	r4, [sp], #4
+ 405 0024 7047     		bx	lr
+ 406              	.L68:
+ 407 0026 0199     		ldr	r1, [sp, #4]
+ 408 0028 0A44     		add	r2, r2, r1
+ 409 002a 1432     		adds	r2, r2, #20
+ 410 002c 0192     		str	r2, [sp, #4]
+ 411 002e F3E7     		b	.L69
+ 412              	.L70:
+ 413 0030 0120     		movs	r0, #1
+ 414 0032 F4E7     		b	.L67
+ 416              		.section	.text.HAL_DAC_ConvCpltCallbackCh1,"ax",%progbits
+ 417              		.align	1
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccf7v11h.s 			page 8
+
+
+ 418              		.weak	HAL_DAC_ConvCpltCallbackCh1
+ 419              		.syntax unified
+ 420              		.thumb
+ 421              		.thumb_func
+ 423              	HAL_DAC_ConvCpltCallbackCh1:
+ 424              		@ args = 0, pretend = 0, frame = 0
+ 425              		@ frame_needed = 0, uses_anonymous_args = 0
+ 426              		@ link register save eliminated.
+ 427 0000 7047     		bx	lr
+ 429              		.section	.text.DAC_DMAConvCpltCh1,"ax",%progbits
+ 430              		.align	1
+ 431              		.global	DAC_DMAConvCpltCh1
+ 432              		.syntax unified
+ 433              		.thumb
+ 434              		.thumb_func
+ 436              	DAC_DMAConvCpltCh1:
+ 437              		@ args = 0, pretend = 0, frame = 0
+ 438              		@ frame_needed = 0, uses_anonymous_args = 0
+ 439 0000 10B5     		push	{r4, lr}
+ 440 0002 846B     		ldr	r4, [r0, #56]
+ 441 0004 2046     		mov	r0, r4
+ 442 0006 FFF7FEFF 		bl	HAL_DAC_ConvCpltCallbackCh1
+ 443 000a 0123     		movs	r3, #1
+ 444 000c 2371     		strb	r3, [r4, #4]
+ 445 000e 10BD     		pop	{r4, pc}
+ 447              		.section	.text.HAL_DAC_ConvHalfCpltCallbackCh1,"ax",%progbits
+ 448              		.align	1
+ 449              		.weak	HAL_DAC_ConvHalfCpltCallbackCh1
+ 450              		.syntax unified
+ 451              		.thumb
+ 452              		.thumb_func
+ 454              	HAL_DAC_ConvHalfCpltCallbackCh1:
+ 455              		@ args = 0, pretend = 0, frame = 0
+ 456              		@ frame_needed = 0, uses_anonymous_args = 0
+ 457              		@ link register save eliminated.
+ 458 0000 7047     		bx	lr
+ 460              		.section	.text.DAC_DMAHalfConvCpltCh1,"ax",%progbits
+ 461              		.align	1
+ 462              		.global	DAC_DMAHalfConvCpltCh1
+ 463              		.syntax unified
+ 464              		.thumb
+ 465              		.thumb_func
+ 467              	DAC_DMAHalfConvCpltCh1:
+ 468              		@ args = 0, pretend = 0, frame = 0
+ 469              		@ frame_needed = 0, uses_anonymous_args = 0
+ 470 0000 08B5     		push	{r3, lr}
+ 471 0002 806B     		ldr	r0, [r0, #56]
+ 472 0004 FFF7FEFF 		bl	HAL_DAC_ConvHalfCpltCallbackCh1
+ 473 0008 08BD     		pop	{r3, pc}
+ 475              		.section	.text.HAL_DAC_ErrorCallbackCh1,"ax",%progbits
+ 476              		.align	1
+ 477              		.weak	HAL_DAC_ErrorCallbackCh1
+ 478              		.syntax unified
+ 479              		.thumb
+ 480              		.thumb_func
+ 482              	HAL_DAC_ErrorCallbackCh1:
+ 483              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccf7v11h.s 			page 9
+
+
+ 484              		@ frame_needed = 0, uses_anonymous_args = 0
+ 485              		@ link register save eliminated.
+ 486 0000 7047     		bx	lr
+ 488              		.section	.text.DAC_DMAErrorCh1,"ax",%progbits
+ 489              		.align	1
+ 490              		.global	DAC_DMAErrorCh1
+ 491              		.syntax unified
+ 492              		.thumb
+ 493              		.thumb_func
+ 495              	DAC_DMAErrorCh1:
+ 496              		@ args = 0, pretend = 0, frame = 0
+ 497              		@ frame_needed = 0, uses_anonymous_args = 0
+ 498 0000 10B5     		push	{r4, lr}
+ 499 0002 846B     		ldr	r4, [r0, #56]
+ 500 0004 2369     		ldr	r3, [r4, #16]
+ 501 0006 43F00403 		orr	r3, r3, #4
+ 502 000a 2361     		str	r3, [r4, #16]
+ 503 000c 2046     		mov	r0, r4
+ 504 000e FFF7FEFF 		bl	HAL_DAC_ErrorCallbackCh1
+ 505 0012 0123     		movs	r3, #1
+ 506 0014 2371     		strb	r3, [r4, #4]
+ 507 0016 10BD     		pop	{r4, pc}
+ 509              		.section	.text.HAL_DAC_DMAUnderrunCallbackCh1,"ax",%progbits
+ 510              		.align	1
+ 511              		.weak	HAL_DAC_DMAUnderrunCallbackCh1
+ 512              		.syntax unified
+ 513              		.thumb
+ 514              		.thumb_func
+ 516              	HAL_DAC_DMAUnderrunCallbackCh1:
+ 517              		@ args = 0, pretend = 0, frame = 0
+ 518              		@ frame_needed = 0, uses_anonymous_args = 0
+ 519              		@ link register save eliminated.
+ 520 0000 7047     		bx	lr
+ 522              		.section	.text.HAL_DAC_IRQHandler,"ax",%progbits
+ 523              		.align	1
+ 524              		.global	HAL_DAC_IRQHandler
+ 525              		.syntax unified
+ 526              		.thumb
+ 527              		.thumb_func
+ 529              	HAL_DAC_IRQHandler:
+ 530              		@ args = 0, pretend = 0, frame = 0
+ 531              		@ frame_needed = 0, uses_anonymous_args = 0
+ 532 0000 70B5     		push	{r4, r5, r6, lr}
+ 533 0002 0446     		mov	r4, r0
+ 534 0004 0368     		ldr	r3, [r0]
+ 535 0006 1D68     		ldr	r5, [r3]
+ 536 0008 5E6B     		ldr	r6, [r3, #52]
+ 537 000a 15F4005F 		tst	r5, #8192
+ 538 000e 02D0     		beq	.L83
+ 539 0010 16F4005F 		tst	r6, #8192
+ 540 0014 06D1     		bne	.L86
+ 541              	.L83:
+ 542 0016 15F0005F 		tst	r5, #536870912
+ 543 001a 02D0     		beq	.L82
+ 544 001c 16F0005F 		tst	r6, #536870912
+ 545 0020 11D1     		bne	.L87
+ 546              	.L82:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccf7v11h.s 			page 10
+
+
+ 547 0022 70BD     		pop	{r4, r5, r6, pc}
+ 548              	.L86:
+ 549 0024 0422     		movs	r2, #4
+ 550 0026 0271     		strb	r2, [r0, #4]
+ 551 0028 0269     		ldr	r2, [r0, #16]
+ 552 002a 42F00102 		orr	r2, r2, #1
+ 553 002e 0261     		str	r2, [r0, #16]
+ 554 0030 4FF40052 		mov	r2, #8192
+ 555 0034 5A63     		str	r2, [r3, #52]
+ 556 0036 0268     		ldr	r2, [r0]
+ 557 0038 1368     		ldr	r3, [r2]
+ 558 003a 23F48053 		bic	r3, r3, #4096
+ 559 003e 1360     		str	r3, [r2]
+ 560 0040 FFF7FEFF 		bl	HAL_DAC_DMAUnderrunCallbackCh1
+ 561 0044 E7E7     		b	.L83
+ 562              	.L87:
+ 563 0046 0423     		movs	r3, #4
+ 564 0048 2371     		strb	r3, [r4, #4]
+ 565 004a 2369     		ldr	r3, [r4, #16]
+ 566 004c 43F00203 		orr	r3, r3, #2
+ 567 0050 2361     		str	r3, [r4, #16]
+ 568 0052 2368     		ldr	r3, [r4]
+ 569 0054 4FF00052 		mov	r2, #536870912
+ 570 0058 5A63     		str	r2, [r3, #52]
+ 571 005a 2268     		ldr	r2, [r4]
+ 572 005c 1368     		ldr	r3, [r2]
+ 573 005e 23F08053 		bic	r3, r3, #268435456
+ 574 0062 1360     		str	r3, [r2]
+ 575 0064 2046     		mov	r0, r4
+ 576 0066 FFF7FEFF 		bl	HAL_DACEx_DMAUnderrunCallbackCh2
+ 577 006a DAE7     		b	.L82
+ 579              		.section	.text.HAL_DAC_GetValue,"ax",%progbits
+ 580              		.align	1
+ 581              		.global	HAL_DAC_GetValue
+ 582              		.syntax unified
+ 583              		.thumb
+ 584              		.thumb_func
+ 586              	HAL_DAC_GetValue:
+ 587              		@ args = 0, pretend = 0, frame = 0
+ 588              		@ frame_needed = 0, uses_anonymous_args = 0
+ 589              		@ link register save eliminated.
+ 590 0000 11B9     		cbnz	r1, .L89
+ 591 0002 0368     		ldr	r3, [r0]
+ 592 0004 D86A     		ldr	r0, [r3, #44]
+ 593 0006 7047     		bx	lr
+ 594              	.L89:
+ 595 0008 0368     		ldr	r3, [r0]
+ 596 000a 186B     		ldr	r0, [r3, #48]
+ 597 000c 7047     		bx	lr
+ 599              		.section	.text.HAL_DAC_ConfigChannel,"ax",%progbits
+ 600              		.align	1
+ 601              		.global	HAL_DAC_ConfigChannel
+ 602              		.syntax unified
+ 603              		.thumb
+ 604              		.thumb_func
+ 606              	HAL_DAC_ConfigChannel:
+ 607              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccf7v11h.s 			page 11
+
+
+ 608              		@ frame_needed = 0, uses_anonymous_args = 0
+ 609 0000 48B3     		cbz	r0, .L93
+ 610 0002 8446     		mov	ip, r0
+ 611 0004 49B3     		cbz	r1, .L94
+ 612 0006 4379     		ldrb	r3, [r0, #5]	@ zero_extendqisi2
+ 613 0008 012B     		cmp	r3, #1
+ 614 000a 28D0     		beq	.L95
+ 615 000c 10B5     		push	{r4, lr}
+ 616 000e 4FF0010E 		mov	lr, #1
+ 617 0012 80F805E0 		strb	lr, [r0, #5]
+ 618 0016 0223     		movs	r3, #2
+ 619 0018 0371     		strb	r3, [r0, #4]
+ 620 001a 0468     		ldr	r4, [r0]
+ 621 001c 2068     		ldr	r0, [r4]
+ 622 001e 02F01002 		and	r2, r2, #16
+ 623 0022 40F6FE73 		movw	r3, #4094
+ 624 0026 9340     		lsls	r3, r3, r2
+ 625 0028 20EA0300 		bic	r0, r0, r3
+ 626 002c 0B68     		ldr	r3, [r1]
+ 627 002e 4968     		ldr	r1, [r1, #4]
+ 628 0030 0B43     		orrs	r3, r3, r1
+ 629 0032 9340     		lsls	r3, r3, r2
+ 630 0034 0343     		orrs	r3, r3, r0
+ 631 0036 2360     		str	r3, [r4]
+ 632 0038 DCF80000 		ldr	r0, [ip]
+ 633 003c 0368     		ldr	r3, [r0]
+ 634 003e C021     		movs	r1, #192
+ 635 0040 01FA02F2 		lsl	r2, r1, r2
+ 636 0044 23EA0203 		bic	r3, r3, r2
+ 637 0048 0360     		str	r3, [r0]
+ 638 004a 8CF804E0 		strb	lr, [ip, #4]
+ 639 004e 0020     		movs	r0, #0
+ 640 0050 8CF80500 		strb	r0, [ip, #5]
+ 641 0054 10BD     		pop	{r4, pc}
+ 642              	.L93:
+ 643 0056 0120     		movs	r0, #1
+ 644 0058 7047     		bx	lr
+ 645              	.L94:
+ 646 005a 0120     		movs	r0, #1
+ 647 005c 7047     		bx	lr
+ 648              	.L95:
+ 649 005e 0220     		movs	r0, #2
+ 650 0060 7047     		bx	lr
+ 652              		.section	.text.HAL_DAC_GetState,"ax",%progbits
+ 653              		.align	1
+ 654              		.global	HAL_DAC_GetState
+ 655              		.syntax unified
+ 656              		.thumb
+ 657              		.thumb_func
+ 659              	HAL_DAC_GetState:
+ 660              		@ args = 0, pretend = 0, frame = 0
+ 661              		@ frame_needed = 0, uses_anonymous_args = 0
+ 662              		@ link register save eliminated.
+ 663 0000 0079     		ldrb	r0, [r0, #4]	@ zero_extendqisi2
+ 664 0002 7047     		bx	lr
+ 666              		.section	.text.HAL_DAC_GetError,"ax",%progbits
+ 667              		.align	1
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccf7v11h.s 			page 12
+
+
+ 668              		.global	HAL_DAC_GetError
+ 669              		.syntax unified
+ 670              		.thumb
+ 671              		.thumb_func
+ 673              	HAL_DAC_GetError:
+ 674              		@ args = 0, pretend = 0, frame = 0
+ 675              		@ frame_needed = 0, uses_anonymous_args = 0
+ 676              		@ link register save eliminated.
+ 677 0000 0069     		ldr	r0, [r0, #16]
+ 678 0002 7047     		bx	lr
+ 680              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccf7v11h.s 			page 13
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 stm32f4xx_hal_dac.c
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:18     .text.HAL_DAC_MspInit:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:24     .text.HAL_DAC_MspInit:00000000 HAL_DAC_MspInit
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:31     .text.HAL_DAC_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:37     .text.HAL_DAC_Init:00000000 HAL_DAC_Init
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:62     .text.HAL_DAC_MspDeInit:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:68     .text.HAL_DAC_MspDeInit:00000000 HAL_DAC_MspDeInit
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:75     .text.HAL_DAC_DeInit:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:81     .text.HAL_DAC_DeInit:00000000 HAL_DAC_DeInit
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:100    .text.HAL_DAC_Start:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:106    .text.HAL_DAC_Start:00000000 HAL_DAC_Start
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:164    .text.HAL_DAC_Stop:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:170    .text.HAL_DAC_Stop:00000000 HAL_DAC_Stop
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:193    .text.HAL_DAC_Start_DMA:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:199    .text.HAL_DAC_Start_DMA:00000000 HAL_DAC_Start_DMA
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:317    .text.HAL_DAC_Start_DMA:000000d8 $d
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:436    .text.DAC_DMAConvCpltCh1:00000000 DAC_DMAConvCpltCh1
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:467    .text.DAC_DMAHalfConvCpltCh1:00000000 DAC_DMAHalfConvCpltCh1
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:495    .text.DAC_DMAErrorCh1:00000000 DAC_DMAErrorCh1
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:325    .text.HAL_DAC_Stop_DMA:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:331    .text.HAL_DAC_Stop_DMA:00000000 HAL_DAC_Stop_DMA
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:375    .text.HAL_DAC_SetValue:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:381    .text.HAL_DAC_SetValue:00000000 HAL_DAC_SetValue
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:417    .text.HAL_DAC_ConvCpltCallbackCh1:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:423    .text.HAL_DAC_ConvCpltCallbackCh1:00000000 HAL_DAC_ConvCpltCallbackCh1
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:430    .text.DAC_DMAConvCpltCh1:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:448    .text.HAL_DAC_ConvHalfCpltCallbackCh1:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:454    .text.HAL_DAC_ConvHalfCpltCallbackCh1:00000000 HAL_DAC_ConvHalfCpltCallbackCh1
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:461    .text.DAC_DMAHalfConvCpltCh1:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:476    .text.HAL_DAC_ErrorCallbackCh1:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:482    .text.HAL_DAC_ErrorCallbackCh1:00000000 HAL_DAC_ErrorCallbackCh1
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:489    .text.DAC_DMAErrorCh1:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:510    .text.HAL_DAC_DMAUnderrunCallbackCh1:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:516    .text.HAL_DAC_DMAUnderrunCallbackCh1:00000000 HAL_DAC_DMAUnderrunCallbackCh1
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:523    .text.HAL_DAC_IRQHandler:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:529    .text.HAL_DAC_IRQHandler:00000000 HAL_DAC_IRQHandler
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:580    .text.HAL_DAC_GetValue:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:586    .text.HAL_DAC_GetValue:00000000 HAL_DAC_GetValue
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:600    .text.HAL_DAC_ConfigChannel:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:606    .text.HAL_DAC_ConfigChannel:00000000 HAL_DAC_ConfigChannel
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:653    .text.HAL_DAC_GetState:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:659    .text.HAL_DAC_GetState:00000000 HAL_DAC_GetState
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:667    .text.HAL_DAC_GetError:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccf7v11h.s:673    .text.HAL_DAC_GetError:00000000 HAL_DAC_GetError
+
+UNDEFINED SYMBOLS
+HAL_DMA_Start_IT
+DAC_DMAConvCpltCh2
+DAC_DMAHalfConvCpltCh2
+DAC_DMAErrorCh2
+HAL_DMA_Abort
+HAL_DACEx_DMAUnderrunCallbackCh2

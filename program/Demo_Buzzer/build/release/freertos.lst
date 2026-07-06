@@ -1,0 +1,297 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"freertos.c"
+  16              		.text
+  17              		.section	.text.StartBuzzerTask,"ax",%progbits
+  18              		.align	1
+  19              		.global	StartBuzzerTask
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	StartBuzzerTask:
+  25              		@ args = 0, pretend = 0, frame = 16
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+  28 0004 85B0     		sub	sp, sp, #20
+  29 0006 0021     		movs	r1, #0
+  30 0008 4548     		ldr	r0, .L17
+  31 000a FFF7FEFF 		bl	MIDI_Init
+  32 000e 3220     		movs	r0, #50
+  33 0010 FFF7FEFF 		bl	MIDI_SetVolume
+  34 0014 5A22     		movs	r2, #90
+  35 0016 2A21     		movs	r1, #42
+  36 0018 4248     		ldr	r0, .L17+4
+  37 001a FFF7FEFF 		bl	MIDI_SetMusic
+  38 001e 0520     		movs	r0, #5
+  39 0020 FFF7FEFF 		bl	MIDI_SetDuration
+  40 0024 FFF7FEFF 		bl	MIDI_Play
+  41 0028 04E0     		b	.L2
+  42              	.L3:
+  43 002a FFF7FEFF 		bl	MIDI_Tick
+  44 002e 0A20     		movs	r0, #10
+  45 0030 FFF7FEFF 		bl	osDelay
+  46              	.L2:
+  47 0034 FFF7FEFF 		bl	MIDI_GetState
+  48 0038 0128     		cmp	r0, #1
+  49 003a F6D0     		beq	.L3
+  50 003c 0027     		movs	r7, #0
+  51 003e 3E46     		mov	r6, r7
+  52 0040 4FF0010A 		mov	r10, #1
+  53 0044 D146     		mov	r9, r10
+  54 0046 D046     		mov	r8, r10
+  55 0048 D346     		mov	fp, r10
+  56 004a 2FE0     		b	.L10
+  57              	.L13:
+  58 004c 009B     		ldr	r3, [sp]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s 			page 2
+
+
+  59 004e 002B     		cmp	r3, #0
+  60 0050 4ED1     		bne	.L4
+  61 0052 C821     		movs	r1, #200
+  62 0054 0120     		movs	r0, #1
+  63 0056 FFF7FEFF 		bl	MIDI_Beep
+  64 005a 49E0     		b	.L4
+  65              	.L14:
+  66 005c 019B     		ldr	r3, [sp, #4]
+  67 005e 002B     		cmp	r3, #0
+  68 0060 49D1     		bne	.L5
+  69 0062 C821     		movs	r1, #200
+  70 0064 0220     		movs	r0, #2
+  71 0066 FFF7FEFF 		bl	MIDI_Beep
+  72 006a 44E0     		b	.L5
+  73              	.L15:
+  74 006c 029B     		ldr	r3, [sp, #8]
+  75 006e 002B     		cmp	r3, #0
+  76 0070 44D1     		bne	.L6
+  77 0072 C821     		movs	r1, #200
+  78 0074 0320     		movs	r0, #3
+  79 0076 FFF7FEFF 		bl	MIDI_Beep
+  80 007a 3FE0     		b	.L6
+  81              	.L16:
+  82 007c 039B     		ldr	r3, [sp, #12]
+  83 007e 002B     		cmp	r3, #0
+  84 0080 3FD1     		bne	.L7
+  85 0082 C821     		movs	r1, #200
+  86 0084 0420     		movs	r0, #4
+  87 0086 FFF7FEFF 		bl	MIDI_Beep
+  88 008a 3AE0     		b	.L7
+  89              	.L8:
+  90 008c 0FB9     		cbnz	r7, .L9
+  91 008e 012C     		cmp	r4, #1
+  92 0090 40D0     		beq	.L12
+  93              	.L9:
+  94 0092 1420     		movs	r0, #20
+  95 0094 FFF7FEFF 		bl	osDelay
+  96 0098 2746     		mov	r7, r4
+  97 009a 2E46     		mov	r6, r5
+  98 009c DDF80CA0 		ldr	r10, [sp, #12]
+  99 00a0 DDF80890 		ldr	r9, [sp, #8]
+ 100 00a4 DDF80480 		ldr	r8, [sp, #4]
+ 101 00a8 DDF800B0 		ldr	fp, [sp]
+ 102              	.L10:
+ 103 00ac 1E4C     		ldr	r4, .L17+8
+ 104 00ae 0221     		movs	r1, #2
+ 105 00b0 2046     		mov	r0, r4
+ 106 00b2 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 107 00b6 0090     		str	r0, [sp]
+ 108 00b8 0421     		movs	r1, #4
+ 109 00ba 2046     		mov	r0, r4
+ 110 00bc FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 111 00c0 0190     		str	r0, [sp, #4]
+ 112 00c2 0821     		movs	r1, #8
+ 113 00c4 2046     		mov	r0, r4
+ 114 00c6 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 115 00ca 0290     		str	r0, [sp, #8]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s 			page 3
+
+
+ 116 00cc 1021     		movs	r1, #16
+ 117 00ce 2046     		mov	r0, r4
+ 118 00d0 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 119 00d4 0390     		str	r0, [sp, #12]
+ 120 00d6 2021     		movs	r1, #32
+ 121 00d8 2046     		mov	r0, r4
+ 122 00da FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 123 00de 0546     		mov	r5, r0
+ 124 00e0 4021     		movs	r1, #64
+ 125 00e2 2046     		mov	r0, r4
+ 126 00e4 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 127 00e8 0446     		mov	r4, r0
+ 128 00ea BBF1010F 		cmp	fp, #1
+ 129 00ee ADD0     		beq	.L13
+ 130              	.L4:
+ 131 00f0 B8F1010F 		cmp	r8, #1
+ 132 00f4 B2D0     		beq	.L14
+ 133              	.L5:
+ 134 00f6 B9F1010F 		cmp	r9, #1
+ 135 00fa B7D0     		beq	.L15
+ 136              	.L6:
+ 137 00fc BAF1010F 		cmp	r10, #1
+ 138 0100 BCD0     		beq	.L16
+ 139              	.L7:
+ 140 0102 002E     		cmp	r6, #0
+ 141 0104 C2D1     		bne	.L8
+ 142 0106 012D     		cmp	r5, #1
+ 143 0108 C0D1     		bne	.L8
+ 144 010a C821     		movs	r1, #200
+ 145 010c 0520     		movs	r0, #5
+ 146 010e FFF7FEFF 		bl	MIDI_Beep
+ 147 0112 BBE7     		b	.L8
+ 148              	.L12:
+ 149 0114 C821     		movs	r1, #200
+ 150 0116 0620     		movs	r0, #6
+ 151 0118 FFF7FEFF 		bl	MIDI_Beep
+ 152 011c B9E7     		b	.L9
+ 153              	.L18:
+ 154 011e 00BF     		.align	2
+ 155              	.L17:
+ 156 0120 00000000 		.word	htim3
+ 157 0124 00000000 		.word	twinkle_twinkle
+ 158 0128 00100240 		.word	1073876992
+ 160              		.section	.text.MX_FREERTOS_Init,"ax",%progbits
+ 161              		.align	1
+ 162              		.global	MX_FREERTOS_Init
+ 163              		.syntax unified
+ 164              		.thumb
+ 165              		.thumb_func
+ 167              	MX_FREERTOS_Init:
+ 168              		@ args = 0, pretend = 0, frame = 0
+ 169              		@ frame_needed = 0, uses_anonymous_args = 0
+ 170 0000 08B5     		push	{r3, lr}
+ 171 0002 044A     		ldr	r2, .L21
+ 172 0004 0021     		movs	r1, #0
+ 173 0006 0448     		ldr	r0, .L21+4
+ 174 0008 FFF7FEFF 		bl	osThreadNew
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s 			page 4
+
+
+ 175 000c 034B     		ldr	r3, .L21+8
+ 176 000e 1860     		str	r0, [r3]
+ 177 0010 08BD     		pop	{r3, pc}
+ 178              	.L22:
+ 179 0012 00BF     		.align	2
+ 180              	.L21:
+ 181 0014 00000000 		.word	buzzerTask_attributes
+ 182 0018 00000000 		.word	StartBuzzerTask
+ 183 001c 00000000 		.word	buzzerTaskHandle
+ 185              		.section	.data.twinkle_twinkle,"aw"
+ 186              		.align	2
+ 189              	twinkle_twinkle:
+ 190 0000 69030100 		.word	66409
+ 191 0004 69030100 		.word	66409
+ 192 0008 6D030100 		.word	66413
+ 193 000c 6D030100 		.word	66413
+ 194 0010 6E030100 		.word	66414
+ 195 0014 6E030100 		.word	66414
+ 196 0018 CD060200 		.word	132813
+ 197 001c 6C030100 		.word	66412
+ 198 0020 6C030100 		.word	66412
+ 199 0024 6B030100 		.word	66411
+ 200 0028 6B030100 		.word	66411
+ 201 002c 6A030100 		.word	66410
+ 202 0030 6A030100 		.word	66410
+ 203 0034 C9060200 		.word	132809
+ 204 0038 6D030100 		.word	66413
+ 205 003c 6D030100 		.word	66413
+ 206 0040 6C030100 		.word	66412
+ 207 0044 6C030100 		.word	66412
+ 208 0048 6B030100 		.word	66411
+ 209 004c 6B030100 		.word	66411
+ 210 0050 CA060200 		.word	132810
+ 211 0054 6D030100 		.word	66413
+ 212 0058 6D030100 		.word	66413
+ 213 005c 6C030100 		.word	66412
+ 214 0060 6C030100 		.word	66412
+ 215 0064 6B030100 		.word	66411
+ 216 0068 6B030100 		.word	66411
+ 217 006c CA060200 		.word	132810
+ 218 0070 69030100 		.word	66409
+ 219 0074 69030100 		.word	66409
+ 220 0078 6D030100 		.word	66413
+ 221 007c 6D030100 		.word	66413
+ 222 0080 6E030100 		.word	66414
+ 223 0084 6E030100 		.word	66414
+ 224 0088 CD060200 		.word	132813
+ 225 008c 6C030100 		.word	66412
+ 226 0090 6C030100 		.word	66412
+ 227 0094 6B030100 		.word	66411
+ 228 0098 6B030100 		.word	66411
+ 229 009c 6A030100 		.word	66410
+ 230 00a0 6A030100 		.word	66410
+ 231 00a4 C9060200 		.word	132809
+ 232              		.global	buzzerTask_attributes
+ 233              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 234              		.align	2
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s 			page 5
+
+
+ 235              	.LC0:
+ 236 0000 62757A7A 		.ascii	"buzzerTask\000"
+ 236      65725461 
+ 236      736B00
+ 237              		.section	.rodata.buzzerTask_attributes,"a"
+ 238              		.align	2
+ 241              	buzzerTask_attributes:
+ 242 0000 00000000 		.word	.LC0
+ 243 0004 00000000 		.space	16
+ 243      00000000 
+ 243      00000000 
+ 243      00000000 
+ 244 0014 00080000 		.word	2048
+ 245 0018 18000000 		.word	24
+ 246 001c 00000000 		.space	8
+ 246      00000000 
+ 247              		.global	buzzerTaskHandle
+ 248              		.section	.bss.buzzerTaskHandle,"aw",%nobits
+ 249              		.align	2
+ 252              	buzzerTaskHandle:
+ 253 0000 00000000 		.space	4
+ 254              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 freertos.c
+C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s:18     .text.StartBuzzerTask:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s:24     .text.StartBuzzerTask:00000000 StartBuzzerTask
+C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s:156    .text.StartBuzzerTask:00000120 $d
+C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s:189    .data.twinkle_twinkle:00000000 twinkle_twinkle
+C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s:161    .text.MX_FREERTOS_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s:167    .text.MX_FREERTOS_Init:00000000 MX_FREERTOS_Init
+C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s:181    .text.MX_FREERTOS_Init:00000014 $d
+C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s:241    .rodata.buzzerTask_attributes:00000000 buzzerTask_attributes
+C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s:252    .bss.buzzerTaskHandle:00000000 buzzerTaskHandle
+C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s:186    .data.twinkle_twinkle:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s:234    .rodata.str1.4:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s:238    .rodata.buzzerTask_attributes:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccmFx8hC.s:249    .bss.buzzerTaskHandle:00000000 $d
+
+UNDEFINED SYMBOLS
+MIDI_Init
+MIDI_SetVolume
+MIDI_SetMusic
+MIDI_SetDuration
+MIDI_Play
+MIDI_Tick
+osDelay
+MIDI_GetState
+MIDI_Beep
+HAL_GPIO_ReadPin
+htim3
+osThreadNew

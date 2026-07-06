@@ -1,0 +1,954 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccxEemIg.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"freertos.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/freertos.c"
+  20              		.section	.rodata.LED_SaveState.str1.4,"aMS",%progbits,1
+  21              		.align	2
+  22              	.LC0:
+  23 0000 4C454420 		.ascii	"LED state saved: 0x%02X\015\012\000"
+  23      73746174 
+  23      65207361 
+  23      7665643A 
+  23      20307825 
+  24              		.section	.text.LED_SaveState,"ax",%progbits
+  25              		.align	1
+  26              		.syntax unified
+  27              		.thumb
+  28              		.thumb_func
+  30              	LED_SaveState:
+  31              	.LVL0:
+  32              	.LFB247:
+   1:Core/Src/freertos.c **** /* USER CODE BEGIN Header */
+   2:Core/Src/freertos.c **** /**
+   3:Core/Src/freertos.c ****   ******************************************************************************
+   4:Core/Src/freertos.c ****   * File Name          : freertos.c
+   5:Core/Src/freertos.c ****   * Description        : Code for freertos applications
+   6:Core/Src/freertos.c ****   ******************************************************************************
+   7:Core/Src/freertos.c ****   * @attention
+   8:Core/Src/freertos.c ****   *
+   9:Core/Src/freertos.c ****   * Copyright (c) 2026 STMicroelectronics.
+  10:Core/Src/freertos.c ****   * All rights reserved.
+  11:Core/Src/freertos.c ****   *
+  12:Core/Src/freertos.c ****   * This software is licensed under terms that can be found in the LICENSE file
+  13:Core/Src/freertos.c ****   * in the root directory of this software component.
+  14:Core/Src/freertos.c ****   * If no LICENSE file comes with this software, it is provided AS-IS.
+  15:Core/Src/freertos.c ****   *
+  16:Core/Src/freertos.c ****   ******************************************************************************
+  17:Core/Src/freertos.c ****   */
+  18:Core/Src/freertos.c **** /* USER CODE END Header */
+  19:Core/Src/freertos.c **** 
+  20:Core/Src/freertos.c **** /* Includes ------------------------------------------------------------------*/
+  21:Core/Src/freertos.c **** #include "FreeRTOS.h"
+  22:Core/Src/freertos.c **** #include "task.h"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccxEemIg.s 			page 2
+
+
+  23:Core/Src/freertos.c **** #include "main.h"
+  24:Core/Src/freertos.c **** #include "cmsis_os.h"
+  25:Core/Src/freertos.c **** #include "w25qxx.h"
+  26:Core/Src/freertos.c **** #include "key.h"
+  27:Core/Src/freertos.c **** #include "led.h"
+  28:Core/Src/freertos.c **** #include "uart_drv.h"
+  29:Core/Src/freertos.c **** #include <stdio.h>
+  30:Core/Src/freertos.c **** 
+  31:Core/Src/freertos.c **** /* Private includes ----------------------------------------------------------*/
+  32:Core/Src/freertos.c **** /* USER CODE BEGIN Includes */
+  33:Core/Src/freertos.c **** #include "usart.h"
+  34:Core/Src/freertos.c **** /* USER CODE END Includes */
+  35:Core/Src/freertos.c **** 
+  36:Core/Src/freertos.c **** /* Private typedef -----------------------------------------------------------*/
+  37:Core/Src/freertos.c **** /* USER CODE BEGIN PTD */
+  38:Core/Src/freertos.c **** 
+  39:Core/Src/freertos.c **** /* USER CODE END PTD */
+  40:Core/Src/freertos.c **** 
+  41:Core/Src/freertos.c **** /* Private define ------------------------------------------------------------*/
+  42:Core/Src/freertos.c **** /* USER CODE BEGIN PD */
+  43:Core/Src/freertos.c **** /* 按键索引定义 */
+  44:Core/Src/freertos.c **** #define KEY_K1  0
+  45:Core/Src/freertos.c **** #define KEY_K2  1
+  46:Core/Src/freertos.c **** #define KEY_K3  2
+  47:Core/Src/freertos.c **** #define KEY_K4  3
+  48:Core/Src/freertos.c **** #define KEY_K5  4
+  49:Core/Src/freertos.c **** #define KEY_K6  5
+  50:Core/Src/freertos.c **** 
+  51:Core/Src/freertos.c **** #define SAVE_ADDR  0  /* W25Q128 中保存 LED 状态的地址 */
+  52:Core/Src/freertos.c **** /* USER CODE END PD */
+  53:Core/Src/freertos.c **** 
+  54:Core/Src/freertos.c **** /* Private macro -------------------------------------------------------------*/
+  55:Core/Src/freertos.c **** /* USER CODE BEGIN PM */
+  56:Core/Src/freertos.c **** 
+  57:Core/Src/freertos.c **** /* USER CODE END PM */
+  58:Core/Src/freertos.c **** 
+  59:Core/Src/freertos.c **** /* Private variables ---------------------------------------------------------*/
+  60:Core/Src/freertos.c **** /* USER CODE BEGIN Variables */
+  61:Core/Src/freertos.c **** /* 串口驱动实例 (用于 printf 调试输出) */
+  62:Core/Src/freertos.c **** static UartDrv_t g_uart1Drv;
+  63:Core/Src/freertos.c **** 
+  64:Core/Src/freertos.c **** /* 按键配置: K1~K4 上拉低有效, K5~K6 下拉高有效 */
+  65:Core/Src/freertos.c **** static const Key_Config_t keyConfigs[6] = {
+  66:Core/Src/freertos.c ****     { K1_GPIO_Port, K1_Pin, KEY_ACTIVE_LOW  },  /* K1 */
+  67:Core/Src/freertos.c ****     { K2_GPIO_Port, K2_Pin, KEY_ACTIVE_LOW  },  /* K2 */
+  68:Core/Src/freertos.c ****     { K3_GPIO_Port, K3_Pin, KEY_ACTIVE_LOW  },  /* K3 */
+  69:Core/Src/freertos.c ****     { K4_GPIO_Port, K4_Pin, KEY_ACTIVE_LOW  },  /* K4 */
+  70:Core/Src/freertos.c ****     { K5_GPIO_Port, K5_Pin, KEY_ACTIVE_HIGH },  /* K5 */
+  71:Core/Src/freertos.c ****     { K6_GPIO_Port, K6_Pin, KEY_ACTIVE_HIGH },  /* K6 */
+  72:Core/Src/freertos.c **** };
+  73:Core/Src/freertos.c **** 
+  74:Core/Src/freertos.c **** /* LED 配置: L1~L7 低电平点亮 (灌电流) */
+  75:Core/Src/freertos.c **** static const Led_Config_t ledConfigs[7] = {
+  76:Core/Src/freertos.c ****     { L1_GPIO_Port, L1_Pin, LED_ON_LOW },  /* L1 */
+  77:Core/Src/freertos.c ****     { L2_GPIO_Port, L2_Pin, LED_ON_LOW },  /* L2 */
+  78:Core/Src/freertos.c ****     { L3_GPIO_Port, L3_Pin, LED_ON_LOW },  /* L3 */
+  79:Core/Src/freertos.c ****     { L4_GPIO_Port, L4_Pin, LED_ON_LOW },  /* L4 */
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccxEemIg.s 			page 3
+
+
+  80:Core/Src/freertos.c ****     { L5_GPIO_Port, L5_Pin, LED_ON_LOW },  /* L5 */
+  81:Core/Src/freertos.c ****     { L6_GPIO_Port, L6_Pin, LED_ON_LOW },  /* L6 */
+  82:Core/Src/freertos.c ****     { L7_GPIO_Port, L7_Pin, LED_ON_LOW },  /* L7 */
+  83:Core/Src/freertos.c **** };
+  84:Core/Src/freertos.c **** 
+  85:Core/Src/freertos.c **** /* LED 状态位: bit0~bit6 对应 L1~L7, 1=亮, 0=灭 */
+  86:Core/Src/freertos.c **** static uint8_t ledState = 0;
+  87:Core/Src/freertos.c **** /* 当前选中的 LED 索引 (0~6) */
+  88:Core/Src/freertos.c **** static uint8_t currentLed = 0;
+  89:Core/Src/freertos.c **** /* USER CODE END Variables */
+  90:Core/Src/freertos.c **** 
+  91:Core/Src/freertos.c **** /* Definitions for ledTask */
+  92:Core/Src/freertos.c **** osThreadId_t ledTaskHandle;
+  93:Core/Src/freertos.c **** const osThreadAttr_t ledTask_attributes = {
+  94:Core/Src/freertos.c ****   .name = "ledTask",
+  95:Core/Src/freertos.c ****   .stack_size = 512 * 4,
+  96:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityNormal,
+  97:Core/Src/freertos.c **** };
+  98:Core/Src/freertos.c **** 
+  99:Core/Src/freertos.c **** /* Private function prototypes -----------------------------------------------*/
+ 100:Core/Src/freertos.c **** /* USER CODE BEGIN FunctionPrototypes */
+ 101:Core/Src/freertos.c **** static void LED_SaveState(uint8_t state);
+ 102:Core/Src/freertos.c **** static uint8_t LED_RestoreState(void);
+ 103:Core/Src/freertos.c **** /* USER CODE END FunctionPrototypes */
+ 104:Core/Src/freertos.c **** 
+ 105:Core/Src/freertos.c **** void StartLedTask(void *argument);
+ 106:Core/Src/freertos.c **** 
+ 107:Core/Src/freertos.c **** void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+ 108:Core/Src/freertos.c **** 
+ 109:Core/Src/freertos.c **** /**
+ 110:Core/Src/freertos.c ****   * @brief  FreeRTOS initialization
+ 111:Core/Src/freertos.c ****   * @param  None
+ 112:Core/Src/freertos.c ****   * @retval None
+ 113:Core/Src/freertos.c ****   */
+ 114:Core/Src/freertos.c **** void MX_FREERTOS_Init(void) {
+ 115:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
+ 116:Core/Src/freertos.c **** 
+ 117:Core/Src/freertos.c ****   /* USER CODE END Init */
+ 118:Core/Src/freertos.c **** 
+ 119:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_MUTEX */
+ 120:Core/Src/freertos.c ****   /* add mutexes, ... */
+ 121:Core/Src/freertos.c ****   /* USER CODE END RTOS_MUTEX */
+ 122:Core/Src/freertos.c **** 
+ 123:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_SEMAPHORES */
+ 124:Core/Src/freertos.c ****   /* add semaphores, ... */
+ 125:Core/Src/freertos.c ****   /* USER CODE END RTOS_SEMAPHORES */
+ 126:Core/Src/freertos.c **** 
+ 127:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_TIMERS */
+ 128:Core/Src/freertos.c ****   /* start timers, add new ones, ... */
+ 129:Core/Src/freertos.c ****   /* USER CODE END RTOS_TIMERS */
+ 130:Core/Src/freertos.c **** 
+ 131:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_QUEUES */
+ 132:Core/Src/freertos.c ****   /* add queues, ... */
+ 133:Core/Src/freertos.c ****   /* USER CODE END RTOS_QUEUES */
+ 134:Core/Src/freertos.c **** 
+ 135:Core/Src/freertos.c ****   /* Create the thread(s) */
+ 136:Core/Src/freertos.c ****   /* creation of ledTask */
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccxEemIg.s 			page 4
+
+
+ 137:Core/Src/freertos.c ****   ledTaskHandle = osThreadNew(StartLedTask, NULL, &ledTask_attributes);
+ 138:Core/Src/freertos.c **** 
+ 139:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_THREADS */
+ 140:Core/Src/freertos.c ****   /* add threads, ... */
+ 141:Core/Src/freertos.c ****   /* USER CODE END RTOS_THREADS */
+ 142:Core/Src/freertos.c **** 
+ 143:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_EVENTS */
+ 144:Core/Src/freertos.c ****   /* add events, ... */
+ 145:Core/Src/freertos.c ****   /* USER CODE END RTOS_EVENTS */
+ 146:Core/Src/freertos.c **** 
+ 147:Core/Src/freertos.c **** }
+ 148:Core/Src/freertos.c **** 
+ 149:Core/Src/freertos.c **** /* ========== LED 状态存储函数 ========== */
+ 150:Core/Src/freertos.c **** 
+ 151:Core/Src/freertos.c **** /**
+ 152:Core/Src/freertos.c ****   * @brief  将 LED 状态保存到 W25Q128
+ 153:Core/Src/freertos.c ****   * @param  state: 要保存的状态字
+ 154:Core/Src/freertos.c ****   */
+ 155:Core/Src/freertos.c **** static void LED_SaveState(uint8_t state)
+ 156:Core/Src/freertos.c **** {
+  33              		.loc 1 156 1 view -0
+  34              		.cfi_startproc
+  35              		@ args = 0, pretend = 0, frame = 8
+  36              		@ frame_needed = 0, uses_anonymous_args = 0
+  37              		.loc 1 156 1 is_stmt 0 view .LVU1
+  38 0000 00B5     		push	{lr}
+  39              		.cfi_def_cfa_offset 4
+  40              		.cfi_offset 14, -4
+  41 0002 83B0     		sub	sp, sp, #12
+  42              		.cfi_def_cfa_offset 16
+  43 0004 8DF80700 		strb	r0, [sp, #7]
+ 157:Core/Src/freertos.c ****   /* 擦除扇区 (4KB, 地址 0 所在的扇区) */
+ 158:Core/Src/freertos.c ****   W25QXX_Erase_Sector(SAVE_ADDR);
+  44              		.loc 1 158 3 is_stmt 1 view .LVU2
+  45 0008 0020     		movs	r0, #0
+  46              	.LVL1:
+  47              		.loc 1 158 3 is_stmt 0 view .LVU3
+  48 000a FFF7FEFF 		bl	W25QXX_Erase_Sector
+  49              	.LVL2:
+ 159:Core/Src/freertos.c ****   W25QXX_Wait_Busy();
+  50              		.loc 1 159 3 is_stmt 1 view .LVU4
+  51 000e FFF7FEFF 		bl	W25QXX_Wait_Busy
+  52              	.LVL3:
+ 160:Core/Src/freertos.c **** 
+ 161:Core/Src/freertos.c ****   /* 写入状态数据 */
+ 162:Core/Src/freertos.c ****   W25QXX_Write_NoCheck(&state, SAVE_ADDR, 1);
+  53              		.loc 1 162 3 view .LVU5
+  54 0012 0122     		movs	r2, #1
+  55 0014 0021     		movs	r1, #0
+  56 0016 0DF10700 		add	r0, sp, #7
+  57 001a FFF7FEFF 		bl	W25QXX_Write_NoCheck
+  58              	.LVL4:
+ 163:Core/Src/freertos.c ****   W25QXX_Wait_Busy();
+  59              		.loc 1 163 3 view .LVU6
+  60 001e FFF7FEFF 		bl	W25QXX_Wait_Busy
+  61              	.LVL5:
+ 164:Core/Src/freertos.c **** 
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccxEemIg.s 			page 5
+
+
+ 165:Core/Src/freertos.c ****   printf("LED state saved: 0x%02X\r\n", state);
+  62              		.loc 1 165 3 view .LVU7
+  63 0022 9DF80710 		ldrb	r1, [sp, #7]	@ zero_extendqisi2
+  64 0026 0348     		ldr	r0, .L3
+  65 0028 FFF7FEFF 		bl	printf
+  66              	.LVL6:
+ 166:Core/Src/freertos.c **** }
+  67              		.loc 1 166 1 is_stmt 0 view .LVU8
+  68 002c 03B0     		add	sp, sp, #12
+  69              		.cfi_def_cfa_offset 4
+  70              		@ sp needed
+  71 002e 5DF804FB 		ldr	pc, [sp], #4
+  72              	.L4:
+  73 0032 00BF     		.align	2
+  74              	.L3:
+  75 0034 00000000 		.word	.LC0
+  76              		.cfi_endproc
+  77              	.LFE247:
+  79              		.section	.rodata.LED_RestoreState.str1.4,"aMS",%progbits,1
+  80              		.align	2
+  81              	.LC1:
+  82 0000 57323551 		.ascii	"W25Q128 ID: 0x%04X\015\012\000"
+  82      31323820 
+  82      49443A20 
+  82      30782530 
+  82      34580D0A 
+  83 0015 000000   		.align	2
+  84              	.LC2:
+  85 0018 52657374 		.ascii	"Restored LED state: 0x%02X\015\012\000"
+  85      6F726564 
+  85      204C4544 
+  85      20737461 
+  85      74653A20 
+  86              		.section	.text.LED_RestoreState,"ax",%progbits
+  87              		.align	1
+  88              		.syntax unified
+  89              		.thumb
+  90              		.thumb_func
+  92              	LED_RestoreState:
+  93              	.LFB248:
+ 167:Core/Src/freertos.c **** 
+ 168:Core/Src/freertos.c **** /**
+ 169:Core/Src/freertos.c ****   * @brief  从 W25Q128 恢复 LED 状态
+ 170:Core/Src/freertos.c ****   * @retval 保存的状态字, 若无有效数据则返回 0
+ 171:Core/Src/freertos.c ****   */
+ 172:Core/Src/freertos.c **** static uint8_t LED_RestoreState(void)
+ 173:Core/Src/freertos.c **** {
+  94              		.loc 1 173 1 is_stmt 1 view -0
+  95              		.cfi_startproc
+  96              		@ args = 0, pretend = 0, frame = 8
+  97              		@ frame_needed = 0, uses_anonymous_args = 0
+  98 0000 10B5     		push	{r4, lr}
+  99              		.cfi_def_cfa_offset 8
+ 100              		.cfi_offset 4, -8
+ 101              		.cfi_offset 14, -4
+ 102 0002 82B0     		sub	sp, sp, #8
+ 103              		.cfi_def_cfa_offset 16
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccxEemIg.s 			page 6
+
+
+ 174:Core/Src/freertos.c ****   uint8_t state = 0;
+ 104              		.loc 1 174 3 view .LVU10
+ 105              		.loc 1 174 11 is_stmt 0 view .LVU11
+ 106 0004 0024     		movs	r4, #0
+ 107 0006 8DF80740 		strb	r4, [sp, #7]
+ 175:Core/Src/freertos.c **** 
+ 176:Core/Src/freertos.c ****   /* 读取 W25Q128 ID 检查芯片是否正常 */
+ 177:Core/Src/freertos.c ****   uint16_t id = W25QXX_ReadID();
+ 108              		.loc 1 177 3 is_stmt 1 view .LVU12
+ 109              		.loc 1 177 17 is_stmt 0 view .LVU13
+ 110 000a FFF7FEFF 		bl	W25QXX_ReadID
+ 111              	.LVL7:
+ 112 000e 0146     		mov	r1, r0
+ 113              	.LVL8:
+ 178:Core/Src/freertos.c ****   printf("W25Q128 ID: 0x%04X\r\n", id);
+ 114              		.loc 1 178 3 is_stmt 1 view .LVU14
+ 115 0010 0848     		ldr	r0, .L7
+ 116 0012 FFF7FEFF 		bl	printf
+ 117              	.LVL9:
+ 179:Core/Src/freertos.c **** 
+ 180:Core/Src/freertos.c ****   /* 读取保存的状态 */
+ 181:Core/Src/freertos.c ****   W25QXX_Read(&state, SAVE_ADDR, 1);
+ 118              		.loc 1 181 3 view .LVU15
+ 119 0016 0122     		movs	r2, #1
+ 120 0018 2146     		mov	r1, r4
+ 121 001a 0DF10700 		add	r0, sp, #7
+ 122 001e FFF7FEFF 		bl	W25QXX_Read
+ 123              	.LVL10:
+ 182:Core/Src/freertos.c ****   printf("Restored LED state: 0x%02X\r\n", state);
+ 124              		.loc 1 182 3 view .LVU16
+ 125 0022 9DF80710 		ldrb	r1, [sp, #7]	@ zero_extendqisi2
+ 126 0026 0448     		ldr	r0, .L7+4
+ 127 0028 FFF7FEFF 		bl	printf
+ 128              	.LVL11:
+ 183:Core/Src/freertos.c **** 
+ 184:Core/Src/freertos.c ****   return state;
+ 129              		.loc 1 184 3 view .LVU17
+ 185:Core/Src/freertos.c **** }
+ 130              		.loc 1 185 1 is_stmt 0 view .LVU18
+ 131 002c 9DF80700 		ldrb	r0, [sp, #7]	@ zero_extendqisi2
+ 132 0030 02B0     		add	sp, sp, #8
+ 133              		.cfi_def_cfa_offset 8
+ 134              		@ sp needed
+ 135 0032 10BD     		pop	{r4, pc}
+ 136              	.L8:
+ 137              		.align	2
+ 138              	.L7:
+ 139 0034 00000000 		.word	.LC1
+ 140 0038 18000000 		.word	.LC2
+ 141              		.cfi_endproc
+ 142              	.LFE248:
+ 144              		.section	.rodata.StartLedTask.str1.4,"aMS",%progbits,1
+ 145              		.align	2
+ 146              	.LC3:
+ 147 0000 57323551 		.ascii	"W25Q128 Demo Started\015\000"
+ 147      31323820 
+ 147      44656D6F 
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccxEemIg.s 			page 7
+
+
+ 147      20537461 
+ 147      72746564 
+ 148 0016 0000     		.align	2
+ 149              	.LC4:
+ 150 0018 4B313D54 		.ascii	"K1=Toggle next  K4=Toggle prev  K3=Save  K6=Restore"
+ 150      6F67676C 
+ 150      65206E65 
+ 150      78742020 
+ 150      4B343D54 
+ 151 004b 0D00     		.ascii	"\015\000"
+ 152 004d 000000   		.align	2
+ 153              	.LC5:
+ 154 0050 4B313A20 		.ascii	"K1: Toggle LED%d, state=0x%02X\015\012\000"
+ 154      546F6767 
+ 154      6C65204C 
+ 154      45442564 
+ 154      2C207374 
+ 155 0071 000000   		.align	2
+ 156              	.LC6:
+ 157 0074 4B343A20 		.ascii	"K4: Toggle LED%d, state=0x%02X\015\012\000"
+ 157      546F6767 
+ 157      6C65204C 
+ 157      45442564 
+ 157      2C207374 
+ 158 0095 000000   		.align	2
+ 159              	.LC7:
+ 160 0098 4B363A20 		.ascii	"K6: State restored, mask=0x%02X\015\012\000"
+ 160      53746174 
+ 160      65207265 
+ 160      73746F72 
+ 160      65642C20 
+ 161              		.section	.text.StartLedTask,"ax",%progbits
+ 162              		.align	1
+ 163              		.global	StartLedTask
+ 164              		.syntax unified
+ 165              		.thumb
+ 166              		.thumb_func
+ 168              	StartLedTask:
+ 169              	.LVL12:
+ 170              	.LFB249:
+ 186:Core/Src/freertos.c **** 
+ 187:Core/Src/freertos.c **** /* USER CODE BEGIN Header_StartLedTask */
+ 188:Core/Src/freertos.c **** /**
+ 189:Core/Src/freertos.c ****   * @brief  W25Q128 存储 LED 状态示例任务
+ 190:Core/Src/freertos.c ****   *         - K1: 切换当前 LED 的亮灭状态, 移到下一个
+ 191:Core/Src/freertos.c ****   *         - K4: 切换上一个 LED 的亮灭状态 (反向调节)
+ 192:Core/Src/freertos.c ****   *         - K3: 保存当前 LED 状态到 W25Q128
+ 193:Core/Src/freertos.c ****   *         - K6: 恢复上次保存的 LED 状态 (从 W25Q128 读取)
+ 194:Core/Src/freertos.c ****   * @param  argument: Not used
+ 195:Core/Src/freertos.c ****   * @retval None
+ 196:Core/Src/freertos.c ****   */
+ 197:Core/Src/freertos.c **** /* USER CODE END Header_StartLedTask */
+ 198:Core/Src/freertos.c **** void StartLedTask(void *argument)
+ 199:Core/Src/freertos.c **** {
+ 171              		.loc 1 199 1 is_stmt 1 view -0
+ 172              		.cfi_startproc
+ 173              		@ Volatile: function does not return.
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccxEemIg.s 			page 8
+
+
+ 174              		@ args = 0, pretend = 0, frame = 0
+ 175              		@ frame_needed = 0, uses_anonymous_args = 0
+ 176              		.loc 1 199 1 is_stmt 0 view .LVU20
+ 177 0000 08B5     		push	{r3, lr}
+ 178              		.cfi_def_cfa_offset 8
+ 179              		.cfi_offset 3, -8
+ 180              		.cfi_offset 14, -4
+ 200:Core/Src/freertos.c ****   /* USER CODE BEGIN StartLedTask */
+ 201:Core/Src/freertos.c ****   /* 初始化串口驱动并设置为 printf 调试输出口 */
+ 202:Core/Src/freertos.c ****   UartDrv_Init(&g_uart1Drv, &huart1);
+ 181              		.loc 1 202 3 is_stmt 1 view .LVU21
+ 182 0002 444C     		ldr	r4, .L22
+ 183 0004 4449     		ldr	r1, .L22+4
+ 184 0006 2046     		mov	r0, r4
+ 185              	.LVL13:
+ 186              		.loc 1 202 3 is_stmt 0 view .LVU22
+ 187 0008 FFF7FEFF 		bl	UartDrv_Init
+ 188              	.LVL14:
+ 203:Core/Src/freertos.c ****   UartDrv_SetDebugPort(&g_uart1Drv);
+ 189              		.loc 1 203 3 is_stmt 1 view .LVU23
+ 190 000c 2046     		mov	r0, r4
+ 191 000e FFF7FEFF 		bl	UartDrv_SetDebugPort
+ 192              	.LVL15:
+ 204:Core/Src/freertos.c **** 
+ 205:Core/Src/freertos.c ****   /* 初始化按键驱动 */
+ 206:Core/Src/freertos.c ****   Key_Init(keyConfigs, 6);
+ 193              		.loc 1 206 3 view .LVU24
+ 194 0012 0621     		movs	r1, #6
+ 195 0014 4148     		ldr	r0, .L22+8
+ 196 0016 FFF7FEFF 		bl	Key_Init
+ 197              	.LVL16:
+ 207:Core/Src/freertos.c **** 
+ 208:Core/Src/freertos.c ****   /* 初始化 LED 驱动 (初始化后全灭) */
+ 209:Core/Src/freertos.c ****   LED_Init(ledConfigs, 7);
+ 198              		.loc 1 209 3 view .LVU25
+ 199 001a 0721     		movs	r1, #7
+ 200 001c 4048     		ldr	r0, .L22+12
+ 201 001e FFF7FEFF 		bl	LED_Init
+ 202              	.LVL17:
+ 210:Core/Src/freertos.c ****   LED_SetLeds(0x00);
+ 203              		.loc 1 210 3 view .LVU26
+ 204 0022 0020     		movs	r0, #0
+ 205 0024 FFF7FEFF 		bl	LED_SetLeds
+ 206              	.LVL18:
+ 211:Core/Src/freertos.c **** 
+ 212:Core/Src/freertos.c ****   /* 初始化 W25Q128 */
+ 213:Core/Src/freertos.c ****   W25QXX_Init();
+ 207              		.loc 1 213 3 view .LVU27
+ 208 0028 FFF7FEFF 		bl	W25QXX_Init
+ 209              	.LVL19:
+ 214:Core/Src/freertos.c **** 
+ 215:Core/Src/freertos.c ****   /* 从 W25Q128 恢复上次保存的 LED 状态 */
+ 216:Core/Src/freertos.c ****   ledState = LED_RestoreState();
+ 210              		.loc 1 216 3 view .LVU28
+ 211              		.loc 1 216 14 is_stmt 0 view .LVU29
+ 212 002c FFF7FEFF 		bl	LED_RestoreState
+ 213              	.LVL20:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccxEemIg.s 			page 9
+
+
+ 214              		.loc 1 216 12 discriminator 1 view .LVU30
+ 215 0030 3C4B     		ldr	r3, .L22+16
+ 216 0032 1870     		strb	r0, [r3]
+ 217:Core/Src/freertos.c ****   LED_SetLeds(ledState);
+ 217              		.loc 1 217 3 is_stmt 1 view .LVU31
+ 218 0034 FFF7FEFF 		bl	LED_SetLeds
+ 219              	.LVL21:
+ 218:Core/Src/freertos.c **** 
+ 219:Core/Src/freertos.c ****   printf("W25Q128 Demo Started\r\n");
+ 220              		.loc 1 219 3 view .LVU32
+ 221 0038 3B48     		ldr	r0, .L22+20
+ 222 003a FFF7FEFF 		bl	puts
+ 223              	.LVL22:
+ 220:Core/Src/freertos.c ****   printf("K1=Toggle next  K4=Toggle prev  K3=Save  K6=Restore\r\n");
+ 224              		.loc 1 220 3 view .LVU33
+ 225 003e 3B48     		ldr	r0, .L22+24
+ 226 0040 FFF7FEFF 		bl	puts
+ 227              	.LVL23:
+ 228 0044 4DE0     		b	.L17
+ 229              	.L10:
+ 221:Core/Src/freertos.c **** 
+ 222:Core/Src/freertos.c ****   /* Infinite loop */
+ 223:Core/Src/freertos.c ****   for(;;)
+ 224:Core/Src/freertos.c ****   {
+ 225:Core/Src/freertos.c ****     /* 按键扫描 (每 10ms 调用一次) */
+ 226:Core/Src/freertos.c ****     Key_Scan();
+ 227:Core/Src/freertos.c **** 
+ 228:Core/Src/freertos.c ****     /* K1: 切换当前 LED 的亮灭状态, 然后移到下一个 LED */
+ 229:Core/Src/freertos.c ****     if (Key_IsShortPressed(KEY_K1) || Key_IsRepeat(KEY_K1))
+ 230:Core/Src/freertos.c ****     {
+ 231:Core/Src/freertos.c ****       ledState ^= (1 << currentLed);              /* 切换当前 LED */
+ 230              		.loc 1 231 7 view .LVU34
+ 231              		.loc 1 231 22 is_stmt 0 view .LVU35
+ 232 0046 3A4D     		ldr	r5, .L22+28
+ 233 0048 2A78     		ldrb	r2, [r5]	@ zero_extendqisi2
+ 234 004a 0123     		movs	r3, #1
+ 235 004c 9340     		lsls	r3, r3, r2
+ 236              		.loc 1 231 16 view .LVU36
+ 237 004e 354C     		ldr	r4, .L22+16
+ 238 0050 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+ 239 0052 5840     		eors	r0, r0, r3
+ 240 0054 C0B2     		uxtb	r0, r0
+ 241 0056 2070     		strb	r0, [r4]
+ 232:Core/Src/freertos.c ****       LED_SetLeds(ledState);
+ 242              		.loc 1 232 7 is_stmt 1 view .LVU37
+ 243 0058 FFF7FEFF 		bl	LED_SetLeds
+ 244              	.LVL24:
+ 233:Core/Src/freertos.c ****       currentLed = (currentLed + 1) % 7;          /* 移到下一个 */
+ 245              		.loc 1 233 7 view .LVU38
+ 246              		.loc 1 233 32 is_stmt 0 view .LVU39
+ 247 005c 2B78     		ldrb	r3, [r5]	@ zero_extendqisi2
+ 248 005e 0133     		adds	r3, r3, #1
+ 249              		.loc 1 233 37 view .LVU40
+ 250 0060 3449     		ldr	r1, .L22+32
+ 251 0062 81FB0321 		smull	r2, r1, r1, r3
+ 252 0066 1944     		add	r1, r1, r3
+ 253 0068 8910     		asrs	r1, r1, #2
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccxEemIg.s 			page 10
+
+
+ 254 006a C1EBC101 		rsb	r1, r1, r1, lsl #3
+ 255 006e 591A     		subs	r1, r3, r1
+ 256              		.loc 1 233 18 view .LVU41
+ 257 0070 2970     		strb	r1, [r5]
+ 234:Core/Src/freertos.c ****       printf("K1: Toggle LED%d, state=0x%02X\r\n", currentLed + 1, ledState);
+ 258              		.loc 1 234 7 is_stmt 1 view .LVU42
+ 259 0072 C9B2     		uxtb	r1, r1
+ 260 0074 2278     		ldrb	r2, [r4]	@ zero_extendqisi2
+ 261 0076 0131     		adds	r1, r1, #1
+ 262 0078 2F48     		ldr	r0, .L22+36
+ 263 007a FFF7FEFF 		bl	printf
+ 264              	.LVL25:
+ 265              	.L11:
+ 235:Core/Src/freertos.c ****     }
+ 236:Core/Src/freertos.c **** 
+ 237:Core/Src/freertos.c ****     /* K4: 切换上一个 LED 的亮灭状态 (反向调节) */
+ 238:Core/Src/freertos.c ****     if (Key_IsShortPressed(KEY_K4) || Key_IsRepeat(KEY_K4))
+ 266              		.loc 1 238 5 view .LVU43
+ 267              		.loc 1 238 9 is_stmt 0 view .LVU44
+ 268 007e 0320     		movs	r0, #3
+ 269 0080 FFF7FEFF 		bl	Key_IsShortPressed
+ 270              	.LVL26:
+ 271              		.loc 1 238 8 discriminator 1 view .LVU45
+ 272 0084 0028     		cmp	r0, #0
+ 273 0086 38D0     		beq	.L20
+ 274              	.L12:
+ 239:Core/Src/freertos.c ****     {
+ 240:Core/Src/freertos.c ****       currentLed = (currentLed == 0) ? 6 : (currentLed - 1);
+ 275              		.loc 1 240 7 is_stmt 1 view .LVU46
+ 276              		.loc 1 240 32 is_stmt 0 view .LVU47
+ 277 0088 294B     		ldr	r3, .L22+28
+ 278 008a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 279              		.loc 1 240 18 view .LVU48
+ 280 008c 002B     		cmp	r3, #0
+ 281 008e 3AD0     		beq	.L18
+ 282              		.loc 1 240 18 discriminator 1 view .LVU49
+ 283 0090 013B     		subs	r3, r3, #1
+ 284 0092 DBB2     		uxtb	r3, r3
+ 285              	.L14:
+ 286              		.loc 1 240 18 discriminator 4 view .LVU50
+ 287 0094 264D     		ldr	r5, .L22+28
+ 288 0096 2B70     		strb	r3, [r5]
+ 241:Core/Src/freertos.c ****       ledState ^= (1 << currentLed);              /* 切换当前 LED */
+ 289              		.loc 1 241 7 is_stmt 1 view .LVU51
+ 290              		.loc 1 241 22 is_stmt 0 view .LVU52
+ 291 0098 0122     		movs	r2, #1
+ 292 009a 02FA03F3 		lsl	r3, r2, r3
+ 293              		.loc 1 241 16 view .LVU53
+ 294 009e 214C     		ldr	r4, .L22+16
+ 295 00a0 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+ 296 00a2 5840     		eors	r0, r0, r3
+ 297 00a4 C0B2     		uxtb	r0, r0
+ 298 00a6 2070     		strb	r0, [r4]
+ 242:Core/Src/freertos.c ****       LED_SetLeds(ledState);
+ 299              		.loc 1 242 7 is_stmt 1 view .LVU54
+ 300 00a8 FFF7FEFF 		bl	LED_SetLeds
+ 301              	.LVL27:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccxEemIg.s 			page 11
+
+
+ 243:Core/Src/freertos.c ****       printf("K4: Toggle LED%d, state=0x%02X\r\n", currentLed + 1, ledState);
+ 302              		.loc 1 243 7 view .LVU55
+ 303 00ac 2978     		ldrb	r1, [r5]	@ zero_extendqisi2
+ 304 00ae 2278     		ldrb	r2, [r4]	@ zero_extendqisi2
+ 305 00b0 0131     		adds	r1, r1, #1
+ 306 00b2 2248     		ldr	r0, .L22+40
+ 307 00b4 FFF7FEFF 		bl	printf
+ 308              	.LVL28:
+ 309              	.L13:
+ 244:Core/Src/freertos.c ****     }
+ 245:Core/Src/freertos.c **** 
+ 246:Core/Src/freertos.c ****     /* K3: 保存当前 LED 状态到 W25Q128 */
+ 247:Core/Src/freertos.c ****     if (Key_IsShortPressed(KEY_K3))
+ 310              		.loc 1 247 5 view .LVU56
+ 311              		.loc 1 247 9 is_stmt 0 view .LVU57
+ 312 00b8 0220     		movs	r0, #2
+ 313 00ba FFF7FEFF 		bl	Key_IsShortPressed
+ 314              	.LVL29:
+ 315              		.loc 1 247 8 discriminator 1 view .LVU58
+ 316 00be 20BB     		cbnz	r0, .L21
+ 317              	.L15:
+ 248:Core/Src/freertos.c ****     {
+ 249:Core/Src/freertos.c ****       LED_SaveState(ledState);
+ 250:Core/Src/freertos.c ****     }
+ 251:Core/Src/freertos.c **** 
+ 252:Core/Src/freertos.c ****     /* K6: 恢复上次保存的 LED 状态 */
+ 253:Core/Src/freertos.c ****     if (Key_IsShortPressed(KEY_K6))
+ 318              		.loc 1 253 5 is_stmt 1 view .LVU59
+ 319              		.loc 1 253 9 is_stmt 0 view .LVU60
+ 320 00c0 0520     		movs	r0, #5
+ 321 00c2 FFF7FEFF 		bl	Key_IsShortPressed
+ 322              	.LVL30:
+ 323              		.loc 1 253 8 discriminator 1 view .LVU61
+ 324 00c6 48B1     		cbz	r0, .L16
+ 254:Core/Src/freertos.c ****     {
+ 255:Core/Src/freertos.c ****       ledState = LED_RestoreState();
+ 325              		.loc 1 255 7 is_stmt 1 view .LVU62
+ 326              		.loc 1 255 18 is_stmt 0 view .LVU63
+ 327 00c8 FFF7FEFF 		bl	LED_RestoreState
+ 328              	.LVL31:
+ 329              		.loc 1 255 16 discriminator 1 view .LVU64
+ 330 00cc 154C     		ldr	r4, .L22+16
+ 331 00ce 2070     		strb	r0, [r4]
+ 256:Core/Src/freertos.c ****       LED_SetLeds(ledState);
+ 332              		.loc 1 256 7 is_stmt 1 view .LVU65
+ 333 00d0 FFF7FEFF 		bl	LED_SetLeds
+ 334              	.LVL32:
+ 257:Core/Src/freertos.c ****       printf("K6: State restored, mask=0x%02X\r\n", ledState);
+ 335              		.loc 1 257 7 view .LVU66
+ 336 00d4 2178     		ldrb	r1, [r4]	@ zero_extendqisi2
+ 337 00d6 1A48     		ldr	r0, .L22+44
+ 338 00d8 FFF7FEFF 		bl	printf
+ 339              	.LVL33:
+ 340              	.L16:
+ 258:Core/Src/freertos.c ****     }
+ 259:Core/Src/freertos.c **** 
+ 260:Core/Src/freertos.c ****     osDelay(KEY_SCAN_INTERVAL_MS);  /* 10ms 扫描周期 */
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccxEemIg.s 			page 12
+
+
+ 341              		.loc 1 260 5 view .LVU67
+ 342 00dc 0A20     		movs	r0, #10
+ 343 00de FFF7FEFF 		bl	osDelay
+ 344              	.LVL34:
+ 223:Core/Src/freertos.c ****   {
+ 345              		.loc 1 223 3 view .LVU68
+ 346              	.L17:
+ 223:Core/Src/freertos.c ****   {
+ 347              		.loc 1 223 3 view .LVU69
+ 226:Core/Src/freertos.c **** 
+ 348              		.loc 1 226 5 view .LVU70
+ 349 00e2 FFF7FEFF 		bl	Key_Scan
+ 350              	.LVL35:
+ 229:Core/Src/freertos.c ****     {
+ 351              		.loc 1 229 5 view .LVU71
+ 229:Core/Src/freertos.c ****     {
+ 352              		.loc 1 229 9 is_stmt 0 view .LVU72
+ 353 00e6 0020     		movs	r0, #0
+ 354 00e8 FFF7FEFF 		bl	Key_IsShortPressed
+ 355              	.LVL36:
+ 229:Core/Src/freertos.c ****     {
+ 356              		.loc 1 229 8 discriminator 1 view .LVU73
+ 357 00ec 0028     		cmp	r0, #0
+ 358 00ee AAD1     		bne	.L10
+ 229:Core/Src/freertos.c ****     {
+ 359              		.loc 1 229 39 discriminator 1 view .LVU74
+ 360 00f0 FFF7FEFF 		bl	Key_IsRepeat
+ 361              	.LVL37:
+ 229:Core/Src/freertos.c ****     {
+ 362              		.loc 1 229 36 discriminator 1 view .LVU75
+ 363 00f4 0028     		cmp	r0, #0
+ 364 00f6 C2D0     		beq	.L11
+ 365 00f8 A5E7     		b	.L10
+ 366              	.L20:
+ 238:Core/Src/freertos.c ****     {
+ 367              		.loc 1 238 39 discriminator 1 view .LVU76
+ 368 00fa 0320     		movs	r0, #3
+ 369 00fc FFF7FEFF 		bl	Key_IsRepeat
+ 370              	.LVL38:
+ 238:Core/Src/freertos.c ****     {
+ 371              		.loc 1 238 36 discriminator 1 view .LVU77
+ 372 0100 0028     		cmp	r0, #0
+ 373 0102 D9D0     		beq	.L13
+ 374 0104 C0E7     		b	.L12
+ 375              	.L18:
+ 240:Core/Src/freertos.c ****       ledState ^= (1 << currentLed);              /* 切换当前 LED */
+ 376              		.loc 1 240 18 discriminator 2 view .LVU78
+ 377 0106 0623     		movs	r3, #6
+ 378 0108 C4E7     		b	.L14
+ 379              	.L21:
+ 249:Core/Src/freertos.c ****     }
+ 380              		.loc 1 249 7 is_stmt 1 view .LVU79
+ 381 010a 064B     		ldr	r3, .L22+16
+ 382 010c 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 383 010e FFF7FEFF 		bl	LED_SaveState
+ 384              	.LVL39:
+ 385 0112 D5E7     		b	.L15
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccxEemIg.s 			page 13
+
+
+ 386              	.L23:
+ 387              		.align	2
+ 388              	.L22:
+ 389 0114 00000000 		.word	g_uart1Drv
+ 390 0118 00000000 		.word	huart1
+ 391 011c 00000000 		.word	keyConfigs
+ 392 0120 00000000 		.word	ledConfigs
+ 393 0124 00000000 		.word	ledState
+ 394 0128 00000000 		.word	.LC3
+ 395 012c 18000000 		.word	.LC4
+ 396 0130 00000000 		.word	currentLed
+ 397 0134 93244992 		.word	-1840700269
+ 398 0138 50000000 		.word	.LC5
+ 399 013c 74000000 		.word	.LC6
+ 400 0140 98000000 		.word	.LC7
+ 401              		.cfi_endproc
+ 402              	.LFE249:
+ 404              		.section	.text.MX_FREERTOS_Init,"ax",%progbits
+ 405              		.align	1
+ 406              		.global	MX_FREERTOS_Init
+ 407              		.syntax unified
+ 408              		.thumb
+ 409              		.thumb_func
+ 411              	MX_FREERTOS_Init:
+ 412              	.LFB246:
+ 114:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
+ 413              		.loc 1 114 29 view -0
+ 414              		.cfi_startproc
+ 415              		@ args = 0, pretend = 0, frame = 0
+ 416              		@ frame_needed = 0, uses_anonymous_args = 0
+ 417 0000 08B5     		push	{r3, lr}
+ 418              		.cfi_def_cfa_offset 8
+ 419              		.cfi_offset 3, -8
+ 420              		.cfi_offset 14, -4
+ 137:Core/Src/freertos.c **** 
+ 421              		.loc 1 137 3 view .LVU81
+ 137:Core/Src/freertos.c **** 
+ 422              		.loc 1 137 19 is_stmt 0 view .LVU82
+ 423 0002 044A     		ldr	r2, .L26
+ 424 0004 0021     		movs	r1, #0
+ 425 0006 0448     		ldr	r0, .L26+4
+ 426 0008 FFF7FEFF 		bl	osThreadNew
+ 427              	.LVL40:
+ 137:Core/Src/freertos.c **** 
+ 428              		.loc 1 137 17 discriminator 1 view .LVU83
+ 429 000c 034B     		ldr	r3, .L26+8
+ 430 000e 1860     		str	r0, [r3]
+ 147:Core/Src/freertos.c **** 
+ 431              		.loc 1 147 1 view .LVU84
+ 432 0010 08BD     		pop	{r3, pc}
+ 433              	.L27:
+ 434 0012 00BF     		.align	2
+ 435              	.L26:
+ 436 0014 00000000 		.word	ledTask_attributes
+ 437 0018 00000000 		.word	StartLedTask
+ 438 001c 00000000 		.word	ledTaskHandle
+ 439              		.cfi_endproc
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccxEemIg.s 			page 14
+
+
+ 440              	.LFE246:
+ 442              		.global	ledTask_attributes
+ 443              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 444              		.align	2
+ 445              	.LC8:
+ 446 0000 6C656454 		.ascii	"ledTask\000"
+ 446      61736B00 
+ 447              		.section	.rodata.ledTask_attributes,"a"
+ 448              		.align	2
+ 451              	ledTask_attributes:
+ 452 0000 00000000 		.word	.LC8
+ 453 0004 00000000 		.space	16
+ 453      00000000 
+ 453      00000000 
+ 453      00000000 
+ 454 0014 00080000 		.word	2048
+ 455 0018 18000000 		.word	24
+ 456 001c 00000000 		.space	8
+ 456      00000000 
+ 457              		.global	ledTaskHandle
+ 458              		.section	.bss.ledTaskHandle,"aw",%nobits
+ 459              		.align	2
+ 462              	ledTaskHandle:
+ 463 0000 00000000 		.space	4
+ 464              		.section	.bss.currentLed,"aw",%nobits
+ 467              	currentLed:
+ 468 0000 00       		.space	1
+ 469              		.section	.bss.ledState,"aw",%nobits
+ 472              	ledState:
+ 473 0000 00       		.space	1
+ 474              		.section	.rodata.ledConfigs,"a"
+ 475              		.align	2
+ 478              	ledConfigs:
+ 479 0000 00100240 		.word	1073876992
+ 480 0004 0001     		.short	256
+ 481 0006 00       		.byte	0
+ 482 0007 00       		.space	1
+ 483 0008 00100240 		.word	1073876992
+ 484 000c 0002     		.short	512
+ 485 000e 00       		.byte	0
+ 486 000f 00       		.space	1
+ 487 0010 00100240 		.word	1073876992
+ 488 0014 0004     		.short	1024
+ 489 0016 00       		.byte	0
+ 490 0017 00       		.space	1
+ 491 0018 00100240 		.word	1073876992
+ 492 001c 0008     		.short	2048
+ 493 001e 00       		.byte	0
+ 494 001f 00       		.space	1
+ 495 0020 00100240 		.word	1073876992
+ 496 0024 0010     		.short	4096
+ 497 0026 00       		.byte	0
+ 498 0027 00       		.space	1
+ 499 0028 00100240 		.word	1073876992
+ 500 002c 0020     		.short	8192
+ 501 002e 00       		.byte	0
+ 502 002f 00       		.space	1
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccxEemIg.s 			page 15
+
+
+ 503 0030 00100240 		.word	1073876992
+ 504 0034 0040     		.short	16384
+ 505 0036 00       		.byte	0
+ 506 0037 00       		.space	1
+ 507              		.section	.rodata.keyConfigs,"a"
+ 508              		.align	2
+ 511              	keyConfigs:
+ 512 0000 00100240 		.word	1073876992
+ 513 0004 0200     		.short	2
+ 514 0006 00       		.byte	0
+ 515 0007 00       		.space	1
+ 516 0008 00100240 		.word	1073876992
+ 517 000c 0400     		.short	4
+ 518 000e 00       		.byte	0
+ 519 000f 00       		.space	1
+ 520 0010 00100240 		.word	1073876992
+ 521 0014 0800     		.short	8
+ 522 0016 00       		.byte	0
+ 523 0017 00       		.space	1
+ 524 0018 00100240 		.word	1073876992
+ 525 001c 1000     		.short	16
+ 526 001e 00       		.byte	0
+ 527 001f 00       		.space	1
+ 528 0020 00100240 		.word	1073876992
+ 529 0024 2000     		.short	32
+ 530 0026 01       		.byte	1
+ 531 0027 00       		.space	1
+ 532 0028 00100240 		.word	1073876992
+ 533 002c 4000     		.short	64
+ 534 002e 01       		.byte	1
+ 535 002f 00       		.space	1
+ 536              		.section	.bss.g_uart1Drv,"aw",%nobits
+ 537              		.align	2
+ 540              	g_uart1Drv:
+ 541 0000 00000000 		.space	536
+ 541      00000000 
+ 541      00000000 
+ 541      00000000 
+ 541      00000000 
+ 542              		.text
+ 543              	.Letext0:
+ 544              		.file 2 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_default_t
+ 545              		.file 3 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h"
+ 546              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 547              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 548              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 549              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
+ 550              		.file 8 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 551              		.file 9 "../Bsp/Key/key.h"
+ 552              		.file 10 "../Bsp/LED/led.h"
+ 553              		.file 11 "../Bsp/UartDrv/uart_drv.h"
+ 554              		.file 12 "Core/Inc/usart.h"
+ 555              		.file 13 "../Bsp/w25qxx/w25qxx.h"
+ 556              		.file 14 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/stdio.h"
+ 557              		.file 15 "<built-in>"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccxEemIg.s 			page 16
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 freertos.c
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:21     .rodata.LED_SaveState.str1.4:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:25     .text.LED_SaveState:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:30     .text.LED_SaveState:00000000 LED_SaveState
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:75     .text.LED_SaveState:00000034 $d
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:80     .rodata.LED_RestoreState.str1.4:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:87     .text.LED_RestoreState:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:92     .text.LED_RestoreState:00000000 LED_RestoreState
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:139    .text.LED_RestoreState:00000034 $d
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:145    .rodata.StartLedTask.str1.4:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:162    .text.StartLedTask:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:168    .text.StartLedTask:00000000 StartLedTask
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:389    .text.StartLedTask:00000114 $d
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:540    .bss.g_uart1Drv:00000000 g_uart1Drv
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:511    .rodata.keyConfigs:00000000 keyConfigs
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:478    .rodata.ledConfigs:00000000 ledConfigs
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:472    .bss.ledState:00000000 ledState
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:467    .bss.currentLed:00000000 currentLed
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:405    .text.MX_FREERTOS_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:411    .text.MX_FREERTOS_Init:00000000 MX_FREERTOS_Init
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:436    .text.MX_FREERTOS_Init:00000014 $d
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:451    .rodata.ledTask_attributes:00000000 ledTask_attributes
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:462    .bss.ledTaskHandle:00000000 ledTaskHandle
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:444    .rodata.str1.4:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:448    .rodata.ledTask_attributes:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:459    .bss.ledTaskHandle:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:468    .bss.currentLed:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:473    .bss.ledState:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:475    .rodata.ledConfigs:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:508    .rodata.keyConfigs:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccxEemIg.s:537    .bss.g_uart1Drv:00000000 $d
+
+UNDEFINED SYMBOLS
+W25QXX_Erase_Sector
+W25QXX_Wait_Busy
+W25QXX_Write_NoCheck
+printf
+W25QXX_ReadID
+W25QXX_Read
+UartDrv_Init
+UartDrv_SetDebugPort
+Key_Init
+LED_Init
+LED_SetLeds
+W25QXX_Init
+puts
+Key_IsShortPressed
+osDelay
+Key_Scan
+Key_IsRepeat
+huart1
+osThreadNew

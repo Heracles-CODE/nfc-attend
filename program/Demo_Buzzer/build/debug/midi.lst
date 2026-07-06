@@ -1,0 +1,1711 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"midi.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "../Bsp/MIDI/midi.c"
+  20              		.section	.text.MIDI_Init,"ax",%progbits
+  21              		.align	1
+  22              		.global	MIDI_Init
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	MIDI_Init:
+  28              	.LVL0:
+  29              	.LFB239:
+   1:../Bsp/MIDI/midi.c **** /**
+   2:../Bsp/MIDI/midi.c ****   ******************************************************************************
+   3:../Bsp/MIDI/midi.c ****   * @file    midi.c
+   4:../Bsp/MIDI/midi.c ****   * @brief   蜂鸣器播放音乐驱动源文件
+   5:../Bsp/MIDI/midi.c ****   ******************************************************************************
+   6:../Bsp/MIDI/midi.c ****   */
+   7:../Bsp/MIDI/midi.c **** 
+   8:../Bsp/MIDI/midi.c **** #include "midi.h"
+   9:../Bsp/MIDI/midi.c **** 
+  10:../Bsp/MIDI/midi.c **** /**
+  11:../Bsp/MIDI/midi.c ****   * @brief  MIDI句柄结构体
+  12:../Bsp/MIDI/midi.c ****   *         保存MIDI驱动的所有状态和配置信息
+  13:../Bsp/MIDI/midi.c ****   */
+  14:../Bsp/MIDI/midi.c **** typedef struct {
+  15:../Bsp/MIDI/midi.c ****     TIM_HandleTypeDef *htim;
+  16:../Bsp/MIDI/midi.c ****     uint32_t channel;
+  17:../Bsp/MIDI/midi.c **** 
+  18:../Bsp/MIDI/midi.c ****     uint8_t tune;
+  19:../Bsp/MIDI/midi.c ****     uint8_t key;
+  20:../Bsp/MIDI/midi.c ****     uint8_t vol;
+  21:../Bsp/MIDI/midi.c ****     int8_t shift;
+  22:../Bsp/MIDI/midi.c ****     uint32_t cnt;
+  23:../Bsp/MIDI/midi.c **** 
+  24:../Bsp/MIDI/midi.c ****     MIDI_StateTypeDef state;
+  25:../Bsp/MIDI/midi.c ****     uint8_t loop;
+  26:../Bsp/MIDI/midi.c ****     uint16_t midi_idx;
+  27:../Bsp/MIDI/midi.c ****     uint32_t play_time;
+  28:../Bsp/MIDI/midi.c ****     uint32_t tune_tick;
+  29:../Bsp/MIDI/midi.c ****     uint32_t end_tick;
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 2
+
+
+  30:../Bsp/MIDI/midi.c **** 
+  31:../Bsp/MIDI/midi.c ****     uint16_t bpm;
+  32:../Bsp/MIDI/midi.c ****     uint16_t base_bpm;
+  33:../Bsp/MIDI/midi.c **** 
+  34:../Bsp/MIDI/midi.c ****     uint32_t *midi_data;
+  35:../Bsp/MIDI/midi.c ****     uint16_t midi_len;
+  36:../Bsp/MIDI/midi.c **** } MIDI_HandleTypeDef;
+  37:../Bsp/MIDI/midi.c **** 
+  38:../Bsp/MIDI/midi.c **** static MIDI_HandleTypeDef hmidi;
+  39:../Bsp/MIDI/midi.c **** 
+  40:../Bsp/MIDI/midi.c **** /**
+  41:../Bsp/MIDI/midi.c ****   * @brief  音符频率表（C大调，一个八度）
+  42:../Bsp/MIDI/midi.c ****   *         索引0为休止符，1-7对应C-B音符
+  43:../Bsp/MIDI/midi.c ****   */
+  44:../Bsp/MIDI/midi.c **** static const float midi_freq_tab[8] = {0, 261.6, 293.6, 329.6, 349.2, 392.0, 440.0, 493.9};
+  45:../Bsp/MIDI/midi.c **** 
+  46:../Bsp/MIDI/midi.c **** /**
+  47:../Bsp/MIDI/midi.c ****   * @brief  初始化MIDI驱动
+  48:../Bsp/MIDI/midi.c ****   * @param  htim: PWM定时器句柄指针
+  49:../Bsp/MIDI/midi.c ****   * @param  channel: PWM通道
+  50:../Bsp/MIDI/midi.c ****   * @retval None
+  51:../Bsp/MIDI/midi.c ****   */
+  52:../Bsp/MIDI/midi.c **** void MIDI_Init(TIM_HandleTypeDef *htim, uint32_t channel)
+  53:../Bsp/MIDI/midi.c **** {
+  30              		.loc 1 53 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  54:../Bsp/MIDI/midi.c ****     hmidi.htim = htim;
+  35              		.loc 1 54 5 view .LVU1
+  36              		.loc 1 54 16 is_stmt 0 view .LVU2
+  37 0000 0D4B     		ldr	r3, .L2
+  38 0002 1860     		str	r0, [r3]
+  55:../Bsp/MIDI/midi.c ****     hmidi.channel = channel;
+  39              		.loc 1 55 5 is_stmt 1 view .LVU3
+  40              		.loc 1 55 19 is_stmt 0 view .LVU4
+  41 0004 5960     		str	r1, [r3, #4]
+  56:../Bsp/MIDI/midi.c **** 
+  57:../Bsp/MIDI/midi.c ****     hmidi.tune = 0;
+  42              		.loc 1 57 5 is_stmt 1 view .LVU5
+  43              		.loc 1 57 16 is_stmt 0 view .LVU6
+  44 0006 0022     		movs	r2, #0
+  45 0008 1A72     		strb	r2, [r3, #8]
+  58:../Bsp/MIDI/midi.c ****     hmidi.key = 1;
+  46              		.loc 1 58 5 is_stmt 1 view .LVU7
+  47              		.loc 1 58 15 is_stmt 0 view .LVU8
+  48 000a 0121     		movs	r1, #1
+  49              	.LVL1:
+  50              		.loc 1 58 15 view .LVU9
+  51 000c 5972     		strb	r1, [r3, #9]
+  59:../Bsp/MIDI/midi.c ****     hmidi.vol = 10;
+  52              		.loc 1 59 5 is_stmt 1 view .LVU10
+  53              		.loc 1 59 15 is_stmt 0 view .LVU11
+  54 000e 0A21     		movs	r1, #10
+  55 0010 9972     		strb	r1, [r3, #10]
+  60:../Bsp/MIDI/midi.c ****     hmidi.shift = 0;
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 3
+
+
+  56              		.loc 1 60 5 is_stmt 1 view .LVU12
+  57              		.loc 1 60 17 is_stmt 0 view .LVU13
+  58 0012 DA72     		strb	r2, [r3, #11]
+  61:../Bsp/MIDI/midi.c ****     hmidi.cnt = 0;
+  59              		.loc 1 61 5 is_stmt 1 view .LVU14
+  60              		.loc 1 61 15 is_stmt 0 view .LVU15
+  61 0014 DA60     		str	r2, [r3, #12]
+  62:../Bsp/MIDI/midi.c **** 
+  63:../Bsp/MIDI/midi.c ****     hmidi.state = MIDI_STATE_STOPPED;
+  62              		.loc 1 63 5 is_stmt 1 view .LVU16
+  63              		.loc 1 63 17 is_stmt 0 view .LVU17
+  64 0016 1A74     		strb	r2, [r3, #16]
+  64:../Bsp/MIDI/midi.c ****     hmidi.loop = 0;
+  65              		.loc 1 64 5 is_stmt 1 view .LVU18
+  66              		.loc 1 64 16 is_stmt 0 view .LVU19
+  67 0018 5A74     		strb	r2, [r3, #17]
+  65:../Bsp/MIDI/midi.c ****     hmidi.midi_idx = 0;
+  68              		.loc 1 65 5 is_stmt 1 view .LVU20
+  69              		.loc 1 65 20 is_stmt 0 view .LVU21
+  70 001a 5A82     		strh	r2, [r3, #18]	@ movhi
+  66:../Bsp/MIDI/midi.c ****     hmidi.play_time = 10;
+  71              		.loc 1 66 5 is_stmt 1 view .LVU22
+  72              		.loc 1 66 21 is_stmt 0 view .LVU23
+  73 001c 5961     		str	r1, [r3, #20]
+  67:../Bsp/MIDI/midi.c ****     hmidi.tune_tick = 0;
+  74              		.loc 1 67 5 is_stmt 1 view .LVU24
+  75              		.loc 1 67 21 is_stmt 0 view .LVU25
+  76 001e 9A61     		str	r2, [r3, #24]
+  68:../Bsp/MIDI/midi.c ****     hmidi.end_tick = 0;
+  77              		.loc 1 68 5 is_stmt 1 view .LVU26
+  78              		.loc 1 68 20 is_stmt 0 view .LVU27
+  79 0020 DA61     		str	r2, [r3, #28]
+  69:../Bsp/MIDI/midi.c **** 
+  70:../Bsp/MIDI/midi.c ****     hmidi.bpm = MIDI_DEFAULT_BPM;
+  80              		.loc 1 70 5 is_stmt 1 view .LVU28
+  81              		.loc 1 70 15 is_stmt 0 view .LVU29
+  82 0022 5A21     		movs	r1, #90
+  83 0024 1984     		strh	r1, [r3, #32]	@ movhi
+  71:../Bsp/MIDI/midi.c ****     hmidi.base_bpm = MIDI_DEFAULT_BPM;
+  84              		.loc 1 71 5 is_stmt 1 view .LVU30
+  85              		.loc 1 71 20 is_stmt 0 view .LVU31
+  86 0026 5984     		strh	r1, [r3, #34]	@ movhi
+  72:../Bsp/MIDI/midi.c **** 
+  73:../Bsp/MIDI/midi.c ****     hmidi.midi_data = NULL;
+  87              		.loc 1 73 5 is_stmt 1 view .LVU32
+  88              		.loc 1 73 21 is_stmt 0 view .LVU33
+  89 0028 5A62     		str	r2, [r3, #36]
+  74:../Bsp/MIDI/midi.c ****     hmidi.midi_len = 0;
+  90              		.loc 1 74 5 is_stmt 1 view .LVU34
+  91              		.loc 1 74 20 is_stmt 0 view .LVU35
+  92 002a 1A85     		strh	r2, [r3, #40]	@ movhi
+  75:../Bsp/MIDI/midi.c **** 		
+  76:../Bsp/MIDI/midi.c **** 		__HAL_TIM_ENABLE_IT(htim, TIM_IT_UPDATE);
+  93              		.loc 1 76 3 is_stmt 1 view .LVU36
+  94 002c 0268     		ldr	r2, [r0]
+  95 002e D368     		ldr	r3, [r2, #12]
+  96              		.loc 1 76 3 is_stmt 0 view .LVU37
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 4
+
+
+  97 0030 43F00103 		orr	r3, r3, #1
+  98 0034 D360     		str	r3, [r2, #12]
+  77:../Bsp/MIDI/midi.c **** }
+  99              		.loc 1 77 1 view .LVU38
+ 100 0036 7047     		bx	lr
+ 101              	.L3:
+ 102              		.align	2
+ 103              	.L2:
+ 104 0038 00000000 		.word	hmidi
+ 105              		.cfi_endproc
+ 106              	.LFE239:
+ 108              		.section	.text.MIDI_SetMusic,"ax",%progbits
+ 109              		.align	1
+ 110              		.global	MIDI_SetMusic
+ 111              		.syntax unified
+ 112              		.thumb
+ 113              		.thumb_func
+ 115              	MIDI_SetMusic:
+ 116              	.LVL2:
+ 117              	.LFB240:
+  78:../Bsp/MIDI/midi.c **** 
+  79:../Bsp/MIDI/midi.c **** /**
+  80:../Bsp/MIDI/midi.c ****   * @brief  设置要播放的音乐数据
+  81:../Bsp/MIDI/midi.c ****   * @param  data: 音乐数据数组指针
+  82:../Bsp/MIDI/midi.c ****   * @param  len: 音乐数据长度
+  83:../Bsp/MIDI/midi.c ****   * @param  base_bpm: 音乐的基准BPM
+  84:../Bsp/MIDI/midi.c ****   * @retval None
+  85:../Bsp/MIDI/midi.c ****   */
+  86:../Bsp/MIDI/midi.c **** void MIDI_SetMusic(uint32_t *data, uint16_t len, uint16_t base_bpm)
+  87:../Bsp/MIDI/midi.c **** {
+ 118              		.loc 1 87 1 is_stmt 1 view -0
+ 119              		.cfi_startproc
+ 120              		@ args = 0, pretend = 0, frame = 0
+ 121              		@ frame_needed = 0, uses_anonymous_args = 0
+ 122              		@ link register save eliminated.
+  88:../Bsp/MIDI/midi.c ****     hmidi.midi_data = data;
+ 123              		.loc 1 88 5 view .LVU40
+ 124              		.loc 1 88 21 is_stmt 0 view .LVU41
+ 125 0000 024B     		ldr	r3, .L5
+ 126 0002 5862     		str	r0, [r3, #36]
+  89:../Bsp/MIDI/midi.c ****     hmidi.midi_len = len;
+ 127              		.loc 1 89 5 is_stmt 1 view .LVU42
+ 128              		.loc 1 89 20 is_stmt 0 view .LVU43
+ 129 0004 1985     		strh	r1, [r3, #40]	@ movhi
+  90:../Bsp/MIDI/midi.c ****     hmidi.base_bpm = base_bpm;
+ 130              		.loc 1 90 5 is_stmt 1 view .LVU44
+ 131              		.loc 1 90 20 is_stmt 0 view .LVU45
+ 132 0006 5A84     		strh	r2, [r3, #34]	@ movhi
+  91:../Bsp/MIDI/midi.c ****     hmidi.bpm = base_bpm;
+ 133              		.loc 1 91 5 is_stmt 1 view .LVU46
+ 134              		.loc 1 91 15 is_stmt 0 view .LVU47
+ 135 0008 1A84     		strh	r2, [r3, #32]	@ movhi
+  92:../Bsp/MIDI/midi.c **** }
+ 136              		.loc 1 92 1 view .LVU48
+ 137 000a 7047     		bx	lr
+ 138              	.L6:
+ 139              		.align	2
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 5
+
+
+ 140              	.L5:
+ 141 000c 00000000 		.word	hmidi
+ 142              		.cfi_endproc
+ 143              	.LFE240:
+ 145              		.section	.text.MIDI_Play,"ax",%progbits
+ 146              		.align	1
+ 147              		.global	MIDI_Play
+ 148              		.syntax unified
+ 149              		.thumb
+ 150              		.thumb_func
+ 152              	MIDI_Play:
+ 153              	.LFB241:
+  93:../Bsp/MIDI/midi.c **** 
+  94:../Bsp/MIDI/midi.c **** /**
+  95:../Bsp/MIDI/midi.c ****   * @brief  开始/继续播放音乐
+  96:../Bsp/MIDI/midi.c ****   * @retval None
+  97:../Bsp/MIDI/midi.c ****   */
+  98:../Bsp/MIDI/midi.c **** void MIDI_Play(void)
+  99:../Bsp/MIDI/midi.c **** {
+ 154              		.loc 1 99 1 is_stmt 1 view -0
+ 155              		.cfi_startproc
+ 156              		@ args = 0, pretend = 0, frame = 0
+ 157              		@ frame_needed = 0, uses_anonymous_args = 0
+ 158              		@ link register save eliminated.
+ 100:../Bsp/MIDI/midi.c ****     if (hmidi.state == MIDI_STATE_PAUSED)
+ 159              		.loc 1 100 5 view .LVU50
+ 160              		.loc 1 100 14 is_stmt 0 view .LVU51
+ 161 0000 0B4B     		ldr	r3, .L11
+ 162 0002 1B7C     		ldrb	r3, [r3, #16]	@ zero_extendqisi2
+ 163              		.loc 1 100 8 view .LVU52
+ 164 0004 022B     		cmp	r3, #2
+ 165 0006 0ED0     		beq	.L10
+ 101:../Bsp/MIDI/midi.c ****     {
+ 102:../Bsp/MIDI/midi.c ****         hmidi.state = MIDI_STATE_PLAYING;
+ 103:../Bsp/MIDI/midi.c ****     }
+ 104:../Bsp/MIDI/midi.c ****     else if (hmidi.state == MIDI_STATE_STOPPED)
+ 166              		.loc 1 104 10 is_stmt 1 view .LVU53
+ 167              		.loc 1 104 13 is_stmt 0 view .LVU54
+ 168 0008 63B9     		cbnz	r3, .L7
+ 105:../Bsp/MIDI/midi.c ****     {
+ 106:../Bsp/MIDI/midi.c ****         if (hmidi.play_time > 0 && hmidi.midi_data != NULL)
+ 169              		.loc 1 106 9 is_stmt 1 view .LVU55
+ 170              		.loc 1 106 18 is_stmt 0 view .LVU56
+ 171 000a 094B     		ldr	r3, .L11
+ 172 000c 5B69     		ldr	r3, [r3, #20]
+ 173              		.loc 1 106 12 view .LVU57
+ 174 000e 4BB1     		cbz	r3, .L7
+ 175              		.loc 1 106 41 discriminator 1 view .LVU58
+ 176 0010 074B     		ldr	r3, .L11
+ 177 0012 5B6A     		ldr	r3, [r3, #36]
+ 178              		.loc 1 106 33 discriminator 1 view .LVU59
+ 179 0014 33B1     		cbz	r3, .L7
+ 107:../Bsp/MIDI/midi.c ****         {
+ 108:../Bsp/MIDI/midi.c ****             hmidi.midi_idx = 0;
+ 180              		.loc 1 108 13 is_stmt 1 view .LVU60
+ 181              		.loc 1 108 28 is_stmt 0 view .LVU61
+ 182 0016 064B     		ldr	r3, .L11
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 6
+
+
+ 183 0018 0022     		movs	r2, #0
+ 184 001a 5A82     		strh	r2, [r3, #18]	@ movhi
+ 109:../Bsp/MIDI/midi.c ****             hmidi.tune_tick = 0;
+ 185              		.loc 1 109 13 is_stmt 1 view .LVU62
+ 186              		.loc 1 109 29 is_stmt 0 view .LVU63
+ 187 001c 9A61     		str	r2, [r3, #24]
+ 110:../Bsp/MIDI/midi.c ****             hmidi.end_tick = 0;
+ 188              		.loc 1 110 13 is_stmt 1 view .LVU64
+ 189              		.loc 1 110 28 is_stmt 0 view .LVU65
+ 190 001e DA61     		str	r2, [r3, #28]
+ 111:../Bsp/MIDI/midi.c ****             hmidi.state = MIDI_STATE_PLAYING;
+ 191              		.loc 1 111 13 is_stmt 1 view .LVU66
+ 192              		.loc 1 111 25 is_stmt 0 view .LVU67
+ 193 0020 0122     		movs	r2, #1
+ 194 0022 1A74     		strb	r2, [r3, #16]
+ 195              	.L7:
+ 112:../Bsp/MIDI/midi.c ****         }
+ 113:../Bsp/MIDI/midi.c ****     }
+ 114:../Bsp/MIDI/midi.c **** }
+ 196              		.loc 1 114 1 view .LVU68
+ 197 0024 7047     		bx	lr
+ 198              	.L10:
+ 102:../Bsp/MIDI/midi.c ****     }
+ 199              		.loc 1 102 9 is_stmt 1 view .LVU69
+ 102:../Bsp/MIDI/midi.c ****     }
+ 200              		.loc 1 102 21 is_stmt 0 view .LVU70
+ 201 0026 024B     		ldr	r3, .L11
+ 202 0028 0122     		movs	r2, #1
+ 203 002a 1A74     		strb	r2, [r3, #16]
+ 204 002c 7047     		bx	lr
+ 205              	.L12:
+ 206 002e 00BF     		.align	2
+ 207              	.L11:
+ 208 0030 00000000 		.word	hmidi
+ 209              		.cfi_endproc
+ 210              	.LFE241:
+ 212              		.section	.text.MIDI_Pause,"ax",%progbits
+ 213              		.align	1
+ 214              		.global	MIDI_Pause
+ 215              		.syntax unified
+ 216              		.thumb
+ 217              		.thumb_func
+ 219              	MIDI_Pause:
+ 220              	.LFB242:
+ 115:../Bsp/MIDI/midi.c **** 
+ 116:../Bsp/MIDI/midi.c **** /**
+ 117:../Bsp/MIDI/midi.c ****   * @brief  暂停播放音乐
+ 118:../Bsp/MIDI/midi.c ****   * @retval None
+ 119:../Bsp/MIDI/midi.c ****   */
+ 120:../Bsp/MIDI/midi.c **** void MIDI_Pause(void)
+ 121:../Bsp/MIDI/midi.c **** {
+ 221              		.loc 1 121 1 is_stmt 1 view -0
+ 222              		.cfi_startproc
+ 223              		@ args = 0, pretend = 0, frame = 0
+ 224              		@ frame_needed = 0, uses_anonymous_args = 0
+ 122:../Bsp/MIDI/midi.c ****     if (hmidi.state == MIDI_STATE_PLAYING)
+ 225              		.loc 1 122 5 view .LVU72
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 7
+
+
+ 226              		.loc 1 122 14 is_stmt 0 view .LVU73
+ 227 0000 064B     		ldr	r3, .L20
+ 228 0002 1B7C     		ldrb	r3, [r3, #16]	@ zero_extendqisi2
+ 229              		.loc 1 122 8 view .LVU74
+ 230 0004 012B     		cmp	r3, #1
+ 231 0006 00D0     		beq	.L19
+ 232 0008 7047     		bx	lr
+ 233              	.L19:
+ 121:../Bsp/MIDI/midi.c ****     if (hmidi.state == MIDI_STATE_PLAYING)
+ 234              		.loc 1 121 1 view .LVU75
+ 235 000a 10B5     		push	{r4, lr}
+ 236              		.cfi_def_cfa_offset 8
+ 237              		.cfi_offset 4, -8
+ 238              		.cfi_offset 14, -4
+ 123:../Bsp/MIDI/midi.c ****     {
+ 124:../Bsp/MIDI/midi.c ****         HAL_TIM_PWM_Stop_IT(hmidi.htim, hmidi.channel);
+ 239              		.loc 1 124 9 is_stmt 1 view .LVU76
+ 240 000c 034C     		ldr	r4, .L20
+ 241 000e 6168     		ldr	r1, [r4, #4]
+ 242 0010 2068     		ldr	r0, [r4]
+ 243 0012 FFF7FEFF 		bl	HAL_TIM_PWM_Stop_IT
+ 244              	.LVL3:
+ 125:../Bsp/MIDI/midi.c ****         hmidi.state = MIDI_STATE_PAUSED;
+ 245              		.loc 1 125 9 view .LVU77
+ 246              		.loc 1 125 21 is_stmt 0 view .LVU78
+ 247 0016 0223     		movs	r3, #2
+ 248 0018 2374     		strb	r3, [r4, #16]
+ 126:../Bsp/MIDI/midi.c ****     }
+ 127:../Bsp/MIDI/midi.c **** }
+ 249              		.loc 1 127 1 view .LVU79
+ 250 001a 10BD     		pop	{r4, pc}
+ 251              	.L21:
+ 252              		.align	2
+ 253              	.L20:
+ 254 001c 00000000 		.word	hmidi
+ 255              		.cfi_endproc
+ 256              	.LFE242:
+ 258              		.section	.text.MIDI_Restart,"ax",%progbits
+ 259              		.align	1
+ 260              		.global	MIDI_Restart
+ 261              		.syntax unified
+ 262              		.thumb
+ 263              		.thumb_func
+ 265              	MIDI_Restart:
+ 266              	.LFB243:
+ 128:../Bsp/MIDI/midi.c **** 
+ 129:../Bsp/MIDI/midi.c **** /**
+ 130:../Bsp/MIDI/midi.c ****   * @brief  重新开始播放音乐
+ 131:../Bsp/MIDI/midi.c ****   * @retval None
+ 132:../Bsp/MIDI/midi.c ****   */
+ 133:../Bsp/MIDI/midi.c **** void MIDI_Restart(void)
+ 134:../Bsp/MIDI/midi.c **** {
+ 267              		.loc 1 134 1 is_stmt 1 view -0
+ 268              		.cfi_startproc
+ 269              		@ args = 0, pretend = 0, frame = 0
+ 270              		@ frame_needed = 0, uses_anonymous_args = 0
+ 135:../Bsp/MIDI/midi.c ****     if (hmidi.midi_data != NULL)
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 8
+
+
+ 271              		.loc 1 135 5 view .LVU81
+ 272              		.loc 1 135 14 is_stmt 0 view .LVU82
+ 273 0000 084B     		ldr	r3, .L28
+ 274 0002 5B6A     		ldr	r3, [r3, #36]
+ 275              		.loc 1 135 8 view .LVU83
+ 276 0004 63B1     		cbz	r3, .L25
+ 134:../Bsp/MIDI/midi.c ****     if (hmidi.midi_data != NULL)
+ 277              		.loc 1 134 1 view .LVU84
+ 278 0006 10B5     		push	{r4, lr}
+ 279              		.cfi_def_cfa_offset 8
+ 280              		.cfi_offset 4, -8
+ 281              		.cfi_offset 14, -4
+ 136:../Bsp/MIDI/midi.c ****     {
+ 137:../Bsp/MIDI/midi.c ****         HAL_TIM_PWM_Stop_IT(hmidi.htim, hmidi.channel);
+ 282              		.loc 1 137 9 is_stmt 1 view .LVU85
+ 283 0008 064C     		ldr	r4, .L28
+ 284 000a 6168     		ldr	r1, [r4, #4]
+ 285 000c 2068     		ldr	r0, [r4]
+ 286 000e FFF7FEFF 		bl	HAL_TIM_PWM_Stop_IT
+ 287              	.LVL4:
+ 138:../Bsp/MIDI/midi.c ****         hmidi.midi_idx = 0;
+ 288              		.loc 1 138 9 view .LVU86
+ 289              		.loc 1 138 24 is_stmt 0 view .LVU87
+ 290 0012 0023     		movs	r3, #0
+ 291 0014 6382     		strh	r3, [r4, #18]	@ movhi
+ 139:../Bsp/MIDI/midi.c ****         hmidi.tune_tick = 0;
+ 292              		.loc 1 139 9 is_stmt 1 view .LVU88
+ 293              		.loc 1 139 25 is_stmt 0 view .LVU89
+ 294 0016 A361     		str	r3, [r4, #24]
+ 140:../Bsp/MIDI/midi.c ****         hmidi.end_tick = 0;
+ 295              		.loc 1 140 9 is_stmt 1 view .LVU90
+ 296              		.loc 1 140 24 is_stmt 0 view .LVU91
+ 297 0018 E361     		str	r3, [r4, #28]
+ 141:../Bsp/MIDI/midi.c ****         hmidi.state = MIDI_STATE_PLAYING;
+ 298              		.loc 1 141 9 is_stmt 1 view .LVU92
+ 299              		.loc 1 141 21 is_stmt 0 view .LVU93
+ 300 001a 0123     		movs	r3, #1
+ 301 001c 2374     		strb	r3, [r4, #16]
+ 142:../Bsp/MIDI/midi.c ****     }
+ 143:../Bsp/MIDI/midi.c **** }
+ 302              		.loc 1 143 1 view .LVU94
+ 303 001e 10BD     		pop	{r4, pc}
+ 304              	.L25:
+ 305              		.cfi_def_cfa_offset 0
+ 306              		.cfi_restore 4
+ 307              		.cfi_restore 14
+ 308 0020 7047     		bx	lr
+ 309              	.L29:
+ 310 0022 00BF     		.align	2
+ 311              	.L28:
+ 312 0024 00000000 		.word	hmidi
+ 313              		.cfi_endproc
+ 314              	.LFE243:
+ 316              		.section	.text.MIDI_Stop,"ax",%progbits
+ 317              		.align	1
+ 318              		.global	MIDI_Stop
+ 319              		.syntax unified
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 9
+
+
+ 320              		.thumb
+ 321              		.thumb_func
+ 323              	MIDI_Stop:
+ 324              	.LFB244:
+ 144:../Bsp/MIDI/midi.c **** 
+ 145:../Bsp/MIDI/midi.c **** /**
+ 146:../Bsp/MIDI/midi.c ****   * @brief  停止播放音乐
+ 147:../Bsp/MIDI/midi.c ****   * @retval None
+ 148:../Bsp/MIDI/midi.c ****   */
+ 149:../Bsp/MIDI/midi.c **** void MIDI_Stop(void)
+ 150:../Bsp/MIDI/midi.c **** {
+ 325              		.loc 1 150 1 is_stmt 1 view -0
+ 326              		.cfi_startproc
+ 327              		@ args = 0, pretend = 0, frame = 0
+ 328              		@ frame_needed = 0, uses_anonymous_args = 0
+ 329 0000 10B5     		push	{r4, lr}
+ 330              		.cfi_def_cfa_offset 8
+ 331              		.cfi_offset 4, -8
+ 332              		.cfi_offset 14, -4
+ 151:../Bsp/MIDI/midi.c ****     HAL_TIM_PWM_Stop_IT(hmidi.htim, hmidi.channel);
+ 333              		.loc 1 151 5 view .LVU96
+ 334 0002 064C     		ldr	r4, .L32
+ 335 0004 6168     		ldr	r1, [r4, #4]
+ 336 0006 2068     		ldr	r0, [r4]
+ 337 0008 FFF7FEFF 		bl	HAL_TIM_PWM_Stop_IT
+ 338              	.LVL5:
+ 152:../Bsp/MIDI/midi.c ****     hmidi.tune = 0;
+ 339              		.loc 1 152 5 view .LVU97
+ 340              		.loc 1 152 16 is_stmt 0 view .LVU98
+ 341 000c 0023     		movs	r3, #0
+ 342 000e 2372     		strb	r3, [r4, #8]
+ 153:../Bsp/MIDI/midi.c ****     hmidi.cnt = 0;
+ 343              		.loc 1 153 5 is_stmt 1 view .LVU99
+ 344              		.loc 1 153 15 is_stmt 0 view .LVU100
+ 345 0010 E360     		str	r3, [r4, #12]
+ 154:../Bsp/MIDI/midi.c ****     hmidi.midi_idx = 0;
+ 346              		.loc 1 154 5 is_stmt 1 view .LVU101
+ 347              		.loc 1 154 20 is_stmt 0 view .LVU102
+ 348 0012 6382     		strh	r3, [r4, #18]	@ movhi
+ 155:../Bsp/MIDI/midi.c ****     hmidi.tune_tick = 0;
+ 349              		.loc 1 155 5 is_stmt 1 view .LVU103
+ 350              		.loc 1 155 21 is_stmt 0 view .LVU104
+ 351 0014 A361     		str	r3, [r4, #24]
+ 156:../Bsp/MIDI/midi.c ****     hmidi.end_tick = 0;
+ 352              		.loc 1 156 5 is_stmt 1 view .LVU105
+ 353              		.loc 1 156 20 is_stmt 0 view .LVU106
+ 354 0016 E361     		str	r3, [r4, #28]
+ 157:../Bsp/MIDI/midi.c ****     hmidi.state = MIDI_STATE_STOPPED;
+ 355              		.loc 1 157 5 is_stmt 1 view .LVU107
+ 356              		.loc 1 157 17 is_stmt 0 view .LVU108
+ 357 0018 2374     		strb	r3, [r4, #16]
+ 158:../Bsp/MIDI/midi.c **** }
+ 358              		.loc 1 158 1 view .LVU109
+ 359 001a 10BD     		pop	{r4, pc}
+ 360              	.L33:
+ 361              		.align	2
+ 362              	.L32:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 10
+
+
+ 363 001c 00000000 		.word	hmidi
+ 364              		.cfi_endproc
+ 365              	.LFE244:
+ 367              		.section	.text.MIDI_SetDuration,"ax",%progbits
+ 368              		.align	1
+ 369              		.global	MIDI_SetDuration
+ 370              		.syntax unified
+ 371              		.thumb
+ 372              		.thumb_func
+ 374              	MIDI_SetDuration:
+ 375              	.LVL6:
+ 376              	.LFB245:
+ 159:../Bsp/MIDI/midi.c **** 
+ 160:../Bsp/MIDI/midi.c **** /**
+ 161:../Bsp/MIDI/midi.c ****   * @brief  设置播放时长（单位：秒）
+ 162:../Bsp/MIDI/midi.c ****   * @param  seconds: 播放时长，0表示无限播放
+ 163:../Bsp/MIDI/midi.c ****   * @retval None
+ 164:../Bsp/MIDI/midi.c ****   */
+ 165:../Bsp/MIDI/midi.c **** void MIDI_SetDuration(uint32_t seconds)
+ 166:../Bsp/MIDI/midi.c **** {
+ 377              		.loc 1 166 1 is_stmt 1 view -0
+ 378              		.cfi_startproc
+ 379              		@ args = 0, pretend = 0, frame = 0
+ 380              		@ frame_needed = 0, uses_anonymous_args = 0
+ 381              		@ link register save eliminated.
+ 167:../Bsp/MIDI/midi.c ****     hmidi.play_time = seconds;
+ 382              		.loc 1 167 5 view .LVU111
+ 383              		.loc 1 167 21 is_stmt 0 view .LVU112
+ 384 0000 014B     		ldr	r3, .L35
+ 385 0002 5861     		str	r0, [r3, #20]
+ 168:../Bsp/MIDI/midi.c **** }
+ 386              		.loc 1 168 1 view .LVU113
+ 387 0004 7047     		bx	lr
+ 388              	.L36:
+ 389 0006 00BF     		.align	2
+ 390              	.L35:
+ 391 0008 00000000 		.word	hmidi
+ 392              		.cfi_endproc
+ 393              	.LFE245:
+ 395              		.section	.text.MIDI_SetLoop,"ax",%progbits
+ 396              		.align	1
+ 397              		.global	MIDI_SetLoop
+ 398              		.syntax unified
+ 399              		.thumb
+ 400              		.thumb_func
+ 402              	MIDI_SetLoop:
+ 403              	.LVL7:
+ 404              	.LFB246:
+ 169:../Bsp/MIDI/midi.c **** 
+ 170:../Bsp/MIDI/midi.c **** /**
+ 171:../Bsp/MIDI/midi.c ****   * @brief  设置是否循环播放
+ 172:../Bsp/MIDI/midi.c ****   * @param  enable: 1=循环播放，0=不循环
+ 173:../Bsp/MIDI/midi.c ****   * @retval None
+ 174:../Bsp/MIDI/midi.c ****   */
+ 175:../Bsp/MIDI/midi.c **** void MIDI_SetLoop(uint8_t enable)
+ 176:../Bsp/MIDI/midi.c **** {
+ 405              		.loc 1 176 1 is_stmt 1 view -0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 11
+
+
+ 406              		.cfi_startproc
+ 407              		@ args = 0, pretend = 0, frame = 0
+ 408              		@ frame_needed = 0, uses_anonymous_args = 0
+ 409              		@ link register save eliminated.
+ 177:../Bsp/MIDI/midi.c ****     hmidi.loop = enable;
+ 410              		.loc 1 177 5 view .LVU115
+ 411              		.loc 1 177 16 is_stmt 0 view .LVU116
+ 412 0000 014B     		ldr	r3, .L38
+ 413 0002 5874     		strb	r0, [r3, #17]
+ 178:../Bsp/MIDI/midi.c **** }
+ 414              		.loc 1 178 1 view .LVU117
+ 415 0004 7047     		bx	lr
+ 416              	.L39:
+ 417 0006 00BF     		.align	2
+ 418              	.L38:
+ 419 0008 00000000 		.word	hmidi
+ 420              		.cfi_endproc
+ 421              	.LFE246:
+ 423              		.section	.text.MIDI_SetVolume,"ax",%progbits
+ 424              		.align	1
+ 425              		.global	MIDI_SetVolume
+ 426              		.syntax unified
+ 427              		.thumb
+ 428              		.thumb_func
+ 430              	MIDI_SetVolume:
+ 431              	.LVL8:
+ 432              	.LFB247:
+ 179:../Bsp/MIDI/midi.c **** 
+ 180:../Bsp/MIDI/midi.c **** /**
+ 181:../Bsp/MIDI/midi.c ****   * @brief  设置音量
+ 182:../Bsp/MIDI/midi.c ****   * @param  vol: 音量值，范围0-100
+ 183:../Bsp/MIDI/midi.c ****   * @retval None
+ 184:../Bsp/MIDI/midi.c ****   */
+ 185:../Bsp/MIDI/midi.c **** void MIDI_SetVolume(uint8_t vol)
+ 186:../Bsp/MIDI/midi.c **** {
+ 433              		.loc 1 186 1 is_stmt 1 view -0
+ 434              		.cfi_startproc
+ 435              		@ args = 0, pretend = 0, frame = 0
+ 436              		@ frame_needed = 0, uses_anonymous_args = 0
+ 437              		@ link register save eliminated.
+ 187:../Bsp/MIDI/midi.c ****     if (vol > 100)
+ 438              		.loc 1 187 5 view .LVU119
+ 439              		.loc 1 187 8 is_stmt 0 view .LVU120
+ 440 0000 6428     		cmp	r0, #100
+ 441 0002 00D9     		bls	.L41
+ 188:../Bsp/MIDI/midi.c ****         vol = 100;
+ 442              		.loc 1 188 13 view .LVU121
+ 443 0004 6420     		movs	r0, #100
+ 444              	.LVL9:
+ 445              	.L41:
+ 189:../Bsp/MIDI/midi.c ****     hmidi.vol = vol;
+ 446              		.loc 1 189 5 is_stmt 1 view .LVU122
+ 447              		.loc 1 189 15 is_stmt 0 view .LVU123
+ 448 0006 014B     		ldr	r3, .L43
+ 449 0008 9872     		strb	r0, [r3, #10]
+ 190:../Bsp/MIDI/midi.c **** }
+ 450              		.loc 1 190 1 view .LVU124
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 12
+
+
+ 451 000a 7047     		bx	lr
+ 452              	.L44:
+ 453              		.align	2
+ 454              	.L43:
+ 455 000c 00000000 		.word	hmidi
+ 456              		.cfi_endproc
+ 457              	.LFE247:
+ 459              		.section	.text.MIDI_GetVolume,"ax",%progbits
+ 460              		.align	1
+ 461              		.global	MIDI_GetVolume
+ 462              		.syntax unified
+ 463              		.thumb
+ 464              		.thumb_func
+ 466              	MIDI_GetVolume:
+ 467              	.LFB248:
+ 191:../Bsp/MIDI/midi.c **** 
+ 192:../Bsp/MIDI/midi.c **** /**
+ 193:../Bsp/MIDI/midi.c ****   * @brief  获取当前音量
+ 194:../Bsp/MIDI/midi.c ****   * @retval 当前音量值
+ 195:../Bsp/MIDI/midi.c ****   */
+ 196:../Bsp/MIDI/midi.c **** uint8_t MIDI_GetVolume(void)
+ 197:../Bsp/MIDI/midi.c **** {
+ 468              		.loc 1 197 1 is_stmt 1 view -0
+ 469              		.cfi_startproc
+ 470              		@ args = 0, pretend = 0, frame = 0
+ 471              		@ frame_needed = 0, uses_anonymous_args = 0
+ 472              		@ link register save eliminated.
+ 198:../Bsp/MIDI/midi.c ****     return hmidi.vol;
+ 473              		.loc 1 198 5 view .LVU126
+ 199:../Bsp/MIDI/midi.c **** }
+ 474              		.loc 1 199 1 is_stmt 0 view .LVU127
+ 475 0000 014B     		ldr	r3, .L46
+ 476 0002 987A     		ldrb	r0, [r3, #10]	@ zero_extendqisi2
+ 477 0004 7047     		bx	lr
+ 478              	.L47:
+ 479 0006 00BF     		.align	2
+ 480              	.L46:
+ 481 0008 00000000 		.word	hmidi
+ 482              		.cfi_endproc
+ 483              	.LFE248:
+ 485              		.section	.text.MIDI_SetBPM,"ax",%progbits
+ 486              		.align	1
+ 487              		.global	MIDI_SetBPM
+ 488              		.syntax unified
+ 489              		.thumb
+ 490              		.thumb_func
+ 492              	MIDI_SetBPM:
+ 493              	.LVL10:
+ 494              	.LFB249:
+ 200:../Bsp/MIDI/midi.c **** 
+ 201:../Bsp/MIDI/midi.c **** /**
+ 202:../Bsp/MIDI/midi.c ****   * @brief  设置播放速度（BPM）
+ 203:../Bsp/MIDI/midi.c ****   * @param  bpm: 每分钟节拍数
+ 204:../Bsp/MIDI/midi.c ****   * @retval None
+ 205:../Bsp/MIDI/midi.c ****   */
+ 206:../Bsp/MIDI/midi.c **** void MIDI_SetBPM(uint16_t bpm)
+ 207:../Bsp/MIDI/midi.c **** {
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 13
+
+
+ 495              		.loc 1 207 1 is_stmt 1 view -0
+ 496              		.cfi_startproc
+ 497              		@ args = 0, pretend = 0, frame = 0
+ 498              		@ frame_needed = 0, uses_anonymous_args = 0
+ 499              		@ link register save eliminated.
+ 208:../Bsp/MIDI/midi.c ****     if (bpm > 0)
+ 500              		.loc 1 208 5 view .LVU129
+ 501              		.loc 1 208 8 is_stmt 0 view .LVU130
+ 502 0000 08B1     		cbz	r0, .L48
+ 209:../Bsp/MIDI/midi.c ****         hmidi.bpm = bpm;
+ 503              		.loc 1 209 9 is_stmt 1 view .LVU131
+ 504              		.loc 1 209 19 is_stmt 0 view .LVU132
+ 505 0002 014A     		ldr	r2, .L50
+ 506 0004 1084     		strh	r0, [r2, #32]	@ movhi
+ 507              	.L48:
+ 210:../Bsp/MIDI/midi.c **** }
+ 508              		.loc 1 210 1 view .LVU133
+ 509 0006 7047     		bx	lr
+ 510              	.L51:
+ 511              		.align	2
+ 512              	.L50:
+ 513 0008 00000000 		.word	hmidi
+ 514              		.cfi_endproc
+ 515              	.LFE249:
+ 517              		.section	.text.MIDI_GetBPM,"ax",%progbits
+ 518              		.align	1
+ 519              		.global	MIDI_GetBPM
+ 520              		.syntax unified
+ 521              		.thumb
+ 522              		.thumb_func
+ 524              	MIDI_GetBPM:
+ 525              	.LFB250:
+ 211:../Bsp/MIDI/midi.c **** 
+ 212:../Bsp/MIDI/midi.c **** /**
+ 213:../Bsp/MIDI/midi.c ****   * @brief  获取当前播放速度
+ 214:../Bsp/MIDI/midi.c ****   * @retval 当前BPM值
+ 215:../Bsp/MIDI/midi.c ****   */
+ 216:../Bsp/MIDI/midi.c **** uint16_t MIDI_GetBPM(void)
+ 217:../Bsp/MIDI/midi.c **** {
+ 526              		.loc 1 217 1 is_stmt 1 view -0
+ 527              		.cfi_startproc
+ 528              		@ args = 0, pretend = 0, frame = 0
+ 529              		@ frame_needed = 0, uses_anonymous_args = 0
+ 530              		@ link register save eliminated.
+ 218:../Bsp/MIDI/midi.c ****     return hmidi.bpm;
+ 531              		.loc 1 218 5 view .LVU135
+ 219:../Bsp/MIDI/midi.c **** }
+ 532              		.loc 1 219 1 is_stmt 0 view .LVU136
+ 533 0000 014B     		ldr	r3, .L53
+ 534 0002 188C     		ldrh	r0, [r3, #32]
+ 535 0004 7047     		bx	lr
+ 536              	.L54:
+ 537 0006 00BF     		.align	2
+ 538              	.L53:
+ 539 0008 00000000 		.word	hmidi
+ 540              		.cfi_endproc
+ 541              	.LFE250:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 14
+
+
+ 543              		.section	.text.MIDI_SetShift,"ax",%progbits
+ 544              		.align	1
+ 545              		.global	MIDI_SetShift
+ 546              		.syntax unified
+ 547              		.thumb
+ 548              		.thumb_func
+ 550              	MIDI_SetShift:
+ 551              	.LVL11:
+ 552              	.LFB251:
+ 220:../Bsp/MIDI/midi.c **** 
+ 221:../Bsp/MIDI/midi.c **** /**
+ 222:../Bsp/MIDI/midi.c ****   * @brief  设置音调偏移（移调）
+ 223:../Bsp/MIDI/midi.c ****   * @param  shift: 移调半音数，正数升调，负数降调
+ 224:../Bsp/MIDI/midi.c ****   * @retval None
+ 225:../Bsp/MIDI/midi.c ****   */
+ 226:../Bsp/MIDI/midi.c **** void MIDI_SetShift(int8_t shift)
+ 227:../Bsp/MIDI/midi.c **** {
+ 553              		.loc 1 227 1 is_stmt 1 view -0
+ 554              		.cfi_startproc
+ 555              		@ args = 0, pretend = 0, frame = 0
+ 556              		@ frame_needed = 0, uses_anonymous_args = 0
+ 557              		@ link register save eliminated.
+ 228:../Bsp/MIDI/midi.c ****     hmidi.shift = shift;
+ 558              		.loc 1 228 5 view .LVU138
+ 559              		.loc 1 228 17 is_stmt 0 view .LVU139
+ 560 0000 014B     		ldr	r3, .L56
+ 561 0002 D872     		strb	r0, [r3, #11]
+ 229:../Bsp/MIDI/midi.c **** }
+ 562              		.loc 1 229 1 view .LVU140
+ 563 0004 7047     		bx	lr
+ 564              	.L57:
+ 565 0006 00BF     		.align	2
+ 566              	.L56:
+ 567 0008 00000000 		.word	hmidi
+ 568              		.cfi_endproc
+ 569              	.LFE251:
+ 571              		.section	.text.MIDI_GetShift,"ax",%progbits
+ 572              		.align	1
+ 573              		.global	MIDI_GetShift
+ 574              		.syntax unified
+ 575              		.thumb
+ 576              		.thumb_func
+ 578              	MIDI_GetShift:
+ 579              	.LFB252:
+ 230:../Bsp/MIDI/midi.c **** 
+ 231:../Bsp/MIDI/midi.c **** /**
+ 232:../Bsp/MIDI/midi.c ****   * @brief  获取当前音调偏移
+ 233:../Bsp/MIDI/midi.c ****   * @retval 当前移调值
+ 234:../Bsp/MIDI/midi.c ****   */
+ 235:../Bsp/MIDI/midi.c **** int8_t MIDI_GetShift(void)
+ 236:../Bsp/MIDI/midi.c **** {
+ 580              		.loc 1 236 1 is_stmt 1 view -0
+ 581              		.cfi_startproc
+ 582              		@ args = 0, pretend = 0, frame = 0
+ 583              		@ frame_needed = 0, uses_anonymous_args = 0
+ 584              		@ link register save eliminated.
+ 237:../Bsp/MIDI/midi.c ****     return hmidi.shift;
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 15
+
+
+ 585              		.loc 1 237 5 view .LVU142
+ 238:../Bsp/MIDI/midi.c **** }
+ 586              		.loc 1 238 1 is_stmt 0 view .LVU143
+ 587 0000 014B     		ldr	r3, .L59
+ 588 0002 93F90B00 		ldrsb	r0, [r3, #11]
+ 589 0006 7047     		bx	lr
+ 590              	.L60:
+ 591              		.align	2
+ 592              	.L59:
+ 593 0008 00000000 		.word	hmidi
+ 594              		.cfi_endproc
+ 595              	.LFE252:
+ 597              		.section	.text.MIDI_GetState,"ax",%progbits
+ 598              		.align	1
+ 599              		.global	MIDI_GetState
+ 600              		.syntax unified
+ 601              		.thumb
+ 602              		.thumb_func
+ 604              	MIDI_GetState:
+ 605              	.LFB253:
+ 239:../Bsp/MIDI/midi.c **** 
+ 240:../Bsp/MIDI/midi.c **** /**
+ 241:../Bsp/MIDI/midi.c ****   * @brief  获取当前播放状态
+ 242:../Bsp/MIDI/midi.c ****   * @retval 当前状态
+ 243:../Bsp/MIDI/midi.c ****   */
+ 244:../Bsp/MIDI/midi.c **** MIDI_StateTypeDef MIDI_GetState(void)
+ 245:../Bsp/MIDI/midi.c **** {
+ 606              		.loc 1 245 1 is_stmt 1 view -0
+ 607              		.cfi_startproc
+ 608              		@ args = 0, pretend = 0, frame = 0
+ 609              		@ frame_needed = 0, uses_anonymous_args = 0
+ 610              		@ link register save eliminated.
+ 246:../Bsp/MIDI/midi.c ****     return hmidi.state;
+ 611              		.loc 1 246 5 view .LVU145
+ 247:../Bsp/MIDI/midi.c **** }
+ 612              		.loc 1 247 1 is_stmt 0 view .LVU146
+ 613 0000 014B     		ldr	r3, .L62
+ 614 0002 187C     		ldrb	r0, [r3, #16]	@ zero_extendqisi2
+ 615 0004 7047     		bx	lr
+ 616              	.L63:
+ 617 0006 00BF     		.align	2
+ 618              	.L62:
+ 619 0008 00000000 		.word	hmidi
+ 620              		.cfi_endproc
+ 621              	.LFE253:
+ 623              		.section	.text.MIDI_Beep,"ax",%progbits
+ 624              		.align	1
+ 625              		.global	MIDI_Beep
+ 626              		.syntax unified
+ 627              		.thumb
+ 628              		.thumb_func
+ 630              	MIDI_Beep:
+ 631              	.LVL12:
+ 632              	.LFB254:
+ 248:../Bsp/MIDI/midi.c **** 
+ 249:../Bsp/MIDI/midi.c **** /**
+ 250:../Bsp/MIDI/midi.c ****   * @brief  播放单音
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 16
+
+
+ 251:../Bsp/MIDI/midi.c ****   * @param  tune: 音符编号（0-24，0=休止符）
+ 252:../Bsp/MIDI/midi.c ****   * @param  time: 音符时长（毫秒）
+ 253:../Bsp/MIDI/midi.c ****   * @retval None
+ 254:../Bsp/MIDI/midi.c ****   */
+ 255:../Bsp/MIDI/midi.c **** void MIDI_Beep(uint8_t tune, uint16_t time)
+ 256:../Bsp/MIDI/midi.c **** {
+ 633              		.loc 1 256 1 is_stmt 1 view -0
+ 634              		.cfi_startproc
+ 635              		@ args = 0, pretend = 0, frame = 8
+ 636              		@ frame_needed = 0, uses_anonymous_args = 0
+ 637              		.loc 1 256 1 is_stmt 0 view .LVU148
+ 638 0000 10B5     		push	{r4, lr}
+ 639              		.cfi_def_cfa_offset 8
+ 640              		.cfi_offset 4, -8
+ 641              		.cfi_offset 14, -4
+ 642 0002 2DED028B 		vpush.64	{d8}
+ 643              		.cfi_def_cfa_offset 16
+ 644              		.cfi_offset 80, -16
+ 645              		.cfi_offset 81, -12
+ 646 0006 82B0     		sub	sp, sp, #8
+ 647              		.cfi_def_cfa_offset 24
+ 648 0008 0191     		str	r1, [sp, #4]
+ 257:../Bsp/MIDI/midi.c ****     float key = (tune / 8) * 2;
+ 649              		.loc 1 257 5 is_stmt 1 view .LVU149
+ 650              		.loc 1 257 23 is_stmt 0 view .LVU150
+ 651 000a C308     		lsrs	r3, r0, #3
+ 652              		.loc 1 257 28 view .LVU151
+ 653 000c 5B00     		lsls	r3, r3, #1
+ 654              		.loc 1 257 11 view .LVU152
+ 655 000e 07EE903A 		vmov	s15, r3	@ int
+ 656 0012 B8EEE78A 		vcvt.f32.s32	s16, s15
+ 657              	.LVL13:
+ 258:../Bsp/MIDI/midi.c ****     if (key < 1)
+ 658              		.loc 1 258 5 is_stmt 1 view .LVU153
+ 659              		.loc 1 258 8 is_stmt 0 view .LVU154
+ 660 0016 F7EE007A 		vmov.f32	s15, #1.0e+0
+ 661 001a B4EEE78A 		vcmpe.f32	s16, s15
+ 662 001e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 663 0022 65D4     		bmi	.L75
+ 664              	.LVL14:
+ 665              	.L65:
+ 259:../Bsp/MIDI/midi.c ****         key = 1;
+ 260:../Bsp/MIDI/midi.c **** 
+ 261:../Bsp/MIDI/midi.c ****     tune %= 8;
+ 666              		.loc 1 261 5 is_stmt 1 view .LVU155
+ 667              		.loc 1 261 10 is_stmt 0 view .LVU156
+ 668 0024 00F00704 		and	r4, r0, #7
+ 669              	.LVL15:
+ 262:../Bsp/MIDI/midi.c ****     hmidi.tune = tune;
+ 670              		.loc 1 262 5 is_stmt 1 view .LVU157
+ 671              		.loc 1 262 16 is_stmt 0 view .LVU158
+ 672 0028 654B     		ldr	r3, .L78
+ 673 002a 1C72     		strb	r4, [r3, #8]
+ 263:../Bsp/MIDI/midi.c **** 
+ 264:../Bsp/MIDI/midi.c ****     HAL_TIM_PWM_Stop_IT(hmidi.htim, hmidi.channel);
+ 674              		.loc 1 264 5 is_stmt 1 view .LVU159
+ 675 002c 5968     		ldr	r1, [r3, #4]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 17
+
+
+ 676              	.LVL16:
+ 677              		.loc 1 264 5 is_stmt 0 view .LVU160
+ 678 002e 1868     		ldr	r0, [r3]
+ 679 0030 FFF7FEFF 		bl	HAL_TIM_PWM_Stop_IT
+ 680              	.LVL17:
+ 265:../Bsp/MIDI/midi.c **** 
+ 266:../Bsp/MIDI/midi.c ****     if (tune > 0)
+ 681              		.loc 1 266 5 is_stmt 1 view .LVU161
+ 682              		.loc 1 266 8 is_stmt 0 view .LVU162
+ 683 0034 002C     		cmp	r4, #0
+ 684 0036 57D0     		beq	.L64
+ 685              	.LBB2:
+ 267:../Bsp/MIDI/midi.c ****     {
+ 268:../Bsp/MIDI/midi.c ****         int8_t tt = tune;
+ 686              		.loc 1 268 9 is_stmt 1 view .LVU163
+ 687              	.LVL18:
+ 269:../Bsp/MIDI/midi.c ****         tt += hmidi.shift;
+ 688              		.loc 1 269 9 view .LVU164
+ 689              		.loc 1 269 20 is_stmt 0 view .LVU165
+ 690 0038 614B     		ldr	r3, .L78
+ 691 003a DB7A     		ldrb	r3, [r3, #11]	@ zero_extendqisi2
+ 692              		.loc 1 269 12 view .LVU166
+ 693 003c 2344     		add	r3, r3, r4
+ 694 003e DAB2     		uxtb	r2, r3
+ 695 0040 5BB2     		sxtb	r3, r3
+ 696              	.LVL19:
+ 270:../Bsp/MIDI/midi.c ****         if (tt >= 8)
+ 697              		.loc 1 270 9 is_stmt 1 view .LVU167
+ 698              		.loc 1 270 12 is_stmt 0 view .LVU168
+ 699 0042 072B     		cmp	r3, #7
+ 700 0044 57DD     		ble	.L67
+ 271:../Bsp/MIDI/midi.c ****         {
+ 272:../Bsp/MIDI/midi.c ****             tt -= 7;
+ 701              		.loc 1 272 13 is_stmt 1 view .LVU169
+ 702              		.loc 1 272 16 is_stmt 0 view .LVU170
+ 703 0046 073A     		subs	r2, r2, #7
+ 704 0048 53B2     		sxtb	r3, r2
+ 705              	.LVL20:
+ 273:../Bsp/MIDI/midi.c ****             key *= 2;
+ 706              		.loc 1 273 13 is_stmt 1 view .LVU171
+ 707              		.loc 1 273 17 is_stmt 0 view .LVU172
+ 708 004a 38EE088A 		vadd.f32	s16, s16, s16
+ 709              	.LVL21:
+ 710              	.L68:
+ 274:../Bsp/MIDI/midi.c ****         }
+ 275:../Bsp/MIDI/midi.c ****         else if (tt <= 0)
+ 276:../Bsp/MIDI/midi.c ****         {
+ 277:../Bsp/MIDI/midi.c ****             tt += 7;
+ 278:../Bsp/MIDI/midi.c ****             key *= 0.5;
+ 279:../Bsp/MIDI/midi.c ****         }
+ 280:../Bsp/MIDI/midi.c **** 
+ 281:../Bsp/MIDI/midi.c ****         float arr = (1000000 / (midi_freq_tab[tt] * key)) - 1;
+ 711              		.loc 1 281 9 is_stmt 1 view .LVU173
+ 712              		.loc 1 281 46 is_stmt 0 view .LVU174
+ 713 004e 5D4A     		ldr	r2, .L78+4
+ 714 0050 02EB8303 		add	r3, r2, r3, lsl #2
+ 715              	.LVL22:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 18
+
+
+ 716              		.loc 1 281 46 view .LVU175
+ 717 0054 93ED007A 		vldr.32	s14, [r3]
+ 718              		.loc 1 281 51 view .LVU176
+ 719 0058 27EE087A 		vmul.f32	s14, s14, s16
+ 720              		.loc 1 281 30 view .LVU177
+ 721 005c DFED5A7A 		vldr.32	s15, .L78+8
+ 722 0060 C7EE876A 		vdiv.f32	s13, s15, s14
+ 723              		.loc 1 281 15 view .LVU178
+ 724 0064 F7EE007A 		vmov.f32	s15, #1.0e+0
+ 725 0068 76EEE76A 		vsub.f32	s13, s13, s15
+ 726              	.LVL23:
+ 282:../Bsp/MIDI/midi.c ****         __HAL_TIM_SET_AUTORELOAD(hmidi.htim, (uint16_t)arr);
+ 727              		.loc 1 282 9 is_stmt 1 view .LVU179
+ 728              		.loc 1 282 9 view .LVU180
+ 729 006c 544A     		ldr	r2, .L78
+ 730 006e 1068     		ldr	r0, [r2]
+ 731 0070 0168     		ldr	r1, [r0]
+ 732 0072 FCEEE67A 		vcvt.u32.f32	s15, s13
+ 733 0076 17EE903A 		vmov	r3, s15	@ int
+ 734 007a 9BB2     		uxth	r3, r3
+ 735 007c CB62     		str	r3, [r1, #44]
+ 736              		.loc 1 282 9 view .LVU181
+ 737 007e C360     		str	r3, [r0, #12]
+ 738              		.loc 1 282 9 view .LVU182
+ 283:../Bsp/MIDI/midi.c ****         __HAL_TIM_SET_COMPARE(hmidi.htim, hmidi.channel, arr * (hmidi.vol % 101) / 100);
+ 739              		.loc 1 283 9 view .LVU183
+ 740 0080 5168     		ldr	r1, [r2, #4]
+ 741 0082 0029     		cmp	r1, #0
+ 742 0084 40D1     		bne	.L69
+ 743              		.loc 1 283 9 is_stmt 0 discriminator 1 view .LVU184
+ 744 0086 937A     		ldrb	r3, [r2, #10]	@ zero_extendqisi2
+ 745 0088 504A     		ldr	r2, .L78+12
+ 746 008a A2FB0342 		umull	r4, r2, r2, r3
+ 747              	.LVL24:
+ 748              		.loc 1 283 9 discriminator 1 view .LVU185
+ 749 008e 9C1A     		subs	r4, r3, r2
+ 750 0090 02EB5402 		add	r2, r2, r4, lsr #1
+ 751 0094 9209     		lsrs	r2, r2, #6
+ 752 0096 6524     		movs	r4, #101
+ 753 0098 04FB1233 		mls	r3, r4, r2, r3
+ 754 009c DBB2     		uxtb	r3, r3
+ 755 009e 07EE903A 		vmov	s15, r3	@ int
+ 756 00a2 F8EEE77A 		vcvt.f32.s32	s15, s15
+ 757 00a6 67EEA67A 		vmul.f32	s15, s15, s13
+ 758 00aa 9FED496A 		vldr.32	s12, .L78+16
+ 759 00ae C7EE866A 		vdiv.f32	s13, s15, s12
+ 760              	.LVL25:
+ 761              		.loc 1 283 9 discriminator 1 view .LVU186
+ 762 00b2 0368     		ldr	r3, [r0]
+ 763 00b4 FCEEE66A 		vcvt.u32.f32	s13, s13
+ 764 00b8 C3ED0D6A 		vstr.32	s13, [r3, #52]	@ int
+ 765              	.L70:
+ 284:../Bsp/MIDI/midi.c ****         hmidi.key = (uint8_t)key;
+ 766              		.loc 1 284 9 is_stmt 1 view .LVU187
+ 767              		.loc 1 284 21 is_stmt 0 view .LVU188
+ 768 00bc FCEEC87A 		vcvt.u32.f32	s15, s16
+ 769 00c0 17EE903A 		vmov	r3, s15	@ int
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 19
+
+
+ 770              		.loc 1 284 19 view .LVU189
+ 771 00c4 3E4A     		ldr	r2, .L78
+ 772 00c6 5372     		strb	r3, [r2, #9]
+ 285:../Bsp/MIDI/midi.c ****         hmidi.cnt = midi_freq_tab[tt] * key * time / 1000;
+ 773              		.loc 1 285 9 is_stmt 1 view .LVU190
+ 774              		.loc 1 285 45 is_stmt 0 view .LVU191
+ 775 00c8 DDED017A 		vldr.32	s15, [sp, #4]	@ int
+ 776 00cc F8EEE77A 		vcvt.f32.s32	s15, s15
+ 777 00d0 67EE877A 		vmul.f32	s15, s15, s14
+ 778              		.loc 1 285 52 view .LVU192
+ 779 00d4 DFED3F6A 		vldr.32	s13, .L78+20
+ 780 00d8 87EEA67A 		vdiv.f32	s14, s15, s13
+ 781              	.LVL26:
+ 782              		.loc 1 285 19 view .LVU193
+ 783 00dc BCEEC77A 		vcvt.u32.f32	s14, s14
+ 784 00e0 82ED037A 		vstr.32	s14, [r2, #12]	@ int
+ 286:../Bsp/MIDI/midi.c ****         HAL_TIM_PWM_Start_IT(hmidi.htim, hmidi.channel);
+ 785              		.loc 1 286 9 is_stmt 1 view .LVU194
+ 786 00e4 FFF7FEFF 		bl	HAL_TIM_PWM_Start_IT
+ 787              	.LVL27:
+ 788              	.L64:
+ 789              		.loc 1 286 9 is_stmt 0 view .LVU195
+ 790              	.LBE2:
+ 287:../Bsp/MIDI/midi.c ****     }
+ 288:../Bsp/MIDI/midi.c **** }
+ 791              		.loc 1 288 1 view .LVU196
+ 792 00e8 02B0     		add	sp, sp, #8
+ 793              		.cfi_remember_state
+ 794              		.cfi_def_cfa_offset 16
+ 795              		@ sp needed
+ 796 00ea BDEC028B 		vldm	sp!, {d8}
+ 797              		.cfi_restore 80
+ 798              		.cfi_restore 81
+ 799              		.cfi_def_cfa_offset 8
+ 800              	.LVL28:
+ 801              		.loc 1 288 1 view .LVU197
+ 802 00ee 10BD     		pop	{r4, pc}
+ 803              	.LVL29:
+ 804              	.L75:
+ 805              		.cfi_restore_state
+ 259:../Bsp/MIDI/midi.c **** 
+ 806              		.loc 1 259 13 view .LVU198
+ 807 00f0 B0EE678A 		vmov.f32	s16, s15
+ 808              	.LVL30:
+ 259:../Bsp/MIDI/midi.c **** 
+ 809              		.loc 1 259 13 view .LVU199
+ 810 00f4 96E7     		b	.L65
+ 811              	.LVL31:
+ 812              	.L67:
+ 813              	.LBB3:
+ 275:../Bsp/MIDI/midi.c ****         {
+ 814              		.loc 1 275 14 is_stmt 1 view .LVU200
+ 275:../Bsp/MIDI/midi.c ****         {
+ 815              		.loc 1 275 17 is_stmt 0 view .LVU201
+ 816 00f6 002B     		cmp	r3, #0
+ 817 00f8 A9DC     		bgt	.L68
+ 277:../Bsp/MIDI/midi.c ****             key *= 0.5;
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 20
+
+
+ 818              		.loc 1 277 13 is_stmt 1 view .LVU202
+ 277:../Bsp/MIDI/midi.c ****             key *= 0.5;
+ 819              		.loc 1 277 16 is_stmt 0 view .LVU203
+ 820 00fa 0732     		adds	r2, r2, #7
+ 821 00fc 53B2     		sxtb	r3, r2
+ 822              	.LVL32:
+ 278:../Bsp/MIDI/midi.c ****         }
+ 823              		.loc 1 278 13 is_stmt 1 view .LVU204
+ 278:../Bsp/MIDI/midi.c ****         }
+ 824              		.loc 1 278 17 is_stmt 0 view .LVU205
+ 825 00fe F6EE007A 		vmov.f32	s15, #5.0e-1
+ 826 0102 28EE278A 		vmul.f32	s16, s16, s15
+ 827              	.LVL33:
+ 278:../Bsp/MIDI/midi.c ****         }
+ 828              		.loc 1 278 17 view .LVU206
+ 829 0106 A2E7     		b	.L68
+ 830              	.LVL34:
+ 831              	.L69:
+ 283:../Bsp/MIDI/midi.c ****         hmidi.key = (uint8_t)key;
+ 832              		.loc 1 283 9 discriminator 2 view .LVU207
+ 833 0108 0429     		cmp	r1, #4
+ 834 010a 1ED0     		beq	.L76
+ 283:../Bsp/MIDI/midi.c ****         hmidi.key = (uint8_t)key;
+ 835              		.loc 1 283 9 discriminator 4 view .LVU208
+ 836 010c 0829     		cmp	r1, #8
+ 837 010e 39D0     		beq	.L77
+ 283:../Bsp/MIDI/midi.c ****         hmidi.key = (uint8_t)key;
+ 838              		.loc 1 283 9 discriminator 7 view .LVU209
+ 839 0110 2B4B     		ldr	r3, .L78
+ 840 0112 9B7A     		ldrb	r3, [r3, #10]	@ zero_extendqisi2
+ 841 0114 2D4A     		ldr	r2, .L78+12
+ 842 0116 A2FB0342 		umull	r4, r2, r2, r3
+ 843              	.LVL35:
+ 283:../Bsp/MIDI/midi.c ****         hmidi.key = (uint8_t)key;
+ 844              		.loc 1 283 9 discriminator 7 view .LVU210
+ 845 011a 9C1A     		subs	r4, r3, r2
+ 846 011c 02EB5402 		add	r2, r2, r4, lsr #1
+ 847 0120 9209     		lsrs	r2, r2, #6
+ 848 0122 6524     		movs	r4, #101
+ 849 0124 04FB1233 		mls	r3, r4, r2, r3
+ 850 0128 DBB2     		uxtb	r3, r3
+ 851 012a 07EE903A 		vmov	s15, r3	@ int
+ 852 012e F8EEE77A 		vcvt.f32.s32	s15, s15
+ 853 0132 67EEA67A 		vmul.f32	s15, s15, s13
+ 854 0136 9FED266A 		vldr.32	s12, .L78+16
+ 855 013a C7EE866A 		vdiv.f32	s13, s15, s12
+ 856              	.LVL36:
+ 283:../Bsp/MIDI/midi.c ****         hmidi.key = (uint8_t)key;
+ 857              		.loc 1 283 9 discriminator 7 view .LVU211
+ 858 013e 0368     		ldr	r3, [r0]
+ 859 0140 FCEEE66A 		vcvt.u32.f32	s13, s13
+ 860 0144 C3ED106A 		vstr.32	s13, [r3, #64]	@ int
+ 861 0148 B8E7     		b	.L70
+ 862              	.LVL37:
+ 863              	.L76:
+ 283:../Bsp/MIDI/midi.c ****         hmidi.key = (uint8_t)key;
+ 864              		.loc 1 283 9 discriminator 3 view .LVU212
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 21
+
+
+ 865 014a 1D4B     		ldr	r3, .L78
+ 866 014c 9B7A     		ldrb	r3, [r3, #10]	@ zero_extendqisi2
+ 867 014e 1F4A     		ldr	r2, .L78+12
+ 868 0150 A2FB0342 		umull	r4, r2, r2, r3
+ 869              	.LVL38:
+ 283:../Bsp/MIDI/midi.c ****         hmidi.key = (uint8_t)key;
+ 870              		.loc 1 283 9 discriminator 3 view .LVU213
+ 871 0154 9C1A     		subs	r4, r3, r2
+ 872 0156 02EB5402 		add	r2, r2, r4, lsr #1
+ 873 015a 9209     		lsrs	r2, r2, #6
+ 874 015c 6524     		movs	r4, #101
+ 875 015e 04FB1233 		mls	r3, r4, r2, r3
+ 876 0162 DBB2     		uxtb	r3, r3
+ 877 0164 07EE903A 		vmov	s15, r3	@ int
+ 878 0168 F8EEE77A 		vcvt.f32.s32	s15, s15
+ 879 016c 67EEA67A 		vmul.f32	s15, s15, s13
+ 880 0170 9FED176A 		vldr.32	s12, .L78+16
+ 881 0174 C7EE866A 		vdiv.f32	s13, s15, s12
+ 882              	.LVL39:
+ 283:../Bsp/MIDI/midi.c ****         hmidi.key = (uint8_t)key;
+ 883              		.loc 1 283 9 discriminator 3 view .LVU214
+ 884 0178 0368     		ldr	r3, [r0]
+ 885 017a FCEEE66A 		vcvt.u32.f32	s13, s13
+ 886 017e C3ED0E6A 		vstr.32	s13, [r3, #56]	@ int
+ 887 0182 9BE7     		b	.L70
+ 888              	.LVL40:
+ 889              	.L77:
+ 283:../Bsp/MIDI/midi.c ****         hmidi.key = (uint8_t)key;
+ 890              		.loc 1 283 9 discriminator 6 view .LVU215
+ 891 0184 0E4B     		ldr	r3, .L78
+ 892 0186 9B7A     		ldrb	r3, [r3, #10]	@ zero_extendqisi2
+ 893 0188 104A     		ldr	r2, .L78+12
+ 894 018a A2FB0342 		umull	r4, r2, r2, r3
+ 895              	.LVL41:
+ 283:../Bsp/MIDI/midi.c ****         hmidi.key = (uint8_t)key;
+ 896              		.loc 1 283 9 discriminator 6 view .LVU216
+ 897 018e 9C1A     		subs	r4, r3, r2
+ 898 0190 02EB5402 		add	r2, r2, r4, lsr #1
+ 899 0194 9209     		lsrs	r2, r2, #6
+ 900 0196 6524     		movs	r4, #101
+ 901 0198 04FB1233 		mls	r3, r4, r2, r3
+ 902 019c DBB2     		uxtb	r3, r3
+ 903 019e 07EE903A 		vmov	s15, r3	@ int
+ 904 01a2 F8EEE77A 		vcvt.f32.s32	s15, s15
+ 905 01a6 67EEA67A 		vmul.f32	s15, s15, s13
+ 906 01aa 9FED096A 		vldr.32	s12, .L78+16
+ 907 01ae C7EE866A 		vdiv.f32	s13, s15, s12
+ 908              	.LVL42:
+ 283:../Bsp/MIDI/midi.c ****         hmidi.key = (uint8_t)key;
+ 909              		.loc 1 283 9 discriminator 6 view .LVU217
+ 910 01b2 0368     		ldr	r3, [r0]
+ 911 01b4 FCEEE66A 		vcvt.u32.f32	s13, s13
+ 912 01b8 C3ED0F6A 		vstr.32	s13, [r3, #60]	@ int
+ 913 01bc 7EE7     		b	.L70
+ 914              	.L79:
+ 915 01be 00BF     		.align	2
+ 916              	.L78:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 22
+
+
+ 917 01c0 00000000 		.word	hmidi
+ 918 01c4 00000000 		.word	midi_freq_tab
+ 919 01c8 00247449 		.word	1232348160
+ 920 01cc 57866F44 		.word	1148159575
+ 921 01d0 0000C842 		.word	1120403456
+ 922 01d4 00007A44 		.word	1148846080
+ 923              	.LBE3:
+ 924              		.cfi_endproc
+ 925              	.LFE254:
+ 927              		.section	.text.MIDI_Tick,"ax",%progbits
+ 928              		.align	1
+ 929              		.global	MIDI_Tick
+ 930              		.syntax unified
+ 931              		.thumb
+ 932              		.thumb_func
+ 934              	MIDI_Tick:
+ 935              	.LFB255:
+ 289:../Bsp/MIDI/midi.c **** 
+ 290:../Bsp/MIDI/midi.c **** /**
+ 291:../Bsp/MIDI/midi.c ****   * @brief  音乐播放节拍处理函数，需在主循环中周期调用
+ 292:../Bsp/MIDI/midi.c ****   * @retval None
+ 293:../Bsp/MIDI/midi.c ****   */
+ 294:../Bsp/MIDI/midi.c **** void MIDI_Tick(void)
+ 295:../Bsp/MIDI/midi.c **** {
+ 936              		.loc 1 295 1 is_stmt 1 view -0
+ 937              		.cfi_startproc
+ 938              		@ args = 0, pretend = 0, frame = 0
+ 939              		@ frame_needed = 0, uses_anonymous_args = 0
+ 296:../Bsp/MIDI/midi.c ****     if (hmidi.state != MIDI_STATE_PLAYING)
+ 940              		.loc 1 296 5 view .LVU219
+ 941              		.loc 1 296 14 is_stmt 0 view .LVU220
+ 942 0000 2B4B     		ldr	r3, .L92
+ 943 0002 1B7C     		ldrb	r3, [r3, #16]	@ zero_extendqisi2
+ 944              		.loc 1 296 8 view .LVU221
+ 945 0004 012B     		cmp	r3, #1
+ 946 0006 05D1     		bne	.L87
+ 297:../Bsp/MIDI/midi.c ****         return;
+ 298:../Bsp/MIDI/midi.c ****     if (hmidi.midi_data == NULL || hmidi.play_time == 0)
+ 947              		.loc 1 298 5 is_stmt 1 view .LVU222
+ 948              		.loc 1 298 14 is_stmt 0 view .LVU223
+ 949 0008 294B     		ldr	r3, .L92
+ 950 000a 5B6A     		ldr	r3, [r3, #36]
+ 951              		.loc 1 298 8 view .LVU224
+ 952 000c 13B1     		cbz	r3, .L87
+ 953              		.loc 1 298 41 discriminator 1 view .LVU225
+ 954 000e 284B     		ldr	r3, .L92
+ 955 0010 5B69     		ldr	r3, [r3, #20]
+ 956              		.loc 1 298 33 discriminator 1 view .LVU226
+ 957 0012 03B9     		cbnz	r3, .L90
+ 958              	.L87:
+ 959 0014 7047     		bx	lr
+ 960              	.L90:
+ 295:../Bsp/MIDI/midi.c ****     if (hmidi.state != MIDI_STATE_PLAYING)
+ 961              		.loc 1 295 1 view .LVU227
+ 962 0016 70B5     		push	{r4, r5, r6, lr}
+ 963              		.cfi_def_cfa_offset 16
+ 964              		.cfi_offset 4, -16
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 23
+
+
+ 965              		.cfi_offset 5, -12
+ 966              		.cfi_offset 6, -8
+ 967              		.cfi_offset 14, -4
+ 299:../Bsp/MIDI/midi.c ****         return;
+ 300:../Bsp/MIDI/midi.c **** 
+ 301:../Bsp/MIDI/midi.c ****     uint32_t ct = HAL_GetTick();
+ 968              		.loc 1 301 5 is_stmt 1 view .LVU228
+ 969              		.loc 1 301 19 is_stmt 0 view .LVU229
+ 970 0018 FFF7FEFF 		bl	HAL_GetTick
+ 971              	.LVL43:
+ 972 001c 0546     		mov	r5, r0
+ 973              	.LVL44:
+ 302:../Bsp/MIDI/midi.c **** 
+ 303:../Bsp/MIDI/midi.c ****     if (hmidi.end_tick == 0)
+ 974              		.loc 1 303 5 is_stmt 1 view .LVU230
+ 975              		.loc 1 303 14 is_stmt 0 view .LVU231
+ 976 001e 244B     		ldr	r3, .L92
+ 977 0020 DB69     		ldr	r3, [r3, #28]
+ 978              		.loc 1 303 8 view .LVU232
+ 979 0022 43B9     		cbnz	r3, .L82
+ 304:../Bsp/MIDI/midi.c ****     {
+ 305:../Bsp/MIDI/midi.c ****         hmidi.end_tick = ct + hmidi.play_time * 1000;
+ 980              		.loc 1 305 9 is_stmt 1 view .LVU233
+ 981              		.loc 1 305 36 is_stmt 0 view .LVU234
+ 982 0024 224B     		ldr	r3, .L92
+ 983 0026 5A69     		ldr	r2, [r3, #20]
+ 984              		.loc 1 305 29 view .LVU235
+ 985 0028 4FF47A71 		mov	r1, #1000
+ 986 002c 01FB0202 		mla	r2, r1, r2, r0
+ 987              		.loc 1 305 24 view .LVU236
+ 988 0030 DA61     		str	r2, [r3, #28]
+ 306:../Bsp/MIDI/midi.c ****         hmidi.midi_idx = 0;
+ 989              		.loc 1 306 9 is_stmt 1 view .LVU237
+ 990              		.loc 1 306 24 is_stmt 0 view .LVU238
+ 991 0032 0022     		movs	r2, #0
+ 992 0034 5A82     		strh	r2, [r3, #18]	@ movhi
+ 993              	.L82:
+ 307:../Bsp/MIDI/midi.c ****     }
+ 308:../Bsp/MIDI/midi.c **** 
+ 309:../Bsp/MIDI/midi.c ****     if (ct >= hmidi.end_tick)
+ 994              		.loc 1 309 5 is_stmt 1 view .LVU239
+ 995              		.loc 1 309 20 is_stmt 0 view .LVU240
+ 996 0036 1E4B     		ldr	r3, .L92
+ 997 0038 DB69     		ldr	r3, [r3, #28]
+ 998              		.loc 1 309 8 view .LVU241
+ 999 003a AB42     		cmp	r3, r5
+ 1000 003c 32D9     		bls	.L91
+ 310:../Bsp/MIDI/midi.c ****     {
+ 311:../Bsp/MIDI/midi.c ****         MIDI_Stop();
+ 312:../Bsp/MIDI/midi.c ****         return;
+ 313:../Bsp/MIDI/midi.c ****     }
+ 314:../Bsp/MIDI/midi.c **** 
+ 315:../Bsp/MIDI/midi.c ****     if (ct < hmidi.tune_tick)
+ 1001              		.loc 1 315 5 is_stmt 1 view .LVU242
+ 1002              		.loc 1 315 19 is_stmt 0 view .LVU243
+ 1003 003e 1C4B     		ldr	r3, .L92
+ 1004 0040 9B69     		ldr	r3, [r3, #24]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 24
+
+
+ 1005              		.loc 1 315 8 view .LVU244
+ 1006 0042 AB42     		cmp	r3, r5
+ 1007 0044 2DD8     		bhi	.L80
+ 316:../Bsp/MIDI/midi.c ****         return;
+ 317:../Bsp/MIDI/midi.c **** 
+ 318:../Bsp/MIDI/midi.c ****     if (hmidi.midi_idx >= hmidi.midi_len)
+ 1008              		.loc 1 318 5 is_stmt 1 view .LVU245
+ 1009              		.loc 1 318 14 is_stmt 0 view .LVU246
+ 1010 0046 1A4B     		ldr	r3, .L92
+ 1011 0048 5A8A     		ldrh	r2, [r3, #18]
+ 1012              		.loc 1 318 32 view .LVU247
+ 1013 004a 1B8D     		ldrh	r3, [r3, #40]
+ 1014              		.loc 1 318 8 view .LVU248
+ 1015 004c 9A42     		cmp	r2, r3
+ 1016 004e 05D3     		bcc	.L84
+ 319:../Bsp/MIDI/midi.c ****     {
+ 320:../Bsp/MIDI/midi.c ****         if (hmidi.loop)
+ 1017              		.loc 1 320 9 is_stmt 1 view .LVU249
+ 1018              		.loc 1 320 18 is_stmt 0 view .LVU250
+ 1019 0050 174B     		ldr	r3, .L92
+ 1020 0052 5B7C     		ldrb	r3, [r3, #17]	@ zero_extendqisi2
+ 1021              		.loc 1 320 12 view .LVU251
+ 1022 0054 4BB3     		cbz	r3, .L85
+ 321:../Bsp/MIDI/midi.c ****             hmidi.midi_idx = 0;
+ 1023              		.loc 1 321 13 is_stmt 1 view .LVU252
+ 1024              		.loc 1 321 28 is_stmt 0 view .LVU253
+ 1025 0056 164B     		ldr	r3, .L92
+ 1026 0058 0022     		movs	r2, #0
+ 1027 005a 5A82     		strh	r2, [r3, #18]	@ movhi
+ 1028              	.L84:
+ 322:../Bsp/MIDI/midi.c ****         else
+ 323:../Bsp/MIDI/midi.c ****         {
+ 324:../Bsp/MIDI/midi.c ****             MIDI_Stop();
+ 325:../Bsp/MIDI/midi.c ****             return;
+ 326:../Bsp/MIDI/midi.c ****         }
+ 327:../Bsp/MIDI/midi.c ****     }
+ 328:../Bsp/MIDI/midi.c **** 
+ 329:../Bsp/MIDI/midi.c ****     uint32_t note = hmidi.midi_data[hmidi.midi_idx++];
+ 1029              		.loc 1 329 5 is_stmt 1 view .LVU254
+ 1030              		.loc 1 329 26 is_stmt 0 view .LVU255
+ 1031 005c 144E     		ldr	r6, .L92
+ 1032 005e 726A     		ldr	r2, [r6, #36]
+ 1033              		.loc 1 329 42 view .LVU256
+ 1034 0060 738A     		ldrh	r3, [r6, #18]
+ 1035              		.loc 1 329 51 view .LVU257
+ 1036 0062 591C     		adds	r1, r3, #1
+ 1037 0064 7182     		strh	r1, [r6, #18]	@ movhi
+ 1038              		.loc 1 329 14 view .LVU258
+ 1039 0066 52F82300 		ldr	r0, [r2, r3, lsl #2]
+ 1040              	.LVL45:
+ 330:../Bsp/MIDI/midi.c ****     uint16_t time = note / 100;
+ 1041              		.loc 1 330 5 is_stmt 1 view .LVU259
+ 1042              		.loc 1 330 26 is_stmt 0 view .LVU260
+ 1043 006a 124B     		ldr	r3, .L92+4
+ 1044 006c A3FB0023 		umull	r2, r3, r3, r0
+ 1045 0070 5A09     		lsrs	r2, r3, #5
+ 1046              	.LVL46:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 25
+
+
+ 331:../Bsp/MIDI/midi.c ****     time = (uint32_t)time * hmidi.base_bpm / hmidi.bpm;
+ 1047              		.loc 1 331 5 is_stmt 1 view .LVU261
+ 1048              		.loc 1 331 34 is_stmt 0 view .LVU262
+ 1049 0072 718C     		ldrh	r1, [r6, #34]
+ 1050              		.loc 1 331 27 view .LVU263
+ 1051 0074 C3F34F14 		ubfx	r4, r3, #5, #16
+ 1052 0078 01FB04F4 		mul	r4, r1, r4
+ 1053              		.loc 1 331 51 view .LVU264
+ 1054 007c 338C     		ldrh	r3, [r6, #32]
+ 1055              		.loc 1 331 44 view .LVU265
+ 1056 007e B4FBF3F4 		udiv	r4, r4, r3
+ 1057              	.LVL47:
+ 332:../Bsp/MIDI/midi.c **** 
+ 333:../Bsp/MIDI/midi.c ****     MIDI_Beep(note % 100, time * 9 / 10);
+ 1058              		.loc 1 333 5 is_stmt 1 view .LVU266
+ 1059              		.loc 1 333 20 is_stmt 0 view .LVU267
+ 1060 0082 6423     		movs	r3, #100
+ 1061 0084 03FB1200 		mls	r0, r3, r2, r0
+ 1062              	.LVL48:
+ 1063              		.loc 1 333 20 view .LVU268
+ 1064 0088 A4B2     		uxth	r4, r4
+ 1065              		.loc 1 333 32 view .LVU269
+ 1066 008a 04EBC401 		add	r1, r4, r4, lsl #3
+ 1067              		.loc 1 333 36 view .LVU270
+ 1068 008e 0A4B     		ldr	r3, .L92+8
+ 1069 0090 83FB0131 		smull	r3, r1, r3, r1
+ 1070              		.loc 1 333 5 view .LVU271
+ 1071 0094 C1F38F01 		ubfx	r1, r1, #2, #16
+ 1072 0098 C0B2     		uxtb	r0, r0
+ 1073 009a FFF7FEFF 		bl	MIDI_Beep
+ 1074              	.LVL49:
+ 334:../Bsp/MIDI/midi.c ****     hmidi.tune_tick = ct + time;
+ 1075              		.loc 1 334 5 is_stmt 1 view .LVU272
+ 1076              		.loc 1 334 26 is_stmt 0 view .LVU273
+ 1077 009e 2544     		add	r5, r5, r4
+ 1078              	.LVL50:
+ 1079              		.loc 1 334 21 view .LVU274
+ 1080 00a0 B561     		str	r5, [r6, #24]
+ 1081              	.LVL51:
+ 1082              	.L80:
+ 335:../Bsp/MIDI/midi.c **** }
+ 1083              		.loc 1 335 1 view .LVU275
+ 1084 00a2 70BD     		pop	{r4, r5, r6, pc}
+ 1085              	.LVL52:
+ 1086              	.L91:
+ 311:../Bsp/MIDI/midi.c ****         return;
+ 1087              		.loc 1 311 9 is_stmt 1 view .LVU276
+ 1088 00a4 FFF7FEFF 		bl	MIDI_Stop
+ 1089              	.LVL53:
+ 312:../Bsp/MIDI/midi.c ****     }
+ 1090              		.loc 1 312 9 view .LVU277
+ 1091 00a8 FBE7     		b	.L80
+ 1092              	.LVL54:
+ 1093              	.L85:
+ 324:../Bsp/MIDI/midi.c ****             return;
+ 1094              		.loc 1 324 13 view .LVU278
+ 1095 00aa FFF7FEFF 		bl	MIDI_Stop
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 26
+
+
+ 1096              	.LVL55:
+ 325:../Bsp/MIDI/midi.c ****         }
+ 1097              		.loc 1 325 13 view .LVU279
+ 1098 00ae F8E7     		b	.L80
+ 1099              	.L93:
+ 1100              		.align	2
+ 1101              	.L92:
+ 1102 00b0 00000000 		.word	hmidi
+ 1103 00b4 1F85EB51 		.word	1374389535
+ 1104 00b8 67666666 		.word	1717986919
+ 1105              		.cfi_endproc
+ 1106              	.LFE255:
+ 1108              		.section	.text.MIDI_TimerCallback,"ax",%progbits
+ 1109              		.align	1
+ 1110              		.global	MIDI_TimerCallback
+ 1111              		.syntax unified
+ 1112              		.thumb
+ 1113              		.thumb_func
+ 1115              	MIDI_TimerCallback:
+ 1116              	.LVL56:
+ 1117              	.LFB256:
+ 336:../Bsp/MIDI/midi.c **** 
+ 337:../Bsp/MIDI/midi.c **** /**
+ 338:../Bsp/MIDI/midi.c ****   * @brief  定时器中断回调函数，需在定时器更新中断中调用
+ 339:../Bsp/MIDI/midi.c ****   * @param  htim: 定时器句柄
+ 340:../Bsp/MIDI/midi.c ****   * @retval None
+ 341:../Bsp/MIDI/midi.c ****   */
+ 342:../Bsp/MIDI/midi.c **** void MIDI_TimerCallback(TIM_HandleTypeDef *htim)
+ 343:../Bsp/MIDI/midi.c **** {
+ 1118              		.loc 1 343 1 view -0
+ 1119              		.cfi_startproc
+ 1120              		@ args = 0, pretend = 0, frame = 0
+ 1121              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1122              		.loc 1 343 1 is_stmt 0 view .LVU281
+ 1123 0000 08B5     		push	{r3, lr}
+ 1124              		.cfi_def_cfa_offset 8
+ 1125              		.cfi_offset 3, -8
+ 1126              		.cfi_offset 14, -4
+ 344:../Bsp/MIDI/midi.c ****     if (hmidi.htim != NULL && htim->Instance == hmidi.htim->Instance)
+ 1127              		.loc 1 344 5 is_stmt 1 view .LVU282
+ 1128              		.loc 1 344 14 is_stmt 0 view .LVU283
+ 1129 0002 0B4B     		ldr	r3, .L99
+ 1130 0004 1B68     		ldr	r3, [r3]
+ 1131              		.loc 1 344 8 view .LVU284
+ 1132 0006 1BB1     		cbz	r3, .L94
+ 1133              		.loc 1 344 35 discriminator 1 view .LVU285
+ 1134 0008 0268     		ldr	r2, [r0]
+ 1135              		.loc 1 344 59 discriminator 1 view .LVU286
+ 1136 000a 1B68     		ldr	r3, [r3]
+ 1137              		.loc 1 344 28 discriminator 1 view .LVU287
+ 1138 000c 9A42     		cmp	r2, r3
+ 1139 000e 00D0     		beq	.L98
+ 1140              	.LVL57:
+ 1141              	.L94:
+ 345:../Bsp/MIDI/midi.c ****     {
+ 346:../Bsp/MIDI/midi.c ****         if (hmidi.cnt > 0 && hmidi.tune > 0)
+ 347:../Bsp/MIDI/midi.c ****             --hmidi.cnt;
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 27
+
+
+ 348:../Bsp/MIDI/midi.c ****         else
+ 349:../Bsp/MIDI/midi.c ****             HAL_TIM_PWM_Stop_IT(htim, hmidi.channel);
+ 350:../Bsp/MIDI/midi.c ****     }
+ 351:../Bsp/MIDI/midi.c **** }
+ 1142              		.loc 1 351 1 view .LVU288
+ 1143 0010 08BD     		pop	{r3, pc}
+ 1144              	.LVL58:
+ 1145              	.L98:
+ 346:../Bsp/MIDI/midi.c ****             --hmidi.cnt;
+ 1146              		.loc 1 346 9 is_stmt 1 view .LVU289
+ 346:../Bsp/MIDI/midi.c ****             --hmidi.cnt;
+ 1147              		.loc 1 346 18 is_stmt 0 view .LVU290
+ 1148 0012 074B     		ldr	r3, .L99
+ 1149 0014 DB68     		ldr	r3, [r3, #12]
+ 346:../Bsp/MIDI/midi.c ****             --hmidi.cnt;
+ 1150              		.loc 1 346 12 view .LVU291
+ 1151 0016 33B1     		cbz	r3, .L96
+ 346:../Bsp/MIDI/midi.c ****             --hmidi.cnt;
+ 1152              		.loc 1 346 35 discriminator 1 view .LVU292
+ 1153 0018 054A     		ldr	r2, .L99
+ 1154 001a 127A     		ldrb	r2, [r2, #8]	@ zero_extendqisi2
+ 346:../Bsp/MIDI/midi.c ****             --hmidi.cnt;
+ 1155              		.loc 1 346 27 discriminator 1 view .LVU293
+ 1156 001c 1AB1     		cbz	r2, .L96
+ 347:../Bsp/MIDI/midi.c ****         else
+ 1157              		.loc 1 347 13 is_stmt 1 view .LVU294
+ 1158 001e 013B     		subs	r3, r3, #1
+ 1159 0020 034A     		ldr	r2, .L99
+ 1160 0022 D360     		str	r3, [r2, #12]
+ 1161 0024 F4E7     		b	.L94
+ 1162              	.L96:
+ 349:../Bsp/MIDI/midi.c ****     }
+ 1163              		.loc 1 349 13 view .LVU295
+ 1164 0026 024B     		ldr	r3, .L99
+ 1165 0028 5968     		ldr	r1, [r3, #4]
+ 1166 002a FFF7FEFF 		bl	HAL_TIM_PWM_Stop_IT
+ 1167              	.LVL59:
+ 1168              		.loc 1 351 1 is_stmt 0 view .LVU296
+ 1169 002e EFE7     		b	.L94
+ 1170              	.L100:
+ 1171              		.align	2
+ 1172              	.L99:
+ 1173 0030 00000000 		.word	hmidi
+ 1174              		.cfi_endproc
+ 1175              	.LFE256:
+ 1177              		.section	.rodata.midi_freq_tab,"a"
+ 1178              		.align	2
+ 1181              	midi_freq_tab:
+ 1182 0000 00000000 		.word	0
+ 1183 0004 CDCC8243 		.word	1132645581
+ 1184 0008 CDCC9243 		.word	1133694157
+ 1185 000c CDCCA443 		.word	1134873805
+ 1186 0010 9A99AE43 		.word	1135516058
+ 1187 0014 0000C443 		.word	1136918528
+ 1188 0018 0000DC43 		.word	1138491392
+ 1189 001c 33F3F643 		.word	1140257587
+ 1190              		.section	.bss.hmidi,"aw",%nobits
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 28
+
+
+ 1191              		.align	2
+ 1194              	hmidi:
+ 1195 0000 00000000 		.space	44
+ 1195      00000000 
+ 1195      00000000 
+ 1195      00000000 
+ 1195      00000000 
+ 1196              		.text
+ 1197              	.Letext0:
+ 1198              		.file 2 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_default_t
+ 1199              		.file 3 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h"
+ 1200              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 1201              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 1202              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 1203              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 1204              		.file 8 "../Bsp/MIDI/midi.h"
+ 1205              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 29
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 midi.c
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:21     .text.MIDI_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:27     .text.MIDI_Init:00000000 MIDI_Init
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:104    .text.MIDI_Init:00000038 $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:1194   .bss.hmidi:00000000 hmidi
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:109    .text.MIDI_SetMusic:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:115    .text.MIDI_SetMusic:00000000 MIDI_SetMusic
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:141    .text.MIDI_SetMusic:0000000c $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:146    .text.MIDI_Play:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:152    .text.MIDI_Play:00000000 MIDI_Play
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:208    .text.MIDI_Play:00000030 $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:213    .text.MIDI_Pause:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:219    .text.MIDI_Pause:00000000 MIDI_Pause
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:254    .text.MIDI_Pause:0000001c $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:259    .text.MIDI_Restart:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:265    .text.MIDI_Restart:00000000 MIDI_Restart
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:312    .text.MIDI_Restart:00000024 $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:317    .text.MIDI_Stop:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:323    .text.MIDI_Stop:00000000 MIDI_Stop
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:363    .text.MIDI_Stop:0000001c $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:368    .text.MIDI_SetDuration:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:374    .text.MIDI_SetDuration:00000000 MIDI_SetDuration
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:391    .text.MIDI_SetDuration:00000008 $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:396    .text.MIDI_SetLoop:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:402    .text.MIDI_SetLoop:00000000 MIDI_SetLoop
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:419    .text.MIDI_SetLoop:00000008 $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:424    .text.MIDI_SetVolume:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:430    .text.MIDI_SetVolume:00000000 MIDI_SetVolume
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:455    .text.MIDI_SetVolume:0000000c $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:460    .text.MIDI_GetVolume:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:466    .text.MIDI_GetVolume:00000000 MIDI_GetVolume
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:481    .text.MIDI_GetVolume:00000008 $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:486    .text.MIDI_SetBPM:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:492    .text.MIDI_SetBPM:00000000 MIDI_SetBPM
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:513    .text.MIDI_SetBPM:00000008 $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:518    .text.MIDI_GetBPM:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:524    .text.MIDI_GetBPM:00000000 MIDI_GetBPM
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:539    .text.MIDI_GetBPM:00000008 $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:544    .text.MIDI_SetShift:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:550    .text.MIDI_SetShift:00000000 MIDI_SetShift
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:567    .text.MIDI_SetShift:00000008 $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:572    .text.MIDI_GetShift:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:578    .text.MIDI_GetShift:00000000 MIDI_GetShift
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:593    .text.MIDI_GetShift:00000008 $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:598    .text.MIDI_GetState:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:604    .text.MIDI_GetState:00000000 MIDI_GetState
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:619    .text.MIDI_GetState:00000008 $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:624    .text.MIDI_Beep:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:630    .text.MIDI_Beep:00000000 MIDI_Beep
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:917    .text.MIDI_Beep:000001c0 $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:1181   .rodata.midi_freq_tab:00000000 midi_freq_tab
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:928    .text.MIDI_Tick:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:934    .text.MIDI_Tick:00000000 MIDI_Tick
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:1102   .text.MIDI_Tick:000000b0 $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:1109   .text.MIDI_TimerCallback:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:1115   .text.MIDI_TimerCallback:00000000 MIDI_TimerCallback
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s 			page 30
+
+
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:1173   .text.MIDI_TimerCallback:00000030 $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:1178   .rodata.midi_freq_tab:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccXZiJtx.s:1191   .bss.hmidi:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_TIM_PWM_Stop_IT
+HAL_TIM_PWM_Start_IT
+HAL_GetTick

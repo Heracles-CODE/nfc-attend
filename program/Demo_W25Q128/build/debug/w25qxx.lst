@@ -1,0 +1,1981 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"w25qxx.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "../Bsp/w25qxx/w25qxx.c"
+  20              		.section	.text.delayus,"ax",%progbits
+  21              		.align	1
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	delayus:
+  27              	.LVL0:
+  28              	.LFB239:
+   1:../Bsp/w25qxx/w25qxx.c **** #include "w25qxx.h"
+   2:../Bsp/w25qxx/w25qxx.c **** #include "spi.h"
+   3:../Bsp/w25qxx/w25qxx.c **** 
+   4:../Bsp/w25qxx/w25qxx.c **** uint16_t W25QXX_TYPE=W25Q128;	//默认是W25Q256
+   5:../Bsp/w25qxx/w25qxx.c **** 
+   6:../Bsp/w25qxx/w25qxx.c **** //4Kbytes为一个Sector
+   7:../Bsp/w25qxx/w25qxx.c **** //16个扇区为1个Block
+   8:../Bsp/w25qxx/w25qxx.c **** //W25Q128
+   9:../Bsp/w25qxx/w25qxx.c **** //容量为16M字节,共有256个Block,4096个Sector
+  10:../Bsp/w25qxx/w25qxx.c **** static void delayus(uint32_t nus)
+  11:../Bsp/w25qxx/w25qxx.c **** {
+  29              		.loc 1 11 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 8
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+  12:../Bsp/w25qxx/w25qxx.c ****     volatile uint32_t i;
+  34              		.loc 1 12 5 view .LVU1
+  13:../Bsp/w25qxx/w25qxx.c ****     while (nus-- > 0)
+  35              		.loc 1 13 5 view .LVU2
+  36              		.loc 1 13 18 view .LVU3
+  37 0000 0346     		mov	r3, r0
+  38              		.loc 1 13 15 is_stmt 0 view .LVU4
+  39 0002 0138     		subs	r0, r0, #1
+  40              	.LVL1:
+  41              		.loc 1 13 18 view .LVU5
+  42 0004 6BB1     		cbz	r3, .L8
+  11:../Bsp/w25qxx/w25qxx.c ****     volatile uint32_t i;
+  43              		.loc 1 11 1 view .LVU6
+  44 0006 82B0     		sub	sp, sp, #8
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 2
+
+
+  45              		.cfi_def_cfa_offset 8
+  46              	.L4:
+  14:../Bsp/w25qxx/w25qxx.c ****     {
+  15:../Bsp/w25qxx/w25qxx.c ****         i = 26;
+  47              		.loc 1 15 9 is_stmt 1 view .LVU7
+  48              		.loc 1 15 11 is_stmt 0 view .LVU8
+  49 0008 1A23     		movs	r3, #26
+  50 000a 0193     		str	r3, [sp, #4]
+  16:../Bsp/w25qxx/w25qxx.c ****         while (i-- > 0);
+  51              		.loc 1 16 9 is_stmt 1 view .LVU9
+  52              	.L3:
+  53              		.loc 1 16 20 discriminator 1 view .LVU10
+  54              		.loc 1 16 17 is_stmt 0 discriminator 1 view .LVU11
+  55 000c 019B     		ldr	r3, [sp, #4]
+  56 000e 5A1E     		subs	r2, r3, #1
+  57 0010 0192     		str	r2, [sp, #4]
+  58              		.loc 1 16 20 discriminator 1 view .LVU12
+  59 0012 002B     		cmp	r3, #0
+  60 0014 FAD1     		bne	.L3
+  13:../Bsp/w25qxx/w25qxx.c ****     {
+  61              		.loc 1 13 18 is_stmt 1 view .LVU13
+  62 0016 0346     		mov	r3, r0
+  13:../Bsp/w25qxx/w25qxx.c ****     {
+  63              		.loc 1 13 15 is_stmt 0 view .LVU14
+  64 0018 0138     		subs	r0, r0, #1
+  65              	.LVL2:
+  13:../Bsp/w25qxx/w25qxx.c ****     {
+  66              		.loc 1 13 18 view .LVU15
+  67 001a 002B     		cmp	r3, #0
+  68 001c F4D1     		bne	.L4
+  17:../Bsp/w25qxx/w25qxx.c ****     }
+  18:../Bsp/w25qxx/w25qxx.c **** }
+  69              		.loc 1 18 1 view .LVU16
+  70 001e 02B0     		add	sp, sp, #8
+  71              		.cfi_def_cfa_offset 0
+  72              		@ sp needed
+  73 0020 7047     		bx	lr
+  74              	.L8:
+  75              		.loc 1 18 1 view .LVU17
+  76 0022 7047     		bx	lr
+  77              		.cfi_endproc
+  78              	.LFE239:
+  80              		.section	.text.SPI1_SetSpeed,"ax",%progbits
+  81              		.align	1
+  82              		.global	SPI1_SetSpeed
+  83              		.syntax unified
+  84              		.thumb
+  85              		.thumb_func
+  87              	SPI1_SetSpeed:
+  88              	.LVL3:
+  89              	.LFB240:
+  19:../Bsp/w25qxx/w25qxx.c **** 
+  20:../Bsp/w25qxx/w25qxx.c **** void SPI1_SetSpeed(uint8_t SPI_BaudRatePrescaler)
+  21:../Bsp/w25qxx/w25qxx.c **** {
+  90              		.loc 1 21 1 is_stmt 1 view -0
+  91              		.cfi_startproc
+  92              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 3
+
+
+  93              		@ frame_needed = 0, uses_anonymous_args = 0
+  94              		@ link register save eliminated.
+  22:../Bsp/w25qxx/w25qxx.c ****     assert_param(IS_SPI_BAUDRATE_PRESCALER(SPI_BaudRatePrescaler));//判断有效性
+  95              		.loc 1 22 5 view .LVU19
+  23:../Bsp/w25qxx/w25qxx.c ****     __HAL_SPI_DISABLE(&hspi1);            				//关闭SPI
+  96              		.loc 1 23 5 view .LVU20
+  97 0000 0B4B     		ldr	r3, .L10
+  98 0002 1968     		ldr	r1, [r3]
+  99 0004 0A68     		ldr	r2, [r1]
+ 100 0006 22F04002 		bic	r2, r2, #64
+ 101 000a 0A60     		str	r2, [r1]
+  24:../Bsp/w25qxx/w25qxx.c ****     hspi1.Instance->CR1 &= 0XFFC7;          			//位3-5清零，用来设置波特率
+ 102              		.loc 1 24 5 view .LVU21
+ 103              		.loc 1 24 10 is_stmt 0 view .LVU22
+ 104 000c 1968     		ldr	r1, [r3]
+ 105              		.loc 1 24 19 view .LVU23
+ 106 000e 0A68     		ldr	r2, [r1]
+ 107              		.loc 1 24 25 view .LVU24
+ 108 0010 22F03802 		bic	r2, r2, #56
+ 109 0014 1204     		lsls	r2, r2, #16
+ 110 0016 120C     		lsrs	r2, r2, #16
+ 111 0018 0A60     		str	r2, [r1]
+  25:../Bsp/w25qxx/w25qxx.c ****     hspi1.Instance->CR1 |= SPI_BaudRatePrescaler;	//设置SPI速度
+ 112              		.loc 1 25 5 is_stmt 1 view .LVU25
+ 113              		.loc 1 25 10 is_stmt 0 view .LVU26
+ 114 001a 1A68     		ldr	r2, [r3]
+ 115              		.loc 1 25 19 view .LVU27
+ 116 001c 1168     		ldr	r1, [r2]
+ 117              		.loc 1 25 25 view .LVU28
+ 118 001e 0843     		orrs	r0, r0, r1
+ 119              	.LVL4:
+ 120              		.loc 1 25 25 view .LVU29
+ 121 0020 1060     		str	r0, [r2]
+  26:../Bsp/w25qxx/w25qxx.c ****     __HAL_SPI_ENABLE(&hspi1);             				//使能SPI
+ 122              		.loc 1 26 5 is_stmt 1 view .LVU30
+ 123 0022 1A68     		ldr	r2, [r3]
+ 124 0024 1368     		ldr	r3, [r2]
+ 125 0026 43F04003 		orr	r3, r3, #64
+ 126 002a 1360     		str	r3, [r2]
+  27:../Bsp/w25qxx/w25qxx.c **** }
+ 127              		.loc 1 27 1 is_stmt 0 view .LVU31
+ 128 002c 7047     		bx	lr
+ 129              	.L11:
+ 130 002e 00BF     		.align	2
+ 131              	.L10:
+ 132 0030 00000000 		.word	hspi1
+ 133              		.cfi_endproc
+ 134              	.LFE240:
+ 136              		.section	.text.SPI1_ReadWriteByte,"ax",%progbits
+ 137              		.align	1
+ 138              		.global	SPI1_ReadWriteByte
+ 139              		.syntax unified
+ 140              		.thumb
+ 141              		.thumb_func
+ 143              	SPI1_ReadWriteByte:
+ 144              	.LVL5:
+ 145              	.LFB241:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 4
+
+
+  28:../Bsp/w25qxx/w25qxx.c **** 
+  29:../Bsp/w25qxx/w25qxx.c **** //SPI1 读写一个字节
+  30:../Bsp/w25qxx/w25qxx.c **** //TxData:要写入的字节
+  31:../Bsp/w25qxx/w25qxx.c **** //返回值:读取到的字节
+  32:../Bsp/w25qxx/w25qxx.c **** uint8_t SPI1_ReadWriteByte(uint8_t TxData)
+  33:../Bsp/w25qxx/w25qxx.c **** {
+ 146              		.loc 1 33 1 is_stmt 1 view -0
+ 147              		.cfi_startproc
+ 148              		@ args = 0, pretend = 0, frame = 16
+ 149              		@ frame_needed = 0, uses_anonymous_args = 0
+ 150              		.loc 1 33 1 is_stmt 0 view .LVU33
+ 151 0000 00B5     		push	{lr}
+ 152              		.cfi_def_cfa_offset 4
+ 153              		.cfi_offset 14, -4
+ 154 0002 87B0     		sub	sp, sp, #28
+ 155              		.cfi_def_cfa_offset 32
+ 156 0004 8DF80F00 		strb	r0, [sp, #15]
+  34:../Bsp/w25qxx/w25qxx.c ****     uint8_t Rxdata;
+ 157              		.loc 1 34 5 is_stmt 1 view .LVU34
+  35:../Bsp/w25qxx/w25qxx.c ****     HAL_SPI_TransmitReceive(&hspi1, &TxData, &Rxdata, 1, 1000);
+ 158              		.loc 1 35 5 view .LVU35
+ 159 0008 4FF47A73 		mov	r3, #1000
+ 160 000c 0093     		str	r3, [sp]
+ 161 000e 0123     		movs	r3, #1
+ 162 0010 0DF11702 		add	r2, sp, #23
+ 163 0014 0DF10F01 		add	r1, sp, #15
+ 164 0018 0348     		ldr	r0, .L14
+ 165              	.LVL6:
+ 166              		.loc 1 35 5 is_stmt 0 view .LVU36
+ 167 001a FFF7FEFF 		bl	HAL_SPI_TransmitReceive
+ 168              	.LVL7:
+  36:../Bsp/w25qxx/w25qxx.c ****     return Rxdata;          		    //返回收到的数据
+ 169              		.loc 1 36 5 is_stmt 1 view .LVU37
+  37:../Bsp/w25qxx/w25qxx.c **** }
+ 170              		.loc 1 37 1 is_stmt 0 view .LVU38
+ 171 001e 9DF81700 		ldrb	r0, [sp, #23]	@ zero_extendqisi2
+ 172 0022 07B0     		add	sp, sp, #28
+ 173              		.cfi_def_cfa_offset 4
+ 174              		@ sp needed
+ 175 0024 5DF804FB 		ldr	pc, [sp], #4
+ 176              	.L15:
+ 177              		.align	2
+ 178              	.L14:
+ 179 0028 00000000 		.word	hspi1
+ 180              		.cfi_endproc
+ 181              	.LFE241:
+ 183              		.section	.text.W25QXX_ReadSR,"ax",%progbits
+ 184              		.align	1
+ 185              		.global	W25QXX_ReadSR
+ 186              		.syntax unified
+ 187              		.thumb
+ 188              		.thumb_func
+ 190              	W25QXX_ReadSR:
+ 191              	.LVL8:
+ 192              	.LFB243:
+  38:../Bsp/w25qxx/w25qxx.c **** 
+  39:../Bsp/w25qxx/w25qxx.c **** //初始化SPI FLASH的IO口
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 5
+
+
+  40:../Bsp/w25qxx/w25qxx.c **** void W25QXX_Init(void)
+  41:../Bsp/w25qxx/w25qxx.c **** {
+  42:../Bsp/w25qxx/w25qxx.c ****     uint8_t temp;
+  43:../Bsp/w25qxx/w25qxx.c **** //    GPIO_InitTypeDef GPIO_Initure;
+  44:../Bsp/w25qxx/w25qxx.c **** 
+  45:../Bsp/w25qxx/w25qxx.c **** //    __HAL_RCC_GPIOC_CLK_ENABLE();           //使能GPIOB时钟
+  46:../Bsp/w25qxx/w25qxx.c **** //
+  47:../Bsp/w25qxx/w25qxx.c **** //    //PB14
+  48:../Bsp/w25qxx/w25qxx.c **** //    GPIO_Initure.Pin=GPIO_PIN_4;            //PB14
+  49:../Bsp/w25qxx/w25qxx.c **** //    GPIO_Initure.Mode=GPIO_MODE_OUTPUT_PP;  //推挽输出
+  50:../Bsp/w25qxx/w25qxx.c **** //    GPIO_Initure.Pull=GPIO_PULLUP;          //上拉
+  51:../Bsp/w25qxx/w25qxx.c **** //    GPIO_Initure.Speed=GPIO_SPEED_HIGH;     //快速
+  52:../Bsp/w25qxx/w25qxx.c **** //    HAL_GPIO_Init(GPIOC,&GPIO_Initure);     //初始化
+  53:../Bsp/w25qxx/w25qxx.c **** 
+  54:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;			                //SPI FLASH不选中
+  55:../Bsp/w25qxx/w25qxx.c **** //	SPI1_Init();		   			        //初始化SPI
+  56:../Bsp/w25qxx/w25qxx.c ****     SPI1_SetSpeed(SPI_BAUDRATEPRESCALER_4); //设置为21M时钟,高速模式
+  57:../Bsp/w25qxx/w25qxx.c ****     W25QXX_TYPE=W25QXX_ReadID();	        //读取FLASH ID.
+  58:../Bsp/w25qxx/w25qxx.c **** }
+  59:../Bsp/w25qxx/w25qxx.c **** 
+  60:../Bsp/w25qxx/w25qxx.c **** //读取W25QXX的状态寄存器，W25QXX一共有3个状态寄存器
+  61:../Bsp/w25qxx/w25qxx.c **** //状态寄存器1：
+  62:../Bsp/w25qxx/w25qxx.c **** //BIT7  6   5   4   3   2   1   0
+  63:../Bsp/w25qxx/w25qxx.c **** //SPR   RV  TB BP2 BP1 BP0 WEL BUSY
+  64:../Bsp/w25qxx/w25qxx.c **** //SPR:默认0,状态寄存器保护位,配合WP使用
+  65:../Bsp/w25qxx/w25qxx.c **** //TB,BP2,BP1,BP0:FLASH区域写保护设置
+  66:../Bsp/w25qxx/w25qxx.c **** //WEL:写使能锁定
+  67:../Bsp/w25qxx/w25qxx.c **** //BUSY:忙标记位(1,忙;0,空闲)
+  68:../Bsp/w25qxx/w25qxx.c **** //默认:0x00
+  69:../Bsp/w25qxx/w25qxx.c **** //状态寄存器2：
+  70:../Bsp/w25qxx/w25qxx.c **** //BIT7  6   5   4   3   2   1   0
+  71:../Bsp/w25qxx/w25qxx.c **** //SUS   CMP LB3 LB2 LB1 (R) QE  SRP1
+  72:../Bsp/w25qxx/w25qxx.c **** //状态寄存器3：
+  73:../Bsp/w25qxx/w25qxx.c **** //BIT7      6    5    4   3   2   1   0
+  74:../Bsp/w25qxx/w25qxx.c **** //HOLD/RST  DRV1 DRV0 (R) (R) WPS ADP ADS
+  75:../Bsp/w25qxx/w25qxx.c **** //regno:状态寄存器号，范:1~3
+  76:../Bsp/w25qxx/w25qxx.c **** //返回值:状态寄存器值
+  77:../Bsp/w25qxx/w25qxx.c **** uint8_t W25QXX_ReadSR(uint8_t regno)
+  78:../Bsp/w25qxx/w25qxx.c **** {
+ 193              		.loc 1 78 1 is_stmt 1 view -0
+ 194              		.cfi_startproc
+ 195              		@ args = 0, pretend = 0, frame = 0
+ 196              		@ frame_needed = 0, uses_anonymous_args = 0
+ 197              		.loc 1 78 1 is_stmt 0 view .LVU40
+ 198 0000 38B5     		push	{r3, r4, r5, lr}
+ 199              		.cfi_def_cfa_offset 16
+ 200              		.cfi_offset 3, -16
+ 201              		.cfi_offset 4, -12
+ 202              		.cfi_offset 5, -8
+ 203              		.cfi_offset 14, -4
+  79:../Bsp/w25qxx/w25qxx.c ****     uint8_t byte=0,command=0;
+ 204              		.loc 1 79 5 is_stmt 1 view .LVU41
+ 205              	.LVL9:
+  80:../Bsp/w25qxx/w25qxx.c ****     switch(regno)
+ 206              		.loc 1 80 5 view .LVU42
+ 207 0002 0228     		cmp	r0, #2
+ 208 0004 03D0     		beq	.L18
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 6
+
+
+ 209 0006 0328     		cmp	r0, #3
+ 210 0008 16D1     		bne	.L19
+  81:../Bsp/w25qxx/w25qxx.c ****     {
+  82:../Bsp/w25qxx/w25qxx.c ****         case 1:
+  83:../Bsp/w25qxx/w25qxx.c ****             command=W25X_ReadStatusReg1;    //读状态寄存器1指令
+  84:../Bsp/w25qxx/w25qxx.c ****             break;
+  85:../Bsp/w25qxx/w25qxx.c ****         case 2:
+  86:../Bsp/w25qxx/w25qxx.c ****             command=W25X_ReadStatusReg2;    //读状态寄存器2指令
+  87:../Bsp/w25qxx/w25qxx.c ****             break;
+  88:../Bsp/w25qxx/w25qxx.c ****         case 3:
+  89:../Bsp/w25qxx/w25qxx.c ****             command=W25X_ReadStatusReg3;    //读状态寄存器3指令
+ 211              		.loc 1 89 20 is_stmt 0 view .LVU43
+ 212 000a 1524     		movs	r4, #21
+ 213 000c 00E0     		b	.L17
+ 214              	.L18:
+  86:../Bsp/w25qxx/w25qxx.c ****             break;
+ 215              		.loc 1 86 20 view .LVU44
+ 216 000e 3524     		movs	r4, #53
+ 217              	.L17:
+ 218              	.LVL10:
+  90:../Bsp/w25qxx/w25qxx.c ****             break;
+  91:../Bsp/w25qxx/w25qxx.c ****         default:
+  92:../Bsp/w25qxx/w25qxx.c ****             command=W25X_ReadStatusReg1;
+  93:../Bsp/w25qxx/w25qxx.c ****             break;
+  94:../Bsp/w25qxx/w25qxx.c ****     }
+  95:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS0;                            //使能器件
+ 219              		.loc 1 95 5 is_stmt 1 view .LVU45
+ 220 0010 0A4D     		ldr	r5, .L21
+ 221 0012 0022     		movs	r2, #0
+ 222 0014 1021     		movs	r1, #16
+ 223 0016 2846     		mov	r0, r5
+ 224              	.LVL11:
+ 225              		.loc 1 95 5 is_stmt 0 view .LVU46
+ 226 0018 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 227              	.LVL12:
+  96:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte(command);            //发送读取状态寄存器命令
+ 228              		.loc 1 96 5 is_stmt 1 view .LVU47
+ 229 001c 2046     		mov	r0, r4
+ 230 001e FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 231              	.LVL13:
+  97:../Bsp/w25qxx/w25qxx.c ****     byte=SPI1_ReadWriteByte(0Xff);          //读取一个字节
+ 232              		.loc 1 97 5 view .LVU48
+ 233              		.loc 1 97 10 is_stmt 0 view .LVU49
+ 234 0022 FF20     		movs	r0, #255
+ 235 0024 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 236              	.LVL14:
+ 237 0028 0446     		mov	r4, r0
+ 238              	.LVL15:
+  98:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;                            //取消片选
+ 239              		.loc 1 98 5 is_stmt 1 view .LVU50
+ 240 002a 0122     		movs	r2, #1
+ 241 002c 1021     		movs	r1, #16
+ 242 002e 2846     		mov	r0, r5
+ 243 0030 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 244              	.LVL16:
+  99:../Bsp/w25qxx/w25qxx.c ****     return byte;
+ 245              		.loc 1 99 5 view .LVU51
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 7
+
+
+ 100:../Bsp/w25qxx/w25qxx.c **** }
+ 246              		.loc 1 100 1 is_stmt 0 view .LVU52
+ 247 0034 2046     		mov	r0, r4
+ 248 0036 38BD     		pop	{r3, r4, r5, pc}
+ 249              	.LVL17:
+ 250              	.L19:
+  80:../Bsp/w25qxx/w25qxx.c ****     {
+ 251              		.loc 1 80 5 view .LVU53
+ 252 0038 0524     		movs	r4, #5
+ 253 003a E9E7     		b	.L17
+ 254              	.L22:
+ 255              		.align	2
+ 256              	.L21:
+ 257 003c 00080240 		.word	1073874944
+ 258              		.cfi_endproc
+ 259              	.LFE243:
+ 261              		.section	.text.W25QXX_Write_SR,"ax",%progbits
+ 262              		.align	1
+ 263              		.global	W25QXX_Write_SR
+ 264              		.syntax unified
+ 265              		.thumb
+ 266              		.thumb_func
+ 268              	W25QXX_Write_SR:
+ 269              	.LVL18:
+ 270              	.LFB244:
+ 101:../Bsp/w25qxx/w25qxx.c **** //写W25QXX状态寄存器
+ 102:../Bsp/w25qxx/w25qxx.c **** void W25QXX_Write_SR(uint8_t regno,uint8_t sr)
+ 103:../Bsp/w25qxx/w25qxx.c **** {
+ 271              		.loc 1 103 1 is_stmt 1 view -0
+ 272              		.cfi_startproc
+ 273              		@ args = 0, pretend = 0, frame = 0
+ 274              		@ frame_needed = 0, uses_anonymous_args = 0
+ 275              		.loc 1 103 1 is_stmt 0 view .LVU55
+ 276 0000 70B5     		push	{r4, r5, r6, lr}
+ 277              		.cfi_def_cfa_offset 16
+ 278              		.cfi_offset 4, -16
+ 279              		.cfi_offset 5, -12
+ 280              		.cfi_offset 6, -8
+ 281              		.cfi_offset 14, -4
+ 282 0002 0C46     		mov	r4, r1
+ 104:../Bsp/w25qxx/w25qxx.c ****     uint8_t command=0;
+ 283              		.loc 1 104 5 is_stmt 1 view .LVU56
+ 284              	.LVL19:
+ 105:../Bsp/w25qxx/w25qxx.c ****     switch(regno)
+ 285              		.loc 1 105 5 view .LVU57
+ 286 0004 0228     		cmp	r0, #2
+ 287 0006 03D0     		beq	.L25
+ 288 0008 0328     		cmp	r0, #3
+ 289 000a 14D1     		bne	.L26
+ 106:../Bsp/w25qxx/w25qxx.c ****     {
+ 107:../Bsp/w25qxx/w25qxx.c ****         case 1:
+ 108:../Bsp/w25qxx/w25qxx.c ****             command=W25X_WriteStatusReg1;    //写状态寄存器1指令
+ 109:../Bsp/w25qxx/w25qxx.c ****             break;
+ 110:../Bsp/w25qxx/w25qxx.c ****         case 2:
+ 111:../Bsp/w25qxx/w25qxx.c ****             command=W25X_WriteStatusReg2;    //写状态寄存器2指令
+ 112:../Bsp/w25qxx/w25qxx.c ****             break;
+ 113:../Bsp/w25qxx/w25qxx.c ****         case 3:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 8
+
+
+ 114:../Bsp/w25qxx/w25qxx.c ****             command=W25X_WriteStatusReg3;    //写状态寄存器3指令
+ 290              		.loc 1 114 20 is_stmt 0 view .LVU58
+ 291 000c 1126     		movs	r6, #17
+ 292 000e 00E0     		b	.L24
+ 293              	.L25:
+ 111:../Bsp/w25qxx/w25qxx.c ****             break;
+ 294              		.loc 1 111 20 view .LVU59
+ 295 0010 3126     		movs	r6, #49
+ 296              	.L24:
+ 297              	.LVL20:
+ 115:../Bsp/w25qxx/w25qxx.c ****             break;
+ 116:../Bsp/w25qxx/w25qxx.c ****         default:
+ 117:../Bsp/w25qxx/w25qxx.c ****             command=W25X_WriteStatusReg1;
+ 118:../Bsp/w25qxx/w25qxx.c ****             break;
+ 119:../Bsp/w25qxx/w25qxx.c ****     }
+ 120:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS0;                            //使能器件
+ 298              		.loc 1 120 5 is_stmt 1 view .LVU60
+ 299 0012 0A4D     		ldr	r5, .L28
+ 300 0014 0022     		movs	r2, #0
+ 301 0016 1021     		movs	r1, #16
+ 302              	.LVL21:
+ 303              		.loc 1 120 5 is_stmt 0 view .LVU61
+ 304 0018 2846     		mov	r0, r5
+ 305              	.LVL22:
+ 306              		.loc 1 120 5 view .LVU62
+ 307 001a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 308              	.LVL23:
+ 121:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte(command);            //发送写取状态寄存器命令
+ 309              		.loc 1 121 5 is_stmt 1 view .LVU63
+ 310 001e 3046     		mov	r0, r6
+ 311 0020 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 312              	.LVL24:
+ 122:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte(sr);                 //写入一个字节
+ 313              		.loc 1 122 5 view .LVU64
+ 314 0024 2046     		mov	r0, r4
+ 315 0026 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 316              	.LVL25:
+ 123:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;                            //取消片选
+ 317              		.loc 1 123 5 view .LVU65
+ 318 002a 0122     		movs	r2, #1
+ 319 002c 1021     		movs	r1, #16
+ 320 002e 2846     		mov	r0, r5
+ 321 0030 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 322              	.LVL26:
+ 124:../Bsp/w25qxx/w25qxx.c **** }
+ 323              		.loc 1 124 1 is_stmt 0 view .LVU66
+ 324 0034 70BD     		pop	{r4, r5, r6, pc}
+ 325              	.LVL27:
+ 326              	.L26:
+ 105:../Bsp/w25qxx/w25qxx.c ****     {
+ 327              		.loc 1 105 5 view .LVU67
+ 328 0036 0126     		movs	r6, #1
+ 329 0038 EBE7     		b	.L24
+ 330              	.L29:
+ 331 003a 00BF     		.align	2
+ 332              	.L28:
+ 333 003c 00080240 		.word	1073874944
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 9
+
+
+ 334              		.cfi_endproc
+ 335              	.LFE244:
+ 337              		.section	.text.W25QXX_Write_Enable,"ax",%progbits
+ 338              		.align	1
+ 339              		.global	W25QXX_Write_Enable
+ 340              		.syntax unified
+ 341              		.thumb
+ 342              		.thumb_func
+ 344              	W25QXX_Write_Enable:
+ 345              	.LFB245:
+ 125:../Bsp/w25qxx/w25qxx.c **** //W25QXX写使能
+ 126:../Bsp/w25qxx/w25qxx.c **** //将WEL置位
+ 127:../Bsp/w25qxx/w25qxx.c **** void W25QXX_Write_Enable(void)
+ 128:../Bsp/w25qxx/w25qxx.c **** {
+ 346              		.loc 1 128 1 is_stmt 1 view -0
+ 347              		.cfi_startproc
+ 348              		@ args = 0, pretend = 0, frame = 0
+ 349              		@ frame_needed = 0, uses_anonymous_args = 0
+ 350 0000 10B5     		push	{r4, lr}
+ 351              		.cfi_def_cfa_offset 8
+ 352              		.cfi_offset 4, -8
+ 353              		.cfi_offset 14, -4
+ 129:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS0;                            //使能器件
+ 354              		.loc 1 129 5 view .LVU69
+ 355 0002 074C     		ldr	r4, .L32
+ 356 0004 0022     		movs	r2, #0
+ 357 0006 1021     		movs	r1, #16
+ 358 0008 2046     		mov	r0, r4
+ 359 000a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 360              	.LVL28:
+ 130:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte(W25X_WriteEnable);   //发送写使能
+ 361              		.loc 1 130 5 view .LVU70
+ 362 000e 0620     		movs	r0, #6
+ 363 0010 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 364              	.LVL29:
+ 131:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;                            //取消片选
+ 365              		.loc 1 131 5 view .LVU71
+ 366 0014 0122     		movs	r2, #1
+ 367 0016 1021     		movs	r1, #16
+ 368 0018 2046     		mov	r0, r4
+ 369 001a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 370              	.LVL30:
+ 132:../Bsp/w25qxx/w25qxx.c **** }
+ 371              		.loc 1 132 1 is_stmt 0 view .LVU72
+ 372 001e 10BD     		pop	{r4, pc}
+ 373              	.L33:
+ 374              		.align	2
+ 375              	.L32:
+ 376 0020 00080240 		.word	1073874944
+ 377              		.cfi_endproc
+ 378              	.LFE245:
+ 380              		.section	.text.W25QXX_Write_Disable,"ax",%progbits
+ 381              		.align	1
+ 382              		.global	W25QXX_Write_Disable
+ 383              		.syntax unified
+ 384              		.thumb
+ 385              		.thumb_func
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 10
+
+
+ 387              	W25QXX_Write_Disable:
+ 388              	.LFB246:
+ 133:../Bsp/w25qxx/w25qxx.c **** //W25QXX写禁止
+ 134:../Bsp/w25qxx/w25qxx.c **** //将WEL清零
+ 135:../Bsp/w25qxx/w25qxx.c **** void W25QXX_Write_Disable(void)
+ 136:../Bsp/w25qxx/w25qxx.c **** {
+ 389              		.loc 1 136 1 is_stmt 1 view -0
+ 390              		.cfi_startproc
+ 391              		@ args = 0, pretend = 0, frame = 0
+ 392              		@ frame_needed = 0, uses_anonymous_args = 0
+ 393 0000 10B5     		push	{r4, lr}
+ 394              		.cfi_def_cfa_offset 8
+ 395              		.cfi_offset 4, -8
+ 396              		.cfi_offset 14, -4
+ 137:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS0;                            //使能器件
+ 397              		.loc 1 137 5 view .LVU74
+ 398 0002 074C     		ldr	r4, .L36
+ 399 0004 0022     		movs	r2, #0
+ 400 0006 1021     		movs	r1, #16
+ 401 0008 2046     		mov	r0, r4
+ 402 000a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 403              	.LVL31:
+ 138:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte(W25X_WriteDisable);  //发送写禁止指令
+ 404              		.loc 1 138 5 view .LVU75
+ 405 000e 0420     		movs	r0, #4
+ 406 0010 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 407              	.LVL32:
+ 139:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;                            //取消片选
+ 408              		.loc 1 139 5 view .LVU76
+ 409 0014 0122     		movs	r2, #1
+ 410 0016 1021     		movs	r1, #16
+ 411 0018 2046     		mov	r0, r4
+ 412 001a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 413              	.LVL33:
+ 140:../Bsp/w25qxx/w25qxx.c **** }
+ 414              		.loc 1 140 1 is_stmt 0 view .LVU77
+ 415 001e 10BD     		pop	{r4, pc}
+ 416              	.L37:
+ 417              		.align	2
+ 418              	.L36:
+ 419 0020 00080240 		.word	1073874944
+ 420              		.cfi_endproc
+ 421              	.LFE246:
+ 423              		.section	.text.W25QXX_ReadID,"ax",%progbits
+ 424              		.align	1
+ 425              		.global	W25QXX_ReadID
+ 426              		.syntax unified
+ 427              		.thumb
+ 428              		.thumb_func
+ 430              	W25QXX_ReadID:
+ 431              	.LFB247:
+ 141:../Bsp/w25qxx/w25qxx.c **** 
+ 142:../Bsp/w25qxx/w25qxx.c **** //读取芯片ID
+ 143:../Bsp/w25qxx/w25qxx.c **** //返回值如下:
+ 144:../Bsp/w25qxx/w25qxx.c **** //0XEF13,表示芯片型号为W25Q80
+ 145:../Bsp/w25qxx/w25qxx.c **** //0XEF14,表示芯片型号为W25Q16
+ 146:../Bsp/w25qxx/w25qxx.c **** //0XEF15,表示芯片型号为W25Q32
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 11
+
+
+ 147:../Bsp/w25qxx/w25qxx.c **** //0XEF16,表示芯片型号为W25Q64
+ 148:../Bsp/w25qxx/w25qxx.c **** //0XEF17,表示芯片型号为W25Q128
+ 149:../Bsp/w25qxx/w25qxx.c **** //0XEF18,表示芯片型号为W25Q256
+ 150:../Bsp/w25qxx/w25qxx.c **** uint16_t W25QXX_ReadID(void)
+ 151:../Bsp/w25qxx/w25qxx.c **** {
+ 432              		.loc 1 151 1 is_stmt 1 view -0
+ 433              		.cfi_startproc
+ 434              		@ args = 0, pretend = 0, frame = 0
+ 435              		@ frame_needed = 0, uses_anonymous_args = 0
+ 436 0000 38B5     		push	{r3, r4, r5, lr}
+ 437              		.cfi_def_cfa_offset 16
+ 438              		.cfi_offset 3, -16
+ 439              		.cfi_offset 4, -12
+ 440              		.cfi_offset 5, -8
+ 441              		.cfi_offset 14, -4
+ 152:../Bsp/w25qxx/w25qxx.c ****     uint16_t Temp = 0;
+ 442              		.loc 1 152 5 view .LVU79
+ 443              	.LVL34:
+ 153:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS0;
+ 444              		.loc 1 153 5 view .LVU80
+ 445 0002 114D     		ldr	r5, .L40
+ 446 0004 0022     		movs	r2, #0
+ 447 0006 1021     		movs	r1, #16
+ 448 0008 2846     		mov	r0, r5
+ 449 000a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 450              	.LVL35:
+ 154:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte(0x90);//发送读取ID命令
+ 451              		.loc 1 154 5 view .LVU81
+ 452 000e 9020     		movs	r0, #144
+ 453 0010 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 454              	.LVL36:
+ 155:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte(0x00);
+ 455              		.loc 1 155 5 view .LVU82
+ 456 0014 0020     		movs	r0, #0
+ 457 0016 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 458              	.LVL37:
+ 156:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte(0x00);
+ 459              		.loc 1 156 5 view .LVU83
+ 460 001a 0020     		movs	r0, #0
+ 461 001c FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 462              	.LVL38:
+ 157:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte(0x00);
+ 463              		.loc 1 157 5 view .LVU84
+ 464 0020 0020     		movs	r0, #0
+ 465 0022 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 466              	.LVL39:
+ 158:../Bsp/w25qxx/w25qxx.c ****     Temp|=SPI1_ReadWriteByte(0xFF)<<8;
+ 467              		.loc 1 158 5 view .LVU85
+ 468              		.loc 1 158 11 is_stmt 0 view .LVU86
+ 469 0026 FF20     		movs	r0, #255
+ 470 0028 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 471              	.LVL40:
+ 472              		.loc 1 158 9 discriminator 1 view .LVU87
+ 473 002c 0402     		lsls	r4, r0, #8
+ 474 002e A4B2     		uxth	r4, r4
+ 475              	.LVL41:
+ 159:../Bsp/w25qxx/w25qxx.c ****     Temp|=SPI1_ReadWriteByte(0xFF);
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 12
+
+
+ 476              		.loc 1 159 5 is_stmt 1 view .LVU88
+ 477              		.loc 1 159 11 is_stmt 0 view .LVU89
+ 478 0030 FF20     		movs	r0, #255
+ 479 0032 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 480              	.LVL42:
+ 481              		.loc 1 159 9 discriminator 1 view .LVU90
+ 482 0036 0443     		orrs	r4, r4, r0
+ 483              	.LVL43:
+ 484              		.loc 1 159 9 discriminator 1 view .LVU91
+ 485 0038 A4B2     		uxth	r4, r4
+ 486              	.LVL44:
+ 160:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;
+ 487              		.loc 1 160 5 is_stmt 1 view .LVU92
+ 488 003a 0122     		movs	r2, #1
+ 489 003c 1021     		movs	r1, #16
+ 490 003e 2846     		mov	r0, r5
+ 491 0040 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 492              	.LVL45:
+ 161:../Bsp/w25qxx/w25qxx.c ****     return Temp;
+ 493              		.loc 1 161 5 view .LVU93
+ 162:../Bsp/w25qxx/w25qxx.c **** }
+ 494              		.loc 1 162 1 is_stmt 0 view .LVU94
+ 495 0044 2046     		mov	r0, r4
+ 496 0046 38BD     		pop	{r3, r4, r5, pc}
+ 497              	.LVL46:
+ 498              	.L41:
+ 499              		.loc 1 162 1 view .LVU95
+ 500              		.align	2
+ 501              	.L40:
+ 502 0048 00080240 		.word	1073874944
+ 503              		.cfi_endproc
+ 504              	.LFE247:
+ 506              		.section	.text.W25QXX_Init,"ax",%progbits
+ 507              		.align	1
+ 508              		.global	W25QXX_Init
+ 509              		.syntax unified
+ 510              		.thumb
+ 511              		.thumb_func
+ 513              	W25QXX_Init:
+ 514              	.LFB242:
+  41:../Bsp/w25qxx/w25qxx.c ****     uint8_t temp;
+ 515              		.loc 1 41 1 is_stmt 1 view -0
+ 516              		.cfi_startproc
+ 517              		@ args = 0, pretend = 0, frame = 0
+ 518              		@ frame_needed = 0, uses_anonymous_args = 0
+ 519 0000 08B5     		push	{r3, lr}
+ 520              		.cfi_def_cfa_offset 8
+ 521              		.cfi_offset 3, -8
+ 522              		.cfi_offset 14, -4
+  42:../Bsp/w25qxx/w25qxx.c **** //    GPIO_InitTypeDef GPIO_Initure;
+ 523              		.loc 1 42 5 view .LVU97
+  54:../Bsp/w25qxx/w25qxx.c **** //	SPI1_Init();		   			        //初始化SPI
+ 524              		.loc 1 54 5 view .LVU98
+ 525 0002 0122     		movs	r2, #1
+ 526 0004 1021     		movs	r1, #16
+ 527 0006 0548     		ldr	r0, .L44
+ 528 0008 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 13
+
+
+ 529              	.LVL47:
+  56:../Bsp/w25qxx/w25qxx.c ****     W25QXX_TYPE=W25QXX_ReadID();	        //读取FLASH ID.
+ 530              		.loc 1 56 5 view .LVU99
+ 531 000c 0820     		movs	r0, #8
+ 532 000e FFF7FEFF 		bl	SPI1_SetSpeed
+ 533              	.LVL48:
+  57:../Bsp/w25qxx/w25qxx.c **** }
+ 534              		.loc 1 57 5 view .LVU100
+  57:../Bsp/w25qxx/w25qxx.c **** }
+ 535              		.loc 1 57 17 is_stmt 0 view .LVU101
+ 536 0012 FFF7FEFF 		bl	W25QXX_ReadID
+ 537              	.LVL49:
+  57:../Bsp/w25qxx/w25qxx.c **** }
+ 538              		.loc 1 57 16 discriminator 1 view .LVU102
+ 539 0016 024B     		ldr	r3, .L44+4
+ 540 0018 1880     		strh	r0, [r3]	@ movhi
+  58:../Bsp/w25qxx/w25qxx.c **** 
+ 541              		.loc 1 58 1 view .LVU103
+ 542 001a 08BD     		pop	{r3, pc}
+ 543              	.L45:
+ 544              		.align	2
+ 545              	.L44:
+ 546 001c 00080240 		.word	1073874944
+ 547 0020 00000000 		.word	W25QXX_TYPE
+ 548              		.cfi_endproc
+ 549              	.LFE242:
+ 551              		.section	.text.W25QXX_Read,"ax",%progbits
+ 552              		.align	1
+ 553              		.global	W25QXX_Read
+ 554              		.syntax unified
+ 555              		.thumb
+ 556              		.thumb_func
+ 558              	W25QXX_Read:
+ 559              	.LVL50:
+ 560              	.LFB248:
+ 163:../Bsp/w25qxx/w25qxx.c **** //读取SPI FLASH
+ 164:../Bsp/w25qxx/w25qxx.c **** //在指定地址开始读取指定长度的数据
+ 165:../Bsp/w25qxx/w25qxx.c **** //pBuffer:数据存储区
+ 166:../Bsp/w25qxx/w25qxx.c **** //ReadAddr:开始读取的地址(24bit)
+ 167:../Bsp/w25qxx/w25qxx.c **** //NumByteToRead:要读取的字节数(最大65535)
+ 168:../Bsp/w25qxx/w25qxx.c **** void W25QXX_Read(uint8_t* pBuffer,uint32_t ReadAddr,uint32_t NumByteToRead)
+ 169:../Bsp/w25qxx/w25qxx.c **** {
+ 561              		.loc 1 169 1 is_stmt 1 view -0
+ 562              		.cfi_startproc
+ 563              		@ args = 0, pretend = 0, frame = 0
+ 564              		@ frame_needed = 0, uses_anonymous_args = 0
+ 565              		.loc 1 169 1 is_stmt 0 view .LVU105
+ 566 0000 70B5     		push	{r4, r5, r6, lr}
+ 567              		.cfi_def_cfa_offset 16
+ 568              		.cfi_offset 4, -16
+ 569              		.cfi_offset 5, -12
+ 570              		.cfi_offset 6, -8
+ 571              		.cfi_offset 14, -4
+ 572 0002 0646     		mov	r6, r0
+ 573 0004 0C46     		mov	r4, r1
+ 574 0006 1546     		mov	r5, r2
+ 170:../Bsp/w25qxx/w25qxx.c ****     uint32_t i;
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 14
+
+
+ 575              		.loc 1 170 5 is_stmt 1 view .LVU106
+ 171:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS0;                            //使能器件
+ 576              		.loc 1 171 5 view .LVU107
+ 577 0008 0022     		movs	r2, #0
+ 578              	.LVL51:
+ 579              		.loc 1 171 5 is_stmt 0 view .LVU108
+ 580 000a 1021     		movs	r1, #16
+ 581              	.LVL52:
+ 582              		.loc 1 171 5 view .LVU109
+ 583 000c 1448     		ldr	r0, .L52
+ 584              	.LVL53:
+ 585              		.loc 1 171 5 view .LVU110
+ 586 000e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 587              	.LVL54:
+ 172:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte(W25X_ReadData);      //发送读取命令
+ 588              		.loc 1 172 5 is_stmt 1 view .LVU111
+ 589 0012 0320     		movs	r0, #3
+ 590 0014 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 591              	.LVL55:
+ 173:../Bsp/w25qxx/w25qxx.c ****     if(W25QXX_TYPE==W25Q256)                //如果是W25Q256的话地址为4字节的，要发送最高8位
+ 592              		.loc 1 173 5 view .LVU112
+ 593              		.loc 1 173 19 is_stmt 0 view .LVU113
+ 594 0018 124B     		ldr	r3, .L52+4
+ 595 001a 1A88     		ldrh	r2, [r3]
+ 596              		.loc 1 173 7 view .LVU114
+ 597 001c 4EF61873 		movw	r3, #61208
+ 598 0020 9A42     		cmp	r2, r3
+ 599 0022 0CD0     		beq	.L51
+ 600              	.L47:
+ 174:../Bsp/w25qxx/w25qxx.c ****     {
+ 175:../Bsp/w25qxx/w25qxx.c ****         SPI1_ReadWriteByte((uint8_t)((ReadAddr)>>24));
+ 176:../Bsp/w25qxx/w25qxx.c ****     }
+ 177:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte((uint8_t)((ReadAddr)>>16));   //发送24bit地址
+ 601              		.loc 1 177 5 is_stmt 1 view .LVU115
+ 602 0024 C4F30740 		ubfx	r0, r4, #16, #8
+ 603 0028 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 604              	.LVL56:
+ 178:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte((uint8_t)((ReadAddr)>>8));
+ 605              		.loc 1 178 5 view .LVU116
+ 606 002c C4F30720 		ubfx	r0, r4, #8, #8
+ 607 0030 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 608              	.LVL57:
+ 179:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte((uint8_t)ReadAddr);
+ 609              		.loc 1 179 5 view .LVU117
+ 610 0034 E0B2     		uxtb	r0, r4
+ 611 0036 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 612              	.LVL58:
+ 180:../Bsp/w25qxx/w25qxx.c ****     for(i=0; i<NumByteToRead; i++)
+ 613              		.loc 1 180 5 view .LVU118
+ 614              		.loc 1 180 10 is_stmt 0 view .LVU119
+ 615 003a 0024     		movs	r4, #0
+ 616              	.LVL59:
+ 617              		.loc 1 180 5 view .LVU120
+ 618 003c 08E0     		b	.L48
+ 619              	.LVL60:
+ 620              	.L51:
+ 175:../Bsp/w25qxx/w25qxx.c ****     }
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 15
+
+
+ 621              		.loc 1 175 9 is_stmt 1 view .LVU121
+ 622 003e 200E     		lsrs	r0, r4, #24
+ 623 0040 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 624              	.LVL61:
+ 625 0044 EEE7     		b	.L47
+ 626              	.LVL62:
+ 627              	.L49:
+ 181:../Bsp/w25qxx/w25qxx.c ****     {
+ 182:../Bsp/w25qxx/w25qxx.c ****         pBuffer[i]=SPI1_ReadWriteByte(0XFF);    //循环读数
+ 628              		.loc 1 182 9 view .LVU122
+ 629              		.loc 1 182 20 is_stmt 0 view .LVU123
+ 630 0046 FF20     		movs	r0, #255
+ 631 0048 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 632              	.LVL63:
+ 633              		.loc 1 182 19 discriminator 1 view .LVU124
+ 634 004c 3055     		strb	r0, [r6, r4]
+ 180:../Bsp/w25qxx/w25qxx.c ****     {
+ 635              		.loc 1 180 32 is_stmt 1 discriminator 3 view .LVU125
+ 636 004e 0134     		adds	r4, r4, #1
+ 637              	.LVL64:
+ 638              	.L48:
+ 180:../Bsp/w25qxx/w25qxx.c ****     {
+ 639              		.loc 1 180 15 discriminator 1 view .LVU126
+ 640 0050 AC42     		cmp	r4, r5
+ 641 0052 F8D3     		bcc	.L49
+ 183:../Bsp/w25qxx/w25qxx.c ****     }
+ 184:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;
+ 642              		.loc 1 184 5 view .LVU127
+ 643 0054 0122     		movs	r2, #1
+ 644 0056 1021     		movs	r1, #16
+ 645 0058 0148     		ldr	r0, .L52
+ 646 005a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 647              	.LVL65:
+ 185:../Bsp/w25qxx/w25qxx.c **** }
+ 648              		.loc 1 185 1 is_stmt 0 view .LVU128
+ 649 005e 70BD     		pop	{r4, r5, r6, pc}
+ 650              	.LVL66:
+ 651              	.L53:
+ 652              		.loc 1 185 1 view .LVU129
+ 653              		.align	2
+ 654              	.L52:
+ 655 0060 00080240 		.word	1073874944
+ 656 0064 00000000 		.word	W25QXX_TYPE
+ 657              		.cfi_endproc
+ 658              	.LFE248:
+ 660              		.section	.text.W25QXX_Wait_Busy,"ax",%progbits
+ 661              		.align	1
+ 662              		.global	W25QXX_Wait_Busy
+ 663              		.syntax unified
+ 664              		.thumb
+ 665              		.thumb_func
+ 667              	W25QXX_Wait_Busy:
+ 668              	.LFB254:
+ 186:../Bsp/w25qxx/w25qxx.c **** //SPI在一页(0~65535)内写入少于256个字节的数据
+ 187:../Bsp/w25qxx/w25qxx.c **** //在指定地址开始写入最大256字节的数据
+ 188:../Bsp/w25qxx/w25qxx.c **** //pBuffer:数据存储区
+ 189:../Bsp/w25qxx/w25qxx.c **** //WriteAddr:开始写入的地址(24bit)
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 16
+
+
+ 190:../Bsp/w25qxx/w25qxx.c **** //NumByteToWrite:要写入的字节数(最大256),该数不应该超过该页的剩余字节数!!!
+ 191:../Bsp/w25qxx/w25qxx.c **** void W25QXX_Write_Page(uint8_t* pBuffer,uint32_t WriteAddr,uint16_t NumByteToWrite)
+ 192:../Bsp/w25qxx/w25qxx.c **** {
+ 193:../Bsp/w25qxx/w25qxx.c ****     uint16_t i;
+ 194:../Bsp/w25qxx/w25qxx.c ****     W25QXX_Write_Enable();                  //SET WEL
+ 195:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS0;                            //使能器件
+ 196:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte(W25X_PageProgram);   //发送写页命令
+ 197:../Bsp/w25qxx/w25qxx.c ****     if(W25QXX_TYPE==W25Q256)                //如果是W25Q256的话地址为4字节的，要发送最高8位
+ 198:../Bsp/w25qxx/w25qxx.c ****     {
+ 199:../Bsp/w25qxx/w25qxx.c ****         SPI1_ReadWriteByte((uint8_t)((WriteAddr)>>24));
+ 200:../Bsp/w25qxx/w25qxx.c ****     }
+ 201:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte((uint8_t)((WriteAddr)>>16)); //发送24bit地址
+ 202:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte((uint8_t)((WriteAddr)>>8));
+ 203:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte((uint8_t)WriteAddr);
+ 204:../Bsp/w25qxx/w25qxx.c ****     for(i=0; i<NumByteToWrite; i++)SPI1_ReadWriteByte(pBuffer[i]); //循环写数
+ 205:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;                            //取消片选
+ 206:../Bsp/w25qxx/w25qxx.c ****     W25QXX_Wait_Busy();					   //等待写入结束
+ 207:../Bsp/w25qxx/w25qxx.c **** }
+ 208:../Bsp/w25qxx/w25qxx.c **** //无检验写SPI FLASH
+ 209:../Bsp/w25qxx/w25qxx.c **** //必须确保所写的地址范围内的数据全部为0XFF,否则在非0XFF处写入的数据将失败!
+ 210:../Bsp/w25qxx/w25qxx.c **** //具有自动换页功能
+ 211:../Bsp/w25qxx/w25qxx.c **** //在指定地址开始写入指定长度的数据,但是要确保地址不越界!
+ 212:../Bsp/w25qxx/w25qxx.c **** //pBuffer:数据存储区
+ 213:../Bsp/w25qxx/w25qxx.c **** //WriteAddr:开始写入的地址(24bit)
+ 214:../Bsp/w25qxx/w25qxx.c **** //NumByteToWrite:要写入的字节数(最大65535)
+ 215:../Bsp/w25qxx/w25qxx.c **** //CHECK OK
+ 216:../Bsp/w25qxx/w25qxx.c **** void W25QXX_Write_NoCheck(uint8_t* pBuffer,uint32_t WriteAddr,uint32_t NumByteToWrite)
+ 217:../Bsp/w25qxx/w25qxx.c **** {
+ 218:../Bsp/w25qxx/w25qxx.c ****     uint16_t pageremain;
+ 219:../Bsp/w25qxx/w25qxx.c ****     pageremain=256-WriteAddr%256; //单页剩余的字节数
+ 220:../Bsp/w25qxx/w25qxx.c ****     if(NumByteToWrite<=pageremain)pageremain=NumByteToWrite;//不大于256个字节
+ 221:../Bsp/w25qxx/w25qxx.c ****     while(1)
+ 222:../Bsp/w25qxx/w25qxx.c ****     {
+ 223:../Bsp/w25qxx/w25qxx.c ****         W25QXX_Write_Page(pBuffer,WriteAddr,pageremain);
+ 224:../Bsp/w25qxx/w25qxx.c ****         if(NumByteToWrite==pageremain)break;//写入结束了
+ 225:../Bsp/w25qxx/w25qxx.c ****         else //NumByteToWrite>pageremain
+ 226:../Bsp/w25qxx/w25qxx.c ****         {
+ 227:../Bsp/w25qxx/w25qxx.c ****             pBuffer+=pageremain;
+ 228:../Bsp/w25qxx/w25qxx.c ****             WriteAddr+=pageremain;
+ 229:../Bsp/w25qxx/w25qxx.c **** 
+ 230:../Bsp/w25qxx/w25qxx.c ****             NumByteToWrite-=pageremain;			  //减去已经写入了的字节数
+ 231:../Bsp/w25qxx/w25qxx.c ****             if(NumByteToWrite>256)pageremain=256; //一次可以写入256个字节
+ 232:../Bsp/w25qxx/w25qxx.c ****             else pageremain=NumByteToWrite; 	  //不够256个字节了
+ 233:../Bsp/w25qxx/w25qxx.c ****         }
+ 234:../Bsp/w25qxx/w25qxx.c ****     };
+ 235:../Bsp/w25qxx/w25qxx.c **** }
+ 236:../Bsp/w25qxx/w25qxx.c **** //写SPI FLASH
+ 237:../Bsp/w25qxx/w25qxx.c **** //在指定地址开始写入指定长度的数据
+ 238:../Bsp/w25qxx/w25qxx.c **** //该函数带擦除操作!
+ 239:../Bsp/w25qxx/w25qxx.c **** //pBuffer:数据存储区
+ 240:../Bsp/w25qxx/w25qxx.c **** //WriteAddr:开始写入的地址(24bit)
+ 241:../Bsp/w25qxx/w25qxx.c **** //NumByteToWrite:要写入的字节数(最大65535)
+ 242:../Bsp/w25qxx/w25qxx.c **** uint8_t W25QXX_BUFFER[SECTOR_SIZE];
+ 243:../Bsp/w25qxx/w25qxx.c **** void W25QXX_Write(uint8_t* pBuffer,uint32_t WriteAddr,uint32_t NumByteToWrite)
+ 244:../Bsp/w25qxx/w25qxx.c **** {
+ 245:../Bsp/w25qxx/w25qxx.c ****     uint32_t secpos;
+ 246:../Bsp/w25qxx/w25qxx.c ****     uint16_t secoff;
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 17
+
+
+ 247:../Bsp/w25qxx/w25qxx.c ****     uint16_t secremain;
+ 248:../Bsp/w25qxx/w25qxx.c ****     uint16_t i;
+ 249:../Bsp/w25qxx/w25qxx.c ****     uint8_t * W25QXX_BUF;
+ 250:../Bsp/w25qxx/w25qxx.c ****     W25QXX_BUF=W25QXX_BUFFER;
+ 251:../Bsp/w25qxx/w25qxx.c ****     secpos=WriteAddr/SECTOR_SIZE;//扇区地址
+ 252:../Bsp/w25qxx/w25qxx.c ****     secoff=WriteAddr%SECTOR_SIZE;//在扇区内的偏移
+ 253:../Bsp/w25qxx/w25qxx.c ****     secremain=SECTOR_SIZE-secoff;//扇区剩余空间大小
+ 254:../Bsp/w25qxx/w25qxx.c **** // 	printf("ad:%X,nb:%X\r\n",WriteAddr,NumByteToWrite);//测试用
+ 255:../Bsp/w25qxx/w25qxx.c ****     if(NumByteToWrite<=secremain)secremain=NumByteToWrite;//不大于4096个字节
+ 256:../Bsp/w25qxx/w25qxx.c ****     while(1)
+ 257:../Bsp/w25qxx/w25qxx.c ****     {
+ 258:../Bsp/w25qxx/w25qxx.c ****         W25QXX_Read(W25QXX_BUF,secpos*SECTOR_SIZE,SECTOR_SIZE);//读出整个扇区的内容
+ 259:../Bsp/w25qxx/w25qxx.c ****         for(i=0; i<secremain; i++) //校验数据
+ 260:../Bsp/w25qxx/w25qxx.c ****         {
+ 261:../Bsp/w25qxx/w25qxx.c ****             if(W25QXX_BUF[secoff+i]!=0XFF)break;//需要擦除
+ 262:../Bsp/w25qxx/w25qxx.c ****         }
+ 263:../Bsp/w25qxx/w25qxx.c ****         if(i<secremain)//需要擦除
+ 264:../Bsp/w25qxx/w25qxx.c ****         {
+ 265:../Bsp/w25qxx/w25qxx.c ****             W25QXX_Erase_Sector(secpos);//擦除这个扇区
+ 266:../Bsp/w25qxx/w25qxx.c ****             for(i=0; i<secremain; i++)	 //复制
+ 267:../Bsp/w25qxx/w25qxx.c ****             {
+ 268:../Bsp/w25qxx/w25qxx.c ****                 W25QXX_BUF[i+secoff]=pBuffer[i];
+ 269:../Bsp/w25qxx/w25qxx.c ****             }
+ 270:../Bsp/w25qxx/w25qxx.c ****             W25QXX_Write_NoCheck(W25QXX_BUF,secpos*SECTOR_SIZE,SECTOR_SIZE);//写入整个扇区
+ 271:../Bsp/w25qxx/w25qxx.c ****         }
+ 272:../Bsp/w25qxx/w25qxx.c ****         else W25QXX_Write_NoCheck(pBuffer,WriteAddr,secremain); //写已经擦除了的,直接写入扇区剩余区
+ 273:../Bsp/w25qxx/w25qxx.c ****         if(NumByteToWrite==secremain)break;//写入结束了
+ 274:../Bsp/w25qxx/w25qxx.c ****         else//写入未结束
+ 275:../Bsp/w25qxx/w25qxx.c ****         {
+ 276:../Bsp/w25qxx/w25qxx.c ****             secpos++;//扇区地址增1
+ 277:../Bsp/w25qxx/w25qxx.c ****             secoff=0;//偏移位置为0
+ 278:../Bsp/w25qxx/w25qxx.c **** 
+ 279:../Bsp/w25qxx/w25qxx.c ****             pBuffer+=secremain;  //指针偏移
+ 280:../Bsp/w25qxx/w25qxx.c ****             WriteAddr+=secremain;//写地址偏移
+ 281:../Bsp/w25qxx/w25qxx.c ****             NumByteToWrite-=secremain;				//字节数递减
+ 282:../Bsp/w25qxx/w25qxx.c ****             if(NumByteToWrite>SECTOR_SIZE)secremain=SECTOR_SIZE;	//下一个扇区还是写不完
+ 283:../Bsp/w25qxx/w25qxx.c ****             else secremain=NumByteToWrite;			//下一个扇区可以写完了
+ 284:../Bsp/w25qxx/w25qxx.c ****         }
+ 285:../Bsp/w25qxx/w25qxx.c ****     };
+ 286:../Bsp/w25qxx/w25qxx.c **** }
+ 287:../Bsp/w25qxx/w25qxx.c **** //擦除整个芯片
+ 288:../Bsp/w25qxx/w25qxx.c **** //等待时间超长...
+ 289:../Bsp/w25qxx/w25qxx.c **** void W25QXX_Erase_Chip(void)
+ 290:../Bsp/w25qxx/w25qxx.c **** {
+ 291:../Bsp/w25qxx/w25qxx.c ****     W25QXX_Write_Enable();                  //SET WEL
+ 292:../Bsp/w25qxx/w25qxx.c ****     W25QXX_Wait_Busy();
+ 293:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS0;                            //使能器件
+ 294:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte(W25X_ChipErase);        //发送片擦除命令
+ 295:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;                            //取消片选
+ 296:../Bsp/w25qxx/w25qxx.c ****     W25QXX_Wait_Busy();   				   //等待芯片擦除结束
+ 297:../Bsp/w25qxx/w25qxx.c **** }
+ 298:../Bsp/w25qxx/w25qxx.c **** //擦除一个扇区
+ 299:../Bsp/w25qxx/w25qxx.c **** //Dst_Addr:扇区地址 根据实际容量设置
+ 300:../Bsp/w25qxx/w25qxx.c **** //擦除一个扇区的最少时间:150ms
+ 301:../Bsp/w25qxx/w25qxx.c **** void W25QXX_Erase_Sector(uint32_t Dst_Addr)
+ 302:../Bsp/w25qxx/w25qxx.c **** {
+ 303:../Bsp/w25qxx/w25qxx.c ****     //监视falsh擦除情况,测试用
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 18
+
+
+ 304:../Bsp/w25qxx/w25qxx.c ****     //printf("fe:%x\r\n",Dst_Addr);
+ 305:../Bsp/w25qxx/w25qxx.c ****     Dst_Addr*=SECTOR_SIZE;
+ 306:../Bsp/w25qxx/w25qxx.c ****     W25QXX_Write_Enable();                  //SET WEL
+ 307:../Bsp/w25qxx/w25qxx.c ****     W25QXX_Wait_Busy();
+ 308:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS0;                            //使能器件
+ 309:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte(W25X_SectorErase);   //发送扇区擦除指令
+ 310:../Bsp/w25qxx/w25qxx.c ****     if(W25QXX_TYPE==W25Q256)                //如果是W25Q256的话地址为4字节的，要发送最高8位
+ 311:../Bsp/w25qxx/w25qxx.c ****     {
+ 312:../Bsp/w25qxx/w25qxx.c ****         SPI1_ReadWriteByte((uint8_t)((Dst_Addr)>>24));
+ 313:../Bsp/w25qxx/w25qxx.c ****     }
+ 314:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte((uint8_t)((Dst_Addr)>>16));  //发送24bit地址
+ 315:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte((uint8_t)((Dst_Addr)>>8));
+ 316:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte((uint8_t)Dst_Addr);
+ 317:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;                            //取消片选
+ 318:../Bsp/w25qxx/w25qxx.c ****     W25QXX_Wait_Busy();   				    //等待擦除完成
+ 319:../Bsp/w25qxx/w25qxx.c **** }
+ 320:../Bsp/w25qxx/w25qxx.c **** //等待空闲
+ 321:../Bsp/w25qxx/w25qxx.c **** void W25QXX_Wait_Busy(void)
+ 322:../Bsp/w25qxx/w25qxx.c **** {
+ 669              		.loc 1 322 1 is_stmt 1 view -0
+ 670              		.cfi_startproc
+ 671              		@ args = 0, pretend = 0, frame = 0
+ 672              		@ frame_needed = 0, uses_anonymous_args = 0
+ 673 0000 08B5     		push	{r3, lr}
+ 674              		.cfi_def_cfa_offset 8
+ 675              		.cfi_offset 3, -8
+ 676              		.cfi_offset 14, -4
+ 677              	.L55:
+ 323:../Bsp/w25qxx/w25qxx.c ****     while((W25QXX_ReadSR(1)&0x01)==0x01);   // 等待BUSY位清空
+ 678              		.loc 1 323 34 discriminator 1 view .LVU131
+ 679              		.loc 1 323 12 is_stmt 0 discriminator 1 view .LVU132
+ 680 0002 0120     		movs	r0, #1
+ 681 0004 FFF7FEFF 		bl	W25QXX_ReadSR
+ 682              	.LVL67:
+ 683              		.loc 1 323 34 discriminator 1 view .LVU133
+ 684 0008 10F0010F 		tst	r0, #1
+ 685 000c F9D1     		bne	.L55
+ 324:../Bsp/w25qxx/w25qxx.c **** }
+ 686              		.loc 1 324 1 view .LVU134
+ 687 000e 08BD     		pop	{r3, pc}
+ 688              		.cfi_endproc
+ 689              	.LFE254:
+ 691              		.section	.text.W25QXX_Write_Page,"ax",%progbits
+ 692              		.align	1
+ 693              		.global	W25QXX_Write_Page
+ 694              		.syntax unified
+ 695              		.thumb
+ 696              		.thumb_func
+ 698              	W25QXX_Write_Page:
+ 699              	.LVL68:
+ 700              	.LFB249:
+ 192:../Bsp/w25qxx/w25qxx.c ****     uint16_t i;
+ 701              		.loc 1 192 1 is_stmt 1 view -0
+ 702              		.cfi_startproc
+ 703              		@ args = 0, pretend = 0, frame = 0
+ 704              		@ frame_needed = 0, uses_anonymous_args = 0
+ 192:../Bsp/w25qxx/w25qxx.c ****     uint16_t i;
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 19
+
+
+ 705              		.loc 1 192 1 is_stmt 0 view .LVU136
+ 706 0000 70B5     		push	{r4, r5, r6, lr}
+ 707              		.cfi_def_cfa_offset 16
+ 708              		.cfi_offset 4, -16
+ 709              		.cfi_offset 5, -12
+ 710              		.cfi_offset 6, -8
+ 711              		.cfi_offset 14, -4
+ 712 0002 0646     		mov	r6, r0
+ 713 0004 0C46     		mov	r4, r1
+ 714 0006 1546     		mov	r5, r2
+ 193:../Bsp/w25qxx/w25qxx.c ****     W25QXX_Write_Enable();                  //SET WEL
+ 715              		.loc 1 193 5 is_stmt 1 view .LVU137
+ 194:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS0;                            //使能器件
+ 716              		.loc 1 194 5 view .LVU138
+ 717 0008 FFF7FEFF 		bl	W25QXX_Write_Enable
+ 718              	.LVL69:
+ 195:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte(W25X_PageProgram);   //发送写页命令
+ 719              		.loc 1 195 5 view .LVU139
+ 720 000c 0022     		movs	r2, #0
+ 721 000e 1021     		movs	r1, #16
+ 722 0010 1548     		ldr	r0, .L63
+ 723 0012 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 724              	.LVL70:
+ 196:../Bsp/w25qxx/w25qxx.c ****     if(W25QXX_TYPE==W25Q256)                //如果是W25Q256的话地址为4字节的，要发送最高8位
+ 725              		.loc 1 196 5 view .LVU140
+ 726 0016 0220     		movs	r0, #2
+ 727 0018 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 728              	.LVL71:
+ 197:../Bsp/w25qxx/w25qxx.c ****     {
+ 729              		.loc 1 197 5 view .LVU141
+ 197:../Bsp/w25qxx/w25qxx.c ****     {
+ 730              		.loc 1 197 19 is_stmt 0 view .LVU142
+ 731 001c 134B     		ldr	r3, .L63+4
+ 732 001e 1A88     		ldrh	r2, [r3]
+ 197:../Bsp/w25qxx/w25qxx.c ****     {
+ 733              		.loc 1 197 7 view .LVU143
+ 734 0020 4EF61873 		movw	r3, #61208
+ 735 0024 9A42     		cmp	r2, r3
+ 736 0026 0CD0     		beq	.L62
+ 737              	.L58:
+ 201:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte((uint8_t)((WriteAddr)>>8));
+ 738              		.loc 1 201 5 is_stmt 1 view .LVU144
+ 739 0028 C4F30740 		ubfx	r0, r4, #16, #8
+ 740 002c FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 741              	.LVL72:
+ 202:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte((uint8_t)WriteAddr);
+ 742              		.loc 1 202 5 view .LVU145
+ 743 0030 C4F30720 		ubfx	r0, r4, #8, #8
+ 744 0034 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 745              	.LVL73:
+ 203:../Bsp/w25qxx/w25qxx.c ****     for(i=0; i<NumByteToWrite; i++)SPI1_ReadWriteByte(pBuffer[i]); //循环写数
+ 746              		.loc 1 203 5 view .LVU146
+ 747 0038 E0B2     		uxtb	r0, r4
+ 748 003a FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 749              	.LVL74:
+ 204:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;                            //取消片选
+ 750              		.loc 1 204 5 view .LVU147
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 20
+
+
+ 204:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;                            //取消片选
+ 751              		.loc 1 204 10 is_stmt 0 view .LVU148
+ 752 003e 0024     		movs	r4, #0
+ 753              	.LVL75:
+ 204:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;                            //取消片选
+ 754              		.loc 1 204 5 view .LVU149
+ 755 0040 08E0     		b	.L59
+ 756              	.LVL76:
+ 757              	.L62:
+ 199:../Bsp/w25qxx/w25qxx.c ****     }
+ 758              		.loc 1 199 9 is_stmt 1 view .LVU150
+ 759 0042 200E     		lsrs	r0, r4, #24
+ 760 0044 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 761              	.LVL77:
+ 762 0048 EEE7     		b	.L58
+ 763              	.LVL78:
+ 764              	.L60:
+ 204:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;                            //取消片选
+ 765              		.loc 1 204 36 discriminator 3 view .LVU151
+ 766 004a 305D     		ldrb	r0, [r6, r4]	@ zero_extendqisi2
+ 767 004c FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 768              	.LVL79:
+ 204:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;                            //取消片选
+ 769              		.loc 1 204 33 discriminator 3 view .LVU152
+ 770 0050 0134     		adds	r4, r4, #1
+ 771              	.LVL80:
+ 204:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;                            //取消片选
+ 772              		.loc 1 204 33 is_stmt 0 discriminator 3 view .LVU153
+ 773 0052 A4B2     		uxth	r4, r4
+ 774              	.LVL81:
+ 775              	.L59:
+ 204:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;                            //取消片选
+ 776              		.loc 1 204 15 is_stmt 1 discriminator 2 view .LVU154
+ 777 0054 AC42     		cmp	r4, r5
+ 778 0056 F8D3     		bcc	.L60
+ 205:../Bsp/w25qxx/w25qxx.c ****     W25QXX_Wait_Busy();					   //等待写入结束
+ 779              		.loc 1 205 5 view .LVU155
+ 780 0058 0122     		movs	r2, #1
+ 781 005a 1021     		movs	r1, #16
+ 782 005c 0248     		ldr	r0, .L63
+ 783 005e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 784              	.LVL82:
+ 206:../Bsp/w25qxx/w25qxx.c **** }
+ 785              		.loc 1 206 5 view .LVU156
+ 786 0062 FFF7FEFF 		bl	W25QXX_Wait_Busy
+ 787              	.LVL83:
+ 207:../Bsp/w25qxx/w25qxx.c **** //无检验写SPI FLASH
+ 788              		.loc 1 207 1 is_stmt 0 view .LVU157
+ 789 0066 70BD     		pop	{r4, r5, r6, pc}
+ 790              	.LVL84:
+ 791              	.L64:
+ 207:../Bsp/w25qxx/w25qxx.c **** //无检验写SPI FLASH
+ 792              		.loc 1 207 1 view .LVU158
+ 793              		.align	2
+ 794              	.L63:
+ 795 0068 00080240 		.word	1073874944
+ 796 006c 00000000 		.word	W25QXX_TYPE
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 21
+
+
+ 797              		.cfi_endproc
+ 798              	.LFE249:
+ 800              		.section	.text.W25QXX_Write_NoCheck,"ax",%progbits
+ 801              		.align	1
+ 802              		.global	W25QXX_Write_NoCheck
+ 803              		.syntax unified
+ 804              		.thumb
+ 805              		.thumb_func
+ 807              	W25QXX_Write_NoCheck:
+ 808              	.LVL85:
+ 809              	.LFB250:
+ 217:../Bsp/w25qxx/w25qxx.c ****     uint16_t pageremain;
+ 810              		.loc 1 217 1 is_stmt 1 view -0
+ 811              		.cfi_startproc
+ 812              		@ args = 0, pretend = 0, frame = 0
+ 813              		@ frame_needed = 0, uses_anonymous_args = 0
+ 217:../Bsp/w25qxx/w25qxx.c ****     uint16_t pageremain;
+ 814              		.loc 1 217 1 is_stmt 0 view .LVU160
+ 815 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 816              		.cfi_def_cfa_offset 24
+ 817              		.cfi_offset 3, -24
+ 818              		.cfi_offset 4, -20
+ 819              		.cfi_offset 5, -16
+ 820              		.cfi_offset 6, -12
+ 821              		.cfi_offset 7, -8
+ 822              		.cfi_offset 14, -4
+ 823 0002 0746     		mov	r7, r0
+ 824 0004 0E46     		mov	r6, r1
+ 825 0006 1546     		mov	r5, r2
+ 218:../Bsp/w25qxx/w25qxx.c ****     pageremain=256-WriteAddr%256; //单页剩余的字节数
+ 826              		.loc 1 218 5 is_stmt 1 view .LVU161
+ 219:../Bsp/w25qxx/w25qxx.c ****     if(NumByteToWrite<=pageremain)pageremain=NumByteToWrite;//不大于256个字节
+ 827              		.loc 1 219 5 view .LVU162
+ 219:../Bsp/w25qxx/w25qxx.c ****     if(NumByteToWrite<=pageremain)pageremain=NumByteToWrite;//不大于256个字节
+ 828              		.loc 1 219 29 is_stmt 0 view .LVU163
+ 829 0008 CCB2     		uxtb	r4, r1
+ 219:../Bsp/w25qxx/w25qxx.c ****     if(NumByteToWrite<=pageremain)pageremain=NumByteToWrite;//不大于256个字节
+ 830              		.loc 1 219 15 view .LVU164
+ 831 000a C4F58074 		rsb	r4, r4, #256
+ 832 000e A4B2     		uxth	r4, r4
+ 833              	.LVL86:
+ 220:../Bsp/w25qxx/w25qxx.c ****     while(1)
+ 834              		.loc 1 220 5 is_stmt 1 view .LVU165
+ 220:../Bsp/w25qxx/w25qxx.c ****     while(1)
+ 835              		.loc 1 220 7 is_stmt 0 view .LVU166
+ 836 0010 9442     		cmp	r4, r2
+ 837 0012 03D3     		bcc	.L67
+ 220:../Bsp/w25qxx/w25qxx.c ****     while(1)
+ 838              		.loc 1 220 35 is_stmt 1 discriminator 1 view .LVU167
+ 220:../Bsp/w25qxx/w25qxx.c ****     while(1)
+ 839              		.loc 1 220 45 is_stmt 0 discriminator 1 view .LVU168
+ 840 0014 94B2     		uxth	r4, r2
+ 841              	.LVL87:
+ 220:../Bsp/w25qxx/w25qxx.c ****     while(1)
+ 842              		.loc 1 220 45 discriminator 1 view .LVU169
+ 843 0016 01E0     		b	.L67
+ 844              	.LVL88:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 22
+
+
+ 845              	.L70:
+ 231:../Bsp/w25qxx/w25qxx.c ****             else pageremain=NumByteToWrite; 	  //不够256个字节了
+ 846              		.loc 1 231 45 discriminator 1 view .LVU170
+ 847 0018 4FF48074 		mov	r4, #256
+ 848              	.LVL89:
+ 849              	.L67:
+ 221:../Bsp/w25qxx/w25qxx.c ****     {
+ 850              		.loc 1 221 5 is_stmt 1 view .LVU171
+ 223:../Bsp/w25qxx/w25qxx.c ****         if(NumByteToWrite==pageremain)break;//写入结束了
+ 851              		.loc 1 223 9 view .LVU172
+ 852 001c 2246     		mov	r2, r4
+ 853 001e 3146     		mov	r1, r6
+ 854 0020 3846     		mov	r0, r7
+ 855 0022 FFF7FEFF 		bl	W25QXX_Write_Page
+ 856              	.LVL90:
+ 224:../Bsp/w25qxx/w25qxx.c ****         else //NumByteToWrite>pageremain
+ 857              		.loc 1 224 9 view .LVU173
+ 224:../Bsp/w25qxx/w25qxx.c ****         else //NumByteToWrite>pageremain
+ 858              		.loc 1 224 11 is_stmt 0 view .LVU174
+ 859 0026 AC42     		cmp	r4, r5
+ 860 0028 07D0     		beq	.L65
+ 227:../Bsp/w25qxx/w25qxx.c ****             WriteAddr+=pageremain;
+ 861              		.loc 1 227 13 is_stmt 1 view .LVU175
+ 227:../Bsp/w25qxx/w25qxx.c ****             WriteAddr+=pageremain;
+ 862              		.loc 1 227 20 is_stmt 0 view .LVU176
+ 863 002a 2744     		add	r7, r7, r4
+ 864              	.LVL91:
+ 228:../Bsp/w25qxx/w25qxx.c **** 
+ 865              		.loc 1 228 13 is_stmt 1 view .LVU177
+ 228:../Bsp/w25qxx/w25qxx.c **** 
+ 866              		.loc 1 228 22 is_stmt 0 view .LVU178
+ 867 002c 2644     		add	r6, r6, r4
+ 868              	.LVL92:
+ 230:../Bsp/w25qxx/w25qxx.c ****             if(NumByteToWrite>256)pageremain=256; //一次可以写入256个字节
+ 869              		.loc 1 230 13 is_stmt 1 view .LVU179
+ 230:../Bsp/w25qxx/w25qxx.c ****             if(NumByteToWrite>256)pageremain=256; //一次可以写入256个字节
+ 870              		.loc 1 230 27 is_stmt 0 view .LVU180
+ 871 002e 2D1B     		subs	r5, r5, r4
+ 872              	.LVL93:
+ 231:../Bsp/w25qxx/w25qxx.c ****             else pageremain=NumByteToWrite; 	  //不够256个字节了
+ 873              		.loc 1 231 13 is_stmt 1 view .LVU181
+ 231:../Bsp/w25qxx/w25qxx.c ****             else pageremain=NumByteToWrite; 	  //不够256个字节了
+ 874              		.loc 1 231 15 is_stmt 0 view .LVU182
+ 875 0030 B5F5807F 		cmp	r5, #256
+ 876 0034 F0D8     		bhi	.L70
+ 232:../Bsp/w25qxx/w25qxx.c ****         }
+ 877              		.loc 1 232 18 is_stmt 1 view .LVU183
+ 232:../Bsp/w25qxx/w25qxx.c ****         }
+ 878              		.loc 1 232 28 is_stmt 0 view .LVU184
+ 879 0036 ACB2     		uxth	r4, r5
+ 880              	.LVL94:
+ 232:../Bsp/w25qxx/w25qxx.c ****         }
+ 881              		.loc 1 232 28 view .LVU185
+ 882 0038 F0E7     		b	.L67
+ 883              	.L65:
+ 235:../Bsp/w25qxx/w25qxx.c **** //写SPI FLASH
+ 884              		.loc 1 235 1 view .LVU186
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 23
+
+
+ 885 003a F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 235:../Bsp/w25qxx/w25qxx.c **** //写SPI FLASH
+ 886              		.loc 1 235 1 view .LVU187
+ 887              		.cfi_endproc
+ 888              	.LFE250:
+ 890              		.section	.text.W25QXX_Erase_Chip,"ax",%progbits
+ 891              		.align	1
+ 892              		.global	W25QXX_Erase_Chip
+ 893              		.syntax unified
+ 894              		.thumb
+ 895              		.thumb_func
+ 897              	W25QXX_Erase_Chip:
+ 898              	.LFB252:
+ 290:../Bsp/w25qxx/w25qxx.c ****     W25QXX_Write_Enable();                  //SET WEL
+ 899              		.loc 1 290 1 is_stmt 1 view -0
+ 900              		.cfi_startproc
+ 901              		@ args = 0, pretend = 0, frame = 0
+ 902              		@ frame_needed = 0, uses_anonymous_args = 0
+ 903 0000 10B5     		push	{r4, lr}
+ 904              		.cfi_def_cfa_offset 8
+ 905              		.cfi_offset 4, -8
+ 906              		.cfi_offset 14, -4
+ 291:../Bsp/w25qxx/w25qxx.c ****     W25QXX_Wait_Busy();
+ 907              		.loc 1 291 5 view .LVU189
+ 908 0002 FFF7FEFF 		bl	W25QXX_Write_Enable
+ 909              	.LVL95:
+ 292:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS0;                            //使能器件
+ 910              		.loc 1 292 5 view .LVU190
+ 911 0006 FFF7FEFF 		bl	W25QXX_Wait_Busy
+ 912              	.LVL96:
+ 293:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte(W25X_ChipErase);        //发送片擦除命令
+ 913              		.loc 1 293 5 view .LVU191
+ 914 000a 084C     		ldr	r4, .L74
+ 915 000c 0022     		movs	r2, #0
+ 916 000e 1021     		movs	r1, #16
+ 917 0010 2046     		mov	r0, r4
+ 918 0012 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 919              	.LVL97:
+ 294:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;                            //取消片选
+ 920              		.loc 1 294 5 view .LVU192
+ 921 0016 C720     		movs	r0, #199
+ 922 0018 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 923              	.LVL98:
+ 295:../Bsp/w25qxx/w25qxx.c ****     W25QXX_Wait_Busy();   				   //等待芯片擦除结束
+ 924              		.loc 1 295 5 view .LVU193
+ 925 001c 0122     		movs	r2, #1
+ 926 001e 1021     		movs	r1, #16
+ 927 0020 2046     		mov	r0, r4
+ 928 0022 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 929              	.LVL99:
+ 296:../Bsp/w25qxx/w25qxx.c **** }
+ 930              		.loc 1 296 5 view .LVU194
+ 931 0026 FFF7FEFF 		bl	W25QXX_Wait_Busy
+ 932              	.LVL100:
+ 297:../Bsp/w25qxx/w25qxx.c **** //擦除一个扇区
+ 933              		.loc 1 297 1 is_stmt 0 view .LVU195
+ 934 002a 10BD     		pop	{r4, pc}
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 24
+
+
+ 935              	.L75:
+ 936              		.align	2
+ 937              	.L74:
+ 938 002c 00080240 		.word	1073874944
+ 939              		.cfi_endproc
+ 940              	.LFE252:
+ 942              		.section	.text.W25QXX_Erase_Sector,"ax",%progbits
+ 943              		.align	1
+ 944              		.global	W25QXX_Erase_Sector
+ 945              		.syntax unified
+ 946              		.thumb
+ 947              		.thumb_func
+ 949              	W25QXX_Erase_Sector:
+ 950              	.LVL101:
+ 951              	.LFB253:
+ 302:../Bsp/w25qxx/w25qxx.c ****     //监视falsh擦除情况,测试用
+ 952              		.loc 1 302 1 is_stmt 1 view -0
+ 953              		.cfi_startproc
+ 954              		@ args = 0, pretend = 0, frame = 0
+ 955              		@ frame_needed = 0, uses_anonymous_args = 0
+ 302:../Bsp/w25qxx/w25qxx.c ****     //监视falsh擦除情况,测试用
+ 956              		.loc 1 302 1 is_stmt 0 view .LVU197
+ 957 0000 10B5     		push	{r4, lr}
+ 958              		.cfi_def_cfa_offset 8
+ 959              		.cfi_offset 4, -8
+ 960              		.cfi_offset 14, -4
+ 305:../Bsp/w25qxx/w25qxx.c ****     W25QXX_Write_Enable();                  //SET WEL
+ 961              		.loc 1 305 5 is_stmt 1 view .LVU198
+ 305:../Bsp/w25qxx/w25qxx.c ****     W25QXX_Write_Enable();                  //SET WEL
+ 962              		.loc 1 305 13 is_stmt 0 view .LVU199
+ 963 0002 0403     		lsls	r4, r0, #12
+ 964              	.LVL102:
+ 306:../Bsp/w25qxx/w25qxx.c ****     W25QXX_Wait_Busy();
+ 965              		.loc 1 306 5 is_stmt 1 view .LVU200
+ 966 0004 FFF7FEFF 		bl	W25QXX_Write_Enable
+ 967              	.LVL103:
+ 307:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS0;                            //使能器件
+ 968              		.loc 1 307 5 view .LVU201
+ 969 0008 FFF7FEFF 		bl	W25QXX_Wait_Busy
+ 970              	.LVL104:
+ 308:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte(W25X_SectorErase);   //发送扇区擦除指令
+ 971              		.loc 1 308 5 view .LVU202
+ 972 000c 0022     		movs	r2, #0
+ 973 000e 1021     		movs	r1, #16
+ 974 0010 1148     		ldr	r0, .L80
+ 975 0012 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 976              	.LVL105:
+ 309:../Bsp/w25qxx/w25qxx.c ****     if(W25QXX_TYPE==W25Q256)                //如果是W25Q256的话地址为4字节的，要发送最高8位
+ 977              		.loc 1 309 5 view .LVU203
+ 978 0016 2020     		movs	r0, #32
+ 979 0018 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 980              	.LVL106:
+ 310:../Bsp/w25qxx/w25qxx.c ****     {
+ 981              		.loc 1 310 5 view .LVU204
+ 310:../Bsp/w25qxx/w25qxx.c ****     {
+ 982              		.loc 1 310 19 is_stmt 0 view .LVU205
+ 983 001c 0F4B     		ldr	r3, .L80+4
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 25
+
+
+ 984 001e 1A88     		ldrh	r2, [r3]
+ 310:../Bsp/w25qxx/w25qxx.c ****     {
+ 985              		.loc 1 310 7 view .LVU206
+ 986 0020 4EF61873 		movw	r3, #61208
+ 987 0024 9A42     		cmp	r2, r3
+ 988 0026 13D0     		beq	.L79
+ 989              	.L77:
+ 314:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte((uint8_t)((Dst_Addr)>>8));
+ 990              		.loc 1 314 5 is_stmt 1 view .LVU207
+ 991 0028 C4F30740 		ubfx	r0, r4, #16, #8
+ 992 002c FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 993              	.LVL107:
+ 315:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte((uint8_t)Dst_Addr);
+ 994              		.loc 1 315 5 view .LVU208
+ 315:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte((uint8_t)Dst_Addr);
+ 995              		.loc 1 315 44 is_stmt 0 view .LVU209
+ 996 0030 200A     		lsrs	r0, r4, #8
+ 315:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte((uint8_t)Dst_Addr);
+ 997              		.loc 1 315 5 view .LVU210
+ 998 0032 00F0F000 		and	r0, r0, #240
+ 999 0036 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 1000              	.LVL108:
+ 316:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;                            //取消片选
+ 1001              		.loc 1 316 5 is_stmt 1 view .LVU211
+ 1002 003a 0020     		movs	r0, #0
+ 1003 003c FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 1004              	.LVL109:
+ 317:../Bsp/w25qxx/w25qxx.c ****     W25QXX_Wait_Busy();   				    //等待擦除完成
+ 1005              		.loc 1 317 5 view .LVU212
+ 1006 0040 0122     		movs	r2, #1
+ 1007 0042 1021     		movs	r1, #16
+ 1008 0044 0448     		ldr	r0, .L80
+ 1009 0046 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1010              	.LVL110:
+ 318:../Bsp/w25qxx/w25qxx.c **** }
+ 1011              		.loc 1 318 5 view .LVU213
+ 1012 004a FFF7FEFF 		bl	W25QXX_Wait_Busy
+ 1013              	.LVL111:
+ 319:../Bsp/w25qxx/w25qxx.c **** //等待空闲
+ 1014              		.loc 1 319 1 is_stmt 0 view .LVU214
+ 1015 004e 10BD     		pop	{r4, pc}
+ 1016              	.LVL112:
+ 1017              	.L79:
+ 312:../Bsp/w25qxx/w25qxx.c ****     }
+ 1018              		.loc 1 312 9 is_stmt 1 view .LVU215
+ 1019 0050 200E     		lsrs	r0, r4, #24
+ 1020 0052 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 1021              	.LVL113:
+ 1022 0056 E7E7     		b	.L77
+ 1023              	.L81:
+ 1024              		.align	2
+ 1025              	.L80:
+ 1026 0058 00080240 		.word	1073874944
+ 1027 005c 00000000 		.word	W25QXX_TYPE
+ 1028              		.cfi_endproc
+ 1029              	.LFE253:
+ 1031              		.section	.text.W25QXX_Write,"ax",%progbits
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 26
+
+
+ 1032              		.align	1
+ 1033              		.global	W25QXX_Write
+ 1034              		.syntax unified
+ 1035              		.thumb
+ 1036              		.thumb_func
+ 1038              	W25QXX_Write:
+ 1039              	.LVL114:
+ 1040              	.LFB251:
+ 244:../Bsp/w25qxx/w25qxx.c ****     uint32_t secpos;
+ 1041              		.loc 1 244 1 view -0
+ 1042              		.cfi_startproc
+ 1043              		@ args = 0, pretend = 0, frame = 0
+ 1044              		@ frame_needed = 0, uses_anonymous_args = 0
+ 244:../Bsp/w25qxx/w25qxx.c ****     uint32_t secpos;
+ 1045              		.loc 1 244 1 is_stmt 0 view .LVU217
+ 1046 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+ 1047              		.cfi_def_cfa_offset 32
+ 1048              		.cfi_offset 4, -32
+ 1049              		.cfi_offset 5, -28
+ 1050              		.cfi_offset 6, -24
+ 1051              		.cfi_offset 7, -20
+ 1052              		.cfi_offset 8, -16
+ 1053              		.cfi_offset 9, -12
+ 1054              		.cfi_offset 10, -8
+ 1055              		.cfi_offset 14, -4
+ 1056 0004 0646     		mov	r6, r0
+ 1057 0006 8946     		mov	r9, r1
+ 1058 0008 1746     		mov	r7, r2
+ 245:../Bsp/w25qxx/w25qxx.c ****     uint16_t secoff;
+ 1059              		.loc 1 245 5 is_stmt 1 view .LVU218
+ 246:../Bsp/w25qxx/w25qxx.c ****     uint16_t secremain;
+ 1060              		.loc 1 246 5 view .LVU219
+ 247:../Bsp/w25qxx/w25qxx.c ****     uint16_t i;
+ 1061              		.loc 1 247 5 view .LVU220
+ 248:../Bsp/w25qxx/w25qxx.c ****     uint8_t * W25QXX_BUF;
+ 1062              		.loc 1 248 5 view .LVU221
+ 249:../Bsp/w25qxx/w25qxx.c ****     W25QXX_BUF=W25QXX_BUFFER;
+ 1063              		.loc 1 249 5 view .LVU222
+ 250:../Bsp/w25qxx/w25qxx.c ****     secpos=WriteAddr/SECTOR_SIZE;//扇区地址
+ 1064              		.loc 1 250 5 view .LVU223
+ 1065              	.LVL115:
+ 251:../Bsp/w25qxx/w25qxx.c ****     secoff=WriteAddr%SECTOR_SIZE;//在扇区内的偏移
+ 1066              		.loc 1 251 5 view .LVU224
+ 251:../Bsp/w25qxx/w25qxx.c ****     secoff=WriteAddr%SECTOR_SIZE;//在扇区内的偏移
+ 1067              		.loc 1 251 11 is_stmt 0 view .LVU225
+ 1068 000a 4FEA1138 		lsr	r8, r1, #12
+ 1069              	.LVL116:
+ 252:../Bsp/w25qxx/w25qxx.c ****     secremain=SECTOR_SIZE-secoff;//扇区剩余空间大小
+ 1070              		.loc 1 252 5 is_stmt 1 view .LVU226
+ 252:../Bsp/w25qxx/w25qxx.c ****     secremain=SECTOR_SIZE-secoff;//扇区剩余空间大小
+ 1071              		.loc 1 252 11 is_stmt 0 view .LVU227
+ 1072 000e C1F30B05 		ubfx	r5, r1, #0, #12
+ 1073              	.LVL117:
+ 253:../Bsp/w25qxx/w25qxx.c **** // 	printf("ad:%X,nb:%X\r\n",WriteAddr,NumByteToWrite);//测试用
+ 1074              		.loc 1 253 5 is_stmt 1 view .LVU228
+ 253:../Bsp/w25qxx/w25qxx.c **** // 	printf("ad:%X,nb:%X\r\n",WriteAddr,NumByteToWrite);//测试用
+ 1075              		.loc 1 253 14 is_stmt 0 view .LVU229
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 27
+
+
+ 1076 0012 C5F58054 		rsb	r4, r5, #4096
+ 1077 0016 A4B2     		uxth	r4, r4
+ 1078              	.LVL118:
+ 255:../Bsp/w25qxx/w25qxx.c ****     while(1)
+ 1079              		.loc 1 255 5 is_stmt 1 view .LVU230
+ 255:../Bsp/w25qxx/w25qxx.c ****     while(1)
+ 1080              		.loc 1 255 7 is_stmt 0 view .LVU231
+ 1081 0018 9442     		cmp	r4, r2
+ 1082 001a 04D3     		bcc	.L84
+ 255:../Bsp/w25qxx/w25qxx.c ****     while(1)
+ 1083              		.loc 1 255 34 is_stmt 1 discriminator 1 view .LVU232
+ 255:../Bsp/w25qxx/w25qxx.c ****     while(1)
+ 1084              		.loc 1 255 43 is_stmt 0 discriminator 1 view .LVU233
+ 1085 001c 94B2     		uxth	r4, r2
+ 1086              	.LVL119:
+ 255:../Bsp/w25qxx/w25qxx.c ****     while(1)
+ 1087              		.loc 1 255 43 discriminator 1 view .LVU234
+ 1088 001e 02E0     		b	.L84
+ 1089              	.LVL120:
+ 1090              	.L94:
+ 282:../Bsp/w25qxx/w25qxx.c ****             else secremain=NumByteToWrite;			//下一个扇区可以写完了
+ 1091              		.loc 1 282 52 discriminator 1 view .LVU235
+ 1092 0020 4FF48054 		mov	r4, #4096
+ 1093              	.LVL121:
+ 1094              	.L93:
+ 282:../Bsp/w25qxx/w25qxx.c ****             else secremain=NumByteToWrite;			//下一个扇区可以写完了
+ 1095              		.loc 1 282 52 discriminator 1 view .LVU236
+ 1096 0024 0025     		movs	r5, #0
+ 1097              	.LVL122:
+ 1098              	.L84:
+ 256:../Bsp/w25qxx/w25qxx.c ****     {
+ 1099              		.loc 1 256 5 is_stmt 1 view .LVU237
+ 258:../Bsp/w25qxx/w25qxx.c ****         for(i=0; i<secremain; i++) //校验数据
+ 1100              		.loc 1 258 9 view .LVU238
+ 1101 0026 4FEA083A 		lsl	r10, r8, #12
+ 1102 002a 4FF48052 		mov	r2, #4096
+ 1103 002e 5146     		mov	r1, r10
+ 1104 0030 1B48     		ldr	r0, .L97
+ 1105 0032 FFF7FEFF 		bl	W25QXX_Read
+ 1106              	.LVL123:
+ 259:../Bsp/w25qxx/w25qxx.c ****         {
+ 1107              		.loc 1 259 9 view .LVU239
+ 259:../Bsp/w25qxx/w25qxx.c ****         {
+ 1108              		.loc 1 259 14 is_stmt 0 view .LVU240
+ 1109 0036 0023     		movs	r3, #0
+ 1110              	.LVL124:
+ 1111              	.L85:
+ 259:../Bsp/w25qxx/w25qxx.c ****         {
+ 1112              		.loc 1 259 19 is_stmt 1 discriminator 1 view .LVU241
+ 1113 0038 9C42     		cmp	r4, r3
+ 1114 003a 07D9     		bls	.L86
+ 261:../Bsp/w25qxx/w25qxx.c ****         }
+ 1115              		.loc 1 261 13 view .LVU242
+ 261:../Bsp/w25qxx/w25qxx.c ****         }
+ 1116              		.loc 1 261 33 is_stmt 0 view .LVU243
+ 1117 003c EA18     		adds	r2, r5, r3
+ 261:../Bsp/w25qxx/w25qxx.c ****         }
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 28
+
+
+ 1118              		.loc 1 261 26 view .LVU244
+ 1119 003e 1849     		ldr	r1, .L97
+ 1120 0040 8A5C     		ldrb	r2, [r1, r2]	@ zero_extendqisi2
+ 261:../Bsp/w25qxx/w25qxx.c ****         }
+ 1121              		.loc 1 261 15 view .LVU245
+ 1122 0042 FF2A     		cmp	r2, #255
+ 1123 0044 02D1     		bne	.L86
+ 259:../Bsp/w25qxx/w25qxx.c ****         {
+ 1124              		.loc 1 259 32 is_stmt 1 discriminator 2 view .LVU246
+ 1125 0046 0133     		adds	r3, r3, #1
+ 1126              	.LVL125:
+ 259:../Bsp/w25qxx/w25qxx.c ****         {
+ 1127              		.loc 1 259 32 is_stmt 0 discriminator 2 view .LVU247
+ 1128 0048 9BB2     		uxth	r3, r3
+ 1129              	.LVL126:
+ 259:../Bsp/w25qxx/w25qxx.c ****         {
+ 1130              		.loc 1 259 32 discriminator 2 view .LVU248
+ 1131 004a F5E7     		b	.L85
+ 1132              	.LVL127:
+ 1133              	.L86:
+ 263:../Bsp/w25qxx/w25qxx.c ****         {
+ 1134              		.loc 1 263 9 is_stmt 1 view .LVU249
+ 263:../Bsp/w25qxx/w25qxx.c ****         {
+ 1135              		.loc 1 263 11 is_stmt 0 view .LVU250
+ 1136 004c 9C42     		cmp	r4, r3
+ 1137 004e 10D8     		bhi	.L96
+ 272:../Bsp/w25qxx/w25qxx.c ****         if(NumByteToWrite==secremain)break;//写入结束了
+ 1138              		.loc 1 272 14 is_stmt 1 view .LVU251
+ 1139 0050 2246     		mov	r2, r4
+ 1140 0052 4946     		mov	r1, r9
+ 1141 0054 3046     		mov	r0, r6
+ 1142 0056 FFF7FEFF 		bl	W25QXX_Write_NoCheck
+ 1143              	.LVL128:
+ 1144              	.L91:
+ 273:../Bsp/w25qxx/w25qxx.c ****         else//写入未结束
+ 1145              		.loc 1 273 9 view .LVU252
+ 273:../Bsp/w25qxx/w25qxx.c ****         else//写入未结束
+ 1146              		.loc 1 273 11 is_stmt 0 view .LVU253
+ 1147 005a BC42     		cmp	r4, r7
+ 1148 005c 1DD0     		beq	.L82
+ 276:../Bsp/w25qxx/w25qxx.c ****             secoff=0;//偏移位置为0
+ 1149              		.loc 1 276 13 is_stmt 1 view .LVU254
+ 276:../Bsp/w25qxx/w25qxx.c ****             secoff=0;//偏移位置为0
+ 1150              		.loc 1 276 19 is_stmt 0 view .LVU255
+ 1151 005e 08F10108 		add	r8, r8, #1
+ 1152              	.LVL129:
+ 277:../Bsp/w25qxx/w25qxx.c **** 
+ 1153              		.loc 1 277 13 is_stmt 1 view .LVU256
+ 279:../Bsp/w25qxx/w25qxx.c ****             WriteAddr+=secremain;//写地址偏移
+ 1154              		.loc 1 279 13 view .LVU257
+ 279:../Bsp/w25qxx/w25qxx.c ****             WriteAddr+=secremain;//写地址偏移
+ 1155              		.loc 1 279 20 is_stmt 0 view .LVU258
+ 1156 0062 2644     		add	r6, r6, r4
+ 1157              	.LVL130:
+ 280:../Bsp/w25qxx/w25qxx.c ****             NumByteToWrite-=secremain;				//字节数递减
+ 1158              		.loc 1 280 13 is_stmt 1 view .LVU259
+ 280:../Bsp/w25qxx/w25qxx.c ****             NumByteToWrite-=secremain;				//字节数递减
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 29
+
+
+ 1159              		.loc 1 280 22 is_stmt 0 view .LVU260
+ 1160 0064 A144     		add	r9, r9, r4
+ 1161              	.LVL131:
+ 281:../Bsp/w25qxx/w25qxx.c ****             if(NumByteToWrite>SECTOR_SIZE)secremain=SECTOR_SIZE;	//下一个扇区还是写不完
+ 1162              		.loc 1 281 13 is_stmt 1 view .LVU261
+ 281:../Bsp/w25qxx/w25qxx.c ****             if(NumByteToWrite>SECTOR_SIZE)secremain=SECTOR_SIZE;	//下一个扇区还是写不完
+ 1163              		.loc 1 281 27 is_stmt 0 view .LVU262
+ 1164 0066 3F1B     		subs	r7, r7, r4
+ 1165              	.LVL132:
+ 282:../Bsp/w25qxx/w25qxx.c ****             else secremain=NumByteToWrite;			//下一个扇区可以写完了
+ 1166              		.loc 1 282 13 is_stmt 1 view .LVU263
+ 282:../Bsp/w25qxx/w25qxx.c ****             else secremain=NumByteToWrite;			//下一个扇区可以写完了
+ 1167              		.loc 1 282 15 is_stmt 0 view .LVU264
+ 1168 0068 B7F5805F 		cmp	r7, #4096
+ 1169 006c D8D8     		bhi	.L94
+ 283:../Bsp/w25qxx/w25qxx.c ****         }
+ 1170              		.loc 1 283 18 is_stmt 1 view .LVU265
+ 283:../Bsp/w25qxx/w25qxx.c ****         }
+ 1171              		.loc 1 283 27 is_stmt 0 view .LVU266
+ 1172 006e BCB2     		uxth	r4, r7
+ 1173              	.LVL133:
+ 283:../Bsp/w25qxx/w25qxx.c ****         }
+ 1174              		.loc 1 283 27 view .LVU267
+ 1175 0070 D8E7     		b	.L93
+ 1176              	.LVL134:
+ 1177              	.L96:
+ 265:../Bsp/w25qxx/w25qxx.c ****             for(i=0; i<secremain; i++)	 //复制
+ 1178              		.loc 1 265 13 is_stmt 1 view .LVU268
+ 1179 0072 4046     		mov	r0, r8
+ 1180 0074 FFF7FEFF 		bl	W25QXX_Erase_Sector
+ 1181              	.LVL135:
+ 266:../Bsp/w25qxx/w25qxx.c ****             {
+ 1182              		.loc 1 266 13 view .LVU269
+ 266:../Bsp/w25qxx/w25qxx.c ****             {
+ 1183              		.loc 1 266 18 is_stmt 0 view .LVU270
+ 1184 0078 0023     		movs	r3, #0
+ 266:../Bsp/w25qxx/w25qxx.c ****             {
+ 1185              		.loc 1 266 13 view .LVU271
+ 1186 007a 05E0     		b	.L89
+ 1187              	.LVL136:
+ 1188              	.L90:
+ 268:../Bsp/w25qxx/w25qxx.c ****             }
+ 1189              		.loc 1 268 17 is_stmt 1 view .LVU272
+ 268:../Bsp/w25qxx/w25qxx.c ****             }
+ 1190              		.loc 1 268 29 is_stmt 0 view .LVU273
+ 1191 007c 5A19     		adds	r2, r3, r5
+ 268:../Bsp/w25qxx/w25qxx.c ****             }
+ 1192              		.loc 1 268 45 view .LVU274
+ 1193 007e F05C     		ldrb	r0, [r6, r3]	@ zero_extendqisi2
+ 268:../Bsp/w25qxx/w25qxx.c ****             }
+ 1194              		.loc 1 268 37 view .LVU275
+ 1195 0080 0749     		ldr	r1, .L97
+ 1196 0082 8854     		strb	r0, [r1, r2]
+ 266:../Bsp/w25qxx/w25qxx.c ****             {
+ 1197              		.loc 1 266 36 is_stmt 1 discriminator 3 view .LVU276
+ 1198 0084 0133     		adds	r3, r3, #1
+ 1199              	.LVL137:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 30
+
+
+ 266:../Bsp/w25qxx/w25qxx.c ****             {
+ 1200              		.loc 1 266 36 is_stmt 0 discriminator 3 view .LVU277
+ 1201 0086 9BB2     		uxth	r3, r3
+ 1202              	.LVL138:
+ 1203              	.L89:
+ 266:../Bsp/w25qxx/w25qxx.c ****             {
+ 1204              		.loc 1 266 23 is_stmt 1 discriminator 1 view .LVU278
+ 1205 0088 9C42     		cmp	r4, r3
+ 1206 008a F7D8     		bhi	.L90
+ 270:../Bsp/w25qxx/w25qxx.c ****         }
+ 1207              		.loc 1 270 13 view .LVU279
+ 1208 008c 4FF48052 		mov	r2, #4096
+ 1209 0090 5146     		mov	r1, r10
+ 1210 0092 0348     		ldr	r0, .L97
+ 1211 0094 FFF7FEFF 		bl	W25QXX_Write_NoCheck
+ 1212              	.LVL139:
+ 270:../Bsp/w25qxx/w25qxx.c ****         }
+ 1213              		.loc 1 270 13 is_stmt 0 view .LVU280
+ 1214 0098 DFE7     		b	.L91
+ 1215              	.LVL140:
+ 1216              	.L82:
+ 286:../Bsp/w25qxx/w25qxx.c **** //擦除整个芯片
+ 1217              		.loc 1 286 1 view .LVU281
+ 1218 009a BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
+ 1219              	.LVL141:
+ 1220              	.L98:
+ 286:../Bsp/w25qxx/w25qxx.c **** //擦除整个芯片
+ 1221              		.loc 1 286 1 view .LVU282
+ 1222 009e 00BF     		.align	2
+ 1223              	.L97:
+ 1224 00a0 00000000 		.word	W25QXX_BUFFER
+ 1225              		.cfi_endproc
+ 1226              	.LFE251:
+ 1228              		.section	.text.W25QXX_PowerDown,"ax",%progbits
+ 1229              		.align	1
+ 1230              		.global	W25QXX_PowerDown
+ 1231              		.syntax unified
+ 1232              		.thumb
+ 1233              		.thumb_func
+ 1235              	W25QXX_PowerDown:
+ 1236              	.LFB255:
+ 325:../Bsp/w25qxx/w25qxx.c **** //进入掉电模式
+ 326:../Bsp/w25qxx/w25qxx.c **** void W25QXX_PowerDown(void)
+ 327:../Bsp/w25qxx/w25qxx.c **** {
+ 1237              		.loc 1 327 1 is_stmt 1 view -0
+ 1238              		.cfi_startproc
+ 1239              		@ args = 0, pretend = 0, frame = 0
+ 1240              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1241 0000 10B5     		push	{r4, lr}
+ 1242              		.cfi_def_cfa_offset 8
+ 1243              		.cfi_offset 4, -8
+ 1244              		.cfi_offset 14, -4
+ 328:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS0;                            //使能器件
+ 1245              		.loc 1 328 5 view .LVU284
+ 1246 0002 094C     		ldr	r4, .L101
+ 1247 0004 0022     		movs	r2, #0
+ 1248 0006 1021     		movs	r1, #16
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 31
+
+
+ 1249 0008 2046     		mov	r0, r4
+ 1250 000a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1251              	.LVL142:
+ 329:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte(W25X_PowerDown);     //发送掉电命令
+ 1252              		.loc 1 329 5 view .LVU285
+ 1253 000e B920     		movs	r0, #185
+ 1254 0010 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 1255              	.LVL143:
+ 330:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;                            //取消片选
+ 1256              		.loc 1 330 5 view .LVU286
+ 1257 0014 0122     		movs	r2, #1
+ 1258 0016 1021     		movs	r1, #16
+ 1259 0018 2046     		mov	r0, r4
+ 1260 001a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1261              	.LVL144:
+ 331:../Bsp/w25qxx/w25qxx.c ****     delayus(3);                            //等待TPD
+ 1262              		.loc 1 331 5 view .LVU287
+ 1263 001e 0320     		movs	r0, #3
+ 1264 0020 FFF7FEFF 		bl	delayus
+ 1265              	.LVL145:
+ 332:../Bsp/w25qxx/w25qxx.c **** }
+ 1266              		.loc 1 332 1 is_stmt 0 view .LVU288
+ 1267 0024 10BD     		pop	{r4, pc}
+ 1268              	.L102:
+ 1269 0026 00BF     		.align	2
+ 1270              	.L101:
+ 1271 0028 00080240 		.word	1073874944
+ 1272              		.cfi_endproc
+ 1273              	.LFE255:
+ 1275              		.section	.text.W25QXX_WAKEUP,"ax",%progbits
+ 1276              		.align	1
+ 1277              		.global	W25QXX_WAKEUP
+ 1278              		.syntax unified
+ 1279              		.thumb
+ 1280              		.thumb_func
+ 1282              	W25QXX_WAKEUP:
+ 1283              	.LFB256:
+ 333:../Bsp/w25qxx/w25qxx.c **** //唤醒
+ 334:../Bsp/w25qxx/w25qxx.c **** void W25QXX_WAKEUP(void)
+ 335:../Bsp/w25qxx/w25qxx.c **** {
+ 1284              		.loc 1 335 1 is_stmt 1 view -0
+ 1285              		.cfi_startproc
+ 1286              		@ args = 0, pretend = 0, frame = 0
+ 1287              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1288 0000 10B5     		push	{r4, lr}
+ 1289              		.cfi_def_cfa_offset 8
+ 1290              		.cfi_offset 4, -8
+ 1291              		.cfi_offset 14, -4
+ 336:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS0;                                //使能器件
+ 1292              		.loc 1 336 5 view .LVU290
+ 1293 0002 094C     		ldr	r4, .L105
+ 1294 0004 0022     		movs	r2, #0
+ 1295 0006 1021     		movs	r1, #16
+ 1296 0008 2046     		mov	r0, r4
+ 1297 000a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1298              	.LVL146:
+ 337:../Bsp/w25qxx/w25qxx.c ****     SPI1_ReadWriteByte(W25X_ReleasePowerDown);  //  send W25X_PowerDown command 0xAB
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 32
+
+
+ 1299              		.loc 1 337 5 view .LVU291
+ 1300 000e AB20     		movs	r0, #171
+ 1301 0010 FFF7FEFF 		bl	SPI1_ReadWriteByte
+ 1302              	.LVL147:
+ 338:../Bsp/w25qxx/w25qxx.c ****     W25QXX_CS1;                                //取消片选
+ 1303              		.loc 1 338 5 view .LVU292
+ 1304 0014 0122     		movs	r2, #1
+ 1305 0016 1021     		movs	r1, #16
+ 1306 0018 2046     		mov	r0, r4
+ 1307 001a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 1308              	.LVL148:
+ 339:../Bsp/w25qxx/w25qxx.c ****     delayus(3);                                //等待TRES1
+ 1309              		.loc 1 339 5 view .LVU293
+ 1310 001e 0320     		movs	r0, #3
+ 1311 0020 FFF7FEFF 		bl	delayus
+ 1312              	.LVL149:
+ 340:../Bsp/w25qxx/w25qxx.c **** }
+ 1313              		.loc 1 340 1 is_stmt 0 view .LVU294
+ 1314 0024 10BD     		pop	{r4, pc}
+ 1315              	.L106:
+ 1316 0026 00BF     		.align	2
+ 1317              	.L105:
+ 1318 0028 00080240 		.word	1073874944
+ 1319              		.cfi_endproc
+ 1320              	.LFE256:
+ 1322              		.global	W25QXX_BUFFER
+ 1323              		.section	.bss.W25QXX_BUFFER,"aw",%nobits
+ 1324              		.align	2
+ 1327              	W25QXX_BUFFER:
+ 1328 0000 00000000 		.space	4096
+ 1328      00000000 
+ 1328      00000000 
+ 1328      00000000 
+ 1328      00000000 
+ 1329              		.global	W25QXX_TYPE
+ 1330              		.section	.data.W25QXX_TYPE,"aw"
+ 1331              		.align	1
+ 1334              	W25QXX_TYPE:
+ 1335 0000 17EF     		.short	-4329
+ 1336              		.text
+ 1337              	.Letext0:
+ 1338              		.file 2 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_default_t
+ 1339              		.file 3 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h"
+ 1340              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 1341              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 1342              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 1343              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 1344              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h"
+ 1345              		.file 9 "../Bsp/w25qxx/w25qxx.h"
+ 1346              		.file 10 "Core/Inc/spi.h"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 33
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 w25qxx.c
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:21     .text.delayus:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:26     .text.delayus:00000000 delayus
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:81     .text.SPI1_SetSpeed:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:87     .text.SPI1_SetSpeed:00000000 SPI1_SetSpeed
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:132    .text.SPI1_SetSpeed:00000030 $d
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:137    .text.SPI1_ReadWriteByte:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:143    .text.SPI1_ReadWriteByte:00000000 SPI1_ReadWriteByte
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:179    .text.SPI1_ReadWriteByte:00000028 $d
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:184    .text.W25QXX_ReadSR:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:190    .text.W25QXX_ReadSR:00000000 W25QXX_ReadSR
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:257    .text.W25QXX_ReadSR:0000003c $d
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:262    .text.W25QXX_Write_SR:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:268    .text.W25QXX_Write_SR:00000000 W25QXX_Write_SR
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:333    .text.W25QXX_Write_SR:0000003c $d
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:338    .text.W25QXX_Write_Enable:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:344    .text.W25QXX_Write_Enable:00000000 W25QXX_Write_Enable
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:376    .text.W25QXX_Write_Enable:00000020 $d
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:381    .text.W25QXX_Write_Disable:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:387    .text.W25QXX_Write_Disable:00000000 W25QXX_Write_Disable
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:419    .text.W25QXX_Write_Disable:00000020 $d
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:424    .text.W25QXX_ReadID:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:430    .text.W25QXX_ReadID:00000000 W25QXX_ReadID
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:502    .text.W25QXX_ReadID:00000048 $d
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:507    .text.W25QXX_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:513    .text.W25QXX_Init:00000000 W25QXX_Init
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:546    .text.W25QXX_Init:0000001c $d
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:1334   .data.W25QXX_TYPE:00000000 W25QXX_TYPE
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:552    .text.W25QXX_Read:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:558    .text.W25QXX_Read:00000000 W25QXX_Read
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:655    .text.W25QXX_Read:00000060 $d
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:661    .text.W25QXX_Wait_Busy:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:667    .text.W25QXX_Wait_Busy:00000000 W25QXX_Wait_Busy
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:692    .text.W25QXX_Write_Page:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:698    .text.W25QXX_Write_Page:00000000 W25QXX_Write_Page
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:795    .text.W25QXX_Write_Page:00000068 $d
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:801    .text.W25QXX_Write_NoCheck:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:807    .text.W25QXX_Write_NoCheck:00000000 W25QXX_Write_NoCheck
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:891    .text.W25QXX_Erase_Chip:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:897    .text.W25QXX_Erase_Chip:00000000 W25QXX_Erase_Chip
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:938    .text.W25QXX_Erase_Chip:0000002c $d
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:943    .text.W25QXX_Erase_Sector:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:949    .text.W25QXX_Erase_Sector:00000000 W25QXX_Erase_Sector
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:1026   .text.W25QXX_Erase_Sector:00000058 $d
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:1032   .text.W25QXX_Write:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:1038   .text.W25QXX_Write:00000000 W25QXX_Write
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:1224   .text.W25QXX_Write:000000a0 $d
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:1327   .bss.W25QXX_BUFFER:00000000 W25QXX_BUFFER
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:1229   .text.W25QXX_PowerDown:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:1235   .text.W25QXX_PowerDown:00000000 W25QXX_PowerDown
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:1271   .text.W25QXX_PowerDown:00000028 $d
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:1276   .text.W25QXX_WAKEUP:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:1282   .text.W25QXX_WAKEUP:00000000 W25QXX_WAKEUP
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:1318   .text.W25QXX_WAKEUP:00000028 $d
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:1324   .bss.W25QXX_BUFFER:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s:1331   .data.W25QXX_TYPE:00000000 $d
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccHxwsOz.s 			page 34
+
+
+
+UNDEFINED SYMBOLS
+hspi1
+HAL_SPI_TransmitReceive
+HAL_GPIO_WritePin

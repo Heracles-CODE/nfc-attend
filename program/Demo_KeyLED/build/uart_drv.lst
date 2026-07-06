@@ -1,0 +1,1735 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"uart_drv.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "../Bsp/UartDrv/uart_drv.c"
+  20              		.section	.text.FindInstance,"ax",%progbits
+  21              		.align	1
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	FindInstance:
+  27              	.LVL0:
+  28              	.LFB254:
+   1:../Bsp/UartDrv/uart_drv.c **** /**
+   2:../Bsp/UartDrv/uart_drv.c ****  * @file    uart_drv.c
+   3:../Bsp/UartDrv/uart_drv.c ****  * @brief   通用串口驱动实现 - 包含printf重定向(支持MDK和GCC/CMake)
+   4:../Bsp/UartDrv/uart_drv.c ****  *
+   5:../Bsp/UartDrv/uart_drv.c ****  * @par 模块职责
+   6:../Bsp/UartDrv/uart_drv.c ****  *   1. 管理多个串口驱动实例的注册与查找
+   7:../Bsp/UartDrv/uart_drv.c ****  *   2. 提供阻塞式发送和空闲中断式接收
+   8:../Bsp/UartDrv/uart_drv.c ****  *   3. 在HAL中断回调中自动分发接收事件到对应实例的回调函数
+   9:../Bsp/UartDrv/uart_drv.c ****  *   4. 提供printf重定向功能(调试输出)
+  10:../Bsp/UartDrv/uart_drv.c ****  *   5. 提供纯整数浮点数打印(不依赖printf %f)
+  11:../Bsp/UartDrv/uart_drv.c ****  *
+  12:../Bsp/UartDrv/uart_drv.c ****  * @par 数据流
+  13:../Bsp/UartDrv/uart_drv.c ****  *   串口硬件 → 空闲中断 → HAL_UARTEx_RxEventCallback
+  14:../Bsp/UartDrv/uart_drv.c ****  *     → UartDrv_RxEventDispatch → FindInstance(查表)
+  15:../Bsp/UartDrv/uart_drv.c ****  *     → 用户回调函数 pRxCb → 自动重启接收
+  16:../Bsp/UartDrv/uart_drv.c ****  */
+  17:../Bsp/UartDrv/uart_drv.c **** 
+  18:../Bsp/UartDrv/uart_drv.c **** #include "uart_drv.h"
+  19:../Bsp/UartDrv/uart_drv.c **** 
+  20:../Bsp/UartDrv/uart_drv.c **** #ifndef UART_DRV_NO_FREERTOS
+  21:../Bsp/UartDrv/uart_drv.c **** #include "cmsis_os.h"
+  22:../Bsp/UartDrv/uart_drv.c **** #endif
+  23:../Bsp/UartDrv/uart_drv.c **** #include <string.h>
+  24:../Bsp/UartDrv/uart_drv.c **** #include <stdio.h>
+  25:../Bsp/UartDrv/uart_drv.c **** 
+  26:../Bsp/UartDrv/uart_drv.c **** /* ====== 私有变量 ====== */
+  27:../Bsp/UartDrv/uart_drv.c **** 
+  28:../Bsp/UartDrv/uart_drv.c **** /**
+  29:../Bsp/UartDrv/uart_drv.c ****  * @brief  已注册的串口驱动实例表(静态数组)
+  30:../Bsp/UartDrv/uart_drv.c ****  * @note   UartDrv_Init() 时将实例指针存入此表,
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 2
+
+
+  31:../Bsp/UartDrv/uart_drv.c ****  *         UartDrv_RxEventDispatch() 时通过遍历此表查找huart对应的实例
+  32:../Bsp/UartDrv/uart_drv.c ****  */
+  33:../Bsp/UartDrv/uart_drv.c **** static UartDrv_t *s_drvInstances[UART_DRV_MAX_INSTANCES];
+  34:../Bsp/UartDrv/uart_drv.c **** 
+  35:../Bsp/UartDrv/uart_drv.c **** /**
+  36:../Bsp/UartDrv/uart_drv.c ****  * @brief  已注册实例数量(同时也是下一个可用槽位索引)
+  37:../Bsp/UartDrv/uart_drv.c ****  * @note   当 s_drvCount == UART_DRV_MAX_INSTANCES 时,不再接受新实例注册
+  38:../Bsp/UartDrv/uart_drv.c ****  */
+  39:../Bsp/UartDrv/uart_drv.c **** static uint8_t s_drvCount = 0;
+  40:../Bsp/UartDrv/uart_drv.c **** 
+  41:../Bsp/UartDrv/uart_drv.c **** /**
+  42:../Bsp/UartDrv/uart_drv.c ****  * @brief  printf调试输出使用的串口驱动实例
+  43:../Bsp/UartDrv/uart_drv.c ****  * @note   由 UartDrv_SetDebugPort() 设置, _write()/fputc() 中使用
+  44:../Bsp/UartDrv/uart_drv.c ****  *         为NULL时printf输出将被丢弃(不会崩溃)
+  45:../Bsp/UartDrv/uart_drv.c ****  */
+  46:../Bsp/UartDrv/uart_drv.c **** static UartDrv_t *s_pDebugPort = NULL;
+  47:../Bsp/UartDrv/uart_drv.c **** 
+  48:../Bsp/UartDrv/uart_drv.c **** /* ====== 私有函数声明 ====== */
+  49:../Bsp/UartDrv/uart_drv.c **** static UartDrv_t *FindInstance(UART_HandleTypeDef *huart);
+  50:../Bsp/UartDrv/uart_drv.c **** 
+  51:../Bsp/UartDrv/uart_drv.c **** /* ====== printf重定向 - MDK(ARMCC) / GCC(CMake) 兼容 ======
+  52:../Bsp/UartDrv/uart_drv.c ****  *
+  53:../Bsp/UartDrv/uart_drv.c ****  * 不同工具链的printf底层机制不同:
+  54:../Bsp/UartDrv/uart_drv.c ****  * - GCC (newlib): printf最终调用 _write() 系统调用输出字符
+  55:../Bsp/UartDrv/uart_drv.c ****  * - MDK (ARMCC):  printf最终调用 fputc() 逐字符输出
+  56:../Bsp/UartDrv/uart_drv.c ****  *
+  57:../Bsp/UartDrv/uart_drv.c ****  * 两种方式都是将字符通过HAL_UART_Transmit发送到调试串口,
+  58:../Bsp/UartDrv/uart_drv.c ****  * 使用 s_pDebugPort 作为目标串口,未设置时输出被丢弃
+  59:../Bsp/UartDrv/uart_drv.c ****  */
+  60:../Bsp/UartDrv/uart_drv.c **** 
+  61:../Bsp/UartDrv/uart_drv.c **** #if defined(__GNUC__) && !defined(__clang__)
+  62:../Bsp/UartDrv/uart_drv.c **** /* ---- GCC工具链 (CMake / STM32CubeIDE / arm-none-eabi-gcc) ----
+  63:../Bsp/UartDrv/uart_drv.c ****  * 注意: 使用 __GNUC__ && !__clang__ 排除 MDK AC6 (armclang)。
+  64:../Bsp/UartDrv/uart_drv.c ****  * AC6 虽然也定义 __GNUC__,但它是基于 LLVM/Clang 的编译器,
+  65:../Bsp/UartDrv/uart_drv.c ****  * 其标准库不使用 newlib-nano,不需要也不存在 _printf_float 符号。
+  66:../Bsp/UartDrv/uart_drv.c ****  * 如果不加 __clang__ 排除,AC6 编译时会因 _printf_float 未定义而报错。 */
+  67:../Bsp/UartDrv/uart_drv.c **** 
+  68:../Bsp/UartDrv/uart_drv.c **** /**
+  69:../Bsp/UartDrv/uart_drv.c ****  * @brief  GCC标准库_write系统调用,将printf输出重定向到串口
+  70:../Bsp/UartDrv/uart_drv.c ****  * @param  fd       文件描述符(未使用,仅用于兼容标准接口)
+  71:../Bsp/UartDrv/uart_drv.c ****  * @param  pBuffer  待输出字符缓冲区
+  72:../Bsp/UartDrv/uart_drv.c ****  * @param  size     待输出字符数量
+  73:../Bsp/UartDrv/uart_drv.c ****  * @retval 实际输出字节数(始终等于size,保持printf语义)
+  74:../Bsp/UartDrv/uart_drv.c ****  * @note   GCC下printf最终调用_write,在此拦截并输出到调试串口。
+  75:../Bsp/UartDrv/uart_drv.c ****  *         当 s_pDebugPort 为NULL或未初始化时,直接丢弃数据不输出。
+  76:../Bsp/UartDrv/uart_drv.c ****  */
+  77:../Bsp/UartDrv/uart_drv.c **** int _write(int fd, char *pBuffer, int size)
+  78:../Bsp/UartDrv/uart_drv.c **** {
+  79:../Bsp/UartDrv/uart_drv.c ****     (void)fd;  /* 抑制未使用参数警告 */
+  80:../Bsp/UartDrv/uart_drv.c ****     if (s_pDebugPort != NULL && s_pDebugPort->initialized)
+  81:../Bsp/UartDrv/uart_drv.c ****     {
+  82:../Bsp/UartDrv/uart_drv.c ****         /* 阻塞式发送,超时0xFFFFms(约65秒) */
+  83:../Bsp/UartDrv/uart_drv.c ****         HAL_UART_Transmit(s_pDebugPort->pUartHandle, (uint8_t *)pBuffer, (uint16_t)size, 0xFFFF);
+  84:../Bsp/UartDrv/uart_drv.c ****     }
+  85:../Bsp/UartDrv/uart_drv.c ****     return size;  /* 始终返回size,避免printf认为写入失败 */
+  86:../Bsp/UartDrv/uart_drv.c **** }
+  87:../Bsp/UartDrv/uart_drv.c **** 
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 3
+
+
+  88:../Bsp/UartDrv/uart_drv.c **** /*
+  89:../Bsp/UartDrv/uart_drv.c ****  * ====== GCC newlib-nano 浮点printf支持 ======
+  90:../Bsp/UartDrv/uart_drv.c ****  *
+  91:../Bsp/UartDrv/uart_drv.c ****  * arm-none-eabi-gcc 默认使用 newlib-nano 精简C库, printf不链接浮点格式化代码,
+  92:../Bsp/UartDrv/uart_drv.c ****  * 导致 printf("%f", 3.14) 输出为空或乱码.
+  93:../Bsp/UartDrv/uart_drv.c ****  *
+  94:../Bsp/UartDrv/uart_drv.c ****  * 常规做法是在CMakeLists.txt中添加:
+  95:../Bsp/UartDrv/uart_drv.c ****  *   target_link_options(${TARGET} PRIVATE -u _printf_float)
+  96:../Bsp/UartDrv/uart_drv.c ****  *
+  97:../Bsp/UartDrv/uart_drv.c ****  * 这里通过在C代码中强制引用 _printf_float 符号,让链接器必须从库中解析它,
+  98:../Bsp/UartDrv/uart_drv.c ****  * 效果等价于 -u _printf_float, 无需修改任何构建配置文件.
+  99:../Bsp/UartDrv/uart_drv.c ****  *
+ 100:../Bsp/UartDrv/uart_drv.c ****  * __attribute__((used)) 确保编译器不会优化掉这个引用,
+ 101:../Bsp/UartDrv/uart_drv.c ****  * volatile 确保链接器也无法在GC sections阶段丢弃它.
+ 102:../Bsp/UartDrv/uart_drv.c ****  *
+ 103:../Bsp/UartDrv/uart_drv.c ****  * 如果不需要printf的%f功能,可以定义宏 UART_DRV_NO_PRINTF_FLOAT
+ 104:../Bsp/UartDrv/uart_drv.c ****  * 来禁用此功能(减小代码体积),此时仍可使用 UartDrv_PrintFloat 打印浮点数。
+ 105:../Bsp/UartDrv/uart_drv.c ****  *
+ 106:../Bsp/UartDrv/uart_drv.c ****  * 注意: 此代码仅对纯GCC工具链生效(通过 __GNUC__ && !__clang__ 判断)。
+ 107:../Bsp/UartDrv/uart_drv.c ****  * MDK AC6 (armclang) 虽然也定义 __GNUC__,但它基于 LLVM/Clang,
+ 108:../Bsp/UartDrv/uart_drv.c ****  * 标准库不使用 newlib-nano,_printf_float 符号不存在,会导致链接错误。
+ 109:../Bsp/UartDrv/uart_drv.c ****  */
+ 110:../Bsp/UartDrv/uart_drv.c **** #ifndef UART_DRV_NO_PRINTF_FLOAT
+ 111:../Bsp/UartDrv/uart_drv.c **** extern void _printf_float(void);
+ 112:../Bsp/UartDrv/uart_drv.c **** __attribute__((used)) volatile void (*s_printfFloatForceRef)(void) = _printf_float;
+ 113:../Bsp/UartDrv/uart_drv.c **** #endif /* UART_DRV_NO_PRINTF_FLOAT */
+ 114:../Bsp/UartDrv/uart_drv.c **** 
+ 115:../Bsp/UartDrv/uart_drv.c **** #elif defined(__clang__)
+ 116:../Bsp/UartDrv/uart_drv.c **** /* ---- MDK AC6 (armclang) 工具链 ----
+ 117:../Bsp/UartDrv/uart_drv.c ****  * AC6 基于 LLVM/Clang,同时定义 __GNUC__ 和 __clang__,
+ 118:../Bsp/UartDrv/uart_drv.c ****  * 但其标准库不是 newlib-nano,printf原生支持 %f,无需 _printf_float。
+ 119:../Bsp/UartDrv/uart_drv.c ****  * fputc 重定向方式与 ARMCC 相同。 */
+ 120:../Bsp/UartDrv/uart_drv.c **** #ifndef __GNUC__		// 如果不使用ARM CC V6编译器
+ 121:../Bsp/UartDrv/uart_drv.c **** /* 禁用半主机模式 */
+ 122:../Bsp/UartDrv/uart_drv.c **** #pragma import(__use_no_semihosting)
+ 123:../Bsp/UartDrv/uart_drv.c **** 
+ 124:../Bsp/UartDrv/uart_drv.c **** /* MDK标准库需要的支持结构 */
+ 125:../Bsp/UartDrv/uart_drv.c **** struct __FILE { int handle; };
+ 126:../Bsp/UartDrv/uart_drv.c **** void _sys_exit(int x)
+ 127:../Bsp/UartDrv/uart_drv.c **** {
+ 128:../Bsp/UartDrv/uart_drv.c ****     x = x;
+ 129:../Bsp/UartDrv/uart_drv.c **** }
+ 130:../Bsp/UartDrv/uart_drv.c **** #endif
+ 131:../Bsp/UartDrv/uart_drv.c **** FILE __stdout;
+ 132:../Bsp/UartDrv/uart_drv.c **** 
+ 133:../Bsp/UartDrv/uart_drv.c **** 
+ 134:../Bsp/UartDrv/uart_drv.c **** /**
+ 135:../Bsp/UartDrv/uart_drv.c ****  * @brief  MDK AC6标准库fputc重定向,将printf输出重定向到串口
+ 136:../Bsp/UartDrv/uart_drv.c ****  * @param  ch 待输出字符(ASCII码)
+ 137:../Bsp/UartDrv/uart_drv.c ****  * @param  f  文件指针(未使用)
+ 138:../Bsp/UartDrv/uart_drv.c ****  * @retval 输出的字符
+ 139:../Bsp/UartDrv/uart_drv.c ****  * @note   AC6的printf原生支持%f,无需额外链接 _printf_float。
+ 140:../Bsp/UartDrv/uart_drv.c ****  */
+ 141:../Bsp/UartDrv/uart_drv.c **** int fputc(int ch, FILE *f)
+ 142:../Bsp/UartDrv/uart_drv.c **** {
+ 143:../Bsp/UartDrv/uart_drv.c ****     (void)f;
+ 144:../Bsp/UartDrv/uart_drv.c ****     if (s_pDebugPort != NULL && s_pDebugPort->initialized)
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 4
+
+
+ 145:../Bsp/UartDrv/uart_drv.c ****     {
+ 146:../Bsp/UartDrv/uart_drv.c ****         HAL_UART_Transmit(s_pDebugPort->pUartHandle, (uint8_t *)&ch, 1, 0xFFFF);
+ 147:../Bsp/UartDrv/uart_drv.c ****     }
+ 148:../Bsp/UartDrv/uart_drv.c ****     return ch;
+ 149:../Bsp/UartDrv/uart_drv.c **** }
+ 150:../Bsp/UartDrv/uart_drv.c **** 
+ 151:../Bsp/UartDrv/uart_drv.c **** #else
+ 152:../Bsp/UartDrv/uart_drv.c **** /* ---- MDK ARMCC (传统ARM编译器) 工具链 ---- */
+ 153:../Bsp/UartDrv/uart_drv.c **** 
+ 154:../Bsp/UartDrv/uart_drv.c **** /* 禁用半主机模式: ARM semihosting通过调试器访问主机文件系统,
+ 155:../Bsp/UartDrv/uart_drv.c ****  * 嵌入式独立运行时必须禁用,否则程序会在BKPT指令处卡死 */
+ 156:../Bsp/UartDrv/uart_drv.c **** #pragma import(__use_no_semihosting)
+ 157:../Bsp/UartDrv/uart_drv.c **** 
+ 158:../Bsp/UartDrv/uart_drv.c **** /* MDK标准库需要的支持结构: __FILE和__stdout是fputc的依赖 */
+ 159:../Bsp/UartDrv/uart_drv.c **** struct __FILE { int handle; };
+ 160:../Bsp/UartDrv/uart_drv.c **** FILE __stdout;
+ 161:../Bsp/UartDrv/uart_drv.c **** 
+ 162:../Bsp/UartDrv/uart_drv.c **** /* 半主机模式的退出函数(空实现,避免链接报错) */
+ 163:../Bsp/UartDrv/uart_drv.c **** void _sys_exit(int x)
+ 164:../Bsp/UartDrv/uart_drv.c **** {
+ 165:../Bsp/UartDrv/uart_drv.c ****     x = x;
+ 166:../Bsp/UartDrv/uart_drv.c **** }
+ 167:../Bsp/UartDrv/uart_drv.c **** 
+ 168:../Bsp/UartDrv/uart_drv.c **** /**
+ 169:../Bsp/UartDrv/uart_drv.c ****  * @brief  MDK ARMCC标准库fputc重定向,将printf输出重定向到串口
+ 170:../Bsp/UartDrv/uart_drv.c ****  * @param  ch 待输出字符(ASCII码)
+ 171:../Bsp/UartDrv/uart_drv.c ****  * @param  f  文件指针(未使用)
+ 172:../Bsp/UartDrv/uart_drv.c ****  * @retval 输出的字符
+ 173:../Bsp/UartDrv/uart_drv.c ****  * @note   ARMCC的printf原生支持%f,无需额外链接。
+ 174:../Bsp/UartDrv/uart_drv.c ****  *         MDK工程中需勾选 Options -> Target -> Use MicroLIB
+ 175:../Bsp/UartDrv/uart_drv.c ****  *         或确保标准库包含浮点格式化支持。
+ 176:../Bsp/UartDrv/uart_drv.c ****  */
+ 177:../Bsp/UartDrv/uart_drv.c **** int fputc(int ch, FILE *f)
+ 178:../Bsp/UartDrv/uart_drv.c **** {
+ 179:../Bsp/UartDrv/uart_drv.c ****     (void)f;  /* 抑制未使用参数警告 */
+ 180:../Bsp/UartDrv/uart_drv.c ****     if (s_pDebugPort != NULL && s_pDebugPort->initialized)
+ 181:../Bsp/UartDrv/uart_drv.c ****     {
+ 182:../Bsp/UartDrv/uart_drv.c ****         HAL_UART_Transmit(s_pDebugPort->pUartHandle, (uint8_t *)&ch, 1, 0xFFFF);
+ 183:../Bsp/UartDrv/uart_drv.c ****     }
+ 184:../Bsp/UartDrv/uart_drv.c ****     return ch;
+ 185:../Bsp/UartDrv/uart_drv.c **** }
+ 186:../Bsp/UartDrv/uart_drv.c **** 
+ 187:../Bsp/UartDrv/uart_drv.c **** #endif /* __GNUC__ / __clang__ / ARMCC 三分支结束 */
+ 188:../Bsp/UartDrv/uart_drv.c **** 
+ 189:../Bsp/UartDrv/uart_drv.c **** /* ====== 导出函数实现 ====== */
+ 190:../Bsp/UartDrv/uart_drv.c **** 
+ 191:../Bsp/UartDrv/uart_drv.c **** /**
+ 192:../Bsp/UartDrv/uart_drv.c ****  * @brief  初始化串口驱动实例
+ 193:../Bsp/UartDrv/uart_drv.c ****  * @param  pDrv        用户定义的UartDrv_t实例指针
+ 194:../Bsp/UartDrv/uart_drv.c ****  * @param  pUartHandle HAL UART句柄(由CubeMX生成,如&huart1)
+ 195:../Bsp/UartDrv/uart_drv.c ****  * @note   初始化流程:
+ 196:../Bsp/UartDrv/uart_drv.c ****  *         1. 参数合法性检查
+ 197:../Bsp/UartDrv/uart_drv.c ****  *         2. 清零实例结构(所有字段归零)
+ 198:../Bsp/UartDrv/uart_drv.c ****  *         3. 绑定UART句柄到实例
+ 199:../Bsp/UartDrv/uart_drv.c ****  *         4. 设置初始化标志
+ 200:../Bsp/UartDrv/uart_drv.c ****  *         5. 将实例注册到内部静态表(供回调分发时查找)
+ 201:../Bsp/UartDrv/uart_drv.c ****  */
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 5
+
+
+ 202:../Bsp/UartDrv/uart_drv.c **** void UartDrv_Init(UartDrv_t *pDrv, UART_HandleTypeDef *pUartHandle)
+ 203:../Bsp/UartDrv/uart_drv.c **** {
+ 204:../Bsp/UartDrv/uart_drv.c ****     /* 参数校验: 指针为空则直接返回 */
+ 205:../Bsp/UartDrv/uart_drv.c ****     if (pDrv == NULL || pUartHandle == NULL)
+ 206:../Bsp/UartDrv/uart_drv.c ****         return;
+ 207:../Bsp/UartDrv/uart_drv.c **** 
+ 208:../Bsp/UartDrv/uart_drv.c ****     /* 清零结构体,确保所有字段从干净状态开始 */
+ 209:../Bsp/UartDrv/uart_drv.c ****     memset(pDrv, 0, sizeof(UartDrv_t));
+ 210:../Bsp/UartDrv/uart_drv.c **** 
+ 211:../Bsp/UartDrv/uart_drv.c ****     /* 绑定HAL UART句柄 */
+ 212:../Bsp/UartDrv/uart_drv.c ****     pDrv->pUartHandle = pUartHandle;
+ 213:../Bsp/UartDrv/uart_drv.c **** 
+ 214:../Bsp/UartDrv/uart_drv.c ****     /* 标记已初始化 */
+ 215:../Bsp/UartDrv/uart_drv.c ****     pDrv->initialized = 1;
+ 216:../Bsp/UartDrv/uart_drv.c **** 
+ 217:../Bsp/UartDrv/uart_drv.c ****     /* 注册实例到静态表,供RxEventDispatch查找 */
+ 218:../Bsp/UartDrv/uart_drv.c ****     if (s_drvCount < UART_DRV_MAX_INSTANCES)
+ 219:../Bsp/UartDrv/uart_drv.c ****     {
+ 220:../Bsp/UartDrv/uart_drv.c ****         s_drvInstances[s_drvCount++] = pDrv;
+ 221:../Bsp/UartDrv/uart_drv.c ****     }
+ 222:../Bsp/UartDrv/uart_drv.c **** }
+ 223:../Bsp/UartDrv/uart_drv.c **** 
+ 224:../Bsp/UartDrv/uart_drv.c **** /**
+ 225:../Bsp/UartDrv/uart_drv.c ****  * @brief  启动串口接收(空闲中断方式)
+ 226:../Bsp/UartDrv/uart_drv.c ****  * @param  pDrv 串口驱动实例指针
+ 227:../Bsp/UartDrv/uart_drv.c ****  * @note   两步启动流程的原因:
+ 228:../Bsp/UartDrv/uart_drv.c ****  *         1. 先调用 HAL_UART_Receive_IT 启动普通接收,再调用 HAL_UART_AbortReceive_IT �
+ 229:../Bsp/UartDrv/uart_drv.c ****  *            这一步的目的是清除HAL内部可能残留的接收状态(如上次异常中断
+ 230:../Bsp/UartDrv/uart_drv.c ****  *            确保后续的 ReceiveToIdle_IT 能正常工作
+ 231:../Bsp/UartDrv/uart_drv.c ****  *         2. 再调用 HAL_UARTEx_ReceiveToIdle_IT 启动空闲中断接收
+ 232:../Bsp/UartDrv/uart_drv.c ****  *            当串口总线空闲一个字符时间后,触发中断,一次性返回整帧数据
+ 233:../Bsp/UartDrv/uart_drv.c ****  *
+ 234:../Bsp/UartDrv/uart_drv.c ****  *         接收回调结束后 UartDrv_RxEventDispatch 会自动重启接收,
+ 235:../Bsp/UartDrv/uart_drv.c ****  *         用户无需手动循环调用此函数(除非要重新启动接收)
+ 236:../Bsp/UartDrv/uart_drv.c ****  */
+ 237:../Bsp/UartDrv/uart_drv.c **** void UartDrv_StartRecv(UartDrv_t *pDrv)
+ 238:../Bsp/UartDrv/uart_drv.c **** {
+ 239:../Bsp/UartDrv/uart_drv.c ****     if (pDrv == NULL || !pDrv->initialized)
+ 240:../Bsp/UartDrv/uart_drv.c ****         return;
+ 241:../Bsp/UartDrv/uart_drv.c **** 
+ 242:../Bsp/UartDrv/uart_drv.c ****     /* 第1步: 先启动一次普通接收再中止,清除之前可能残留的状态 */
+ 243:../Bsp/UartDrv/uart_drv.c ****     HAL_UART_Receive_IT(pDrv->pUartHandle, pDrv->rxData.rx_buf, UART_DRV_RX_BUF_SIZE - 1);
+ 244:../Bsp/UartDrv/uart_drv.c ****     HAL_UART_AbortReceive_IT(pDrv->pUartHandle);
+ 245:../Bsp/UartDrv/uart_drv.c **** 
+ 246:../Bsp/UartDrv/uart_drv.c ****     /* 第2步: 启动空闲中断接收(真正的工作模式) */
+ 247:../Bsp/UartDrv/uart_drv.c ****     HAL_UARTEx_ReceiveToIdle_IT(pDrv->pUartHandle, pDrv->rxData.rx_buf, UART_DRV_RX_BUF_SIZE - 1);
+ 248:../Bsp/UartDrv/uart_drv.c **** }
+ 249:../Bsp/UartDrv/uart_drv.c **** 
+ 250:../Bsp/UartDrv/uart_drv.c **** /**
+ 251:../Bsp/UartDrv/uart_drv.c ****  * @brief  发送数据(阻塞方式)
+ 252:../Bsp/UartDrv/uart_drv.c ****  * @param  pDrv  串口驱动实例指针
+ 253:../Bsp/UartDrv/uart_drv.c ****  * @param  pData 待发送数据指针
+ 254:../Bsp/UartDrv/uart_drv.c ****  * @param  len   待发送数据长度(字节)
+ 255:../Bsp/UartDrv/uart_drv.c ****  * @note   内部调用 HAL_UART_Transmit,阻塞直到发送完成或超时。
+ 256:../Bsp/UartDrv/uart_drv.c ****  *         超时值为0xFFFF(约65秒),一般不会超时。
+ 257:../Bsp/UartDrv/uart_drv.c ****  *         不建议在中断上下文中调用(可能长时间阻塞)。
+ 258:../Bsp/UartDrv/uart_drv.c ****  */
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 6
+
+
+ 259:../Bsp/UartDrv/uart_drv.c **** void UartDrv_Send(UartDrv_t *pDrv, const uint8_t *pData, uint16_t len)
+ 260:../Bsp/UartDrv/uart_drv.c **** {
+ 261:../Bsp/UartDrv/uart_drv.c ****     /* 参数校验 */
+ 262:../Bsp/UartDrv/uart_drv.c ****     if (pDrv == NULL || !pDrv->initialized || pData == NULL || len == 0)
+ 263:../Bsp/UartDrv/uart_drv.c ****         return;
+ 264:../Bsp/UartDrv/uart_drv.c **** 
+ 265:../Bsp/UartDrv/uart_drv.c ****     HAL_UART_Transmit(pDrv->pUartHandle, (uint8_t *)pData, len, 0xFFFF);
+ 266:../Bsp/UartDrv/uart_drv.c **** }
+ 267:../Bsp/UartDrv/uart_drv.c **** 
+ 268:../Bsp/UartDrv/uart_drv.c **** /**
+ 269:../Bsp/UartDrv/uart_drv.c ****  * @brief  发送字符串(阻塞方式)
+ 270:../Bsp/UartDrv/uart_drv.c ****  * @param  pDrv 串口驱动实例指针
+ 271:../Bsp/UartDrv/uart_drv.c ****  * @param  str  以'\0'结尾的字符串
+ 272:../Bsp/UartDrv/uart_drv.c ****  * @note   自动计算字符串长度(strlen),内部调用UartDrv_Send
+ 273:../Bsp/UartDrv/uart_drv.c ****  */
+ 274:../Bsp/UartDrv/uart_drv.c **** void UartDrv_SendStr(UartDrv_t *pDrv, const char *str)
+ 275:../Bsp/UartDrv/uart_drv.c **** {
+ 276:../Bsp/UartDrv/uart_drv.c ****     if (pDrv == NULL || !pDrv->initialized || str == NULL)
+ 277:../Bsp/UartDrv/uart_drv.c ****         return;
+ 278:../Bsp/UartDrv/uart_drv.c **** 
+ 279:../Bsp/UartDrv/uart_drv.c ****     UartDrv_Send(pDrv, (const uint8_t *)str, (uint16_t)strlen(str));
+ 280:../Bsp/UartDrv/uart_drv.c **** }
+ 281:../Bsp/UartDrv/uart_drv.c **** 
+ 282:../Bsp/UartDrv/uart_drv.c **** /**
+ 283:../Bsp/UartDrv/uart_drv.c ****  * @brief  注册串口接收回调函数
+ 284:../Bsp/UartDrv/uart_drv.c ****  * @param  pDrv      串口驱动实例指针
+ 285:../Bsp/UartDrv/uart_drv.c ****  * @param  pCb       回调函数指针(函数原型见 UartDrv_RxCallback_t)
+ 286:../Bsp/UartDrv/uart_drv.c ****  * @param  pUserCtx  用户上下文指针,回调时原样传回,可传NULL
+ 287:../Bsp/UartDrv/uart_drv.c ****  */
+ 288:../Bsp/UartDrv/uart_drv.c **** void UartDrv_RegisterRxCb(UartDrv_t *pDrv, UartDrv_RxCallback_t pCb, void *pUserCtx)
+ 289:../Bsp/UartDrv/uart_drv.c **** {
+ 290:../Bsp/UartDrv/uart_drv.c ****     if (pDrv == NULL || !pDrv->initialized)
+ 291:../Bsp/UartDrv/uart_drv.c ****         return;
+ 292:../Bsp/UartDrv/uart_drv.c **** 
+ 293:../Bsp/UartDrv/uart_drv.c ****     pDrv->pRxCb = pCb;
+ 294:../Bsp/UartDrv/uart_drv.c ****     pDrv->pUserCtx = pUserCtx;
+ 295:../Bsp/UartDrv/uart_drv.c **** }
+ 296:../Bsp/UartDrv/uart_drv.c **** 
+ 297:../Bsp/UartDrv/uart_drv.c **** #ifndef UART_DRV_NO_FREERTOS
+ 298:../Bsp/UartDrv/uart_drv.c **** /**
+ 299:../Bsp/UartDrv/uart_drv.c ****  * @brief  注册串口接收消息队列
+ 300:../Bsp/UartDrv/uart_drv.c ****  * @param  pDrv  串口驱动实例指针
+ 301:../Bsp/UartDrv/uart_drv.c ****  * @param  queue CMSIS-RTOS2 消息队列句柄
+ 302:../Bsp/UartDrv/uart_drv.c ****  * @note   注册后,每次空闲中断收到数据都会向该队列发送一个 UartDrv_QueueEven
+ 303:../Bsp/UartDrv/uart_drv.c ****  */
+ 304:../Bsp/UartDrv/uart_drv.c **** void UartDrv_RegisterRxQueue(UartDrv_t *pDrv, osMessageQueueId_t queue)
+ 305:../Bsp/UartDrv/uart_drv.c **** {
+ 306:../Bsp/UartDrv/uart_drv.c ****     if (pDrv == NULL || !pDrv->initialized)
+ 307:../Bsp/UartDrv/uart_drv.c ****         return;
+ 308:../Bsp/UartDrv/uart_drv.c **** 
+ 309:../Bsp/UartDrv/uart_drv.c ****     pDrv->rxQueue = queue;
+ 310:../Bsp/UartDrv/uart_drv.c **** }
+ 311:../Bsp/UartDrv/uart_drv.c **** #endif
+ 312:../Bsp/UartDrv/uart_drv.c **** 
+ 313:../Bsp/UartDrv/uart_drv.c **** /**
+ 314:../Bsp/UartDrv/uart_drv.c ****  * @brief  串口接收事件分发函数
+ 315:../Bsp/UartDrv/uart_drv.c ****  * @param  huart 触发事件的UART句柄(由HAL中断回调传入)
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 7
+
+
+ 316:../Bsp/UartDrv/uart_drv.c ****  * @param  Size  接收数据长度(由HAL中断回调传入)
+ 317:../Bsp/UartDrv/uart_drv.c ****  * @note   处理流程:
+ 318:../Bsp/UartDrv/uart_drv.c ****  *         1. 根据huart句柄查找对应的驱动实例(FindInstance查表)
+ 319:../Bsp/UartDrv/uart_drv.c ****  *         2. 在缓冲区末尾添加'\0'结尾(方便用户作为字符串处理)
+ 320:../Bsp/UartDrv/uart_drv.c ****  *         3. 如果用户注册了回调,则调用回调函数传递数据
+ 321:../Bsp/UartDrv/uart_drv.c ****  *         4. 解锁UART句柄(防止HAL锁死)并重启接收(为下一帧做准备)
+ 322:../Bsp/UartDrv/uart_drv.c ****  *
+ 323:../Bsp/UartDrv/uart_drv.c ****  *         此函数由默认的 HAL_UARTEx_RxEventCallback 自动调用,
+ 324:../Bsp/UartDrv/uart_drv.c ****  *         用户通常不需要手动调用。
+ 325:../Bsp/UartDrv/uart_drv.c ****  */
+ 326:../Bsp/UartDrv/uart_drv.c **** void UartDrv_RxEventDispatch(UART_HandleTypeDef *huart, uint16_t Size)
+ 327:../Bsp/UartDrv/uart_drv.c **** {
+ 328:../Bsp/UartDrv/uart_drv.c ****     /* 根据UART句柄查找对应的驱动实例 */
+ 329:../Bsp/UartDrv/uart_drv.c ****     UartDrv_t *pDrv = FindInstance(huart);
+ 330:../Bsp/UartDrv/uart_drv.c ****     if (pDrv == NULL || !pDrv->initialized)
+ 331:../Bsp/UartDrv/uart_drv.c ****         return;
+ 332:../Bsp/UartDrv/uart_drv.c **** 
+ 333:../Bsp/UartDrv/uart_drv.c ****     if (Size > 0)
+ 334:../Bsp/UartDrv/uart_drv.c ****     {
+ 335:../Bsp/UartDrv/uart_drv.c ****         /* 在接收数据末尾添加字符串结束符,方便用户直接用strstr/strcmp等处�
+ 336:../Bsp/UartDrv/uart_drv.c ****         pDrv->rxData.rx_buf[Size] = '\0';
+ 337:../Bsp/UartDrv/uart_drv.c ****         pDrv->rxData.rx_len = Size;
+ 338:../Bsp/UartDrv/uart_drv.c **** 
+ 339:../Bsp/UartDrv/uart_drv.c ****         /* 调用用户注册的回调函数 */
+ 340:../Bsp/UartDrv/uart_drv.c **** #ifndef UART_DRV_NO_FREERTOS
+ 341:../Bsp/UartDrv/uart_drv.c ****         /* 如果注册了接收队列,将事件(含数据副本)发送到队列(中断中不等待
+ 342:../Bsp/UartDrv/uart_drv.c ****         if (pDrv->rxQueue != NULL)
+ 343:../Bsp/UartDrv/uart_drv.c ****         {
+ 344:../Bsp/UartDrv/uart_drv.c ****             UartDrv_QueueEvent_t evt;
+ 345:../Bsp/UartDrv/uart_drv.c ****             evt.pDrv = pDrv;
+ 346:../Bsp/UartDrv/uart_drv.c ****             evt.len  = (Size > UART_DRV_QUEUE_DATA_SIZE) ? UART_DRV_QUEUE_DATA_SIZE : Size;
+ 347:../Bsp/UartDrv/uart_drv.c ****             memcpy(evt.data, pDrv->rxData.rx_buf, evt.len);
+ 348:../Bsp/UartDrv/uart_drv.c ****             osMessageQueuePut(pDrv->rxQueue, &evt, 0, 0);
+ 349:../Bsp/UartDrv/uart_drv.c ****         }
+ 350:../Bsp/UartDrv/uart_drv.c **** #endif
+ 351:../Bsp/UartDrv/uart_drv.c **** 
+ 352:../Bsp/UartDrv/uart_drv.c ****         if (pDrv->pRxCb)
+ 353:../Bsp/UartDrv/uart_drv.c ****         {
+ 354:../Bsp/UartDrv/uart_drv.c ****             pDrv->pRxCb(&pDrv->rxData, pDrv->pUserCtx);
+ 355:../Bsp/UartDrv/uart_drv.c ****         }
+ 356:../Bsp/UartDrv/uart_drv.c ****     }
+ 357:../Bsp/UartDrv/uart_drv.c **** 
+ 358:../Bsp/UartDrv/uart_drv.c ****     /* 解锁UART句柄: HAL_UARTEx_ReceiveToIdle_IT完成接收后会锁住句柄,
+ 359:../Bsp/UartDrv/uart_drv.c ****      * 不解锁则无法重新启动接收。这是HAL库的一个特性,
+ 360:../Bsp/UartDrv/uart_drv.c ****      * 直接操作 __HAL_UNLOCK 宏来绕过HAL的状态检查 */
+ 361:../Bsp/UartDrv/uart_drv.c ****     __HAL_UNLOCK(huart);
+ 362:../Bsp/UartDrv/uart_drv.c **** 
+ 363:../Bsp/UartDrv/uart_drv.c ****     /* 重启接收: 为下一帧数据做准备,形成自动接收循环 */
+ 364:../Bsp/UartDrv/uart_drv.c ****     HAL_UARTEx_ReceiveToIdle_IT(pDrv->pUartHandle, pDrv->rxData.rx_buf, UART_DRV_RX_BUF_SIZE - 1);
+ 365:../Bsp/UartDrv/uart_drv.c **** }
+ 366:../Bsp/UartDrv/uart_drv.c **** 
+ 367:../Bsp/UartDrv/uart_drv.c **** /* ====== 私有函数实现 ====== */
+ 368:../Bsp/UartDrv/uart_drv.c **** 
+ 369:../Bsp/UartDrv/uart_drv.c **** /**
+ 370:../Bsp/UartDrv/uart_drv.c ****  * @brief  根据UART句柄查找对应的驱动实例
+ 371:../Bsp/UartDrv/uart_drv.c ****  * @param  huart UART句柄指针(由HAL中断回调传入)
+ 372:../Bsp/UartDrv/uart_drv.c ****  * @retval 驱动实例指针,未找到返回NULL
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 8
+
+
+ 373:../Bsp/UartDrv/uart_drv.c ****  * @note   遍历静态注册表 s_drvInstances,比较每个实例的 pUartHandle 与传入的 huar
+ 374:../Bsp/UartDrv/uart_drv.c ****  *         由于每个串口外设的句柄地址是唯一的,可以用指针比较来匹配
+ 375:../Bsp/UartDrv/uart_drv.c ****  */
+ 376:../Bsp/UartDrv/uart_drv.c **** static UartDrv_t *FindInstance(UART_HandleTypeDef *huart)
+ 377:../Bsp/UartDrv/uart_drv.c **** {
+  29              		.loc 1 377 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+  34              		.loc 1 377 1 is_stmt 0 view .LVU1
+  35 0000 0146     		mov	r1, r0
+ 378:../Bsp/UartDrv/uart_drv.c ****     for (uint8_t i = 0; i < s_drvCount; i++)
+  36              		.loc 1 378 5 is_stmt 1 view .LVU2
+  37              	.LBB2:
+  38              		.loc 1 378 10 view .LVU3
+  39              	.LVL1:
+  40              		.loc 1 378 18 is_stmt 0 view .LVU4
+  41 0002 0023     		movs	r3, #0
+  42              		.loc 1 378 5 view .LVU5
+  43 0004 01E0     		b	.L2
+  44              	.LVL2:
+  45              	.L3:
+  46              		.loc 1 378 42 is_stmt 1 discriminator 2 view .LVU6
+  47 0006 0133     		adds	r3, r3, #1
+  48              	.LVL3:
+  49              		.loc 1 378 42 is_stmt 0 discriminator 2 view .LVU7
+  50 0008 DBB2     		uxtb	r3, r3
+  51              	.LVL4:
+  52              	.L2:
+  53              		.loc 1 378 27 is_stmt 1 discriminator 1 view .LVU8
+  54 000a 074A     		ldr	r2, .L7
+  55 000c 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+  56 000e 9A42     		cmp	r2, r3
+  57 0010 08D9     		bls	.L6
+ 379:../Bsp/UartDrv/uart_drv.c ****     {
+ 380:../Bsp/UartDrv/uart_drv.c ****         if (s_drvInstances[i] != NULL && s_drvInstances[i]->pUartHandle == huart)
+  58              		.loc 1 380 9 view .LVU9
+  59              		.loc 1 380 27 is_stmt 0 view .LVU10
+  60 0012 064A     		ldr	r2, .L7+4
+  61 0014 52F82300 		ldr	r0, [r2, r3, lsl #2]
+  62              		.loc 1 380 12 view .LVU11
+  63 0018 0028     		cmp	r0, #0
+  64 001a F4D0     		beq	.L3
+  65              		.loc 1 380 59 discriminator 1 view .LVU12
+  66 001c 0268     		ldr	r2, [r0]
+  67              		.loc 1 380 39 discriminator 1 view .LVU13
+  68 001e 8A42     		cmp	r2, r1
+  69 0020 F1D1     		bne	.L3
+  70 0022 00E0     		b	.L1
+  71              	.L6:
+  72              		.loc 1 380 39 discriminator 1 view .LVU14
+  73              	.LBE2:
+ 381:../Bsp/UartDrv/uart_drv.c ****         {
+ 382:../Bsp/UartDrv/uart_drv.c ****             return s_drvInstances[i];
+ 383:../Bsp/UartDrv/uart_drv.c ****         }
+ 384:../Bsp/UartDrv/uart_drv.c ****     }
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 9
+
+
+ 385:../Bsp/UartDrv/uart_drv.c ****     return NULL;  /* 未找到匹配的实例,可能是未注册的串口触发了中断 */
+  74              		.loc 1 385 12 view .LVU15
+  75 0024 0020     		movs	r0, #0
+  76              	.L1:
+ 386:../Bsp/UartDrv/uart_drv.c **** }
+  77              		.loc 1 386 1 view .LVU16
+  78 0026 7047     		bx	lr
+  79              	.L8:
+  80              		.align	2
+  81              	.L7:
+  82 0028 00000000 		.word	s_drvCount
+  83 002c 00000000 		.word	s_drvInstances
+  84              		.cfi_endproc
+  85              	.LFE254:
+  87              		.section	.text._write,"ax",%progbits
+  88              		.align	1
+  89              		.global	_write
+  90              		.syntax unified
+  91              		.thumb
+  92              		.thumb_func
+  94              	_write:
+  95              	.LVL5:
+  96              	.LFB246:
+  78:../Bsp/UartDrv/uart_drv.c ****     (void)fd;  /* 抑制未使用参数警告 */
+  97              		.loc 1 78 1 is_stmt 1 view -0
+  98              		.cfi_startproc
+  99              		@ args = 0, pretend = 0, frame = 0
+ 100              		@ frame_needed = 0, uses_anonymous_args = 0
+  78:../Bsp/UartDrv/uart_drv.c ****     (void)fd;  /* 抑制未使用参数警告 */
+ 101              		.loc 1 78 1 is_stmt 0 view .LVU18
+ 102 0000 10B5     		push	{r4, lr}
+ 103              	.LCFI0:
+ 104              		.cfi_def_cfa_offset 8
+ 105              		.cfi_offset 4, -8
+ 106              		.cfi_offset 14, -4
+ 107 0002 1446     		mov	r4, r2
+  79:../Bsp/UartDrv/uart_drv.c ****     if (s_pDebugPort != NULL && s_pDebugPort->initialized)
+ 108              		.loc 1 79 5 is_stmt 1 view .LVU19
+  80:../Bsp/UartDrv/uart_drv.c ****     {
+ 109              		.loc 1 80 5 view .LVU20
+  80:../Bsp/UartDrv/uart_drv.c ****     {
+ 110              		.loc 1 80 22 is_stmt 0 view .LVU21
+ 111 0004 074B     		ldr	r3, .L13
+ 112 0006 1868     		ldr	r0, [r3]
+ 113              	.LVL6:
+  80:../Bsp/UartDrv/uart_drv.c ****     {
+ 114              		.loc 1 80 8 view .LVU22
+ 115 0008 10B1     		cbz	r0, .L10
+  80:../Bsp/UartDrv/uart_drv.c ****     {
+ 116              		.loc 1 80 45 discriminator 1 view .LVU23
+ 117 000a 90F81432 		ldrb	r3, [r0, #532]	@ zero_extendqisi2
+  80:../Bsp/UartDrv/uart_drv.c ****     {
+ 118              		.loc 1 80 30 discriminator 1 view .LVU24
+ 119 000e 0BB9     		cbnz	r3, .L12
+ 120              	.LVL7:
+ 121              	.L10:
+  85:../Bsp/UartDrv/uart_drv.c **** }
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 10
+
+
+ 122              		.loc 1 85 5 is_stmt 1 view .LVU25
+  86:../Bsp/UartDrv/uart_drv.c **** 
+ 123              		.loc 1 86 1 is_stmt 0 view .LVU26
+ 124 0010 2046     		mov	r0, r4
+ 125 0012 10BD     		pop	{r4, pc}
+ 126              	.LVL8:
+ 127              	.L12:
+  83:../Bsp/UartDrv/uart_drv.c ****     }
+ 128              		.loc 1 83 9 is_stmt 1 view .LVU27
+ 129 0014 4FF6FF73 		movw	r3, #65535
+ 130 0018 92B2     		uxth	r2, r2
+ 131              	.LVL9:
+  83:../Bsp/UartDrv/uart_drv.c ****     }
+ 132              		.loc 1 83 9 is_stmt 0 view .LVU28
+ 133 001a 0068     		ldr	r0, [r0]
+ 134 001c FFF7FEFF 		bl	HAL_UART_Transmit
+ 135              	.LVL10:
+  83:../Bsp/UartDrv/uart_drv.c ****     }
+ 136              		.loc 1 83 9 view .LVU29
+ 137 0020 F6E7     		b	.L10
+ 138              	.L14:
+ 139 0022 00BF     		.align	2
+ 140              	.L13:
+ 141 0024 00000000 		.word	s_pDebugPort
+ 142              		.cfi_endproc
+ 143              	.LFE246:
+ 145              		.section	.text.UartDrv_Init,"ax",%progbits
+ 146              		.align	1
+ 147              		.global	UartDrv_Init
+ 148              		.syntax unified
+ 149              		.thumb
+ 150              		.thumb_func
+ 152              	UartDrv_Init:
+ 153              	.LVL11:
+ 154              	.LFB247:
+ 203:../Bsp/UartDrv/uart_drv.c ****     /* 参数校验: 指针为空则直接返回 */
+ 155              		.loc 1 203 1 is_stmt 1 view -0
+ 156              		.cfi_startproc
+ 157              		@ args = 0, pretend = 0, frame = 0
+ 158              		@ frame_needed = 0, uses_anonymous_args = 0
+ 205:../Bsp/UartDrv/uart_drv.c ****         return;
+ 159              		.loc 1 205 5 view .LVU31
+ 205:../Bsp/UartDrv/uart_drv.c ****         return;
+ 160              		.loc 1 205 8 is_stmt 0 view .LVU32
+ 161 0000 B8B1     		cbz	r0, .L18
+ 203:../Bsp/UartDrv/uart_drv.c ****     /* 参数校验: 指针为空则直接返回 */
+ 162              		.loc 1 203 1 view .LVU33
+ 163 0002 38B5     		push	{r3, r4, r5, lr}
+ 164              	.LCFI1:
+ 165              		.cfi_def_cfa_offset 16
+ 166              		.cfi_offset 3, -16
+ 167              		.cfi_offset 4, -12
+ 168              		.cfi_offset 5, -8
+ 169              		.cfi_offset 14, -4
+ 170 0004 0C46     		mov	r4, r1
+ 171 0006 0546     		mov	r5, r0
+ 205:../Bsp/UartDrv/uart_drv.c ****         return;
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 11
+
+
+ 172              		.loc 1 205 22 discriminator 1 view .LVU34
+ 173 0008 91B1     		cbz	r1, .L15
+ 209:../Bsp/UartDrv/uart_drv.c **** 
+ 174              		.loc 1 209 5 is_stmt 1 view .LVU35
+ 175 000a 4FF40672 		mov	r2, #536
+ 176 000e 0021     		movs	r1, #0
+ 177              	.LVL12:
+ 209:../Bsp/UartDrv/uart_drv.c **** 
+ 178              		.loc 1 209 5 is_stmt 0 view .LVU36
+ 179 0010 FFF7FEFF 		bl	memset
+ 180              	.LVL13:
+ 212:../Bsp/UartDrv/uart_drv.c **** 
+ 181              		.loc 1 212 5 is_stmt 1 view .LVU37
+ 212:../Bsp/UartDrv/uart_drv.c **** 
+ 182              		.loc 1 212 23 is_stmt 0 view .LVU38
+ 183 0014 2C60     		str	r4, [r5]
+ 215:../Bsp/UartDrv/uart_drv.c **** 
+ 184              		.loc 1 215 5 is_stmt 1 view .LVU39
+ 215:../Bsp/UartDrv/uart_drv.c **** 
+ 185              		.loc 1 215 23 is_stmt 0 view .LVU40
+ 186 0016 0123     		movs	r3, #1
+ 187 0018 85F81432 		strb	r3, [r5, #532]
+ 218:../Bsp/UartDrv/uart_drv.c ****     {
+ 188              		.loc 1 218 5 is_stmt 1 view .LVU41
+ 218:../Bsp/UartDrv/uart_drv.c ****     {
+ 189              		.loc 1 218 20 is_stmt 0 view .LVU42
+ 190 001c 054B     		ldr	r3, .L21
+ 191 001e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 218:../Bsp/UartDrv/uart_drv.c ****     {
+ 192              		.loc 1 218 8 view .LVU43
+ 193 0020 072B     		cmp	r3, #7
+ 194 0022 05D8     		bhi	.L15
+ 220:../Bsp/UartDrv/uart_drv.c ****     }
+ 195              		.loc 1 220 9 is_stmt 1 view .LVU44
+ 220:../Bsp/UartDrv/uart_drv.c ****     }
+ 196              		.loc 1 220 34 is_stmt 0 view .LVU45
+ 197 0024 591C     		adds	r1, r3, #1
+ 198 0026 034A     		ldr	r2, .L21
+ 199 0028 1170     		strb	r1, [r2]
+ 220:../Bsp/UartDrv/uart_drv.c ****     }
+ 200              		.loc 1 220 38 view .LVU46
+ 201 002a 034A     		ldr	r2, .L21+4
+ 202 002c 42F82350 		str	r5, [r2, r3, lsl #2]
+ 203              	.L15:
+ 222:../Bsp/UartDrv/uart_drv.c **** 
+ 204              		.loc 1 222 1 view .LVU47
+ 205 0030 38BD     		pop	{r3, r4, r5, pc}
+ 206              	.LVL14:
+ 207              	.L18:
+ 208              	.LCFI2:
+ 209              		.cfi_def_cfa_offset 0
+ 210              		.cfi_restore 3
+ 211              		.cfi_restore 4
+ 212              		.cfi_restore 5
+ 213              		.cfi_restore 14
+ 222:../Bsp/UartDrv/uart_drv.c **** 
+ 214              		.loc 1 222 1 view .LVU48
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 12
+
+
+ 215 0032 7047     		bx	lr
+ 216              	.L22:
+ 217              		.align	2
+ 218              	.L21:
+ 219 0034 00000000 		.word	s_drvCount
+ 220 0038 00000000 		.word	s_drvInstances
+ 221              		.cfi_endproc
+ 222              	.LFE247:
+ 224              		.section	.text.UartDrv_StartRecv,"ax",%progbits
+ 225              		.align	1
+ 226              		.global	UartDrv_StartRecv
+ 227              		.syntax unified
+ 228              		.thumb
+ 229              		.thumb_func
+ 231              	UartDrv_StartRecv:
+ 232              	.LVL15:
+ 233              	.LFB248:
+ 238:../Bsp/UartDrv/uart_drv.c ****     if (pDrv == NULL || !pDrv->initialized)
+ 234              		.loc 1 238 1 is_stmt 1 view -0
+ 235              		.cfi_startproc
+ 236              		@ args = 0, pretend = 0, frame = 0
+ 237              		@ frame_needed = 0, uses_anonymous_args = 0
+ 239:../Bsp/UartDrv/uart_drv.c ****         return;
+ 238              		.loc 1 239 5 view .LVU50
+ 239:../Bsp/UartDrv/uart_drv.c ****         return;
+ 239              		.loc 1 239 8 is_stmt 0 view .LVU51
+ 240 0000 B8B1     		cbz	r0, .L26
+ 238:../Bsp/UartDrv/uart_drv.c ****     if (pDrv == NULL || !pDrv->initialized)
+ 241              		.loc 1 238 1 view .LVU52
+ 242 0002 38B5     		push	{r3, r4, r5, lr}
+ 243              	.LCFI3:
+ 244              		.cfi_def_cfa_offset 16
+ 245              		.cfi_offset 3, -16
+ 246              		.cfi_offset 4, -12
+ 247              		.cfi_offset 5, -8
+ 248              		.cfi_offset 14, -4
+ 249 0004 0446     		mov	r4, r0
+ 239:../Bsp/UartDrv/uart_drv.c ****         return;
+ 250              		.loc 1 239 30 discriminator 1 view .LVU53
+ 251 0006 90F81432 		ldrb	r3, [r0, #532]	@ zero_extendqisi2
+ 239:../Bsp/UartDrv/uart_drv.c ****         return;
+ 252              		.loc 1 239 22 discriminator 1 view .LVU54
+ 253 000a 03B9     		cbnz	r3, .L29
+ 254              	.LVL16:
+ 255              	.L23:
+ 248:../Bsp/UartDrv/uart_drv.c **** 
+ 256              		.loc 1 248 1 view .LVU55
+ 257 000c 38BD     		pop	{r3, r4, r5, pc}
+ 258              	.LVL17:
+ 259              	.L29:
+ 243:../Bsp/UartDrv/uart_drv.c ****     HAL_UART_AbortReceive_IT(pDrv->pUartHandle);
+ 260              		.loc 1 243 5 is_stmt 1 view .LVU56
+ 243:../Bsp/UartDrv/uart_drv.c ****     HAL_UART_AbortReceive_IT(pDrv->pUartHandle);
+ 261              		.loc 1 243 56 is_stmt 0 view .LVU57
+ 262 000e 0546     		mov	r5, r0
+ 243:../Bsp/UartDrv/uart_drv.c ****     HAL_UART_AbortReceive_IT(pDrv->pUartHandle);
+ 263              		.loc 1 243 5 view .LVU58
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 13
+
+
+ 264 0010 55F8060B 		ldr	r0, [r5], #6
+ 265              	.LVL18:
+ 243:../Bsp/UartDrv/uart_drv.c ****     HAL_UART_AbortReceive_IT(pDrv->pUartHandle);
+ 266              		.loc 1 243 5 view .LVU59
+ 267 0014 40F2FF12 		movw	r2, #511
+ 268 0018 2946     		mov	r1, r5
+ 269 001a FFF7FEFF 		bl	HAL_UART_Receive_IT
+ 270              	.LVL19:
+ 244:../Bsp/UartDrv/uart_drv.c **** 
+ 271              		.loc 1 244 5 is_stmt 1 view .LVU60
+ 272 001e 2068     		ldr	r0, [r4]
+ 273 0020 FFF7FEFF 		bl	HAL_UART_AbortReceive_IT
+ 274              	.LVL20:
+ 247:../Bsp/UartDrv/uart_drv.c **** }
+ 275              		.loc 1 247 5 view .LVU61
+ 276 0024 40F2FF12 		movw	r2, #511
+ 277 0028 2946     		mov	r1, r5
+ 278 002a 2068     		ldr	r0, [r4]
+ 279 002c FFF7FEFF 		bl	HAL_UARTEx_ReceiveToIdle_IT
+ 280              	.LVL21:
+ 281 0030 ECE7     		b	.L23
+ 282              	.LVL22:
+ 283              	.L26:
+ 284              	.LCFI4:
+ 285              		.cfi_def_cfa_offset 0
+ 286              		.cfi_restore 3
+ 287              		.cfi_restore 4
+ 288              		.cfi_restore 5
+ 289              		.cfi_restore 14
+ 247:../Bsp/UartDrv/uart_drv.c **** }
+ 290              		.loc 1 247 5 is_stmt 0 view .LVU62
+ 291 0032 7047     		bx	lr
+ 292              		.cfi_endproc
+ 293              	.LFE248:
+ 295              		.section	.text.UartDrv_Send,"ax",%progbits
+ 296              		.align	1
+ 297              		.global	UartDrv_Send
+ 298              		.syntax unified
+ 299              		.thumb
+ 300              		.thumb_func
+ 302              	UartDrv_Send:
+ 303              	.LVL23:
+ 304              	.LFB249:
+ 260:../Bsp/UartDrv/uart_drv.c ****     /* 参数校验 */
+ 305              		.loc 1 260 1 is_stmt 1 view -0
+ 306              		.cfi_startproc
+ 307              		@ args = 0, pretend = 0, frame = 0
+ 308              		@ frame_needed = 0, uses_anonymous_args = 0
+ 262:../Bsp/UartDrv/uart_drv.c ****         return;
+ 309              		.loc 1 262 5 view .LVU64
+ 262:../Bsp/UartDrv/uart_drv.c ****         return;
+ 310              		.loc 1 262 8 is_stmt 0 view .LVU65
+ 311 0000 60B1     		cbz	r0, .L33
+ 260:../Bsp/UartDrv/uart_drv.c ****     /* 参数校验 */
+ 312              		.loc 1 260 1 view .LVU66
+ 313 0002 08B5     		push	{r3, lr}
+ 314              	.LCFI5:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 14
+
+
+ 315              		.cfi_def_cfa_offset 8
+ 316              		.cfi_offset 3, -8
+ 317              		.cfi_offset 14, -4
+ 262:../Bsp/UartDrv/uart_drv.c ****         return;
+ 318              		.loc 1 262 30 discriminator 1 view .LVU67
+ 319 0004 90F81432 		ldrb	r3, [r0, #532]	@ zero_extendqisi2
+ 262:../Bsp/UartDrv/uart_drv.c ****         return;
+ 320              		.loc 1 262 22 discriminator 1 view .LVU68
+ 321 0008 0BB1     		cbz	r3, .L30
+ 262:../Bsp/UartDrv/uart_drv.c ****         return;
+ 322              		.loc 1 262 44 discriminator 2 view .LVU69
+ 323 000a 01B1     		cbz	r1, .L30
+ 262:../Bsp/UartDrv/uart_drv.c ****         return;
+ 324              		.loc 1 262 61 discriminator 3 view .LVU70
+ 325 000c 02B9     		cbnz	r2, .L36
+ 326              	.LVL24:
+ 327              	.L30:
+ 266:../Bsp/UartDrv/uart_drv.c **** 
+ 328              		.loc 1 266 1 view .LVU71
+ 329 000e 08BD     		pop	{r3, pc}
+ 330              	.LVL25:
+ 331              	.L36:
+ 265:../Bsp/UartDrv/uart_drv.c **** }
+ 332              		.loc 1 265 5 is_stmt 1 view .LVU72
+ 333 0010 4FF6FF73 		movw	r3, #65535
+ 334 0014 0068     		ldr	r0, [r0]
+ 335              	.LVL26:
+ 265:../Bsp/UartDrv/uart_drv.c **** }
+ 336              		.loc 1 265 5 is_stmt 0 view .LVU73
+ 337 0016 FFF7FEFF 		bl	HAL_UART_Transmit
+ 338              	.LVL27:
+ 265:../Bsp/UartDrv/uart_drv.c **** }
+ 339              		.loc 1 265 5 view .LVU74
+ 340 001a F8E7     		b	.L30
+ 341              	.LVL28:
+ 342              	.L33:
+ 343              	.LCFI6:
+ 344              		.cfi_def_cfa_offset 0
+ 345              		.cfi_restore 3
+ 346              		.cfi_restore 14
+ 265:../Bsp/UartDrv/uart_drv.c **** }
+ 347              		.loc 1 265 5 view .LVU75
+ 348 001c 7047     		bx	lr
+ 349              		.cfi_endproc
+ 350              	.LFE249:
+ 352              		.section	.text.UartDrv_SendStr,"ax",%progbits
+ 353              		.align	1
+ 354              		.global	UartDrv_SendStr
+ 355              		.syntax unified
+ 356              		.thumb
+ 357              		.thumb_func
+ 359              	UartDrv_SendStr:
+ 360              	.LVL29:
+ 361              	.LFB250:
+ 275:../Bsp/UartDrv/uart_drv.c ****     if (pDrv == NULL || !pDrv->initialized || str == NULL)
+ 362              		.loc 1 275 1 is_stmt 1 view -0
+ 363              		.cfi_startproc
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 15
+
+
+ 364              		@ args = 0, pretend = 0, frame = 0
+ 365              		@ frame_needed = 0, uses_anonymous_args = 0
+ 276:../Bsp/UartDrv/uart_drv.c ****         return;
+ 366              		.loc 1 276 5 view .LVU77
+ 276:../Bsp/UartDrv/uart_drv.c ****         return;
+ 367              		.loc 1 276 8 is_stmt 0 view .LVU78
+ 368 0000 78B1     		cbz	r0, .L40
+ 275:../Bsp/UartDrv/uart_drv.c ****     if (pDrv == NULL || !pDrv->initialized || str == NULL)
+ 369              		.loc 1 275 1 view .LVU79
+ 370 0002 38B5     		push	{r3, r4, r5, lr}
+ 371              	.LCFI7:
+ 372              		.cfi_def_cfa_offset 16
+ 373              		.cfi_offset 3, -16
+ 374              		.cfi_offset 4, -12
+ 375              		.cfi_offset 5, -8
+ 376              		.cfi_offset 14, -4
+ 377 0004 0C46     		mov	r4, r1
+ 378 0006 0546     		mov	r5, r0
+ 276:../Bsp/UartDrv/uart_drv.c ****         return;
+ 379              		.loc 1 276 30 discriminator 1 view .LVU80
+ 380 0008 90F81432 		ldrb	r3, [r0, #532]	@ zero_extendqisi2
+ 276:../Bsp/UartDrv/uart_drv.c ****         return;
+ 381              		.loc 1 276 22 discriminator 1 view .LVU81
+ 382 000c 43B1     		cbz	r3, .L37
+ 276:../Bsp/UartDrv/uart_drv.c ****         return;
+ 383              		.loc 1 276 44 discriminator 2 view .LVU82
+ 384 000e 39B1     		cbz	r1, .L37
+ 279:../Bsp/UartDrv/uart_drv.c **** }
+ 385              		.loc 1 279 5 is_stmt 1 view .LVU83
+ 279:../Bsp/UartDrv/uart_drv.c **** }
+ 386              		.loc 1 279 56 is_stmt 0 view .LVU84
+ 387 0010 0846     		mov	r0, r1
+ 388              	.LVL30:
+ 279:../Bsp/UartDrv/uart_drv.c **** }
+ 389              		.loc 1 279 56 view .LVU85
+ 390 0012 FFF7FEFF 		bl	strlen
+ 391              	.LVL31:
+ 279:../Bsp/UartDrv/uart_drv.c **** }
+ 392              		.loc 1 279 5 discriminator 1 view .LVU86
+ 393 0016 82B2     		uxth	r2, r0
+ 394 0018 2146     		mov	r1, r4
+ 395 001a 2846     		mov	r0, r5
+ 396 001c FFF7FEFF 		bl	UartDrv_Send
+ 397              	.LVL32:
+ 398              	.L37:
+ 280:../Bsp/UartDrv/uart_drv.c **** 
+ 399              		.loc 1 280 1 view .LVU87
+ 400 0020 38BD     		pop	{r3, r4, r5, pc}
+ 401              	.LVL33:
+ 402              	.L40:
+ 403              	.LCFI8:
+ 404              		.cfi_def_cfa_offset 0
+ 405              		.cfi_restore 3
+ 406              		.cfi_restore 4
+ 407              		.cfi_restore 5
+ 408              		.cfi_restore 14
+ 280:../Bsp/UartDrv/uart_drv.c **** 
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 16
+
+
+ 409              		.loc 1 280 1 view .LVU88
+ 410 0022 7047     		bx	lr
+ 411              		.cfi_endproc
+ 412              	.LFE250:
+ 414              		.section	.text.UartDrv_RegisterRxCb,"ax",%progbits
+ 415              		.align	1
+ 416              		.global	UartDrv_RegisterRxCb
+ 417              		.syntax unified
+ 418              		.thumb
+ 419              		.thumb_func
+ 421              	UartDrv_RegisterRxCb:
+ 422              	.LVL34:
+ 423              	.LFB251:
+ 289:../Bsp/UartDrv/uart_drv.c ****     if (pDrv == NULL || !pDrv->initialized)
+ 424              		.loc 1 289 1 is_stmt 1 view -0
+ 425              		.cfi_startproc
+ 426              		@ args = 0, pretend = 0, frame = 0
+ 427              		@ frame_needed = 0, uses_anonymous_args = 0
+ 428              		@ link register save eliminated.
+ 290:../Bsp/UartDrv/uart_drv.c ****         return;
+ 429              		.loc 1 290 5 view .LVU90
+ 290:../Bsp/UartDrv/uart_drv.c ****         return;
+ 430              		.loc 1 290 8 is_stmt 0 view .LVU91
+ 431 0000 0346     		mov	r3, r0
+ 432 0002 30B1     		cbz	r0, .L43
+ 290:../Bsp/UartDrv/uart_drv.c ****         return;
+ 433              		.loc 1 290 30 discriminator 1 view .LVU92
+ 434 0004 90F81402 		ldrb	r0, [r0, #532]	@ zero_extendqisi2
+ 435              	.LVL35:
+ 290:../Bsp/UartDrv/uart_drv.c ****         return;
+ 436              		.loc 1 290 22 discriminator 1 view .LVU93
+ 437 0008 18B1     		cbz	r0, .L43
+ 293:../Bsp/UartDrv/uart_drv.c ****     pDrv->pUserCtx = pUserCtx;
+ 438              		.loc 1 293 5 is_stmt 1 view .LVU94
+ 293:../Bsp/UartDrv/uart_drv.c ****     pDrv->pUserCtx = pUserCtx;
+ 439              		.loc 1 293 17 is_stmt 0 view .LVU95
+ 440 000a C3F80812 		str	r1, [r3, #520]
+ 294:../Bsp/UartDrv/uart_drv.c **** }
+ 441              		.loc 1 294 5 is_stmt 1 view .LVU96
+ 294:../Bsp/UartDrv/uart_drv.c **** }
+ 442              		.loc 1 294 20 is_stmt 0 view .LVU97
+ 443 000e C3F80C22 		str	r2, [r3, #524]
+ 444              	.L43:
+ 295:../Bsp/UartDrv/uart_drv.c **** 
+ 445              		.loc 1 295 1 view .LVU98
+ 446 0012 7047     		bx	lr
+ 447              		.cfi_endproc
+ 448              	.LFE251:
+ 450              		.section	.text.UartDrv_RegisterRxQueue,"ax",%progbits
+ 451              		.align	1
+ 452              		.global	UartDrv_RegisterRxQueue
+ 453              		.syntax unified
+ 454              		.thumb
+ 455              		.thumb_func
+ 457              	UartDrv_RegisterRxQueue:
+ 458              	.LVL36:
+ 459              	.LFB252:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 17
+
+
+ 305:../Bsp/UartDrv/uart_drv.c ****     if (pDrv == NULL || !pDrv->initialized)
+ 460              		.loc 1 305 1 is_stmt 1 view -0
+ 461              		.cfi_startproc
+ 462              		@ args = 0, pretend = 0, frame = 0
+ 463              		@ frame_needed = 0, uses_anonymous_args = 0
+ 464              		@ link register save eliminated.
+ 306:../Bsp/UartDrv/uart_drv.c ****         return;
+ 465              		.loc 1 306 5 view .LVU100
+ 306:../Bsp/UartDrv/uart_drv.c ****         return;
+ 466              		.loc 1 306 8 is_stmt 0 view .LVU101
+ 467 0000 20B1     		cbz	r0, .L45
+ 306:../Bsp/UartDrv/uart_drv.c ****         return;
+ 468              		.loc 1 306 30 discriminator 1 view .LVU102
+ 469 0002 90F81422 		ldrb	r2, [r0, #532]	@ zero_extendqisi2
+ 306:../Bsp/UartDrv/uart_drv.c ****         return;
+ 470              		.loc 1 306 22 discriminator 1 view .LVU103
+ 471 0006 0AB1     		cbz	r2, .L45
+ 309:../Bsp/UartDrv/uart_drv.c **** }
+ 472              		.loc 1 309 5 is_stmt 1 view .LVU104
+ 309:../Bsp/UartDrv/uart_drv.c **** }
+ 473              		.loc 1 309 19 is_stmt 0 view .LVU105
+ 474 0008 C0F81012 		str	r1, [r0, #528]
+ 475              	.L45:
+ 310:../Bsp/UartDrv/uart_drv.c **** #endif
+ 476              		.loc 1 310 1 view .LVU106
+ 477 000c 7047     		bx	lr
+ 478              		.cfi_endproc
+ 479              	.LFE252:
+ 481              		.section	.text.UartDrv_RxEventDispatch,"ax",%progbits
+ 482              		.align	1
+ 483              		.global	UartDrv_RxEventDispatch
+ 484              		.syntax unified
+ 485              		.thumb
+ 486              		.thumb_func
+ 488              	UartDrv_RxEventDispatch:
+ 489              	.LVL37:
+ 490              	.LFB253:
+ 327:../Bsp/UartDrv/uart_drv.c ****     /* 根据UART句柄查找对应的驱动实例 */
+ 491              		.loc 1 327 1 is_stmt 1 view -0
+ 492              		.cfi_startproc
+ 493              		@ args = 0, pretend = 0, frame = 520
+ 494              		@ frame_needed = 0, uses_anonymous_args = 0
+ 327:../Bsp/UartDrv/uart_drv.c ****     /* 根据UART句柄查找对应的驱动实例 */
+ 495              		.loc 1 327 1 is_stmt 0 view .LVU108
+ 496 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 497              	.LCFI9:
+ 498              		.cfi_def_cfa_offset 20
+ 499              		.cfi_offset 4, -20
+ 500              		.cfi_offset 5, -16
+ 501              		.cfi_offset 6, -12
+ 502              		.cfi_offset 7, -8
+ 503              		.cfi_offset 14, -4
+ 504 0002 ADF5037D 		sub	sp, sp, #524
+ 505              	.LCFI10:
+ 506              		.cfi_def_cfa_offset 544
+ 507 0006 0646     		mov	r6, r0
+ 508 0008 0D46     		mov	r5, r1
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 18
+
+
+ 329:../Bsp/UartDrv/uart_drv.c ****     if (pDrv == NULL || !pDrv->initialized)
+ 509              		.loc 1 329 5 is_stmt 1 view .LVU109
+ 329:../Bsp/UartDrv/uart_drv.c ****     if (pDrv == NULL || !pDrv->initialized)
+ 510              		.loc 1 329 23 is_stmt 0 view .LVU110
+ 511 000a FFF7FEFF 		bl	FindInstance
+ 512              	.LVL38:
+ 330:../Bsp/UartDrv/uart_drv.c ****         return;
+ 513              		.loc 1 330 5 is_stmt 1 view .LVU111
+ 330:../Bsp/UartDrv/uart_drv.c ****         return;
+ 514              		.loc 1 330 8 is_stmt 0 view .LVU112
+ 515 000e 88B3     		cbz	r0, .L47
+ 516 0010 0446     		mov	r4, r0
+ 330:../Bsp/UartDrv/uart_drv.c ****         return;
+ 517              		.loc 1 330 30 discriminator 1 view .LVU113
+ 518 0012 90F81432 		ldrb	r3, [r0, #532]	@ zero_extendqisi2
+ 330:../Bsp/UartDrv/uart_drv.c ****         return;
+ 519              		.loc 1 330 22 discriminator 1 view .LVU114
+ 520 0016 6BB3     		cbz	r3, .L47
+ 333:../Bsp/UartDrv/uart_drv.c ****     {
+ 521              		.loc 1 333 5 is_stmt 1 view .LVU115
+ 333:../Bsp/UartDrv/uart_drv.c ****     {
+ 522              		.loc 1 333 8 is_stmt 0 view .LVU116
+ 523 0018 15B3     		cbz	r5, .L49
+ 336:../Bsp/UartDrv/uart_drv.c ****         pDrv->rxData.rx_len = Size;
+ 524              		.loc 1 336 9 is_stmt 1 view .LVU117
+ 336:../Bsp/UartDrv/uart_drv.c ****         pDrv->rxData.rx_len = Size;
+ 525              		.loc 1 336 35 is_stmt 0 view .LVU118
+ 526 001a 4319     		adds	r3, r0, r5
+ 527 001c 0022     		movs	r2, #0
+ 528 001e 9A71     		strb	r2, [r3, #6]
+ 337:../Bsp/UartDrv/uart_drv.c **** 
+ 529              		.loc 1 337 9 is_stmt 1 view .LVU119
+ 337:../Bsp/UartDrv/uart_drv.c **** 
+ 530              		.loc 1 337 29 is_stmt 0 view .LVU120
+ 531 0020 8580     		strh	r5, [r0, #4]	@ movhi
+ 342:../Bsp/UartDrv/uart_drv.c ****         {
+ 532              		.loc 1 342 9 is_stmt 1 view .LVU121
+ 342:../Bsp/UartDrv/uart_drv.c ****         {
+ 533              		.loc 1 342 17 is_stmt 0 view .LVU122
+ 534 0022 D0F81032 		ldr	r3, [r0, #528]
+ 342:../Bsp/UartDrv/uart_drv.c ****         {
+ 535              		.loc 1 342 12 view .LVU123
+ 536 0026 A3B1     		cbz	r3, .L50
+ 537              	.LBB3:
+ 344:../Bsp/UartDrv/uart_drv.c ****             evt.pDrv = pDrv;
+ 538              		.loc 1 344 13 is_stmt 1 view .LVU124
+ 345:../Bsp/UartDrv/uart_drv.c ****             evt.len  = (Size > UART_DRV_QUEUE_DATA_SIZE) ? UART_DRV_QUEUE_DATA_SIZE : Size;
+ 539              		.loc 1 345 13 view .LVU125
+ 345:../Bsp/UartDrv/uart_drv.c ****             evt.len  = (Size > UART_DRV_QUEUE_DATA_SIZE) ? UART_DRV_QUEUE_DATA_SIZE : Size;
+ 540              		.loc 1 345 22 is_stmt 0 view .LVU126
+ 541 0028 0090     		str	r0, [sp]
+ 346:../Bsp/UartDrv/uart_drv.c ****             memcpy(evt.data, pDrv->rxData.rx_buf, evt.len);
+ 542              		.loc 1 346 13 is_stmt 1 view .LVU127
+ 346:../Bsp/UartDrv/uart_drv.c ****             memcpy(evt.data, pDrv->rxData.rx_buf, evt.len);
+ 543              		.loc 1 346 85 is_stmt 0 view .LVU128
+ 544 002a 2A46     		mov	r2, r5
+ 545 002c B5F5007F 		cmp	r5, #512
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 19
+
+
+ 546 0030 28BF     		it	cs
+ 547 0032 4FF40072 		movcs	r2, #512
+ 346:../Bsp/UartDrv/uart_drv.c ****             memcpy(evt.data, pDrv->rxData.rx_buf, evt.len);
+ 548              		.loc 1 346 22 view .LVU129
+ 549 0036 ADF80420 		strh	r2, [sp, #4]	@ movhi
+ 347:../Bsp/UartDrv/uart_drv.c ****             osMessageQueuePut(pDrv->rxQueue, &evt, 0, 0);
+ 550              		.loc 1 347 13 is_stmt 1 view .LVU130
+ 551 003a 811D     		adds	r1, r0, #6
+ 552 003c 0DF10600 		add	r0, sp, #6
+ 553              	.LVL39:
+ 347:../Bsp/UartDrv/uart_drv.c ****             osMessageQueuePut(pDrv->rxQueue, &evt, 0, 0);
+ 554              		.loc 1 347 13 is_stmt 0 view .LVU131
+ 555 0040 FFF7FEFF 		bl	memcpy
+ 556              	.LVL40:
+ 348:../Bsp/UartDrv/uart_drv.c ****         }
+ 557              		.loc 1 348 13 is_stmt 1 view .LVU132
+ 558 0044 0023     		movs	r3, #0
+ 559 0046 1A46     		mov	r2, r3
+ 560 0048 6946     		mov	r1, sp
+ 561 004a D4F81002 		ldr	r0, [r4, #528]
+ 562 004e FFF7FEFF 		bl	osMessageQueuePut
+ 563              	.LVL41:
+ 564              	.L50:
+ 565              	.LBE3:
+ 352:../Bsp/UartDrv/uart_drv.c ****         {
+ 566              		.loc 1 352 9 view .LVU133
+ 352:../Bsp/UartDrv/uart_drv.c ****         {
+ 567              		.loc 1 352 17 is_stmt 0 view .LVU134
+ 568 0052 D4F80832 		ldr	r3, [r4, #520]
+ 352:../Bsp/UartDrv/uart_drv.c ****         {
+ 569              		.loc 1 352 12 view .LVU135
+ 570 0056 1BB1     		cbz	r3, .L49
+ 354:../Bsp/UartDrv/uart_drv.c ****         }
+ 571              		.loc 1 354 13 is_stmt 1 view .LVU136
+ 572 0058 D4F80C12 		ldr	r1, [r4, #524]
+ 573 005c 201D     		adds	r0, r4, #4
+ 574 005e 9847     		blx	r3
+ 575              	.LVL42:
+ 576              	.L49:
+ 361:../Bsp/UartDrv/uart_drv.c **** 
+ 577              		.loc 1 361 5 view .LVU137
+ 361:../Bsp/UartDrv/uart_drv.c **** 
+ 578              		.loc 1 361 5 view .LVU138
+ 579 0060 0023     		movs	r3, #0
+ 580 0062 86F84030 		strb	r3, [r6, #64]
+ 361:../Bsp/UartDrv/uart_drv.c **** 
+ 581              		.loc 1 361 5 view .LVU139
+ 364:../Bsp/UartDrv/uart_drv.c **** }
+ 582              		.loc 1 364 5 view .LVU140
+ 364:../Bsp/UartDrv/uart_drv.c **** }
+ 583              		.loc 1 364 64 is_stmt 0 view .LVU141
+ 584 0066 2146     		mov	r1, r4
+ 364:../Bsp/UartDrv/uart_drv.c **** }
+ 585              		.loc 1 364 5 view .LVU142
+ 586 0068 51F8060B 		ldr	r0, [r1], #6
+ 587 006c 40F2FF12 		movw	r2, #511
+ 588 0070 FFF7FEFF 		bl	HAL_UARTEx_ReceiveToIdle_IT
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 20
+
+
+ 589              	.LVL43:
+ 590              	.L47:
+ 365:../Bsp/UartDrv/uart_drv.c **** 
+ 591              		.loc 1 365 1 view .LVU143
+ 592 0074 0DF5037D 		add	sp, sp, #524
+ 593              	.LCFI11:
+ 594              		.cfi_def_cfa_offset 20
+ 595              		@ sp needed
+ 596 0078 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 365:../Bsp/UartDrv/uart_drv.c **** 
+ 597              		.loc 1 365 1 view .LVU144
+ 598              		.cfi_endproc
+ 599              	.LFE253:
+ 601              		.section	.text.UartDrv_SetDebugPort,"ax",%progbits
+ 602              		.align	1
+ 603              		.global	UartDrv_SetDebugPort
+ 604              		.syntax unified
+ 605              		.thumb
+ 606              		.thumb_func
+ 608              	UartDrv_SetDebugPort:
+ 609              	.LVL44:
+ 610              	.LFB255:
+ 387:../Bsp/UartDrv/uart_drv.c **** 
+ 388:../Bsp/UartDrv/uart_drv.c **** /**
+ 389:../Bsp/UartDrv/uart_drv.c ****  * @brief  设置printf调试输出使用的串口驱动实例
+ 390:../Bsp/UartDrv/uart_drv.c ****  * @param  pDrv 串口驱动实例指针,传入NULL则禁用printf输出
+ 391:../Bsp/UartDrv/uart_drv.c ****  * @note   设置后,所有printf/fputs等标准输出将重定向到该串口
+ 392:../Bsp/UartDrv/uart_drv.c ****  */
+ 393:../Bsp/UartDrv/uart_drv.c **** void UartDrv_SetDebugPort(UartDrv_t *pDrv)
+ 394:../Bsp/UartDrv/uart_drv.c **** {
+ 611              		.loc 1 394 1 is_stmt 1 view -0
+ 612              		.cfi_startproc
+ 613              		@ args = 0, pretend = 0, frame = 0
+ 614              		@ frame_needed = 0, uses_anonymous_args = 0
+ 615              		@ link register save eliminated.
+ 395:../Bsp/UartDrv/uart_drv.c ****     s_pDebugPort = pDrv;
+ 616              		.loc 1 395 5 view .LVU146
+ 617              		.loc 1 395 18 is_stmt 0 view .LVU147
+ 618 0000 014B     		ldr	r3, .L53
+ 619 0002 1860     		str	r0, [r3]
+ 396:../Bsp/UartDrv/uart_drv.c **** }
+ 620              		.loc 1 396 1 view .LVU148
+ 621 0004 7047     		bx	lr
+ 622              	.L54:
+ 623 0006 00BF     		.align	2
+ 624              	.L53:
+ 625 0008 00000000 		.word	s_pDebugPort
+ 626              		.cfi_endproc
+ 627              	.LFE255:
+ 629              		.section	.rodata.UartDrv_PrintFloat.str1.4,"aMS",%progbits,1
+ 630              		.align	2
+ 631              	.LC0:
+ 632 0000 2D00     		.ascii	"-\000"
+ 633 0002 0000     		.align	2
+ 634              	.LC1:
+ 635 0004 256C7500 		.ascii	"%lu\000"
+ 636              		.align	2
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 21
+
+
+ 637              	.LC2:
+ 638 0008 2E00     		.ascii	".\000"
+ 639 000a 0000     		.align	2
+ 640              	.LC3:
+ 641 000c 25302A6C 		.ascii	"%0*lu\000"
+ 641      7500
+ 642              		.section	.text.UartDrv_PrintFloat,"ax",%progbits
+ 643              		.align	1
+ 644              		.global	UartDrv_PrintFloat
+ 645              		.syntax unified
+ 646              		.thumb
+ 647              		.thumb_func
+ 649              	UartDrv_PrintFloat:
+ 650              	.LVL45:
+ 651              	.LFB256:
+ 397:../Bsp/UartDrv/uart_drv.c **** 
+ 398:../Bsp/UartDrv/uart_drv.c **** /**
+ 399:../Bsp/UartDrv/uart_drv.c ****  * @brief  通过串口打印浮点数(纯整数运算实现,不依赖printf %f)
+ 400:../Bsp/UartDrv/uart_drv.c ****  * @param  pDrv          串口驱动实例指针
+ 401:../Bsp/UartDrv/uart_drv.c ****  * @param  value         要打印的浮点数(支持负数)
+ 402:../Bsp/UartDrv/uart_drv.c ****  * @param  decimalPlaces 小数位数(0~6,超过6自动截断为6)
+ 403:../Bsp/UartDrv/uart_drv.c ****  * @note   实现原理:
+ 404:../Bsp/UartDrv/uart_drv.c ****  *         1. 处理负数符号
+ 405:../Bsp/UartDrv/uart_drv.c ****  *         2. 加上舍入偏移(如2位小数加0.005)实现四舍五入
+ 406:../Bsp/UartDrv/uart_drv.c ****  *         3. 分离整数部分和小数部分
+ 407:../Bsp/UartDrv/uart_drv.c ****  *         4. 分别格式化输出整数和小数部分
+ 408:../Bsp/UartDrv/uart_drv.c ****  *         这是不依赖 newlib-nano _printf_float 的备选方案,
+ 409:../Bsp/UartDrv/uart_drv.c ****  *         即使GCC工具链未启用浮点printf也能正常打印浮点数.
+ 410:../Bsp/UartDrv/uart_drv.c ****  *         使用示例: UartDrv_PrintFloat(&g_uart1Drv, 3.14159f, 2) 输出 "3.14"
+ 411:../Bsp/UartDrv/uart_drv.c ****  */
+ 412:../Bsp/UartDrv/uart_drv.c **** void UartDrv_PrintFloat(UartDrv_t *pDrv, float value, uint8_t decimalPlaces)
+ 413:../Bsp/UartDrv/uart_drv.c **** {
+ 652              		.loc 1 413 1 is_stmt 1 view -0
+ 653              		.cfi_startproc
+ 654              		@ args = 0, pretend = 0, frame = 16
+ 655              		@ frame_needed = 0, uses_anonymous_args = 0
+ 414:../Bsp/UartDrv/uart_drv.c ****     if (pDrv == NULL || !pDrv->initialized)
+ 656              		.loc 1 414 5 view .LVU150
+ 657              		.loc 1 414 8 is_stmt 0 view .LVU151
+ 658 0000 0028     		cmp	r0, #0
+ 659 0002 58D0     		beq	.L70
+ 413:../Bsp/UartDrv/uart_drv.c ****     if (pDrv == NULL || !pDrv->initialized)
+ 660              		.loc 1 413 1 view .LVU152
+ 661 0004 70B5     		push	{r4, r5, r6, lr}
+ 662              	.LCFI12:
+ 663              		.cfi_def_cfa_offset 16
+ 664              		.cfi_offset 4, -16
+ 665              		.cfi_offset 5, -12
+ 666              		.cfi_offset 6, -8
+ 667              		.cfi_offset 14, -4
+ 668 0006 2DED028B 		vpush.64	{d8}
+ 669              	.LCFI13:
+ 670              		.cfi_def_cfa_offset 24
+ 671              		.cfi_offset 80, -24
+ 672              		.cfi_offset 81, -20
+ 673 000a 84B0     		sub	sp, sp, #16
+ 674              	.LCFI14:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 22
+
+
+ 675              		.cfi_def_cfa_offset 40
+ 676 000c B0EE408A 		vmov.f32	s16, s0
+ 677 0010 0C46     		mov	r4, r1
+ 678 0012 0546     		mov	r5, r0
+ 679              		.loc 1 414 30 discriminator 1 view .LVU153
+ 680 0014 90F81432 		ldrb	r3, [r0, #532]	@ zero_extendqisi2
+ 681              		.loc 1 414 22 discriminator 1 view .LVU154
+ 682 0018 CBB3     		cbz	r3, .L55
+ 415:../Bsp/UartDrv/uart_drv.c ****         return;
+ 416:../Bsp/UartDrv/uart_drv.c **** 
+ 417:../Bsp/UartDrv/uart_drv.c ****     /* 限制小数位数上限为6位(float有效精度约6~7位) */
+ 418:../Bsp/UartDrv/uart_drv.c ****     if (decimalPlaces > 6)
+ 683              		.loc 1 418 5 is_stmt 1 view .LVU155
+ 684              		.loc 1 418 8 is_stmt 0 view .LVU156
+ 685 001a 0629     		cmp	r1, #6
+ 686 001c 00D9     		bls	.L59
+ 419:../Bsp/UartDrv/uart_drv.c ****         decimalPlaces = 6;
+ 687              		.loc 1 419 23 view .LVU157
+ 688 001e 0624     		movs	r4, #6
+ 689              	.L59:
+ 690              	.LVL46:
+ 420:../Bsp/UartDrv/uart_drv.c **** 
+ 421:../Bsp/UartDrv/uart_drv.c ****     char buf[16];
+ 691              		.loc 1 421 5 is_stmt 1 view .LVU158
+ 422:../Bsp/UartDrv/uart_drv.c **** 
+ 423:../Bsp/UartDrv/uart_drv.c ****     /* 第1步: 处理负数 - 先输出负号,再取绝对值 */
+ 424:../Bsp/UartDrv/uart_drv.c ****     if (value < 0.0f)
+ 692              		.loc 1 424 5 view .LVU159
+ 693              		.loc 1 424 8 is_stmt 0 view .LVU160
+ 694 0020 B5EEC08A 		vcmpe.f32	s16, #0
+ 695 0024 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 696 0028 03D4     		bmi	.L73
+ 697              	.LVL47:
+ 698              	.L60:
+ 425:../Bsp/UartDrv/uart_drv.c ****     {
+ 426:../Bsp/UartDrv/uart_drv.c ****         UartDrv_SendStr(pDrv, "-");
+ 427:../Bsp/UartDrv/uart_drv.c ****         value = -value;
+ 428:../Bsp/UartDrv/uart_drv.c ****     }
+ 429:../Bsp/UartDrv/uart_drv.c **** 
+ 430:../Bsp/UartDrv/uart_drv.c ****     /* 第2步: 计算舍入偏移,实现四舍五入
+ 431:../Bsp/UartDrv/uart_drv.c ****      * 例如2位小数: rounding = 0.5/10/10 = 0.005
+ 432:../Bsp/UartDrv/uart_drv.c ****      * 加上0.005后3.144变为3.149,截断小数得到3.14
+ 433:../Bsp/UartDrv/uart_drv.c ****      * 而加上0.005后3.145变为3.150,截断小数得到3.15 */
+ 434:../Bsp/UartDrv/uart_drv.c ****     float rounding = 0.5f;
+ 699              		.loc 1 434 5 is_stmt 1 view .LVU161
+ 435:../Bsp/UartDrv/uart_drv.c ****     for (uint8_t i = 0; i < decimalPlaces; i++)
+ 700              		.loc 1 435 5 view .LVU162
+ 701              	.LBB4:
+ 702              		.loc 1 435 10 view .LVU163
+ 703              		.loc 1 435 18 is_stmt 0 view .LVU164
+ 704 002a 0023     		movs	r3, #0
+ 705              	.LBE4:
+ 434:../Bsp/UartDrv/uart_drv.c ****     for (uint8_t i = 0; i < decimalPlaces; i++)
+ 706              		.loc 1 434 11 view .LVU165
+ 707 002c F6EE007A 		vmov.f32	s15, #5.0e-1
+ 708              	.LBB5:
+ 709              		.loc 1 435 5 view .LVU166
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 23
+
+
+ 710 0030 0CE0     		b	.L62
+ 711              	.LVL48:
+ 712              	.L73:
+ 713              		.loc 1 435 5 view .LVU167
+ 714              	.LBE5:
+ 426:../Bsp/UartDrv/uart_drv.c ****         value = -value;
+ 715              		.loc 1 426 9 is_stmt 1 view .LVU168
+ 716 0032 2149     		ldr	r1, .L75
+ 717 0034 2846     		mov	r0, r5
+ 718              	.LVL49:
+ 426:../Bsp/UartDrv/uart_drv.c ****         value = -value;
+ 719              		.loc 1 426 9 is_stmt 0 view .LVU169
+ 720 0036 FFF7FEFF 		bl	UartDrv_SendStr
+ 721              	.LVL50:
+ 427:../Bsp/UartDrv/uart_drv.c ****     }
+ 722              		.loc 1 427 9 is_stmt 1 view .LVU170
+ 427:../Bsp/UartDrv/uart_drv.c ****     }
+ 723              		.loc 1 427 15 is_stmt 0 view .LVU171
+ 724 003a B1EE488A 		vneg.f32	s16, s16
+ 725              	.LVL51:
+ 427:../Bsp/UartDrv/uart_drv.c ****     }
+ 726              		.loc 1 427 15 view .LVU172
+ 727 003e F4E7     		b	.L60
+ 728              	.LVL52:
+ 729              	.L63:
+ 730              	.LBB6:
+ 436:../Bsp/UartDrv/uart_drv.c ****         rounding /= 10.0f;
+ 731              		.loc 1 436 9 is_stmt 1 view .LVU173
+ 732              		.loc 1 436 18 is_stmt 0 view .LVU174
+ 733 0040 B2EE047A 		vmov.f32	s14, #1.0e+1
+ 734 0044 C7EE877A 		vdiv.f32	s15, s15, s14
+ 735              	.LVL53:
+ 435:../Bsp/UartDrv/uart_drv.c ****         rounding /= 10.0f;
+ 736              		.loc 1 435 45 is_stmt 1 discriminator 3 view .LVU175
+ 737 0048 0133     		adds	r3, r3, #1
+ 738              	.LVL54:
+ 435:../Bsp/UartDrv/uart_drv.c ****         rounding /= 10.0f;
+ 739              		.loc 1 435 45 is_stmt 0 discriminator 3 view .LVU176
+ 740 004a DBB2     		uxtb	r3, r3
+ 741              	.LVL55:
+ 742              	.L62:
+ 435:../Bsp/UartDrv/uart_drv.c ****         rounding /= 10.0f;
+ 743              		.loc 1 435 27 is_stmt 1 discriminator 1 view .LVU177
+ 744 004c 9C42     		cmp	r4, r3
+ 745 004e F7D8     		bhi	.L63
+ 746              	.LBE6:
+ 437:../Bsp/UartDrv/uart_drv.c ****     value += rounding;
+ 747              		.loc 1 437 5 view .LVU178
+ 748              		.loc 1 437 11 is_stmt 0 view .LVU179
+ 749 0050 78EE277A 		vadd.f32	s15, s16, s15
+ 750              	.LVL56:
+ 438:../Bsp/UartDrv/uart_drv.c **** 
+ 439:../Bsp/UartDrv/uart_drv.c ****     /* 第3步: 分离整数部分和小数部分
+ 440:../Bsp/UartDrv/uart_drv.c ****      * 例如3.149: intPart=3, fracPart=0.149 */
+ 441:../Bsp/UartDrv/uart_drv.c ****     uint32_t intPart = (uint32_t)value;
+ 751              		.loc 1 441 5 is_stmt 1 view .LVU180
+ 752              		.loc 1 441 14 is_stmt 0 view .LVU181
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 24
+
+
+ 753 0054 FCEEE76A 		vcvt.u32.f32	s13, s15
+ 754              	.LVL57:
+ 442:../Bsp/UartDrv/uart_drv.c ****     float fracPart = value - (float)intPart;
+ 755              		.loc 1 442 5 is_stmt 1 view .LVU182
+ 756              		.loc 1 442 30 is_stmt 0 view .LVU183
+ 757 0058 B8EE667A 		vcvt.f32.u32	s14, s13
+ 758              		.loc 1 442 11 view .LVU184
+ 759 005c 77EEC77A 		vsub.f32	s15, s15, s14
+ 760              	.LVL58:
+ 443:../Bsp/UartDrv/uart_drv.c **** 
+ 444:../Bsp/UartDrv/uart_drv.c ****     /* 第4步: 将小数部分转为整数
+ 445:../Bsp/UartDrv/uart_drv.c ****      * 例如2位小数: fracPart*10*10 = 14.9, fracInt=14 */
+ 446:../Bsp/UartDrv/uart_drv.c ****     for (uint8_t i = 0; i < decimalPlaces; i++)
+ 761              		.loc 1 446 5 is_stmt 1 view .LVU185
+ 762              	.LBB7:
+ 763              		.loc 1 446 10 view .LVU186
+ 764              		.loc 1 446 18 is_stmt 0 view .LVU187
+ 765 0060 0023     		movs	r3, #0
+ 766              	.LVL59:
+ 767              		.loc 1 446 5 view .LVU188
+ 768 0062 05E0     		b	.L64
+ 769              	.LVL60:
+ 770              	.L65:
+ 447:../Bsp/UartDrv/uart_drv.c ****         fracPart *= 10.0f;
+ 771              		.loc 1 447 9 is_stmt 1 view .LVU189
+ 772              		.loc 1 447 18 is_stmt 0 view .LVU190
+ 773 0064 B2EE047A 		vmov.f32	s14, #1.0e+1
+ 774 0068 67EE877A 		vmul.f32	s15, s15, s14
+ 775              	.LVL61:
+ 446:../Bsp/UartDrv/uart_drv.c ****         fracPart *= 10.0f;
+ 776              		.loc 1 446 45 is_stmt 1 discriminator 3 view .LVU191
+ 777 006c 0133     		adds	r3, r3, #1
+ 778              	.LVL62:
+ 446:../Bsp/UartDrv/uart_drv.c ****         fracPart *= 10.0f;
+ 779              		.loc 1 446 45 is_stmt 0 discriminator 3 view .LVU192
+ 780 006e DBB2     		uxtb	r3, r3
+ 781              	.LVL63:
+ 782              	.L64:
+ 446:../Bsp/UartDrv/uart_drv.c ****         fracPart *= 10.0f;
+ 783              		.loc 1 446 27 is_stmt 1 discriminator 1 view .LVU193
+ 784 0070 9C42     		cmp	r4, r3
+ 785 0072 F7D8     		bhi	.L65
+ 446:../Bsp/UartDrv/uart_drv.c ****         fracPart *= 10.0f;
+ 786              		.loc 1 446 27 is_stmt 0 discriminator 1 view .LVU194
+ 787              	.LBE7:
+ 448:../Bsp/UartDrv/uart_drv.c ****     uint32_t fracInt = (uint32_t)fracPart;
+ 788              		.loc 1 448 5 is_stmt 1 view .LVU195
+ 789              		.loc 1 448 14 is_stmt 0 view .LVU196
+ 790 0074 BCEEE78A 		vcvt.u32.f32	s16, s15
+ 791              	.LVL64:
+ 449:../Bsp/UartDrv/uart_drv.c **** 
+ 450:../Bsp/UartDrv/uart_drv.c ****     /* 第5步: 输出整数部分 */
+ 451:../Bsp/UartDrv/uart_drv.c ****     sprintf(buf, "%lu", (unsigned long)intPart);
+ 792              		.loc 1 451 5 is_stmt 1 view .LVU197
+ 793 0078 16EE902A 		vmov	r2, s13	@ int
+ 794 007c 0F49     		ldr	r1, .L75+4
+ 795 007e 6846     		mov	r0, sp
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 25
+
+
+ 796 0080 FFF7FEFF 		bl	sprintf
+ 797              	.LVL65:
+ 452:../Bsp/UartDrv/uart_drv.c ****     UartDrv_SendStr(pDrv, buf);
+ 798              		.loc 1 452 5 view .LVU198
+ 799 0084 6946     		mov	r1, sp
+ 800 0086 2846     		mov	r0, r5
+ 801 0088 FFF7FEFF 		bl	UartDrv_SendStr
+ 802              	.LVL66:
+ 453:../Bsp/UartDrv/uart_drv.c **** 
+ 454:../Bsp/UartDrv/uart_drv.c ****     /* 第6步: 输出小数部分(如有) */
+ 455:../Bsp/UartDrv/uart_drv.c ****     if (decimalPlaces > 0)
+ 803              		.loc 1 455 5 view .LVU199
+ 804              		.loc 1 455 8 is_stmt 0 view .LVU200
+ 805 008c 1CB9     		cbnz	r4, .L74
+ 806              	.LVL67:
+ 807              	.L55:
+ 456:../Bsp/UartDrv/uart_drv.c ****     {
+ 457:../Bsp/UartDrv/uart_drv.c ****         UartDrv_SendStr(pDrv, ".");
+ 458:../Bsp/UartDrv/uart_drv.c ****         /* 前导零补齐: 如 3.05 的小数部分应为 "05" 而非 "5"
+ 459:../Bsp/UartDrv/uart_drv.c ****          * %0*lu 中的 * 由 decimalPlaces 指定宽度,0表示补零 */
+ 460:../Bsp/UartDrv/uart_drv.c ****         sprintf(buf, "%0*lu", decimalPlaces, (unsigned long)fracInt);
+ 461:../Bsp/UartDrv/uart_drv.c ****         UartDrv_SendStr(pDrv, buf);
+ 462:../Bsp/UartDrv/uart_drv.c ****     }
+ 463:../Bsp/UartDrv/uart_drv.c **** }
+ 808              		.loc 1 463 1 view .LVU201
+ 809 008e 04B0     		add	sp, sp, #16
+ 810              	.LCFI15:
+ 811              		.cfi_remember_state
+ 812              		.cfi_def_cfa_offset 24
+ 813              		@ sp needed
+ 814 0090 BDEC028B 		vldm	sp!, {d8}
+ 815              	.LCFI16:
+ 816              		.cfi_restore 80
+ 817              		.cfi_restore 81
+ 818              		.cfi_def_cfa_offset 16
+ 819 0094 70BD     		pop	{r4, r5, r6, pc}
+ 820              	.LVL68:
+ 821              	.L74:
+ 822              	.LCFI17:
+ 823              		.cfi_restore_state
+ 457:../Bsp/UartDrv/uart_drv.c ****         /* 前导零补齐: 如 3.05 的小数部分应为 "05" 而非 "5"
+ 824              		.loc 1 457 9 is_stmt 1 view .LVU202
+ 825 0096 0A49     		ldr	r1, .L75+8
+ 826 0098 2846     		mov	r0, r5
+ 827 009a FFF7FEFF 		bl	UartDrv_SendStr
+ 828              	.LVL69:
+ 460:../Bsp/UartDrv/uart_drv.c ****         UartDrv_SendStr(pDrv, buf);
+ 829              		.loc 1 460 9 view .LVU203
+ 830 009e 18EE103A 		vmov	r3, s16	@ int
+ 831 00a2 2246     		mov	r2, r4
+ 832 00a4 0749     		ldr	r1, .L75+12
+ 833 00a6 6846     		mov	r0, sp
+ 834 00a8 FFF7FEFF 		bl	sprintf
+ 835              	.LVL70:
+ 461:../Bsp/UartDrv/uart_drv.c ****     }
+ 836              		.loc 1 461 9 view .LVU204
+ 837 00ac 6946     		mov	r1, sp
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 26
+
+
+ 838 00ae 2846     		mov	r0, r5
+ 839 00b0 FFF7FEFF 		bl	UartDrv_SendStr
+ 840              	.LVL71:
+ 841 00b4 EBE7     		b	.L55
+ 842              	.LVL72:
+ 843              	.L70:
+ 844              	.LCFI18:
+ 845              		.cfi_def_cfa_offset 0
+ 846              		.cfi_restore 4
+ 847              		.cfi_restore 5
+ 848              		.cfi_restore 6
+ 849              		.cfi_restore 14
+ 850              		.cfi_restore 80
+ 851              		.cfi_restore 81
+ 461:../Bsp/UartDrv/uart_drv.c ****     }
+ 852              		.loc 1 461 9 is_stmt 0 view .LVU205
+ 853 00b6 7047     		bx	lr
+ 854              	.L76:
+ 855              		.align	2
+ 856              	.L75:
+ 857 00b8 00000000 		.word	.LC0
+ 858 00bc 04000000 		.word	.LC1
+ 859 00c0 08000000 		.word	.LC2
+ 860 00c4 0C000000 		.word	.LC3
+ 861              		.cfi_endproc
+ 862              	.LFE256:
+ 864              		.section	.text.UartDrv_OnRxEvent,"ax",%progbits
+ 865              		.align	1
+ 866              		.weak	UartDrv_OnRxEvent
+ 867              		.syntax unified
+ 868              		.thumb
+ 869              		.thumb_func
+ 871              	UartDrv_OnRxEvent:
+ 872              	.LVL73:
+ 873              	.LFB257:
+ 464:../Bsp/UartDrv/uart_drv.c **** 
+ 465:../Bsp/UartDrv/uart_drv.c **** /* ====== 默认串口接收回调 + 弱钩子 ======
+ 466:../Bsp/UartDrv/uart_drv.c ****  *
+ 467:../Bsp/UartDrv/uart_drv.c ****  * 默认回调 HAL_UARTEx_RxEventCallback 覆盖了HAL库中的__weak空实现,
+ 468:../Bsp/UartDrv/uart_drv.c ****  * 自动完成: 事件分发 → 弱钩子调用
+ 469:../Bsp/UartDrv/uart_drv.c ****  *
+ 470:../Bsp/UartDrv/uart_drv.c ****  * 用户自定义回调行为的两种方式:
+ 471:../Bsp/UartDrv/uart_drv.c ****  * 方式1(轻度): 重写 UartDrv_OnRxEvent() 弱钩子,在分发完成后追加处理
+ 472:../Bsp/UartDrv/uart_drv.c ****  * 方式2(完全): 定义 UART_DRV_NO_DEFAULT_CALLBACK 宏排除默认实现,
+ 473:../Bsp/UartDrv/uart_drv.c ****  *             然后在自己的.c文件中重写 HAL_UARTEx_RxEventCallback()
+ 474:../Bsp/UartDrv/uart_drv.c ****  */
+ 475:../Bsp/UartDrv/uart_drv.c **** 
+ 476:../Bsp/UartDrv/uart_drv.c **** /**
+ 477:../Bsp/UartDrv/uart_drv.c ****  * @brief  弱钩子函数,用户可在自己的.c文件中重写以追加处理逻辑
+ 478:../Bsp/UartDrv/uart_drv.c ****  * @param  huart 触发事件的UART句柄
+ 479:../Bsp/UartDrv/uart_drv.c ****  * @param  Size  接收数据长度
+ 480:../Bsp/UartDrv/uart_drv.c ****  * @note   默认空实现。用户重写示例:
+ 481:../Bsp/UartDrv/uart_drv.c ****  *         @code
+ 482:../Bsp/UartDrv/uart_drv.c ****  *         void UartDrv_OnRxEvent(UART_HandleTypeDef *huart, uint16_t Size) {
+ 483:../Bsp/UartDrv/uart_drv.c ****  *             // 追加的处理,如点亮LED、触发事件标志等
+ 484:../Bsp/UartDrv/uart_drv.c ****  *         }
+ 485:../Bsp/UartDrv/uart_drv.c ****  *         @endcode
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 27
+
+
+ 486:../Bsp/UartDrv/uart_drv.c ****  *         链接器会自动用用户的强定义替换此弱定义
+ 487:../Bsp/UartDrv/uart_drv.c ****  */
+ 488:../Bsp/UartDrv/uart_drv.c **** __WEAK void UartDrv_OnRxEvent(UART_HandleTypeDef *huart, uint16_t Size)
+ 489:../Bsp/UartDrv/uart_drv.c **** {
+ 874              		.loc 1 489 1 is_stmt 1 view -0
+ 875              		.cfi_startproc
+ 876              		@ args = 0, pretend = 0, frame = 0
+ 877              		@ frame_needed = 0, uses_anonymous_args = 0
+ 878              		@ link register save eliminated.
+ 490:../Bsp/UartDrv/uart_drv.c ****     (void)huart;  /* 抑制未使用参数警告 */
+ 879              		.loc 1 490 5 view .LVU207
+ 491:../Bsp/UartDrv/uart_drv.c ****     (void)Size;
+ 880              		.loc 1 491 5 view .LVU208
+ 492:../Bsp/UartDrv/uart_drv.c **** }
+ 881              		.loc 1 492 1 is_stmt 0 view .LVU209
+ 882 0000 7047     		bx	lr
+ 883              		.cfi_endproc
+ 884              	.LFE257:
+ 886              		.section	.text.HAL_UARTEx_RxEventCallback,"ax",%progbits
+ 887              		.align	1
+ 888              		.global	HAL_UARTEx_RxEventCallback
+ 889              		.syntax unified
+ 890              		.thumb
+ 891              		.thumb_func
+ 893              	HAL_UARTEx_RxEventCallback:
+ 894              	.LVL74:
+ 895              	.LFB258:
+ 493:../Bsp/UartDrv/uart_drv.c **** 
+ 494:../Bsp/UartDrv/uart_drv.c **** #ifndef UART_DRV_NO_DEFAULT_CALLBACK
+ 495:../Bsp/UartDrv/uart_drv.c **** 
+ 496:../Bsp/UartDrv/uart_drv.c **** /**
+ 497:../Bsp/UartDrv/uart_drv.c ****  * @brief  HAL串口接收事件回调函数的默认实现
+ 498:../Bsp/UartDrv/uart_drv.c ****  * @param  huart 触发事件的UART句柄(由HAL中断处理自动传入)
+ 499:../Bsp/UartDrv/uart_drv.c ****  * @param  Size  接收数据长度(由HAL中断处理自动传入)
+ 500:../Bsp/UartDrv/uart_drv.c ****  * @note   此函数为强定义,覆盖HAL库中的__weak空实现。
+ 501:../Bsp/UartDrv/uart_drv.c ****  *         处理流程:
+ 502:../Bsp/UartDrv/uart_drv.c ****  *         1. 调用 UartDrv_RxEventDispatch() 进行事件分发
+ 503:../Bsp/UartDrv/uart_drv.c ****  *            (查找实例→填充数据→调用用户回调→重启接收)
+ 504:../Bsp/UartDrv/uart_drv.c ****  *         2. 调用 UartDrv_OnRxEvent() 弱钩子供用户追加处理
+ 505:../Bsp/UartDrv/uart_drv.c ****  *
+ 506:../Bsp/UartDrv/uart_drv.c ****  *         如果用户需要完全自定义此回调(如多协议解析等),
+ 507:../Bsp/UartDrv/uart_drv.c ****  *         可在编译选项中定义 UART_DRV_NO_DEFAULT_CALLBACK 宏来排除此默认实现,
+ 508:../Bsp/UartDrv/uart_drv.c ****  *         然后在自己的.c文件中重写此函数。
+ 509:../Bsp/UartDrv/uart_drv.c ****  */
+ 510:../Bsp/UartDrv/uart_drv.c **** void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+ 511:../Bsp/UartDrv/uart_drv.c **** {
+ 896              		.loc 1 511 1 is_stmt 1 view -0
+ 897              		.cfi_startproc
+ 898              		@ args = 0, pretend = 0, frame = 0
+ 899              		@ frame_needed = 0, uses_anonymous_args = 0
+ 900              		.loc 1 511 1 is_stmt 0 view .LVU211
+ 901 0000 38B5     		push	{r3, r4, r5, lr}
+ 902              	.LCFI19:
+ 903              		.cfi_def_cfa_offset 16
+ 904              		.cfi_offset 3, -16
+ 905              		.cfi_offset 4, -12
+ 906              		.cfi_offset 5, -8
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 28
+
+
+ 907              		.cfi_offset 14, -4
+ 908 0002 0446     		mov	r4, r0
+ 909 0004 0D46     		mov	r5, r1
+ 512:../Bsp/UartDrv/uart_drv.c ****     /* 第1步: 分发接收事件到对应实例的回调函数 */
+ 513:../Bsp/UartDrv/uart_drv.c ****     UartDrv_RxEventDispatch(huart, Size);
+ 910              		.loc 1 513 5 is_stmt 1 view .LVU212
+ 911 0006 FFF7FEFF 		bl	UartDrv_RxEventDispatch
+ 912              	.LVL75:
+ 514:../Bsp/UartDrv/uart_drv.c ****     /* 第2步: 调用弱钩子,允许用户追加额外处理 */
+ 515:../Bsp/UartDrv/uart_drv.c ****     UartDrv_OnRxEvent(huart, Size);
+ 913              		.loc 1 515 5 view .LVU213
+ 914 000a 2946     		mov	r1, r5
+ 915 000c 2046     		mov	r0, r4
+ 916 000e FFF7FEFF 		bl	UartDrv_OnRxEvent
+ 917              	.LVL76:
+ 516:../Bsp/UartDrv/uart_drv.c **** }
+ 918              		.loc 1 516 1 is_stmt 0 view .LVU214
+ 919 0012 38BD     		pop	{r3, r4, r5, pc}
+ 920              		.loc 1 516 1 view .LVU215
+ 921              		.cfi_endproc
+ 922              	.LFE258:
+ 924              		.global	s_printfFloatForceRef
+ 925              		.section	.data.s_printfFloatForceRef,"aw"
+ 926              		.align	2
+ 929              	s_printfFloatForceRef:
+ 930 0000 00000000 		.word	_printf_float
+ 931              		.section	.bss.s_pDebugPort,"aw",%nobits
+ 932              		.align	2
+ 935              	s_pDebugPort:
+ 936 0000 00000000 		.space	4
+ 937              		.section	.bss.s_drvCount,"aw",%nobits
+ 940              	s_drvCount:
+ 941 0000 00       		.space	1
+ 942              		.section	.bss.s_drvInstances,"aw",%nobits
+ 943              		.align	2
+ 946              	s_drvInstances:
+ 947 0000 00000000 		.space	32
+ 947      00000000 
+ 947      00000000 
+ 947      00000000 
+ 947      00000000 
+ 948              		.text
+ 949              	.Letext0:
+ 950              		.file 2 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_default_t
+ 951              		.file 3 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h"
+ 952              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 953              		.file 5 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/lib/gcc/arm-none-eabi/14.2.1/include/std
+ 954              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 955              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 956              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
+ 957              		.file 9 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 958              		.file 10 "../Bsp/UartDrv/uart_drv.h"
+ 959              		.file 11 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/stdio.h"
+ 960              		.file 12 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/string.h"
+ 961              		.file 13 "<built-in>"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s 			page 29
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 uart_drv.c
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:21     .text.FindInstance:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:26     .text.FindInstance:00000000 FindInstance
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:82     .text.FindInstance:00000028 $d
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:940    .bss.s_drvCount:00000000 s_drvCount
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:946    .bss.s_drvInstances:00000000 s_drvInstances
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:88     .text._write:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:94     .text._write:00000000 _write
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:141    .text._write:00000024 $d
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:935    .bss.s_pDebugPort:00000000 s_pDebugPort
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:146    .text.UartDrv_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:152    .text.UartDrv_Init:00000000 UartDrv_Init
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:219    .text.UartDrv_Init:00000034 $d
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:225    .text.UartDrv_StartRecv:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:231    .text.UartDrv_StartRecv:00000000 UartDrv_StartRecv
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:296    .text.UartDrv_Send:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:302    .text.UartDrv_Send:00000000 UartDrv_Send
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:353    .text.UartDrv_SendStr:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:359    .text.UartDrv_SendStr:00000000 UartDrv_SendStr
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:415    .text.UartDrv_RegisterRxCb:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:421    .text.UartDrv_RegisterRxCb:00000000 UartDrv_RegisterRxCb
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:451    .text.UartDrv_RegisterRxQueue:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:457    .text.UartDrv_RegisterRxQueue:00000000 UartDrv_RegisterRxQueue
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:482    .text.UartDrv_RxEventDispatch:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:488    .text.UartDrv_RxEventDispatch:00000000 UartDrv_RxEventDispatch
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:602    .text.UartDrv_SetDebugPort:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:608    .text.UartDrv_SetDebugPort:00000000 UartDrv_SetDebugPort
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:625    .text.UartDrv_SetDebugPort:00000008 $d
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:630    .rodata.UartDrv_PrintFloat.str1.4:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:643    .text.UartDrv_PrintFloat:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:649    .text.UartDrv_PrintFloat:00000000 UartDrv_PrintFloat
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:857    .text.UartDrv_PrintFloat:000000b8 $d
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:865    .text.UartDrv_OnRxEvent:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:871    .text.UartDrv_OnRxEvent:00000000 UartDrv_OnRxEvent
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:887    .text.HAL_UARTEx_RxEventCallback:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:893    .text.HAL_UARTEx_RxEventCallback:00000000 HAL_UARTEx_RxEventCallback
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:929    .data.s_printfFloatForceRef:00000000 s_printfFloatForceRef
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:926    .data.s_printfFloatForceRef:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:932    .bss.s_pDebugPort:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:941    .bss.s_drvCount:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccjyRnjH.s:943    .bss.s_drvInstances:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_UART_Transmit
+memset
+HAL_UART_Receive_IT
+HAL_UART_AbortReceive_IT
+HAL_UARTEx_ReceiveToIdle_IT
+strlen
+memcpy
+osMessageQueuePut
+sprintf
+_printf_float

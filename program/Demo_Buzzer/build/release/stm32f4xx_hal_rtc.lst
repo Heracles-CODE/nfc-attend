@@ -1,0 +1,1501 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"stm32f4xx_hal_rtc.c"
+  16              		.text
+  17              		.section	.text.HAL_RTC_MspInit,"ax",%progbits
+  18              		.align	1
+  19              		.weak	HAL_RTC_MspInit
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	HAL_RTC_MspInit:
+  25              		@ args = 0, pretend = 0, frame = 0
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27              		@ link register save eliminated.
+  28 0000 7047     		bx	lr
+  30              		.section	.text.HAL_RTC_MspDeInit,"ax",%progbits
+  31              		.align	1
+  32              		.weak	HAL_RTC_MspDeInit
+  33              		.syntax unified
+  34              		.thumb
+  35              		.thumb_func
+  37              	HAL_RTC_MspDeInit:
+  38              		@ args = 0, pretend = 0, frame = 0
+  39              		@ frame_needed = 0, uses_anonymous_args = 0
+  40              		@ link register save eliminated.
+  41 0000 7047     		bx	lr
+  43              		.section	.text.HAL_RTC_DeactivateAlarm,"ax",%progbits
+  44              		.align	1
+  45              		.global	HAL_RTC_DeactivateAlarm
+  46              		.syntax unified
+  47              		.thumb
+  48              		.thumb_func
+  50              	HAL_RTC_DeactivateAlarm:
+  51              		@ args = 0, pretend = 0, frame = 0
+  52              		@ frame_needed = 0, uses_anonymous_args = 0
+  53 0000 38B5     		push	{r3, r4, r5, lr}
+  54 0002 037F     		ldrb	r3, [r0, #28]	@ zero_extendqisi2
+  55 0004 012B     		cmp	r3, #1
+  56 0006 55D0     		beq	.L11
+  57 0008 0446     		mov	r4, r0
+  58 000a 0123     		movs	r3, #1
+  59 000c 0377     		strb	r3, [r0, #28]
+  60 000e 0223     		movs	r3, #2
+  61 0010 4377     		strb	r3, [r0, #29]
+  62 0012 0368     		ldr	r3, [r0]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 2
+
+
+  63 0014 CA22     		movs	r2, #202
+  64 0016 5A62     		str	r2, [r3, #36]
+  65 0018 0368     		ldr	r3, [r0]
+  66 001a 5322     		movs	r2, #83
+  67 001c 5A62     		str	r2, [r3, #36]
+  68 001e B1F5807F 		cmp	r1, #256
+  69 0022 1FD0     		beq	.L13
+  70 0024 0268     		ldr	r2, [r0]
+  71 0026 9368     		ldr	r3, [r2, #8]
+  72 0028 23F40073 		bic	r3, r3, #512
+  73 002c 9360     		str	r3, [r2, #8]
+  74 002e 0268     		ldr	r2, [r0]
+  75 0030 9368     		ldr	r3, [r2, #8]
+  76 0032 23F40053 		bic	r3, r3, #8192
+  77 0036 9360     		str	r3, [r2, #8]
+  78 0038 FFF7FEFF 		bl	HAL_GetTick
+  79 003c 0546     		mov	r5, r0
+  80              	.L9:
+  81 003e 2368     		ldr	r3, [r4]
+  82 0040 DB68     		ldr	r3, [r3, #12]
+  83 0042 13F0020F 		tst	r3, #2
+  84 0046 2DD1     		bne	.L8
+  85 0048 FFF7FEFF 		bl	HAL_GetTick
+  86 004c 431B     		subs	r3, r0, r5
+  87 004e B3F57A7F 		cmp	r3, #1000
+  88 0052 F4D9     		bls	.L9
+  89 0054 2368     		ldr	r3, [r4]
+  90 0056 FF22     		movs	r2, #255
+  91 0058 5A62     		str	r2, [r3, #36]
+  92 005a 0320     		movs	r0, #3
+  93 005c 6077     		strb	r0, [r4, #29]
+  94 005e 0023     		movs	r3, #0
+  95 0060 2377     		strb	r3, [r4, #28]
+  96 0062 26E0     		b	.L4
+  97              	.L13:
+  98 0064 0268     		ldr	r2, [r0]
+  99 0066 9368     		ldr	r3, [r2, #8]
+ 100 0068 23F48073 		bic	r3, r3, #256
+ 101 006c 9360     		str	r3, [r2, #8]
+ 102 006e 0268     		ldr	r2, [r0]
+ 103 0070 9368     		ldr	r3, [r2, #8]
+ 104 0072 23F48053 		bic	r3, r3, #4096
+ 105 0076 9360     		str	r3, [r2, #8]
+ 106 0078 FFF7FEFF 		bl	HAL_GetTick
+ 107 007c 0546     		mov	r5, r0
+ 108              	.L6:
+ 109 007e 2368     		ldr	r3, [r4]
+ 110 0080 DB68     		ldr	r3, [r3, #12]
+ 111 0082 13F0010F 		tst	r3, #1
+ 112 0086 0DD1     		bne	.L8
+ 113 0088 FFF7FEFF 		bl	HAL_GetTick
+ 114 008c 401B     		subs	r0, r0, r5
+ 115 008e B0F57A7F 		cmp	r0, #1000
+ 116 0092 F4D9     		bls	.L6
+ 117 0094 2368     		ldr	r3, [r4]
+ 118 0096 FF22     		movs	r2, #255
+ 119 0098 5A62     		str	r2, [r3, #36]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 3
+
+
+ 120 009a 0320     		movs	r0, #3
+ 121 009c 6077     		strb	r0, [r4, #29]
+ 122 009e 0023     		movs	r3, #0
+ 123 00a0 2377     		strb	r3, [r4, #28]
+ 124 00a2 06E0     		b	.L4
+ 125              	.L8:
+ 126 00a4 2368     		ldr	r3, [r4]
+ 127 00a6 FF22     		movs	r2, #255
+ 128 00a8 5A62     		str	r2, [r3, #36]
+ 129 00aa 0123     		movs	r3, #1
+ 130 00ac 6377     		strb	r3, [r4, #29]
+ 131 00ae 0020     		movs	r0, #0
+ 132 00b0 2077     		strb	r0, [r4, #28]
+ 133              	.L4:
+ 134 00b2 38BD     		pop	{r3, r4, r5, pc}
+ 135              	.L11:
+ 136 00b4 0220     		movs	r0, #2
+ 137 00b6 FCE7     		b	.L4
+ 139              		.section	.text.HAL_RTC_AlarmAEventCallback,"ax",%progbits
+ 140              		.align	1
+ 141              		.weak	HAL_RTC_AlarmAEventCallback
+ 142              		.syntax unified
+ 143              		.thumb
+ 144              		.thumb_func
+ 146              	HAL_RTC_AlarmAEventCallback:
+ 147              		@ args = 0, pretend = 0, frame = 0
+ 148              		@ frame_needed = 0, uses_anonymous_args = 0
+ 149              		@ link register save eliminated.
+ 150 0000 7047     		bx	lr
+ 152              		.section	.text.HAL_RTC_AlarmIRQHandler,"ax",%progbits
+ 153              		.align	1
+ 154              		.global	HAL_RTC_AlarmIRQHandler
+ 155              		.syntax unified
+ 156              		.thumb
+ 157              		.thumb_func
+ 159              	HAL_RTC_AlarmIRQHandler:
+ 160              		@ args = 0, pretend = 0, frame = 0
+ 161              		@ frame_needed = 0, uses_anonymous_args = 0
+ 162 0000 10B5     		push	{r4, lr}
+ 163 0002 0446     		mov	r4, r0
+ 164 0004 144B     		ldr	r3, .L21
+ 165 0006 4FF40032 		mov	r2, #131072
+ 166 000a 5A61     		str	r2, [r3, #20]
+ 167 000c 0368     		ldr	r3, [r0]
+ 168 000e 9A68     		ldr	r2, [r3, #8]
+ 169 0010 12F4805F 		tst	r2, #4096
+ 170 0014 03D0     		beq	.L16
+ 171 0016 DA68     		ldr	r2, [r3, #12]
+ 172 0018 12F4807F 		tst	r2, #256
+ 173 001c 0BD1     		bne	.L19
+ 174              	.L16:
+ 175 001e 2368     		ldr	r3, [r4]
+ 176 0020 9A68     		ldr	r2, [r3, #8]
+ 177 0022 12F4005F 		tst	r2, #8192
+ 178 0026 03D0     		beq	.L17
+ 179 0028 DA68     		ldr	r2, [r3, #12]
+ 180 002a 12F4007F 		tst	r2, #512
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 4
+
+
+ 181 002e 0AD1     		bne	.L20
+ 182              	.L17:
+ 183 0030 0123     		movs	r3, #1
+ 184 0032 6377     		strb	r3, [r4, #29]
+ 185 0034 10BD     		pop	{r4, pc}
+ 186              	.L19:
+ 187 0036 DA68     		ldr	r2, [r3, #12]
+ 188 0038 D2B2     		uxtb	r2, r2
+ 189 003a 62F4C072 		orn	r2, r2, #384
+ 190 003e DA60     		str	r2, [r3, #12]
+ 191 0040 FFF7FEFF 		bl	HAL_RTC_AlarmAEventCallback
+ 192 0044 EBE7     		b	.L16
+ 193              	.L20:
+ 194 0046 DA68     		ldr	r2, [r3, #12]
+ 195 0048 D2B2     		uxtb	r2, r2
+ 196 004a 62F42072 		orn	r2, r2, #640
+ 197 004e DA60     		str	r2, [r3, #12]
+ 198 0050 2046     		mov	r0, r4
+ 199 0052 FFF7FEFF 		bl	HAL_RTCEx_AlarmBEventCallback
+ 200 0056 EBE7     		b	.L17
+ 201              	.L22:
+ 202              		.align	2
+ 203              	.L21:
+ 204 0058 003C0140 		.word	1073822720
+ 206              		.section	.text.HAL_RTC_PollForAlarmAEvent,"ax",%progbits
+ 207              		.align	1
+ 208              		.global	HAL_RTC_PollForAlarmAEvent
+ 209              		.syntax unified
+ 210              		.thumb
+ 211              		.thumb_func
+ 213              	HAL_RTC_PollForAlarmAEvent:
+ 214              		@ args = 0, pretend = 0, frame = 0
+ 215              		@ frame_needed = 0, uses_anonymous_args = 0
+ 216 0000 70B5     		push	{r4, r5, r6, lr}
+ 217 0002 0446     		mov	r4, r0
+ 218 0004 0D46     		mov	r5, r1
+ 219 0006 FFF7FEFF 		bl	HAL_GetTick
+ 220 000a 0646     		mov	r6, r0
+ 221              	.L25:
+ 222 000c 2368     		ldr	r3, [r4]
+ 223 000e DA68     		ldr	r2, [r3, #12]
+ 224 0010 12F4807F 		tst	r2, #256
+ 225 0014 0BD1     		bne	.L30
+ 226 0016 B5F1FF3F 		cmp	r5, #-1
+ 227 001a F7D0     		beq	.L25
+ 228 001c 25B1     		cbz	r5, .L26
+ 229 001e FFF7FEFF 		bl	HAL_GetTick
+ 230 0022 801B     		subs	r0, r0, r6
+ 231 0024 A842     		cmp	r0, r5
+ 232 0026 F1D9     		bls	.L25
+ 233              	.L26:
+ 234 0028 0320     		movs	r0, #3
+ 235 002a 6077     		strb	r0, [r4, #29]
+ 236 002c 07E0     		b	.L27
+ 237              	.L30:
+ 238 002e DA68     		ldr	r2, [r3, #12]
+ 239 0030 D2B2     		uxtb	r2, r2
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 5
+
+
+ 240 0032 62F4C072 		orn	r2, r2, #384
+ 241 0036 DA60     		str	r2, [r3, #12]
+ 242 0038 0123     		movs	r3, #1
+ 243 003a 6377     		strb	r3, [r4, #29]
+ 244 003c 0020     		movs	r0, #0
+ 245              	.L27:
+ 246 003e 70BD     		pop	{r4, r5, r6, pc}
+ 248              		.section	.text.HAL_RTC_WaitForSynchro,"ax",%progbits
+ 249              		.align	1
+ 250              		.global	HAL_RTC_WaitForSynchro
+ 251              		.syntax unified
+ 252              		.thumb
+ 253              		.thumb_func
+ 255              	HAL_RTC_WaitForSynchro:
+ 256              		@ args = 0, pretend = 0, frame = 0
+ 257              		@ frame_needed = 0, uses_anonymous_args = 0
+ 258 0000 38B5     		push	{r3, r4, r5, lr}
+ 259 0002 0446     		mov	r4, r0
+ 260 0004 0368     		ldr	r3, [r0]
+ 261 0006 0A4A     		ldr	r2, .L38
+ 262 0008 DA60     		str	r2, [r3, #12]
+ 263 000a FFF7FEFF 		bl	HAL_GetTick
+ 264 000e 0546     		mov	r5, r0
+ 265              	.L32:
+ 266 0010 2368     		ldr	r3, [r4]
+ 267 0012 DB68     		ldr	r3, [r3, #12]
+ 268 0014 13F0200F 		tst	r3, #32
+ 269 0018 07D1     		bne	.L37
+ 270 001a FFF7FEFF 		bl	HAL_GetTick
+ 271 001e 401B     		subs	r0, r0, r5
+ 272 0020 B0F57A7F 		cmp	r0, #1000
+ 273 0024 F4D9     		bls	.L32
+ 274 0026 0320     		movs	r0, #3
+ 275 0028 00E0     		b	.L33
+ 276              	.L37:
+ 277 002a 0020     		movs	r0, #0
+ 278              	.L33:
+ 279 002c 38BD     		pop	{r3, r4, r5, pc}
+ 280              	.L39:
+ 281 002e 00BF     		.align	2
+ 282              	.L38:
+ 283 0030 5F7F0100 		.word	98143
+ 285              		.section	.text.HAL_RTC_DST_Add1Hour,"ax",%progbits
+ 286              		.align	1
+ 287              		.global	HAL_RTC_DST_Add1Hour
+ 288              		.syntax unified
+ 289              		.thumb
+ 290              		.thumb_func
+ 292              	HAL_RTC_DST_Add1Hour:
+ 293              		@ args = 0, pretend = 0, frame = 0
+ 294              		@ frame_needed = 0, uses_anonymous_args = 0
+ 295              		@ link register save eliminated.
+ 296 0000 0368     		ldr	r3, [r0]
+ 297 0002 CA22     		movs	r2, #202
+ 298 0004 5A62     		str	r2, [r3, #36]
+ 299 0006 0368     		ldr	r3, [r0]
+ 300 0008 5322     		movs	r2, #83
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 6
+
+
+ 301 000a 5A62     		str	r2, [r3, #36]
+ 302 000c 0268     		ldr	r2, [r0]
+ 303 000e 9368     		ldr	r3, [r2, #8]
+ 304 0010 43F48033 		orr	r3, r3, #65536
+ 305 0014 9360     		str	r3, [r2, #8]
+ 306 0016 0368     		ldr	r3, [r0]
+ 307 0018 FF22     		movs	r2, #255
+ 308 001a 5A62     		str	r2, [r3, #36]
+ 309 001c 7047     		bx	lr
+ 311              		.section	.text.HAL_RTC_DST_Sub1Hour,"ax",%progbits
+ 312              		.align	1
+ 313              		.global	HAL_RTC_DST_Sub1Hour
+ 314              		.syntax unified
+ 315              		.thumb
+ 316              		.thumb_func
+ 318              	HAL_RTC_DST_Sub1Hour:
+ 319              		@ args = 0, pretend = 0, frame = 0
+ 320              		@ frame_needed = 0, uses_anonymous_args = 0
+ 321              		@ link register save eliminated.
+ 322 0000 0368     		ldr	r3, [r0]
+ 323 0002 CA22     		movs	r2, #202
+ 324 0004 5A62     		str	r2, [r3, #36]
+ 325 0006 0368     		ldr	r3, [r0]
+ 326 0008 5322     		movs	r2, #83
+ 327 000a 5A62     		str	r2, [r3, #36]
+ 328 000c 0268     		ldr	r2, [r0]
+ 329 000e 9368     		ldr	r3, [r2, #8]
+ 330 0010 43F40033 		orr	r3, r3, #131072
+ 331 0014 9360     		str	r3, [r2, #8]
+ 332 0016 0368     		ldr	r3, [r0]
+ 333 0018 FF22     		movs	r2, #255
+ 334 001a 5A62     		str	r2, [r3, #36]
+ 335 001c 7047     		bx	lr
+ 337              		.section	.text.HAL_RTC_DST_SetStoreOperation,"ax",%progbits
+ 338              		.align	1
+ 339              		.global	HAL_RTC_DST_SetStoreOperation
+ 340              		.syntax unified
+ 341              		.thumb
+ 342              		.thumb_func
+ 344              	HAL_RTC_DST_SetStoreOperation:
+ 345              		@ args = 0, pretend = 0, frame = 0
+ 346              		@ frame_needed = 0, uses_anonymous_args = 0
+ 347              		@ link register save eliminated.
+ 348 0000 0368     		ldr	r3, [r0]
+ 349 0002 CA22     		movs	r2, #202
+ 350 0004 5A62     		str	r2, [r3, #36]
+ 351 0006 0368     		ldr	r3, [r0]
+ 352 0008 5322     		movs	r2, #83
+ 353 000a 5A62     		str	r2, [r3, #36]
+ 354 000c 0268     		ldr	r2, [r0]
+ 355 000e 9368     		ldr	r3, [r2, #8]
+ 356 0010 43F48023 		orr	r3, r3, #262144
+ 357 0014 9360     		str	r3, [r2, #8]
+ 358 0016 0368     		ldr	r3, [r0]
+ 359 0018 FF22     		movs	r2, #255
+ 360 001a 5A62     		str	r2, [r3, #36]
+ 361 001c 7047     		bx	lr
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 7
+
+
+ 363              		.section	.text.HAL_RTC_DST_ClearStoreOperation,"ax",%progbits
+ 364              		.align	1
+ 365              		.global	HAL_RTC_DST_ClearStoreOperation
+ 366              		.syntax unified
+ 367              		.thumb
+ 368              		.thumb_func
+ 370              	HAL_RTC_DST_ClearStoreOperation:
+ 371              		@ args = 0, pretend = 0, frame = 0
+ 372              		@ frame_needed = 0, uses_anonymous_args = 0
+ 373              		@ link register save eliminated.
+ 374 0000 0368     		ldr	r3, [r0]
+ 375 0002 CA22     		movs	r2, #202
+ 376 0004 5A62     		str	r2, [r3, #36]
+ 377 0006 0368     		ldr	r3, [r0]
+ 378 0008 5322     		movs	r2, #83
+ 379 000a 5A62     		str	r2, [r3, #36]
+ 380 000c 0268     		ldr	r2, [r0]
+ 381 000e 9368     		ldr	r3, [r2, #8]
+ 382 0010 23F48023 		bic	r3, r3, #262144
+ 383 0014 9360     		str	r3, [r2, #8]
+ 384 0016 0368     		ldr	r3, [r0]
+ 385 0018 FF22     		movs	r2, #255
+ 386 001a 5A62     		str	r2, [r3, #36]
+ 387 001c 7047     		bx	lr
+ 389              		.section	.text.HAL_RTC_DST_ReadStoreOperation,"ax",%progbits
+ 390              		.align	1
+ 391              		.global	HAL_RTC_DST_ReadStoreOperation
+ 392              		.syntax unified
+ 393              		.thumb
+ 394              		.thumb_func
+ 396              	HAL_RTC_DST_ReadStoreOperation:
+ 397              		@ args = 0, pretend = 0, frame = 0
+ 398              		@ frame_needed = 0, uses_anonymous_args = 0
+ 399              		@ link register save eliminated.
+ 400 0000 0368     		ldr	r3, [r0]
+ 401 0002 9868     		ldr	r0, [r3, #8]
+ 402 0004 00F48020 		and	r0, r0, #262144
+ 403 0008 7047     		bx	lr
+ 405              		.section	.text.HAL_RTC_GetState,"ax",%progbits
+ 406              		.align	1
+ 407              		.global	HAL_RTC_GetState
+ 408              		.syntax unified
+ 409              		.thumb
+ 410              		.thumb_func
+ 412              	HAL_RTC_GetState:
+ 413              		@ args = 0, pretend = 0, frame = 0
+ 414              		@ frame_needed = 0, uses_anonymous_args = 0
+ 415              		@ link register save eliminated.
+ 416 0000 407F     		ldrb	r0, [r0, #29]	@ zero_extendqisi2
+ 417 0002 7047     		bx	lr
+ 419              		.section	.text.RTC_EnterInitMode,"ax",%progbits
+ 420              		.align	1
+ 421              		.global	RTC_EnterInitMode
+ 422              		.syntax unified
+ 423              		.thumb
+ 424              		.thumb_func
+ 426              	RTC_EnterInitMode:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 8
+
+
+ 427              		@ args = 0, pretend = 0, frame = 0
+ 428              		@ frame_needed = 0, uses_anonymous_args = 0
+ 429 0000 70B5     		push	{r4, r5, r6, lr}
+ 430 0002 0368     		ldr	r3, [r0]
+ 431 0004 DA68     		ldr	r2, [r3, #12]
+ 432 0006 12F0400F 		tst	r2, #64
+ 433 000a 02D0     		beq	.L53
+ 434 000c 0025     		movs	r5, #0
+ 435              	.L47:
+ 436 000e 2846     		mov	r0, r5
+ 437 0010 70BD     		pop	{r4, r5, r6, pc}
+ 438              	.L53:
+ 439 0012 0446     		mov	r4, r0
+ 440 0014 DA68     		ldr	r2, [r3, #12]
+ 441 0016 42F08002 		orr	r2, r2, #128
+ 442 001a DA60     		str	r2, [r3, #12]
+ 443 001c FFF7FEFF 		bl	HAL_GetTick
+ 444 0020 0646     		mov	r6, r0
+ 445 0022 0025     		movs	r5, #0
+ 446              	.L49:
+ 447 0024 2368     		ldr	r3, [r4]
+ 448 0026 DB68     		ldr	r3, [r3, #12]
+ 449 0028 13F0400F 		tst	r3, #64
+ 450 002c EFD1     		bne	.L47
+ 451 002e 002D     		cmp	r5, #0
+ 452 0030 EDD1     		bne	.L47
+ 453 0032 FFF7FEFF 		bl	HAL_GetTick
+ 454 0036 831B     		subs	r3, r0, r6
+ 455 0038 B3F57A7F 		cmp	r3, #1000
+ 456 003c F2D9     		bls	.L49
+ 457 003e 0423     		movs	r3, #4
+ 458 0040 6377     		strb	r3, [r4, #29]
+ 459 0042 0125     		movs	r5, #1
+ 460 0044 EEE7     		b	.L49
+ 462              		.section	.text.RTC_ExitInitMode,"ax",%progbits
+ 463              		.align	1
+ 464              		.global	RTC_ExitInitMode
+ 465              		.syntax unified
+ 466              		.thumb
+ 467              		.thumb_func
+ 469              	RTC_ExitInitMode:
+ 470              		@ args = 0, pretend = 0, frame = 0
+ 471              		@ frame_needed = 0, uses_anonymous_args = 0
+ 472 0000 0268     		ldr	r2, [r0]
+ 473 0002 D368     		ldr	r3, [r2, #12]
+ 474 0004 23F08003 		bic	r3, r3, #128
+ 475 0008 D360     		str	r3, [r2, #12]
+ 476 000a 0368     		ldr	r3, [r0]
+ 477 000c 9B68     		ldr	r3, [r3, #8]
+ 478 000e 13F0200F 		tst	r3, #32
+ 479 0012 01D0     		beq	.L61
+ 480 0014 0020     		movs	r0, #0
+ 481 0016 7047     		bx	lr
+ 482              	.L61:
+ 483 0018 10B5     		push	{r4, lr}
+ 484 001a 0446     		mov	r4, r0
+ 485 001c FFF7FEFF 		bl	HAL_RTC_WaitForSynchro
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 9
+
+
+ 486 0020 10B1     		cbz	r0, .L55
+ 487 0022 0423     		movs	r3, #4
+ 488 0024 6377     		strb	r3, [r4, #29]
+ 489 0026 0120     		movs	r0, #1
+ 490              	.L55:
+ 491 0028 10BD     		pop	{r4, pc}
+ 493              		.section	.text.HAL_RTC_Init,"ax",%progbits
+ 494              		.align	1
+ 495              		.global	HAL_RTC_Init
+ 496              		.syntax unified
+ 497              		.thumb
+ 498              		.thumb_func
+ 500              	HAL_RTC_Init:
+ 501              		@ args = 0, pretend = 0, frame = 0
+ 502              		@ frame_needed = 0, uses_anonymous_args = 0
+ 503 0000 0028     		cmp	r0, #0
+ 504 0002 4AD0     		beq	.L67
+ 505 0004 10B5     		push	{r4, lr}
+ 506 0006 0446     		mov	r4, r0
+ 507 0008 437F     		ldrb	r3, [r0, #29]	@ zero_extendqisi2
+ 508 000a 53B1     		cbz	r3, .L73
+ 509              	.L64:
+ 510 000c 0223     		movs	r3, #2
+ 511 000e 6377     		strb	r3, [r4, #29]
+ 512 0010 2368     		ldr	r3, [r4]
+ 513 0012 DA68     		ldr	r2, [r3, #12]
+ 514 0014 12F0100F 		tst	r2, #16
+ 515 0018 07D0     		beq	.L74
+ 516 001a 0020     		movs	r0, #0
+ 517              	.L65:
+ 518 001c 0123     		movs	r3, #1
+ 519 001e 6377     		strb	r3, [r4, #29]
+ 520              	.L63:
+ 521 0020 10BD     		pop	{r4, pc}
+ 522              	.L73:
+ 523 0022 0377     		strb	r3, [r0, #28]
+ 524 0024 FFF7FEFF 		bl	HAL_RTC_MspInit
+ 525 0028 F0E7     		b	.L64
+ 526              	.L74:
+ 527 002a CA22     		movs	r2, #202
+ 528 002c 5A62     		str	r2, [r3, #36]
+ 529 002e 2368     		ldr	r3, [r4]
+ 530 0030 5322     		movs	r2, #83
+ 531 0032 5A62     		str	r2, [r3, #36]
+ 532 0034 2046     		mov	r0, r4
+ 533 0036 FFF7FEFF 		bl	RTC_EnterInitMode
+ 534 003a 28B1     		cbz	r0, .L75
+ 535              	.L66:
+ 536 003c 2368     		ldr	r3, [r4]
+ 537 003e FF22     		movs	r2, #255
+ 538 0040 5A62     		str	r2, [r3, #36]
+ 539 0042 0028     		cmp	r0, #0
+ 540 0044 ECD1     		bne	.L63
+ 541 0046 E9E7     		b	.L65
+ 542              	.L75:
+ 543 0048 2268     		ldr	r2, [r4]
+ 544 004a 9368     		ldr	r3, [r2, #8]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 10
+
+
+ 545 004c 23F4E003 		bic	r3, r3, #7340032
+ 546 0050 23F04003 		bic	r3, r3, #64
+ 547 0054 9360     		str	r3, [r2, #8]
+ 548 0056 2168     		ldr	r1, [r4]
+ 549 0058 8A68     		ldr	r2, [r1, #8]
+ 550 005a 6368     		ldr	r3, [r4, #4]
+ 551 005c 2069     		ldr	r0, [r4, #16]
+ 552 005e 0343     		orrs	r3, r3, r0
+ 553 0060 6069     		ldr	r0, [r4, #20]
+ 554 0062 0343     		orrs	r3, r3, r0
+ 555 0064 1343     		orrs	r3, r3, r2
+ 556 0066 8B60     		str	r3, [r1, #8]
+ 557 0068 2368     		ldr	r3, [r4]
+ 558 006a E268     		ldr	r2, [r4, #12]
+ 559 006c 1A61     		str	r2, [r3, #16]
+ 560 006e 2268     		ldr	r2, [r4]
+ 561 0070 1369     		ldr	r3, [r2, #16]
+ 562 0072 A168     		ldr	r1, [r4, #8]
+ 563 0074 43EA0143 		orr	r3, r3, r1, lsl #16
+ 564 0078 1361     		str	r3, [r2, #16]
+ 565 007a 2046     		mov	r0, r4
+ 566 007c FFF7FEFF 		bl	RTC_ExitInitMode
+ 567 0080 0028     		cmp	r0, #0
+ 568 0082 DBD1     		bne	.L66
+ 569 0084 2268     		ldr	r2, [r4]
+ 570 0086 136C     		ldr	r3, [r2, #64]
+ 571 0088 23F48023 		bic	r3, r3, #262144
+ 572 008c 1364     		str	r3, [r2, #64]
+ 573 008e 2268     		ldr	r2, [r4]
+ 574 0090 136C     		ldr	r3, [r2, #64]
+ 575 0092 A169     		ldr	r1, [r4, #24]
+ 576 0094 0B43     		orrs	r3, r3, r1
+ 577 0096 1364     		str	r3, [r2, #64]
+ 578 0098 D0E7     		b	.L66
+ 579              	.L67:
+ 580 009a 0120     		movs	r0, #1
+ 581 009c 7047     		bx	lr
+ 583              		.section	.text.HAL_RTC_DeInit,"ax",%progbits
+ 584              		.align	1
+ 585              		.global	HAL_RTC_DeInit
+ 586              		.syntax unified
+ 587              		.thumb
+ 588              		.thumb_func
+ 590              	HAL_RTC_DeInit:
+ 591              		@ args = 0, pretend = 0, frame = 0
+ 592              		@ frame_needed = 0, uses_anonymous_args = 0
+ 593 0000 70B5     		push	{r4, r5, r6, lr}
+ 594 0002 0446     		mov	r4, r0
+ 595 0004 0223     		movs	r3, #2
+ 596 0006 4377     		strb	r3, [r0, #29]
+ 597 0008 0368     		ldr	r3, [r0]
+ 598 000a CA22     		movs	r2, #202
+ 599 000c 5A62     		str	r2, [r3, #36]
+ 600 000e 0368     		ldr	r3, [r0]
+ 601 0010 5322     		movs	r2, #83
+ 602 0012 5A62     		str	r2, [r3, #36]
+ 603 0014 FFF7FEFF 		bl	RTC_EnterInitMode
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 11
+
+
+ 604 0018 0546     		mov	r5, r0
+ 605 001a 38B1     		cbz	r0, .L80
+ 606              	.L77:
+ 607 001c 2368     		ldr	r3, [r4]
+ 608 001e FF22     		movs	r2, #255
+ 609 0020 5A62     		str	r2, [r3, #36]
+ 610 0022 35B3     		cbz	r5, .L81
+ 611              	.L78:
+ 612 0024 0023     		movs	r3, #0
+ 613 0026 2377     		strb	r3, [r4, #28]
+ 614 0028 2846     		mov	r0, r5
+ 615 002a 70BD     		pop	{r4, r5, r6, pc}
+ 616              	.L80:
+ 617 002c 2268     		ldr	r2, [r4]
+ 618 002e 0023     		movs	r3, #0
+ 619 0030 1360     		str	r3, [r2]
+ 620 0032 2268     		ldr	r2, [r4]
+ 621 0034 42F20111 		movw	r1, #8449
+ 622 0038 5160     		str	r1, [r2, #4]
+ 623 003a 2268     		ldr	r2, [r4]
+ 624 003c 9360     		str	r3, [r2, #8]
+ 625 003e 2268     		ldr	r2, [r4]
+ 626 0040 4FF6FF71 		movw	r1, #65535
+ 627 0044 5161     		str	r1, [r2, #20]
+ 628 0046 2268     		ldr	r2, [r4]
+ 629 0048 0E49     		ldr	r1, .L82
+ 630 004a 1161     		str	r1, [r2, #16]
+ 631 004c 2268     		ldr	r2, [r4]
+ 632 004e 9361     		str	r3, [r2, #24]
+ 633 0050 2268     		ldr	r2, [r4]
+ 634 0052 D361     		str	r3, [r2, #28]
+ 635 0054 2268     		ldr	r2, [r4]
+ 636 0056 1362     		str	r3, [r2, #32]
+ 637 0058 2268     		ldr	r2, [r4]
+ 638 005a D363     		str	r3, [r2, #60]
+ 639 005c 2268     		ldr	r2, [r4]
+ 640 005e D362     		str	r3, [r2, #44]
+ 641 0060 2268     		ldr	r2, [r4]
+ 642 0062 5364     		str	r3, [r2, #68]
+ 643 0064 2268     		ldr	r2, [r4]
+ 644 0066 9364     		str	r3, [r2, #72]
+ 645 0068 2046     		mov	r0, r4
+ 646 006a FFF7FEFF 		bl	RTC_ExitInitMode
+ 647 006e 0546     		mov	r5, r0
+ 648 0070 D4E7     		b	.L77
+ 649              	.L81:
+ 650 0072 2368     		ldr	r3, [r4]
+ 651 0074 0026     		movs	r6, #0
+ 652 0076 1E64     		str	r6, [r3, #64]
+ 653 0078 2046     		mov	r0, r4
+ 654 007a FFF7FEFF 		bl	HAL_RTC_MspDeInit
+ 655 007e 6677     		strb	r6, [r4, #29]
+ 656 0080 D0E7     		b	.L78
+ 657              	.L83:
+ 658 0082 00BF     		.align	2
+ 659              	.L82:
+ 660 0084 FF007F00 		.word	8323327
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 12
+
+
+ 662              		.section	.text.RTC_ByteToBcd2,"ax",%progbits
+ 663              		.align	1
+ 664              		.global	RTC_ByteToBcd2
+ 665              		.syntax unified
+ 666              		.thumb
+ 667              		.thumb_func
+ 669              	RTC_ByteToBcd2:
+ 670              		@ args = 0, pretend = 0, frame = 0
+ 671              		@ frame_needed = 0, uses_anonymous_args = 0
+ 672              		@ link register save eliminated.
+ 673 0000 0023     		movs	r3, #0
+ 674 0002 02E0     		b	.L85
+ 675              	.L86:
+ 676 0004 0133     		adds	r3, r3, #1
+ 677 0006 0A38     		subs	r0, r0, #10
+ 678 0008 C0B2     		uxtb	r0, r0
+ 679              	.L85:
+ 680 000a 0928     		cmp	r0, #9
+ 681 000c FAD8     		bhi	.L86
+ 682 000e 1B01     		lsls	r3, r3, #4
+ 683 0010 DBB2     		uxtb	r3, r3
+ 684 0012 1843     		orrs	r0, r0, r3
+ 685 0014 7047     		bx	lr
+ 687              		.section	.text.HAL_RTC_SetTime,"ax",%progbits
+ 688              		.align	1
+ 689              		.global	HAL_RTC_SetTime
+ 690              		.syntax unified
+ 691              		.thumb
+ 692              		.thumb_func
+ 694              	HAL_RTC_SetTime:
+ 695              		@ args = 0, pretend = 0, frame = 0
+ 696              		@ frame_needed = 0, uses_anonymous_args = 0
+ 697 0000 037F     		ldrb	r3, [r0, #28]	@ zero_extendqisi2
+ 698 0002 012B     		cmp	r3, #1
+ 699 0004 5AD0     		beq	.L94
+ 700 0006 70B5     		push	{r4, r5, r6, lr}
+ 701 0008 0446     		mov	r4, r0
+ 702 000a 0E46     		mov	r6, r1
+ 703 000c 0123     		movs	r3, #1
+ 704 000e 0377     		strb	r3, [r0, #28]
+ 705 0010 0223     		movs	r3, #2
+ 706 0012 4377     		strb	r3, [r0, #29]
+ 707 0014 32BB     		cbnz	r2, .L89
+ 708 0016 0368     		ldr	r3, [r0]
+ 709 0018 9B68     		ldr	r3, [r3, #8]
+ 710 001a 13F0400F 		tst	r3, #64
+ 711 001e 01D1     		bne	.L90
+ 712 0020 0023     		movs	r3, #0
+ 713 0022 CB70     		strb	r3, [r1, #3]
+ 714              	.L90:
+ 715 0024 3078     		ldrb	r0, [r6]	@ zero_extendqisi2
+ 716 0026 FFF7FEFF 		bl	RTC_ByteToBcd2
+ 717 002a 0504     		lsls	r5, r0, #16
+ 718 002c 7078     		ldrb	r0, [r6, #1]	@ zero_extendqisi2
+ 719 002e FFF7FEFF 		bl	RTC_ByteToBcd2
+ 720 0032 45EA0025 		orr	r5, r5, r0, lsl #8
+ 721 0036 B078     		ldrb	r0, [r6, #2]	@ zero_extendqisi2
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 13
+
+
+ 722 0038 FFF7FEFF 		bl	RTC_ByteToBcd2
+ 723 003c 0543     		orrs	r5, r5, r0
+ 724 003e F378     		ldrb	r3, [r6, #3]	@ zero_extendqisi2
+ 725 0040 45EA8355 		orr	r5, r5, r3, lsl #22
+ 726              	.L91:
+ 727 0044 2368     		ldr	r3, [r4]
+ 728 0046 CA22     		movs	r2, #202
+ 729 0048 5A62     		str	r2, [r3, #36]
+ 730 004a 2368     		ldr	r3, [r4]
+ 731 004c 5322     		movs	r2, #83
+ 732 004e 5A62     		str	r2, [r3, #36]
+ 733 0050 2046     		mov	r0, r4
+ 734 0052 FFF7FEFF 		bl	RTC_EnterInitMode
+ 735 0056 B8B1     		cbz	r0, .L99
+ 736              	.L93:
+ 737 0058 2368     		ldr	r3, [r4]
+ 738 005a FF22     		movs	r2, #255
+ 739 005c 5A62     		str	r2, [r3, #36]
+ 740 005e 0023     		movs	r3, #0
+ 741 0060 2377     		strb	r3, [r4, #28]
+ 742 0062 70BD     		pop	{r4, r5, r6, pc}
+ 743              	.L89:
+ 744 0064 0368     		ldr	r3, [r0]
+ 745 0066 9B68     		ldr	r3, [r3, #8]
+ 746 0068 13F0400F 		tst	r3, #64
+ 747 006c 01D1     		bne	.L92
+ 748 006e 0023     		movs	r3, #0
+ 749 0070 CB70     		strb	r3, [r1, #3]
+ 750              	.L92:
+ 751 0072 3378     		ldrb	r3, [r6]	@ zero_extendqisi2
+ 752 0074 7578     		ldrb	r5, [r6, #1]	@ zero_extendqisi2
+ 753 0076 2D02     		lsls	r5, r5, #8
+ 754 0078 45EA0345 		orr	r5, r5, r3, lsl #16
+ 755 007c B378     		ldrb	r3, [r6, #2]	@ zero_extendqisi2
+ 756 007e 1D43     		orrs	r5, r5, r3
+ 757 0080 F378     		ldrb	r3, [r6, #3]	@ zero_extendqisi2
+ 758 0082 45EA8355 		orr	r5, r5, r3, lsl #22
+ 759 0086 DDE7     		b	.L91
+ 760              	.L99:
+ 761 0088 2368     		ldr	r3, [r4]
+ 762 008a 05F07F35 		and	r5, r5, #2139062143
+ 763 008e 25F0FE45 		bic	r5, r5, #2130706432
+ 764 0092 1D60     		str	r5, [r3]
+ 765 0094 2268     		ldr	r2, [r4]
+ 766 0096 9368     		ldr	r3, [r2, #8]
+ 767 0098 23F48023 		bic	r3, r3, #262144
+ 768 009c 9360     		str	r3, [r2, #8]
+ 769 009e 2168     		ldr	r1, [r4]
+ 770 00a0 8B68     		ldr	r3, [r1, #8]
+ 771 00a2 F268     		ldr	r2, [r6, #12]
+ 772 00a4 3069     		ldr	r0, [r6, #16]
+ 773 00a6 0243     		orrs	r2, r2, r0
+ 774 00a8 1343     		orrs	r3, r3, r2
+ 775 00aa 8B60     		str	r3, [r1, #8]
+ 776 00ac 2046     		mov	r0, r4
+ 777 00ae FFF7FEFF 		bl	RTC_ExitInitMode
+ 778 00b2 0028     		cmp	r0, #0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 14
+
+
+ 779 00b4 D0D1     		bne	.L93
+ 780 00b6 0123     		movs	r3, #1
+ 781 00b8 6377     		strb	r3, [r4, #29]
+ 782 00ba CDE7     		b	.L93
+ 783              	.L94:
+ 784 00bc 0220     		movs	r0, #2
+ 785 00be 7047     		bx	lr
+ 787              		.section	.text.HAL_RTC_SetDate,"ax",%progbits
+ 788              		.align	1
+ 789              		.global	HAL_RTC_SetDate
+ 790              		.syntax unified
+ 791              		.thumb
+ 792              		.thumb_func
+ 794              	HAL_RTC_SetDate:
+ 795              		@ args = 0, pretend = 0, frame = 0
+ 796              		@ frame_needed = 0, uses_anonymous_args = 0
+ 797 0000 037F     		ldrb	r3, [r0, #28]	@ zero_extendqisi2
+ 798 0002 012B     		cmp	r3, #1
+ 799 0004 48D0     		beq	.L106
+ 800 0006 70B5     		push	{r4, r5, r6, lr}
+ 801 0008 0446     		mov	r4, r0
+ 802 000a 0E46     		mov	r6, r1
+ 803 000c 0123     		movs	r3, #1
+ 804 000e 0377     		strb	r3, [r0, #28]
+ 805 0010 0223     		movs	r3, #2
+ 806 0012 4377     		strb	r3, [r0, #29]
+ 807 0014 CAB1     		cbz	r2, .L102
+ 808 0016 CB78     		ldrb	r3, [r1, #3]	@ zero_extendqisi2
+ 809 0018 4D78     		ldrb	r5, [r1, #1]	@ zero_extendqisi2
+ 810 001a 2D02     		lsls	r5, r5, #8
+ 811 001c 45EA0345 		orr	r5, r5, r3, lsl #16
+ 812 0020 8B78     		ldrb	r3, [r1, #2]	@ zero_extendqisi2
+ 813 0022 1D43     		orrs	r5, r5, r3
+ 814 0024 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 815 0026 45EA4335 		orr	r5, r5, r3, lsl #13
+ 816              	.L103:
+ 817 002a 2368     		ldr	r3, [r4]
+ 818 002c CA22     		movs	r2, #202
+ 819 002e 5A62     		str	r2, [r3, #36]
+ 820 0030 2368     		ldr	r3, [r4]
+ 821 0032 5322     		movs	r2, #83
+ 822 0034 5A62     		str	r2, [r3, #36]
+ 823 0036 2046     		mov	r0, r4
+ 824 0038 FFF7FEFF 		bl	RTC_EnterInitMode
+ 825 003c F0B1     		cbz	r0, .L111
+ 826              	.L105:
+ 827 003e 2368     		ldr	r3, [r4]
+ 828 0040 FF22     		movs	r2, #255
+ 829 0042 5A62     		str	r2, [r3, #36]
+ 830 0044 0023     		movs	r3, #0
+ 831 0046 2377     		strb	r3, [r4, #28]
+ 832 0048 70BD     		pop	{r4, r5, r6, pc}
+ 833              	.L102:
+ 834 004a 4B78     		ldrb	r3, [r1, #1]	@ zero_extendqisi2
+ 835 004c 13F0100F 		tst	r3, #16
+ 836 0050 03D0     		beq	.L104
+ 837 0052 03F0EF03 		and	r3, r3, #239
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 15
+
+
+ 838 0056 0A33     		adds	r3, r3, #10
+ 839 0058 4B70     		strb	r3, [r1, #1]
+ 840              	.L104:
+ 841 005a F078     		ldrb	r0, [r6, #3]	@ zero_extendqisi2
+ 842 005c FFF7FEFF 		bl	RTC_ByteToBcd2
+ 843 0060 0504     		lsls	r5, r0, #16
+ 844 0062 7078     		ldrb	r0, [r6, #1]	@ zero_extendqisi2
+ 845 0064 FFF7FEFF 		bl	RTC_ByteToBcd2
+ 846 0068 45EA0025 		orr	r5, r5, r0, lsl #8
+ 847 006c B078     		ldrb	r0, [r6, #2]	@ zero_extendqisi2
+ 848 006e FFF7FEFF 		bl	RTC_ByteToBcd2
+ 849 0072 0543     		orrs	r5, r5, r0
+ 850 0074 3378     		ldrb	r3, [r6]	@ zero_extendqisi2
+ 851 0076 45EA4335 		orr	r5, r5, r3, lsl #13
+ 852 007a D6E7     		b	.L103
+ 853              	.L111:
+ 854 007c 2368     		ldr	r3, [r4]
+ 855 007e 25F07F45 		bic	r5, r5, #-16777216
+ 856 0082 25F0C005 		bic	r5, r5, #192
+ 857 0086 5D60     		str	r5, [r3, #4]
+ 858 0088 2046     		mov	r0, r4
+ 859 008a FFF7FEFF 		bl	RTC_ExitInitMode
+ 860 008e 0028     		cmp	r0, #0
+ 861 0090 D5D1     		bne	.L105
+ 862 0092 0123     		movs	r3, #1
+ 863 0094 6377     		strb	r3, [r4, #29]
+ 864 0096 D2E7     		b	.L105
+ 865              	.L106:
+ 866 0098 0220     		movs	r0, #2
+ 867 009a 7047     		bx	lr
+ 869              		.section	.text.HAL_RTC_SetAlarm,"ax",%progbits
+ 870              		.align	1
+ 871              		.global	HAL_RTC_SetAlarm
+ 872              		.syntax unified
+ 873              		.thumb
+ 874              		.thumb_func
+ 876              	HAL_RTC_SetAlarm:
+ 877              		@ args = 0, pretend = 0, frame = 0
+ 878              		@ frame_needed = 0, uses_anonymous_args = 0
+ 879 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 880 0002 037F     		ldrb	r3, [r0, #28]	@ zero_extendqisi2
+ 881 0004 012B     		cmp	r3, #1
+ 882 0006 00F0B580 		beq	.L124
+ 883 000a 0446     		mov	r4, r0
+ 884 000c 0E46     		mov	r6, r1
+ 885 000e 0123     		movs	r3, #1
+ 886 0010 0377     		strb	r3, [r0, #28]
+ 887 0012 0223     		movs	r3, #2
+ 888 0014 4377     		strb	r3, [r0, #29]
+ 889 0016 002A     		cmp	r2, #0
+ 890 0018 53D1     		bne	.L114
+ 891 001a 0368     		ldr	r3, [r0]
+ 892 001c 9B68     		ldr	r3, [r3, #8]
+ 893 001e 13F0400F 		tst	r3, #64
+ 894 0022 01D1     		bne	.L115
+ 895 0024 0023     		movs	r3, #0
+ 896 0026 CB70     		strb	r3, [r1, #3]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 16
+
+
+ 897              	.L115:
+ 898 0028 3078     		ldrb	r0, [r6]	@ zero_extendqisi2
+ 899 002a FFF7FEFF 		bl	RTC_ByteToBcd2
+ 900 002e 0504     		lsls	r5, r0, #16
+ 901 0030 7078     		ldrb	r0, [r6, #1]	@ zero_extendqisi2
+ 902 0032 FFF7FEFF 		bl	RTC_ByteToBcd2
+ 903 0036 45EA0025 		orr	r5, r5, r0, lsl #8
+ 904 003a B078     		ldrb	r0, [r6, #2]	@ zero_extendqisi2
+ 905 003c FFF7FEFF 		bl	RTC_ByteToBcd2
+ 906 0040 0543     		orrs	r5, r5, r0
+ 907 0042 F378     		ldrb	r3, [r6, #3]	@ zero_extendqisi2
+ 908 0044 45EA8355 		orr	r5, r5, r3, lsl #22
+ 909 0048 96F82000 		ldrb	r0, [r6, #32]	@ zero_extendqisi2
+ 910 004c FFF7FEFF 		bl	RTC_ByteToBcd2
+ 911 0050 45EA0065 		orr	r5, r5, r0, lsl #24
+ 912 0054 F369     		ldr	r3, [r6, #28]
+ 913 0056 1D43     		orrs	r5, r5, r3
+ 914 0058 7369     		ldr	r3, [r6, #20]
+ 915 005a 1D43     		orrs	r5, r5, r3
+ 916              	.L116:
+ 917 005c 7768     		ldr	r7, [r6, #4]
+ 918 005e B369     		ldr	r3, [r6, #24]
+ 919 0060 1F43     		orrs	r7, r7, r3
+ 920 0062 2368     		ldr	r3, [r4]
+ 921 0064 CA22     		movs	r2, #202
+ 922 0066 5A62     		str	r2, [r3, #36]
+ 923 0068 2368     		ldr	r3, [r4]
+ 924 006a 5322     		movs	r2, #83
+ 925 006c 5A62     		str	r2, [r3, #36]
+ 926 006e 736A     		ldr	r3, [r6, #36]
+ 927 0070 B3F5807F 		cmp	r3, #256
+ 928 0074 3FD0     		beq	.L126
+ 929 0076 2268     		ldr	r2, [r4]
+ 930 0078 9368     		ldr	r3, [r2, #8]
+ 931 007a 23F40073 		bic	r3, r3, #512
+ 932 007e 9360     		str	r3, [r2, #8]
+ 933 0080 2268     		ldr	r2, [r4]
+ 934 0082 9368     		ldr	r3, [r2, #8]
+ 935 0084 23F40053 		bic	r3, r3, #8192
+ 936 0088 9360     		str	r3, [r2, #8]
+ 937 008a 2268     		ldr	r2, [r4]
+ 938 008c D368     		ldr	r3, [r2, #12]
+ 939 008e DBB2     		uxtb	r3, r3
+ 940 0090 63F42073 		orn	r3, r3, #640
+ 941 0094 D360     		str	r3, [r2, #12]
+ 942 0096 FFF7FEFF 		bl	HAL_GetTick
+ 943 009a 0646     		mov	r6, r0
+ 944              	.L122:
+ 945 009c 2368     		ldr	r3, [r4]
+ 946 009e DA68     		ldr	r2, [r3, #12]
+ 947 00a0 12F0020F 		tst	r2, #2
+ 948 00a4 56D1     		bne	.L127
+ 949 00a6 FFF7FEFF 		bl	HAL_GetTick
+ 950 00aa 801B     		subs	r0, r0, r6
+ 951 00ac B0F57A7F 		cmp	r0, #1000
+ 952 00b0 F4D9     		bls	.L122
+ 953 00b2 2368     		ldr	r3, [r4]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 17
+
+
+ 954 00b4 FF22     		movs	r2, #255
+ 955 00b6 5A62     		str	r2, [r3, #36]
+ 956 00b8 0320     		movs	r0, #3
+ 957 00ba 6077     		strb	r0, [r4, #29]
+ 958 00bc 0023     		movs	r3, #0
+ 959 00be 2377     		strb	r3, [r4, #28]
+ 960 00c0 57E0     		b	.L113
+ 961              	.L114:
+ 962 00c2 0368     		ldr	r3, [r0]
+ 963 00c4 9B68     		ldr	r3, [r3, #8]
+ 964 00c6 13F0400F 		tst	r3, #64
+ 965 00ca 01D1     		bne	.L117
+ 966 00cc 0023     		movs	r3, #0
+ 967 00ce CB70     		strb	r3, [r1, #3]
+ 968              	.L117:
+ 969 00d0 3378     		ldrb	r3, [r6]	@ zero_extendqisi2
+ 970 00d2 7578     		ldrb	r5, [r6, #1]	@ zero_extendqisi2
+ 971 00d4 2D02     		lsls	r5, r5, #8
+ 972 00d6 45EA0345 		orr	r5, r5, r3, lsl #16
+ 973 00da B378     		ldrb	r3, [r6, #2]	@ zero_extendqisi2
+ 974 00dc 1D43     		orrs	r5, r5, r3
+ 975 00de F378     		ldrb	r3, [r6, #3]	@ zero_extendqisi2
+ 976 00e0 45EA8355 		orr	r5, r5, r3, lsl #22
+ 977 00e4 96F82030 		ldrb	r3, [r6, #32]	@ zero_extendqisi2
+ 978 00e8 45EA0365 		orr	r5, r5, r3, lsl #24
+ 979 00ec F369     		ldr	r3, [r6, #28]
+ 980 00ee 1D43     		orrs	r5, r5, r3
+ 981 00f0 7369     		ldr	r3, [r6, #20]
+ 982 00f2 1D43     		orrs	r5, r5, r3
+ 983 00f4 B2E7     		b	.L116
+ 984              	.L126:
+ 985 00f6 2268     		ldr	r2, [r4]
+ 986 00f8 9368     		ldr	r3, [r2, #8]
+ 987 00fa 23F48073 		bic	r3, r3, #256
+ 988 00fe 9360     		str	r3, [r2, #8]
+ 989 0100 2268     		ldr	r2, [r4]
+ 990 0102 9368     		ldr	r3, [r2, #8]
+ 991 0104 23F48053 		bic	r3, r3, #4096
+ 992 0108 9360     		str	r3, [r2, #8]
+ 993 010a 2268     		ldr	r2, [r4]
+ 994 010c D368     		ldr	r3, [r2, #12]
+ 995 010e DBB2     		uxtb	r3, r3
+ 996 0110 63F4C073 		orn	r3, r3, #384
+ 997 0114 D360     		str	r3, [r2, #12]
+ 998 0116 FFF7FEFF 		bl	HAL_GetTick
+ 999 011a 0646     		mov	r6, r0
+ 1000              	.L119:
+ 1001 011c 2368     		ldr	r3, [r4]
+ 1002 011e DA68     		ldr	r2, [r3, #12]
+ 1003 0120 12F0010F 		tst	r2, #1
+ 1004 0124 0DD1     		bne	.L128
+ 1005 0126 FFF7FEFF 		bl	HAL_GetTick
+ 1006 012a 801B     		subs	r0, r0, r6
+ 1007 012c B0F57A7F 		cmp	r0, #1000
+ 1008 0130 F4D9     		bls	.L119
+ 1009 0132 2368     		ldr	r3, [r4]
+ 1010 0134 FF22     		movs	r2, #255
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 18
+
+
+ 1011 0136 5A62     		str	r2, [r3, #36]
+ 1012 0138 0320     		movs	r0, #3
+ 1013 013a 6077     		strb	r0, [r4, #29]
+ 1014 013c 0023     		movs	r3, #0
+ 1015 013e 2377     		strb	r3, [r4, #28]
+ 1016 0140 17E0     		b	.L113
+ 1017              	.L128:
+ 1018 0142 DD61     		str	r5, [r3, #28]
+ 1019 0144 2368     		ldr	r3, [r4]
+ 1020 0146 5F64     		str	r7, [r3, #68]
+ 1021 0148 2268     		ldr	r2, [r4]
+ 1022 014a 9368     		ldr	r3, [r2, #8]
+ 1023 014c 43F48073 		orr	r3, r3, #256
+ 1024 0150 9360     		str	r3, [r2, #8]
+ 1025 0152 07E0     		b	.L121
+ 1026              	.L127:
+ 1027 0154 1D62     		str	r5, [r3, #32]
+ 1028 0156 2368     		ldr	r3, [r4]
+ 1029 0158 9F64     		str	r7, [r3, #72]
+ 1030 015a 2268     		ldr	r2, [r4]
+ 1031 015c 9368     		ldr	r3, [r2, #8]
+ 1032 015e 43F40073 		orr	r3, r3, #512
+ 1033 0162 9360     		str	r3, [r2, #8]
+ 1034              	.L121:
+ 1035 0164 2368     		ldr	r3, [r4]
+ 1036 0166 FF22     		movs	r2, #255
+ 1037 0168 5A62     		str	r2, [r3, #36]
+ 1038 016a 0123     		movs	r3, #1
+ 1039 016c 6377     		strb	r3, [r4, #29]
+ 1040 016e 0020     		movs	r0, #0
+ 1041 0170 2077     		strb	r0, [r4, #28]
+ 1042              	.L113:
+ 1043 0172 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 1044              	.L124:
+ 1045 0174 0220     		movs	r0, #2
+ 1046 0176 FCE7     		b	.L113
+ 1048              		.section	.text.HAL_RTC_SetAlarm_IT,"ax",%progbits
+ 1049              		.align	1
+ 1050              		.global	HAL_RTC_SetAlarm_IT
+ 1051              		.syntax unified
+ 1052              		.thumb
+ 1053              		.thumb_func
+ 1055              	HAL_RTC_SetAlarm_IT:
+ 1056              		@ args = 0, pretend = 0, frame = 8
+ 1057              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1058 0000 70B5     		push	{r4, r5, r6, lr}
+ 1059 0002 82B0     		sub	sp, sp, #8
+ 1060 0004 0D46     		mov	r5, r1
+ 1061 0006 694B     		ldr	r3, .L146
+ 1062 0008 1B68     		ldr	r3, [r3]
+ 1063 000a 6949     		ldr	r1, .L146+4
+ 1064 000c A1FB0313 		umull	r1, r3, r1, r3
+ 1065 0010 DB0A     		lsrs	r3, r3, #11
+ 1066 0012 4FF47A71 		mov	r1, #1000
+ 1067 0016 01FB03F3 		mul	r3, r1, r3
+ 1068 001a 0193     		str	r3, [sp, #4]
+ 1069 001c 037F     		ldrb	r3, [r0, #28]	@ zero_extendqisi2
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 19
+
+
+ 1070 001e 012B     		cmp	r3, #1
+ 1071 0020 00F0C280 		beq	.L141
+ 1072 0024 0446     		mov	r4, r0
+ 1073 0026 0123     		movs	r3, #1
+ 1074 0028 0377     		strb	r3, [r0, #28]
+ 1075 002a 0223     		movs	r3, #2
+ 1076 002c 4377     		strb	r3, [r0, #29]
+ 1077 002e 002A     		cmp	r2, #0
+ 1078 0030 6DD1     		bne	.L131
+ 1079 0032 0368     		ldr	r3, [r0]
+ 1080 0034 9B68     		ldr	r3, [r3, #8]
+ 1081 0036 13F0400F 		tst	r3, #64
+ 1082 003a 01D1     		bne	.L132
+ 1083 003c 0023     		movs	r3, #0
+ 1084 003e EB70     		strb	r3, [r5, #3]
+ 1085              	.L132:
+ 1086 0040 2878     		ldrb	r0, [r5]	@ zero_extendqisi2
+ 1087 0042 FFF7FEFF 		bl	RTC_ByteToBcd2
+ 1088 0046 0604     		lsls	r6, r0, #16
+ 1089 0048 6878     		ldrb	r0, [r5, #1]	@ zero_extendqisi2
+ 1090 004a FFF7FEFF 		bl	RTC_ByteToBcd2
+ 1091 004e 46EA0026 		orr	r6, r6, r0, lsl #8
+ 1092 0052 A878     		ldrb	r0, [r5, #2]	@ zero_extendqisi2
+ 1093 0054 FFF7FEFF 		bl	RTC_ByteToBcd2
+ 1094 0058 0643     		orrs	r6, r6, r0
+ 1095 005a EB78     		ldrb	r3, [r5, #3]	@ zero_extendqisi2
+ 1096 005c 46EA8356 		orr	r6, r6, r3, lsl #22
+ 1097 0060 95F82000 		ldrb	r0, [r5, #32]	@ zero_extendqisi2
+ 1098 0064 FFF7FEFF 		bl	RTC_ByteToBcd2
+ 1099 0068 46EA0062 		orr	r2, r6, r0, lsl #24
+ 1100 006c EB69     		ldr	r3, [r5, #28]
+ 1101 006e 1A43     		orrs	r2, r2, r3
+ 1102 0070 6B69     		ldr	r3, [r5, #20]
+ 1103 0072 1A43     		orrs	r2, r2, r3
+ 1104              	.L133:
+ 1105 0074 6868     		ldr	r0, [r5, #4]
+ 1106 0076 AB69     		ldr	r3, [r5, #24]
+ 1107 0078 1843     		orrs	r0, r0, r3
+ 1108 007a 2368     		ldr	r3, [r4]
+ 1109 007c CA21     		movs	r1, #202
+ 1110 007e 5962     		str	r1, [r3, #36]
+ 1111 0080 2368     		ldr	r3, [r4]
+ 1112 0082 5321     		movs	r1, #83
+ 1113 0084 5962     		str	r1, [r3, #36]
+ 1114 0086 6B6A     		ldr	r3, [r5, #36]
+ 1115 0088 B3F5807F 		cmp	r3, #256
+ 1116 008c 59D0     		beq	.L143
+ 1117 008e 2168     		ldr	r1, [r4]
+ 1118 0090 8B68     		ldr	r3, [r1, #8]
+ 1119 0092 23F40073 		bic	r3, r3, #512
+ 1120 0096 8B60     		str	r3, [r1, #8]
+ 1121 0098 2168     		ldr	r1, [r4]
+ 1122 009a CB68     		ldr	r3, [r1, #12]
+ 1123 009c DBB2     		uxtb	r3, r3
+ 1124 009e 63F42073 		orn	r3, r3, #640
+ 1125 00a2 CB60     		str	r3, [r1, #12]
+ 1126 00a4 414B     		ldr	r3, .L146
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 20
+
+
+ 1127 00a6 1B68     		ldr	r3, [r3]
+ 1128 00a8 4149     		ldr	r1, .L146+4
+ 1129 00aa A1FB0313 		umull	r1, r3, r1, r3
+ 1130 00ae DB0A     		lsrs	r3, r3, #11
+ 1131 00b0 4FF47A71 		mov	r1, #1000
+ 1132 00b4 01FB03F3 		mul	r3, r1, r3
+ 1133 00b8 0193     		str	r3, [sp, #4]
+ 1134              	.L140:
+ 1135 00ba 019B     		ldr	r3, [sp, #4]
+ 1136 00bc 013B     		subs	r3, r3, #1
+ 1137 00be 0193     		str	r3, [sp, #4]
+ 1138 00c0 019B     		ldr	r3, [sp, #4]
+ 1139 00c2 002B     		cmp	r3, #0
+ 1140 00c4 68D0     		beq	.L144
+ 1141 00c6 2368     		ldr	r3, [r4]
+ 1142 00c8 D968     		ldr	r1, [r3, #12]
+ 1143 00ca 11F0020F 		tst	r1, #2
+ 1144 00ce F4D0     		beq	.L140
+ 1145 00d0 1A62     		str	r2, [r3, #32]
+ 1146 00d2 2368     		ldr	r3, [r4]
+ 1147 00d4 9864     		str	r0, [r3, #72]
+ 1148 00d6 2268     		ldr	r2, [r4]
+ 1149 00d8 9368     		ldr	r3, [r2, #8]
+ 1150 00da 43F40073 		orr	r3, r3, #512
+ 1151 00de 9360     		str	r3, [r2, #8]
+ 1152 00e0 2268     		ldr	r2, [r4]
+ 1153 00e2 9368     		ldr	r3, [r2, #8]
+ 1154 00e4 43F40053 		orr	r3, r3, #8192
+ 1155 00e8 9360     		str	r3, [r2, #8]
+ 1156              	.L138:
+ 1157 00ea 324B     		ldr	r3, .L146+8
+ 1158 00ec 1A68     		ldr	r2, [r3]
+ 1159 00ee 42F40032 		orr	r2, r2, #131072
+ 1160 00f2 1A60     		str	r2, [r3]
+ 1161 00f4 9A68     		ldr	r2, [r3, #8]
+ 1162 00f6 42F40032 		orr	r2, r2, #131072
+ 1163 00fa 9A60     		str	r2, [r3, #8]
+ 1164 00fc 2368     		ldr	r3, [r4]
+ 1165 00fe FF22     		movs	r2, #255
+ 1166 0100 5A62     		str	r2, [r3, #36]
+ 1167 0102 0123     		movs	r3, #1
+ 1168 0104 6377     		strb	r3, [r4, #29]
+ 1169 0106 0020     		movs	r0, #0
+ 1170 0108 2077     		strb	r0, [r4, #28]
+ 1171              	.L130:
+ 1172 010a 02B0     		add	sp, sp, #8
+ 1173              		@ sp needed
+ 1174 010c 70BD     		pop	{r4, r5, r6, pc}
+ 1175              	.L131:
+ 1176 010e 0368     		ldr	r3, [r0]
+ 1177 0110 9B68     		ldr	r3, [r3, #8]
+ 1178 0112 13F0400F 		tst	r3, #64
+ 1179 0116 01D1     		bne	.L134
+ 1180 0118 0023     		movs	r3, #0
+ 1181 011a EB70     		strb	r3, [r5, #3]
+ 1182              	.L134:
+ 1183 011c 2B78     		ldrb	r3, [r5]	@ zero_extendqisi2
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 21
+
+
+ 1184 011e 6A78     		ldrb	r2, [r5, #1]	@ zero_extendqisi2
+ 1185 0120 1202     		lsls	r2, r2, #8
+ 1186 0122 42EA0342 		orr	r2, r2, r3, lsl #16
+ 1187 0126 AB78     		ldrb	r3, [r5, #2]	@ zero_extendqisi2
+ 1188 0128 1A43     		orrs	r2, r2, r3
+ 1189 012a EB78     		ldrb	r3, [r5, #3]	@ zero_extendqisi2
+ 1190 012c 42EA8352 		orr	r2, r2, r3, lsl #22
+ 1191 0130 95F82030 		ldrb	r3, [r5, #32]	@ zero_extendqisi2
+ 1192 0134 42EA0362 		orr	r2, r2, r3, lsl #24
+ 1193 0138 EB69     		ldr	r3, [r5, #28]
+ 1194 013a 1A43     		orrs	r2, r2, r3
+ 1195 013c 6B69     		ldr	r3, [r5, #20]
+ 1196 013e 1A43     		orrs	r2, r2, r3
+ 1197 0140 98E7     		b	.L133
+ 1198              	.L143:
+ 1199 0142 2168     		ldr	r1, [r4]
+ 1200 0144 8B68     		ldr	r3, [r1, #8]
+ 1201 0146 23F48073 		bic	r3, r3, #256
+ 1202 014a 8B60     		str	r3, [r1, #8]
+ 1203 014c 2168     		ldr	r1, [r4]
+ 1204 014e CB68     		ldr	r3, [r1, #12]
+ 1205 0150 DBB2     		uxtb	r3, r3
+ 1206 0152 63F4C073 		orn	r3, r3, #384
+ 1207 0156 CB60     		str	r3, [r1, #12]
+ 1208              	.L137:
+ 1209 0158 019B     		ldr	r3, [sp, #4]
+ 1210 015a 013B     		subs	r3, r3, #1
+ 1211 015c 0193     		str	r3, [sp, #4]
+ 1212 015e 019B     		ldr	r3, [sp, #4]
+ 1213 0160 93B1     		cbz	r3, .L145
+ 1214 0162 2368     		ldr	r3, [r4]
+ 1215 0164 D968     		ldr	r1, [r3, #12]
+ 1216 0166 11F0010F 		tst	r1, #1
+ 1217 016a F5D0     		beq	.L137
+ 1218 016c DA61     		str	r2, [r3, #28]
+ 1219 016e 2368     		ldr	r3, [r4]
+ 1220 0170 5864     		str	r0, [r3, #68]
+ 1221 0172 2268     		ldr	r2, [r4]
+ 1222 0174 9368     		ldr	r3, [r2, #8]
+ 1223 0176 43F48073 		orr	r3, r3, #256
+ 1224 017a 9360     		str	r3, [r2, #8]
+ 1225 017c 2268     		ldr	r2, [r4]
+ 1226 017e 9368     		ldr	r3, [r2, #8]
+ 1227 0180 43F48053 		orr	r3, r3, #4096
+ 1228 0184 9360     		str	r3, [r2, #8]
+ 1229 0186 B0E7     		b	.L138
+ 1230              	.L145:
+ 1231 0188 2368     		ldr	r3, [r4]
+ 1232 018a FF22     		movs	r2, #255
+ 1233 018c 5A62     		str	r2, [r3, #36]
+ 1234 018e 0320     		movs	r0, #3
+ 1235 0190 6077     		strb	r0, [r4, #29]
+ 1236 0192 0023     		movs	r3, #0
+ 1237 0194 2377     		strb	r3, [r4, #28]
+ 1238 0196 B8E7     		b	.L130
+ 1239              	.L144:
+ 1240 0198 2368     		ldr	r3, [r4]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 22
+
+
+ 1241 019a FF22     		movs	r2, #255
+ 1242 019c 5A62     		str	r2, [r3, #36]
+ 1243 019e 0320     		movs	r0, #3
+ 1244 01a0 6077     		strb	r0, [r4, #29]
+ 1245 01a2 0023     		movs	r3, #0
+ 1246 01a4 2377     		strb	r3, [r4, #28]
+ 1247 01a6 B0E7     		b	.L130
+ 1248              	.L141:
+ 1249 01a8 0220     		movs	r0, #2
+ 1250 01aa AEE7     		b	.L130
+ 1251              	.L147:
+ 1252              		.align	2
+ 1253              	.L146:
+ 1254 01ac 00000000 		.word	SystemCoreClock
+ 1255 01b0 D34D6210 		.word	274877907
+ 1256 01b4 003C0140 		.word	1073822720
+ 1258              		.section	.text.RTC_Bcd2ToByte,"ax",%progbits
+ 1259              		.align	1
+ 1260              		.global	RTC_Bcd2ToByte
+ 1261              		.syntax unified
+ 1262              		.thumb
+ 1263              		.thumb_func
+ 1265              	RTC_Bcd2ToByte:
+ 1266              		@ args = 0, pretend = 0, frame = 0
+ 1267              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1268              		@ link register save eliminated.
+ 1269 0000 0309     		lsrs	r3, r0, #4
+ 1270 0002 03EB8303 		add	r3, r3, r3, lsl #2
+ 1271 0006 00F00F00 		and	r0, r0, #15
+ 1272 000a 00EB4300 		add	r0, r0, r3, lsl #1
+ 1273 000e C0B2     		uxtb	r0, r0
+ 1274 0010 7047     		bx	lr
+ 1276              		.section	.text.HAL_RTC_GetTime,"ax",%progbits
+ 1277              		.align	1
+ 1278              		.global	HAL_RTC_GetTime
+ 1279              		.syntax unified
+ 1280              		.thumb
+ 1281              		.thumb_func
+ 1283              	HAL_RTC_GetTime:
+ 1284              		@ args = 0, pretend = 0, frame = 0
+ 1285              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1286 0000 70B5     		push	{r4, r5, r6, lr}
+ 1287 0002 0368     		ldr	r3, [r0]
+ 1288 0004 9B6A     		ldr	r3, [r3, #40]
+ 1289 0006 4B60     		str	r3, [r1, #4]
+ 1290 0008 0368     		ldr	r3, [r0]
+ 1291 000a 1B69     		ldr	r3, [r3, #16]
+ 1292 000c C3F30E03 		ubfx	r3, r3, #0, #15
+ 1293 0010 8B60     		str	r3, [r1, #8]
+ 1294 0012 0368     		ldr	r3, [r0]
+ 1295 0014 1B68     		ldr	r3, [r3]
+ 1296 0016 C3F30540 		ubfx	r0, r3, #16, #6
+ 1297 001a 0870     		strb	r0, [r1]
+ 1298 001c C3F30626 		ubfx	r6, r3, #8, #7
+ 1299 0020 4E70     		strb	r6, [r1, #1]
+ 1300 0022 03F07F05 		and	r5, r3, #127
+ 1301 0026 8D70     		strb	r5, [r1, #2]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 23
+
+
+ 1302 0028 C3F38053 		ubfx	r3, r3, #22, #1
+ 1303 002c CB70     		strb	r3, [r1, #3]
+ 1304 002e 5AB9     		cbnz	r2, .L150
+ 1305 0030 0C46     		mov	r4, r1
+ 1306 0032 FFF7FEFF 		bl	RTC_Bcd2ToByte
+ 1307 0036 2070     		strb	r0, [r4]
+ 1308 0038 3046     		mov	r0, r6
+ 1309 003a FFF7FEFF 		bl	RTC_Bcd2ToByte
+ 1310 003e 6070     		strb	r0, [r4, #1]
+ 1311 0040 2846     		mov	r0, r5
+ 1312 0042 FFF7FEFF 		bl	RTC_Bcd2ToByte
+ 1313 0046 A070     		strb	r0, [r4, #2]
+ 1314              	.L150:
+ 1315 0048 0020     		movs	r0, #0
+ 1316 004a 70BD     		pop	{r4, r5, r6, pc}
+ 1318              		.section	.text.HAL_RTC_GetDate,"ax",%progbits
+ 1319              		.align	1
+ 1320              		.global	HAL_RTC_GetDate
+ 1321              		.syntax unified
+ 1322              		.thumb
+ 1323              		.thumb_func
+ 1325              	HAL_RTC_GetDate:
+ 1326              		@ args = 0, pretend = 0, frame = 0
+ 1327              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1328 0000 70B5     		push	{r4, r5, r6, lr}
+ 1329 0002 0368     		ldr	r3, [r0]
+ 1330 0004 5B68     		ldr	r3, [r3, #4]
+ 1331 0006 C3F30740 		ubfx	r0, r3, #16, #8
+ 1332 000a C870     		strb	r0, [r1, #3]
+ 1333 000c C3F30426 		ubfx	r6, r3, #8, #5
+ 1334 0010 4E70     		strb	r6, [r1, #1]
+ 1335 0012 03F03F05 		and	r5, r3, #63
+ 1336 0016 8D70     		strb	r5, [r1, #2]
+ 1337 0018 C3F34233 		ubfx	r3, r3, #13, #3
+ 1338 001c 0B70     		strb	r3, [r1]
+ 1339 001e 5AB9     		cbnz	r2, .L153
+ 1340 0020 0C46     		mov	r4, r1
+ 1341 0022 FFF7FEFF 		bl	RTC_Bcd2ToByte
+ 1342 0026 E070     		strb	r0, [r4, #3]
+ 1343 0028 3046     		mov	r0, r6
+ 1344 002a FFF7FEFF 		bl	RTC_Bcd2ToByte
+ 1345 002e 6070     		strb	r0, [r4, #1]
+ 1346 0030 2846     		mov	r0, r5
+ 1347 0032 FFF7FEFF 		bl	RTC_Bcd2ToByte
+ 1348 0036 A070     		strb	r0, [r4, #2]
+ 1349              	.L153:
+ 1350 0038 0020     		movs	r0, #0
+ 1351 003a 70BD     		pop	{r4, r5, r6, pc}
+ 1353              		.section	.text.HAL_RTC_GetAlarm,"ax",%progbits
+ 1354              		.align	1
+ 1355              		.global	HAL_RTC_GetAlarm
+ 1356              		.syntax unified
+ 1357              		.thumb
+ 1358              		.thumb_func
+ 1360              	HAL_RTC_GetAlarm:
+ 1361              		@ args = 0, pretend = 0, frame = 0
+ 1362              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 24
+
+
+ 1363 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 1364 0002 0C46     		mov	r4, r1
+ 1365 0004 B2F5807F 		cmp	r2, #256
+ 1366 0008 31D0     		beq	.L160
+ 1367 000a 4FF40072 		mov	r2, #512
+ 1368 000e 4A62     		str	r2, [r1, #36]
+ 1369 0010 0168     		ldr	r1, [r0]
+ 1370 0012 0A6A     		ldr	r2, [r1, #32]
+ 1371 0014 896C     		ldr	r1, [r1, #72]
+ 1372 0016 C1F30E01 		ubfx	r1, r1, #0, #15
+ 1373              	.L157:
+ 1374 001a C2F30540 		ubfx	r0, r2, #16, #6
+ 1375 001e 2070     		strb	r0, [r4]
+ 1376 0020 C2F30627 		ubfx	r7, r2, #8, #7
+ 1377 0024 6770     		strb	r7, [r4, #1]
+ 1378 0026 02F07F06 		and	r6, r2, #127
+ 1379 002a A670     		strb	r6, [r4, #2]
+ 1380 002c C2F38055 		ubfx	r5, r2, #22, #1
+ 1381 0030 E570     		strb	r5, [r4, #3]
+ 1382 0032 6160     		str	r1, [r4, #4]
+ 1383 0034 C2F30565 		ubfx	r5, r2, #24, #6
+ 1384 0038 84F82050 		strb	r5, [r4, #32]
+ 1385 003c 02F08041 		and	r1, r2, #1073741824
+ 1386 0040 E161     		str	r1, [r4, #28]
+ 1387 0042 02F08032 		and	r2, r2, #-2139062144
+ 1388 0046 6261     		str	r2, [r4, #20]
+ 1389 0048 7BB9     		cbnz	r3, .L158
+ 1390 004a FFF7FEFF 		bl	RTC_Bcd2ToByte
+ 1391 004e 2070     		strb	r0, [r4]
+ 1392 0050 3846     		mov	r0, r7
+ 1393 0052 FFF7FEFF 		bl	RTC_Bcd2ToByte
+ 1394 0056 6070     		strb	r0, [r4, #1]
+ 1395 0058 3046     		mov	r0, r6
+ 1396 005a FFF7FEFF 		bl	RTC_Bcd2ToByte
+ 1397 005e A070     		strb	r0, [r4, #2]
+ 1398 0060 2846     		mov	r0, r5
+ 1399 0062 FFF7FEFF 		bl	RTC_Bcd2ToByte
+ 1400 0066 84F82000 		strb	r0, [r4, #32]
+ 1401              	.L158:
+ 1402 006a 0020     		movs	r0, #0
+ 1403 006c F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 1404              	.L160:
+ 1405 006e 4A62     		str	r2, [r1, #36]
+ 1406 0070 0168     		ldr	r1, [r0]
+ 1407 0072 CA69     		ldr	r2, [r1, #28]
+ 1408 0074 496C     		ldr	r1, [r1, #68]
+ 1409 0076 C1F30E01 		ubfx	r1, r1, #0, #15
+ 1410 007a CEE7     		b	.L157
+ 1412              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 25
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 stm32f4xx_hal_rtc.c
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:18     .text.HAL_RTC_MspInit:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:24     .text.HAL_RTC_MspInit:00000000 HAL_RTC_MspInit
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:31     .text.HAL_RTC_MspDeInit:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:37     .text.HAL_RTC_MspDeInit:00000000 HAL_RTC_MspDeInit
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:44     .text.HAL_RTC_DeactivateAlarm:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:50     .text.HAL_RTC_DeactivateAlarm:00000000 HAL_RTC_DeactivateAlarm
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:140    .text.HAL_RTC_AlarmAEventCallback:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:146    .text.HAL_RTC_AlarmAEventCallback:00000000 HAL_RTC_AlarmAEventCallback
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:153    .text.HAL_RTC_AlarmIRQHandler:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:159    .text.HAL_RTC_AlarmIRQHandler:00000000 HAL_RTC_AlarmIRQHandler
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:204    .text.HAL_RTC_AlarmIRQHandler:00000058 $d
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:207    .text.HAL_RTC_PollForAlarmAEvent:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:213    .text.HAL_RTC_PollForAlarmAEvent:00000000 HAL_RTC_PollForAlarmAEvent
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:249    .text.HAL_RTC_WaitForSynchro:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:255    .text.HAL_RTC_WaitForSynchro:00000000 HAL_RTC_WaitForSynchro
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:283    .text.HAL_RTC_WaitForSynchro:00000030 $d
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:286    .text.HAL_RTC_DST_Add1Hour:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:292    .text.HAL_RTC_DST_Add1Hour:00000000 HAL_RTC_DST_Add1Hour
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:312    .text.HAL_RTC_DST_Sub1Hour:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:318    .text.HAL_RTC_DST_Sub1Hour:00000000 HAL_RTC_DST_Sub1Hour
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:338    .text.HAL_RTC_DST_SetStoreOperation:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:344    .text.HAL_RTC_DST_SetStoreOperation:00000000 HAL_RTC_DST_SetStoreOperation
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:364    .text.HAL_RTC_DST_ClearStoreOperation:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:370    .text.HAL_RTC_DST_ClearStoreOperation:00000000 HAL_RTC_DST_ClearStoreOperation
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:390    .text.HAL_RTC_DST_ReadStoreOperation:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:396    .text.HAL_RTC_DST_ReadStoreOperation:00000000 HAL_RTC_DST_ReadStoreOperation
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:406    .text.HAL_RTC_GetState:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:412    .text.HAL_RTC_GetState:00000000 HAL_RTC_GetState
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:420    .text.RTC_EnterInitMode:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:426    .text.RTC_EnterInitMode:00000000 RTC_EnterInitMode
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:463    .text.RTC_ExitInitMode:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:469    .text.RTC_ExitInitMode:00000000 RTC_ExitInitMode
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:494    .text.HAL_RTC_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:500    .text.HAL_RTC_Init:00000000 HAL_RTC_Init
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:584    .text.HAL_RTC_DeInit:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:590    .text.HAL_RTC_DeInit:00000000 HAL_RTC_DeInit
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:660    .text.HAL_RTC_DeInit:00000084 $d
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:663    .text.RTC_ByteToBcd2:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:669    .text.RTC_ByteToBcd2:00000000 RTC_ByteToBcd2
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:688    .text.HAL_RTC_SetTime:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:694    .text.HAL_RTC_SetTime:00000000 HAL_RTC_SetTime
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:788    .text.HAL_RTC_SetDate:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:794    .text.HAL_RTC_SetDate:00000000 HAL_RTC_SetDate
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:870    .text.HAL_RTC_SetAlarm:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:876    .text.HAL_RTC_SetAlarm:00000000 HAL_RTC_SetAlarm
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:1049   .text.HAL_RTC_SetAlarm_IT:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:1055   .text.HAL_RTC_SetAlarm_IT:00000000 HAL_RTC_SetAlarm_IT
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:1254   .text.HAL_RTC_SetAlarm_IT:000001ac $d
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:1259   .text.RTC_Bcd2ToByte:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:1265   .text.RTC_Bcd2ToByte:00000000 RTC_Bcd2ToByte
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:1277   .text.HAL_RTC_GetTime:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:1283   .text.HAL_RTC_GetTime:00000000 HAL_RTC_GetTime
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:1319   .text.HAL_RTC_GetDate:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:1325   .text.HAL_RTC_GetDate:00000000 HAL_RTC_GetDate
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:1354   .text.HAL_RTC_GetAlarm:00000000 $t
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s 			page 26
+
+
+C:\Users\fish\AppData\Local\Temp\ccyOnVwR.s:1360   .text.HAL_RTC_GetAlarm:00000000 HAL_RTC_GetAlarm
+
+UNDEFINED SYMBOLS
+HAL_GetTick
+HAL_RTCEx_AlarmBEventCallback
+SystemCoreClock

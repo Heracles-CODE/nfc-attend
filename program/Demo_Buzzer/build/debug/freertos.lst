@@ -1,0 +1,860 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccSBddGY.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"freertos.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/freertos.c"
+  20              		.section	.rodata.StartBuzzerTask.str1.4,"aMS",%progbits,1
+  21              		.align	2
+  22              	.LC0:
+  23 0000 42757A7A 		.ascii	"Buzzer Demo Started\015\000"
+  23      65722044 
+  23      656D6F20 
+  23      53746172 
+  23      7465640D 
+  24 0015 000000   		.align	2
+  25              	.LC1:
+  26 0018 506C6179 		.ascii	"Playing Twinkle Twinkle Little Star...\015\000"
+  26      696E6720 
+  26      5477696E 
+  26      6B6C6520 
+  26      5477696E 
+  27              		.align	2
+  28              	.LC2:
+  29 0040 4D757369 		.ascii	"Music finished. Press K1~K6 to play notes.\015\000"
+  29      63206669 
+  29      6E697368 
+  29      65642E20 
+  29      50726573 
+  30              		.align	2
+  31              	.LC3:
+  32 006c 4B313A20 		.ascii	"K1: Do\015\000"
+  32      446F0D00 
+  33              		.align	2
+  34              	.LC4:
+  35 0074 4B323A20 		.ascii	"K2: Re\015\000"
+  35      52650D00 
+  36              		.align	2
+  37              	.LC5:
+  38 007c 4B333A20 		.ascii	"K3: Mi\015\000"
+  38      4D690D00 
+  39              		.align	2
+  40              	.LC6:
+  41 0084 4B343A20 		.ascii	"K4: Fa\015\000"
+  41      46610D00 
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccSBddGY.s 			page 2
+
+
+  42              		.align	2
+  43              	.LC7:
+  44 008c 4B353A20 		.ascii	"K5: Sol\015\000"
+  44      536F6C0D 
+  44      00
+  45 0095 000000   		.align	2
+  46              	.LC8:
+  47 0098 4B363A20 		.ascii	"K6: La\015\000"
+  47      4C610D00 
+  48              		.section	.text.StartBuzzerTask,"ax",%progbits
+  49              		.align	1
+  50              		.global	StartBuzzerTask
+  51              		.syntax unified
+  52              		.thumb
+  53              		.thumb_func
+  55              	StartBuzzerTask:
+  56              	.LVL0:
+  57              	.LFB247:
+   1:Core/Src/freertos.c **** /* USER CODE BEGIN Header */
+   2:Core/Src/freertos.c **** /**
+   3:Core/Src/freertos.c ****   ******************************************************************************
+   4:Core/Src/freertos.c ****   * File Name          : freertos.c
+   5:Core/Src/freertos.c ****   * Description        : Code for freertos applications
+   6:Core/Src/freertos.c ****   ******************************************************************************
+   7:Core/Src/freertos.c ****   * @attention
+   8:Core/Src/freertos.c ****   *
+   9:Core/Src/freertos.c ****   * Copyright (c) 2026 STMicroelectronics.
+  10:Core/Src/freertos.c ****   * All rights reserved.
+  11:Core/Src/freertos.c ****   *
+  12:Core/Src/freertos.c ****   * This software is licensed under terms that can be found in the LICENSE file
+  13:Core/Src/freertos.c ****   * in the root directory of this software component.
+  14:Core/Src/freertos.c ****   * If no LICENSE file comes with this software, it is provided AS-IS.
+  15:Core/Src/freertos.c ****   *
+  16:Core/Src/freertos.c ****   ******************************************************************************
+  17:Core/Src/freertos.c ****   */
+  18:Core/Src/freertos.c **** /* USER CODE END Header */
+  19:Core/Src/freertos.c **** 
+  20:Core/Src/freertos.c **** /* Includes ------------------------------------------------------------------*/
+  21:Core/Src/freertos.c **** #include "FreeRTOS.h"
+  22:Core/Src/freertos.c **** #include "task.h"
+  23:Core/Src/freertos.c **** #include "main.h"
+  24:Core/Src/freertos.c **** #include "cmsis_os.h"
+  25:Core/Src/freertos.c **** #include "midi.h"
+  26:Core/Src/freertos.c **** #include "key.h"
+  27:Core/Src/freertos.c **** #include "uart_drv.h"
+  28:Core/Src/freertos.c **** #include <stdio.h>
+  29:Core/Src/freertos.c **** 
+  30:Core/Src/freertos.c **** /* Private includes ----------------------------------------------------------*/
+  31:Core/Src/freertos.c **** /* USER CODE BEGIN Includes */
+  32:Core/Src/freertos.c **** #include "tim.h"
+  33:Core/Src/freertos.c **** #include "usart.h"
+  34:Core/Src/freertos.c **** /* USER CODE END Includes */
+  35:Core/Src/freertos.c **** 
+  36:Core/Src/freertos.c **** /* Private typedef -----------------------------------------------------------*/
+  37:Core/Src/freertos.c **** /* USER CODE BEGIN PTD */
+  38:Core/Src/freertos.c **** 
+  39:Core/Src/freertos.c **** /* USER CODE END PTD */
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccSBddGY.s 			page 3
+
+
+  40:Core/Src/freertos.c **** 
+  41:Core/Src/freertos.c **** /* Private define ------------------------------------------------------------*/
+  42:Core/Src/freertos.c **** /* USER CODE BEGIN PD */
+  43:Core/Src/freertos.c **** /* 按键索引定义 */
+  44:Core/Src/freertos.c **** #define KEY_K1  0
+  45:Core/Src/freertos.c **** #define KEY_K2  1
+  46:Core/Src/freertos.c **** #define KEY_K3  2
+  47:Core/Src/freertos.c **** #define KEY_K4  3
+  48:Core/Src/freertos.c **** #define KEY_K5  4
+  49:Core/Src/freertos.c **** #define KEY_K6  5
+  50:Core/Src/freertos.c **** /* USER CODE END PD */
+  51:Core/Src/freertos.c **** 
+  52:Core/Src/freertos.c **** /* Private macro -------------------------------------------------------------*/
+  53:Core/Src/freertos.c **** /* USER CODE BEGIN PM */
+  54:Core/Src/freertos.c **** 
+  55:Core/Src/freertos.c **** /* USER CODE END PM */
+  56:Core/Src/freertos.c **** 
+  57:Core/Src/freertos.c **** /* Private variables ---------------------------------------------------------*/
+  58:Core/Src/freertos.c **** /* USER CODE BEGIN Variables */
+  59:Core/Src/freertos.c **** /* 串口驱动实例 (用于 printf 调试输出) */
+  60:Core/Src/freertos.c **** static UartDrv_t g_uart1Drv;
+  61:Core/Src/freertos.c **** 
+  62:Core/Src/freertos.c **** /* 按键配置: K1~K4 上拉低有效, K5~K6 下拉高有效 */
+  63:Core/Src/freertos.c **** static const Key_Config_t keyConfigs[6] = {
+  64:Core/Src/freertos.c ****     { K1_GPIO_Port, K1_Pin, KEY_ACTIVE_LOW  },  /* K1 */
+  65:Core/Src/freertos.c ****     { K2_GPIO_Port, K2_Pin, KEY_ACTIVE_LOW  },  /* K2 */
+  66:Core/Src/freertos.c ****     { K3_GPIO_Port, K3_Pin, KEY_ACTIVE_LOW  },  /* K3 */
+  67:Core/Src/freertos.c ****     { K4_GPIO_Port, K4_Pin, KEY_ACTIVE_LOW  },  /* K4 */
+  68:Core/Src/freertos.c ****     { K5_GPIO_Port, K5_Pin, KEY_ACTIVE_HIGH },  /* K5 */
+  69:Core/Src/freertos.c ****     { K6_GPIO_Port, K6_Pin, KEY_ACTIVE_HIGH },  /* K6 */
+  70:Core/Src/freertos.c **** };
+  71:Core/Src/freertos.c **** /* USER CODE END Variables */
+  72:Core/Src/freertos.c **** 
+  73:Core/Src/freertos.c **** /* Definitions for buzzerTask */
+  74:Core/Src/freertos.c **** osThreadId_t buzzerTaskHandle;
+  75:Core/Src/freertos.c **** const osThreadAttr_t buzzerTask_attributes = {
+  76:Core/Src/freertos.c ****   .name = "buzzerTask",
+  77:Core/Src/freertos.c ****   .stack_size = 512 * 4,
+  78:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityNormal,
+  79:Core/Src/freertos.c **** };
+  80:Core/Src/freertos.c **** 
+  81:Core/Src/freertos.c **** /* Private function prototypes -----------------------------------------------*/
+  82:Core/Src/freertos.c **** /* USER CODE BEGIN FunctionPrototypes */
+  83:Core/Src/freertos.c **** 
+  84:Core/Src/freertos.c **** /* USER CODE END FunctionPrototypes */
+  85:Core/Src/freertos.c **** 
+  86:Core/Src/freertos.c **** void StartBuzzerTask(void *argument);
+  87:Core/Src/freertos.c **** 
+  88:Core/Src/freertos.c **** void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+  89:Core/Src/freertos.c **** 
+  90:Core/Src/freertos.c **** /* ========== 小星星音乐数据 ========== */
+  91:Core/Src/freertos.c **** /* 使用 M1(x) = 中音八度四分音符, M2(x) = 中音八度二分音符 */
+  92:Core/Src/freertos.c **** /* 音符编码: 1=C, 2=D, 3=E, 4=F, 5=G, 6=A, 7=B, 0=休止符 */
+  93:Core/Src/freertos.c **** static uint32_t twinkle_twinkle[] = {
+  94:Core/Src/freertos.c ****     M1(1), M1(1), M1(5), M1(5), M1(6), M1(6), M2(5),
+  95:Core/Src/freertos.c ****     M1(4), M1(4), M1(3), M1(3), M1(2), M1(2), M2(1),
+  96:Core/Src/freertos.c ****     M1(5), M1(5), M1(4), M1(4), M1(3), M1(3), M2(2),
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccSBddGY.s 			page 4
+
+
+  97:Core/Src/freertos.c ****     M1(5), M1(5), M1(4), M1(4), M1(3), M1(3), M2(2),
+  98:Core/Src/freertos.c ****     M1(1), M1(1), M1(5), M1(5), M1(6), M1(6), M2(5),
+  99:Core/Src/freertos.c ****     M1(4), M1(4), M1(3), M1(3), M1(2), M1(2), M2(1),
+ 100:Core/Src/freertos.c **** };
+ 101:Core/Src/freertos.c **** 
+ 102:Core/Src/freertos.c **** /**
+ 103:Core/Src/freertos.c ****   * @brief  FreeRTOS initialization
+ 104:Core/Src/freertos.c ****   * @param  None
+ 105:Core/Src/freertos.c ****   * @retval None
+ 106:Core/Src/freertos.c ****   */
+ 107:Core/Src/freertos.c **** void MX_FREERTOS_Init(void) {
+ 108:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
+ 109:Core/Src/freertos.c **** 
+ 110:Core/Src/freertos.c ****   /* USER CODE END Init */
+ 111:Core/Src/freertos.c **** 
+ 112:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_MUTEX */
+ 113:Core/Src/freertos.c ****   /* add mutexes, ... */
+ 114:Core/Src/freertos.c ****   /* USER CODE END RTOS_MUTEX */
+ 115:Core/Src/freertos.c **** 
+ 116:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_SEMAPHORES */
+ 117:Core/Src/freertos.c ****   /* add semaphores, ... */
+ 118:Core/Src/freertos.c ****   /* USER CODE END RTOS_SEMAPHORES */
+ 119:Core/Src/freertos.c **** 
+ 120:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_TIMERS */
+ 121:Core/Src/freertos.c ****   /* start timers, add new ones, ... */
+ 122:Core/Src/freertos.c ****   /* USER CODE END RTOS_TIMERS */
+ 123:Core/Src/freertos.c **** 
+ 124:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_QUEUES */
+ 125:Core/Src/freertos.c ****   /* add queues, ... */
+ 126:Core/Src/freertos.c ****   /* USER CODE END RTOS_QUEUES */
+ 127:Core/Src/freertos.c **** 
+ 128:Core/Src/freertos.c ****   /* Create the thread(s) */
+ 129:Core/Src/freertos.c ****   /* creation of buzzerTask */
+ 130:Core/Src/freertos.c ****   buzzerTaskHandle = osThreadNew(StartBuzzerTask, NULL, &buzzerTask_attributes);
+ 131:Core/Src/freertos.c **** 
+ 132:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_THREADS */
+ 133:Core/Src/freertos.c ****   /* add threads, ... */
+ 134:Core/Src/freertos.c ****   /* USER CODE END RTOS_THREADS */
+ 135:Core/Src/freertos.c **** 
+ 136:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_EVENTS */
+ 137:Core/Src/freertos.c ****   /* add events, ... */
+ 138:Core/Src/freertos.c ****   /* USER CODE END RTOS_EVENTS */
+ 139:Core/Src/freertos.c **** 
+ 140:Core/Src/freertos.c **** }
+ 141:Core/Src/freertos.c **** 
+ 142:Core/Src/freertos.c **** /* USER CODE BEGIN Header_StartBuzzerTask */
+ 143:Core/Src/freertos.c **** /**
+ 144:Core/Src/freertos.c ****   * @brief  蜂鸣器音乐播放示例任务
+ 145:Core/Src/freertos.c ****   *         - 第一阶段: 开机自动播放5秒小星星
+ 146:Core/Src/freertos.c ****   *         - 第二阶段: 按键播放对应音符提示音
+ 147:Core/Src/freertos.c ****   *           K1=Do  K2=Re  K3=Mi  K4=Fa  K5=Sol  K6=La
+ 148:Core/Src/freertos.c ****   *         - K1长按: 重新播放小星星
+ 149:Core/Src/freertos.c ****   * @param  argument: Not used
+ 150:Core/Src/freertos.c ****   * @retval None
+ 151:Core/Src/freertos.c ****   */
+ 152:Core/Src/freertos.c **** /* USER CODE END Header_StartBuzzerTask */
+ 153:Core/Src/freertos.c **** void StartBuzzerTask(void *argument)
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccSBddGY.s 			page 5
+
+
+ 154:Core/Src/freertos.c **** {
+  58              		.loc 1 154 1 view -0
+  59              		.cfi_startproc
+  60              		@ Volatile: function does not return.
+  61              		@ args = 0, pretend = 0, frame = 0
+  62              		@ frame_needed = 0, uses_anonymous_args = 0
+  63              		.loc 1 154 1 is_stmt 0 view .LVU1
+  64 0000 08B5     		push	{r3, lr}
+  65              		.cfi_def_cfa_offset 8
+  66              		.cfi_offset 3, -8
+  67              		.cfi_offset 14, -4
+ 155:Core/Src/freertos.c ****   /* USER CODE BEGIN StartBuzzerTask */
+ 156:Core/Src/freertos.c ****   /* 初始化串口驱动并设置为 printf 调试输出口 */
+ 157:Core/Src/freertos.c ****   UartDrv_Init(&g_uart1Drv, &huart1);
+  68              		.loc 1 157 3 is_stmt 1 view .LVU2
+  69 0002 4B4C     		ldr	r4, .L19
+  70 0004 4B49     		ldr	r1, .L19+4
+  71 0006 2046     		mov	r0, r4
+  72              	.LVL1:
+  73              		.loc 1 157 3 is_stmt 0 view .LVU3
+  74 0008 FFF7FEFF 		bl	UartDrv_Init
+  75              	.LVL2:
+ 158:Core/Src/freertos.c ****   UartDrv_SetDebugPort(&g_uart1Drv);
+  76              		.loc 1 158 3 is_stmt 1 view .LVU4
+  77 000c 2046     		mov	r0, r4
+  78 000e FFF7FEFF 		bl	UartDrv_SetDebugPort
+  79              	.LVL3:
+ 159:Core/Src/freertos.c **** 
+ 160:Core/Src/freertos.c ****   /* 初始化按键驱动 */
+ 161:Core/Src/freertos.c ****   Key_Init(keyConfigs, 6);
+  80              		.loc 1 161 3 view .LVU5
+  81 0012 0621     		movs	r1, #6
+  82 0014 4848     		ldr	r0, .L19+8
+  83 0016 FFF7FEFF 		bl	Key_Init
+  84              	.LVL4:
+ 162:Core/Src/freertos.c **** 
+ 163:Core/Src/freertos.c ****   /* 初始化 MIDI 驱动 (TIM3_CH1, PB4 - BEEP) */
+ 164:Core/Src/freertos.c ****   MIDI_Init(&htim3, TIM_CHANNEL_1);
+  85              		.loc 1 164 3 view .LVU6
+  86 001a 0021     		movs	r1, #0
+  87 001c 4748     		ldr	r0, .L19+12
+  88 001e FFF7FEFF 		bl	MIDI_Init
+  89              	.LVL5:
+ 165:Core/Src/freertos.c ****   MIDI_SetVolume(50);
+  90              		.loc 1 165 3 view .LVU7
+  91 0022 3220     		movs	r0, #50
+  92 0024 FFF7FEFF 		bl	MIDI_SetVolume
+  93              	.LVL6:
+ 166:Core/Src/freertos.c **** 
+ 167:Core/Src/freertos.c ****   printf("Buzzer Demo Started\r\n");
+  94              		.loc 1 167 3 view .LVU8
+  95 0028 4548     		ldr	r0, .L19+16
+  96 002a FFF7FEFF 		bl	puts
+  97              	.LVL7:
+ 168:Core/Src/freertos.c **** 
+ 169:Core/Src/freertos.c ****   /* === 第一阶段: 播放5秒小星星 === */
+ 170:Core/Src/freertos.c ****   printf("Playing Twinkle Twinkle Little Star...\r\n");
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccSBddGY.s 			page 6
+
+
+  98              		.loc 1 170 3 view .LVU9
+  99 002e 4548     		ldr	r0, .L19+20
+ 100 0030 FFF7FEFF 		bl	puts
+ 101              	.LVL8:
+ 171:Core/Src/freertos.c ****   MIDI_SetMusic(twinkle_twinkle, ARRAY_SIZE(twinkle_twinkle), MIDI_DEFAULT_BPM);
+ 102              		.loc 1 171 3 view .LVU10
+ 103 0034 5A22     		movs	r2, #90
+ 104 0036 2A21     		movs	r1, #42
+ 105 0038 4348     		ldr	r0, .L19+24
+ 106 003a FFF7FEFF 		bl	MIDI_SetMusic
+ 107              	.LVL9:
+ 172:Core/Src/freertos.c ****   MIDI_SetDuration(5);  /* 播放5秒 */
+ 108              		.loc 1 172 3 view .LVU11
+ 109 003e 0520     		movs	r0, #5
+ 110 0040 FFF7FEFF 		bl	MIDI_SetDuration
+ 111              	.LVL10:
+ 173:Core/Src/freertos.c ****   MIDI_Play();
+ 112              		.loc 1 173 3 view .LVU12
+ 113 0044 FFF7FEFF 		bl	MIDI_Play
+ 114              	.LVL11:
+ 174:Core/Src/freertos.c **** 
+ 175:Core/Src/freertos.c ****   /* 等待音乐播放完成 */
+ 176:Core/Src/freertos.c ****   while (MIDI_GetState() == MIDI_STATE_PLAYING)
+ 115              		.loc 1 176 3 view .LVU13
+ 116              		.loc 1 176 9 is_stmt 0 view .LVU14
+ 117 0048 04E0     		b	.L2
+ 118              	.L3:
+ 177:Core/Src/freertos.c ****   {
+ 178:Core/Src/freertos.c ****     MIDI_Tick();
+ 119              		.loc 1 178 5 is_stmt 1 view .LVU15
+ 120 004a FFF7FEFF 		bl	MIDI_Tick
+ 121              	.LVL12:
+ 179:Core/Src/freertos.c ****     osDelay(10);
+ 122              		.loc 1 179 5 view .LVU16
+ 123 004e 0A20     		movs	r0, #10
+ 124 0050 FFF7FEFF 		bl	osDelay
+ 125              	.LVL13:
+ 126              	.L2:
+ 176:Core/Src/freertos.c ****   {
+ 127              		.loc 1 176 26 view .LVU17
+ 176:Core/Src/freertos.c ****   {
+ 128              		.loc 1 176 10 is_stmt 0 view .LVU18
+ 129 0054 FFF7FEFF 		bl	MIDI_GetState
+ 130              	.LVL14:
+ 176:Core/Src/freertos.c ****   {
+ 131              		.loc 1 176 26 discriminator 1 view .LVU19
+ 132 0058 0128     		cmp	r0, #1
+ 133 005a F6D0     		beq	.L3
+ 180:Core/Src/freertos.c ****   }
+ 181:Core/Src/freertos.c ****   printf("Music finished. Press K1~K6 to play notes.\r\n");
+ 134              		.loc 1 181 3 is_stmt 1 view .LVU20
+ 135 005c 3B48     		ldr	r0, .L19+28
+ 136 005e FFF7FEFF 		bl	puts
+ 137              	.LVL15:
+ 138 0062 17E0     		b	.L16
+ 139              	.L12:
+ 182:Core/Src/freertos.c **** 
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccSBddGY.s 			page 7
+
+
+ 183:Core/Src/freertos.c ****   /* === 第二阶段: 按键播放提示音 === */
+ 184:Core/Src/freertos.c ****   for(;;)
+ 185:Core/Src/freertos.c ****   {
+ 186:Core/Src/freertos.c ****     /* 按键扫描 (每 10ms 调用一次) */
+ 187:Core/Src/freertos.c ****     Key_Scan();
+ 188:Core/Src/freertos.c **** 
+ 189:Core/Src/freertos.c ****     /* K1 短按: Do */
+ 190:Core/Src/freertos.c ****     if (Key_IsShortPressed(KEY_K1) || Key_IsRepeat(KEY_K1))
+ 191:Core/Src/freertos.c ****     {
+ 192:Core/Src/freertos.c ****       MIDI_Beep(1, 200);  /* Do */
+ 193:Core/Src/freertos.c ****       printf("K1: Do\r\n");
+ 194:Core/Src/freertos.c ****     }
+ 195:Core/Src/freertos.c **** 
+ 196:Core/Src/freertos.c ****     /* K2 短按: Re */
+ 197:Core/Src/freertos.c ****     if (Key_IsShortPressed(KEY_K2) || Key_IsRepeat(KEY_K2))
+ 198:Core/Src/freertos.c ****     {
+ 199:Core/Src/freertos.c ****       MIDI_Beep(2, 200);  /* Re */
+ 200:Core/Src/freertos.c ****       printf("K2: Re\r\n");
+ 201:Core/Src/freertos.c ****     }
+ 202:Core/Src/freertos.c **** 
+ 203:Core/Src/freertos.c ****     /* K3 短按: Mi */
+ 204:Core/Src/freertos.c ****     if (Key_IsShortPressed(KEY_K3) || Key_IsRepeat(KEY_K3))
+ 205:Core/Src/freertos.c ****     {
+ 206:Core/Src/freertos.c ****       MIDI_Beep(3, 200);  /* Mi */
+ 207:Core/Src/freertos.c ****       printf("K3: Mi\r\n");
+ 208:Core/Src/freertos.c ****     }
+ 209:Core/Src/freertos.c **** 
+ 210:Core/Src/freertos.c ****     /* K4 短按: Fa */
+ 211:Core/Src/freertos.c ****     if (Key_IsShortPressed(KEY_K4) || Key_IsRepeat(KEY_K4))
+ 212:Core/Src/freertos.c ****     {
+ 213:Core/Src/freertos.c ****       MIDI_Beep(4, 200);  /* Fa */
+ 214:Core/Src/freertos.c ****       printf("K4: Fa\r\n");
+ 215:Core/Src/freertos.c ****     }
+ 216:Core/Src/freertos.c **** 
+ 217:Core/Src/freertos.c ****     /* K5 短按: Sol */
+ 218:Core/Src/freertos.c ****     if (Key_IsShortPressed(KEY_K5) || Key_IsRepeat(KEY_K5))
+ 219:Core/Src/freertos.c ****     {
+ 220:Core/Src/freertos.c ****       MIDI_Beep(5, 200);  /* Sol */
+ 140              		.loc 1 220 7 view .LVU21
+ 141 0064 C821     		movs	r1, #200
+ 142 0066 0520     		movs	r0, #5
+ 143 0068 FFF7FEFF 		bl	MIDI_Beep
+ 144              	.LVL16:
+ 221:Core/Src/freertos.c ****       printf("K5: Sol\r\n");
+ 145              		.loc 1 221 7 view .LVU22
+ 146 006c 3848     		ldr	r0, .L19+32
+ 147 006e FFF7FEFF 		bl	puts
+ 148              	.LVL17:
+ 149              	.L13:
+ 222:Core/Src/freertos.c ****     }
+ 223:Core/Src/freertos.c **** 
+ 224:Core/Src/freertos.c ****     /* K6 短按: La */
+ 225:Core/Src/freertos.c ****     if (Key_IsShortPressed(KEY_K6) || Key_IsRepeat(KEY_K6))
+ 150              		.loc 1 225 5 view .LVU23
+ 151              		.loc 1 225 9 is_stmt 0 view .LVU24
+ 152 0072 0520     		movs	r0, #5
+ 153 0074 FFF7FEFF 		bl	Key_IsShortPressed
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccSBddGY.s 			page 8
+
+
+ 154              	.LVL18:
+ 155              		.loc 1 225 8 discriminator 1 view .LVU25
+ 156 0078 0028     		cmp	r0, #0
+ 157 007a 53D0     		beq	.L18
+ 158              	.L14:
+ 226:Core/Src/freertos.c ****     {
+ 227:Core/Src/freertos.c ****       MIDI_Beep(6, 200);  /* La */
+ 159              		.loc 1 227 7 is_stmt 1 view .LVU26
+ 160 007c C821     		movs	r1, #200
+ 161 007e 0620     		movs	r0, #6
+ 162 0080 FFF7FEFF 		bl	MIDI_Beep
+ 163              	.LVL19:
+ 228:Core/Src/freertos.c ****       printf("K6: La\r\n");
+ 164              		.loc 1 228 7 view .LVU27
+ 165 0084 3348     		ldr	r0, .L19+36
+ 166 0086 FFF7FEFF 		bl	puts
+ 167              	.LVL20:
+ 168              	.L15:
+ 229:Core/Src/freertos.c ****     }
+ 230:Core/Src/freertos.c **** 
+ 231:Core/Src/freertos.c ****     /* MIDI 节拍处理 */
+ 232:Core/Src/freertos.c ****     MIDI_Tick();
+ 169              		.loc 1 232 5 view .LVU28
+ 170 008a FFF7FEFF 		bl	MIDI_Tick
+ 171              	.LVL21:
+ 233:Core/Src/freertos.c **** 
+ 234:Core/Src/freertos.c ****     osDelay(KEY_SCAN_INTERVAL_MS);  /* 10ms 扫描周期 */
+ 172              		.loc 1 234 5 view .LVU29
+ 173 008e 0A20     		movs	r0, #10
+ 174 0090 FFF7FEFF 		bl	osDelay
+ 175              	.LVL22:
+ 184:Core/Src/freertos.c ****   {
+ 176              		.loc 1 184 3 view .LVU30
+ 177              	.L16:
+ 184:Core/Src/freertos.c ****   {
+ 178              		.loc 1 184 3 view .LVU31
+ 187:Core/Src/freertos.c **** 
+ 179              		.loc 1 187 5 view .LVU32
+ 180 0094 FFF7FEFF 		bl	Key_Scan
+ 181              	.LVL23:
+ 190:Core/Src/freertos.c ****     {
+ 182              		.loc 1 190 5 view .LVU33
+ 190:Core/Src/freertos.c ****     {
+ 183              		.loc 1 190 9 is_stmt 0 view .LVU34
+ 184 0098 0020     		movs	r0, #0
+ 185 009a FFF7FEFF 		bl	Key_IsShortPressed
+ 186              	.LVL24:
+ 190:Core/Src/freertos.c ****     {
+ 187              		.loc 1 190 8 discriminator 1 view .LVU35
+ 188 009e 10B9     		cbnz	r0, .L4
+ 190:Core/Src/freertos.c ****     {
+ 189              		.loc 1 190 39 discriminator 1 view .LVU36
+ 190 00a0 FFF7FEFF 		bl	Key_IsRepeat
+ 191              	.LVL25:
+ 190:Core/Src/freertos.c ****     {
+ 192              		.loc 1 190 36 discriminator 1 view .LVU37
+ 193 00a4 30B1     		cbz	r0, .L5
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccSBddGY.s 			page 9
+
+
+ 194              	.L4:
+ 192:Core/Src/freertos.c ****       printf("K1: Do\r\n");
+ 195              		.loc 1 192 7 is_stmt 1 view .LVU38
+ 196 00a6 C821     		movs	r1, #200
+ 197 00a8 0120     		movs	r0, #1
+ 198 00aa FFF7FEFF 		bl	MIDI_Beep
+ 199              	.LVL26:
+ 193:Core/Src/freertos.c ****     }
+ 200              		.loc 1 193 7 view .LVU39
+ 201 00ae 2A48     		ldr	r0, .L19+40
+ 202 00b0 FFF7FEFF 		bl	puts
+ 203              	.LVL27:
+ 204              	.L5:
+ 197:Core/Src/freertos.c ****     {
+ 205              		.loc 1 197 5 view .LVU40
+ 197:Core/Src/freertos.c ****     {
+ 206              		.loc 1 197 9 is_stmt 0 view .LVU41
+ 207 00b4 0120     		movs	r0, #1
+ 208 00b6 FFF7FEFF 		bl	Key_IsShortPressed
+ 209              	.LVL28:
+ 197:Core/Src/freertos.c ****     {
+ 210              		.loc 1 197 8 discriminator 1 view .LVU42
+ 211 00ba 18B9     		cbnz	r0, .L6
+ 197:Core/Src/freertos.c ****     {
+ 212              		.loc 1 197 39 discriminator 1 view .LVU43
+ 213 00bc 0120     		movs	r0, #1
+ 214 00be FFF7FEFF 		bl	Key_IsRepeat
+ 215              	.LVL29:
+ 197:Core/Src/freertos.c ****     {
+ 216              		.loc 1 197 36 discriminator 1 view .LVU44
+ 217 00c2 30B1     		cbz	r0, .L7
+ 218              	.L6:
+ 199:Core/Src/freertos.c ****       printf("K2: Re\r\n");
+ 219              		.loc 1 199 7 is_stmt 1 view .LVU45
+ 220 00c4 C821     		movs	r1, #200
+ 221 00c6 0220     		movs	r0, #2
+ 222 00c8 FFF7FEFF 		bl	MIDI_Beep
+ 223              	.LVL30:
+ 200:Core/Src/freertos.c ****     }
+ 224              		.loc 1 200 7 view .LVU46
+ 225 00cc 2348     		ldr	r0, .L19+44
+ 226 00ce FFF7FEFF 		bl	puts
+ 227              	.LVL31:
+ 228              	.L7:
+ 204:Core/Src/freertos.c ****     {
+ 229              		.loc 1 204 5 view .LVU47
+ 204:Core/Src/freertos.c ****     {
+ 230              		.loc 1 204 9 is_stmt 0 view .LVU48
+ 231 00d2 0220     		movs	r0, #2
+ 232 00d4 FFF7FEFF 		bl	Key_IsShortPressed
+ 233              	.LVL32:
+ 204:Core/Src/freertos.c ****     {
+ 234              		.loc 1 204 8 discriminator 1 view .LVU49
+ 235 00d8 18B9     		cbnz	r0, .L8
+ 204:Core/Src/freertos.c ****     {
+ 236              		.loc 1 204 39 discriminator 1 view .LVU50
+ 237 00da 0220     		movs	r0, #2
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccSBddGY.s 			page 10
+
+
+ 238 00dc FFF7FEFF 		bl	Key_IsRepeat
+ 239              	.LVL33:
+ 204:Core/Src/freertos.c ****     {
+ 240              		.loc 1 204 36 discriminator 1 view .LVU51
+ 241 00e0 30B1     		cbz	r0, .L9
+ 242              	.L8:
+ 206:Core/Src/freertos.c ****       printf("K3: Mi\r\n");
+ 243              		.loc 1 206 7 is_stmt 1 view .LVU52
+ 244 00e2 C821     		movs	r1, #200
+ 245 00e4 0320     		movs	r0, #3
+ 246 00e6 FFF7FEFF 		bl	MIDI_Beep
+ 247              	.LVL34:
+ 207:Core/Src/freertos.c ****     }
+ 248              		.loc 1 207 7 view .LVU53
+ 249 00ea 1D48     		ldr	r0, .L19+48
+ 250 00ec FFF7FEFF 		bl	puts
+ 251              	.LVL35:
+ 252              	.L9:
+ 211:Core/Src/freertos.c ****     {
+ 253              		.loc 1 211 5 view .LVU54
+ 211:Core/Src/freertos.c ****     {
+ 254              		.loc 1 211 9 is_stmt 0 view .LVU55
+ 255 00f0 0320     		movs	r0, #3
+ 256 00f2 FFF7FEFF 		bl	Key_IsShortPressed
+ 257              	.LVL36:
+ 211:Core/Src/freertos.c ****     {
+ 258              		.loc 1 211 8 discriminator 1 view .LVU56
+ 259 00f6 18B9     		cbnz	r0, .L10
+ 211:Core/Src/freertos.c ****     {
+ 260              		.loc 1 211 39 discriminator 1 view .LVU57
+ 261 00f8 0320     		movs	r0, #3
+ 262 00fa FFF7FEFF 		bl	Key_IsRepeat
+ 263              	.LVL37:
+ 211:Core/Src/freertos.c ****     {
+ 264              		.loc 1 211 36 discriminator 1 view .LVU58
+ 265 00fe 30B1     		cbz	r0, .L11
+ 266              	.L10:
+ 213:Core/Src/freertos.c ****       printf("K4: Fa\r\n");
+ 267              		.loc 1 213 7 is_stmt 1 view .LVU59
+ 268 0100 C821     		movs	r1, #200
+ 269 0102 0420     		movs	r0, #4
+ 270 0104 FFF7FEFF 		bl	MIDI_Beep
+ 271              	.LVL38:
+ 214:Core/Src/freertos.c ****     }
+ 272              		.loc 1 214 7 view .LVU60
+ 273 0108 1648     		ldr	r0, .L19+52
+ 274 010a FFF7FEFF 		bl	puts
+ 275              	.LVL39:
+ 276              	.L11:
+ 218:Core/Src/freertos.c ****     {
+ 277              		.loc 1 218 5 view .LVU61
+ 218:Core/Src/freertos.c ****     {
+ 278              		.loc 1 218 9 is_stmt 0 view .LVU62
+ 279 010e 0420     		movs	r0, #4
+ 280 0110 FFF7FEFF 		bl	Key_IsShortPressed
+ 281              	.LVL40:
+ 218:Core/Src/freertos.c ****     {
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccSBddGY.s 			page 11
+
+
+ 282              		.loc 1 218 8 discriminator 1 view .LVU63
+ 283 0114 0028     		cmp	r0, #0
+ 284 0116 A5D1     		bne	.L12
+ 218:Core/Src/freertos.c ****     {
+ 285              		.loc 1 218 39 discriminator 1 view .LVU64
+ 286 0118 0420     		movs	r0, #4
+ 287 011a FFF7FEFF 		bl	Key_IsRepeat
+ 288              	.LVL41:
+ 218:Core/Src/freertos.c ****     {
+ 289              		.loc 1 218 36 discriminator 1 view .LVU65
+ 290 011e 0028     		cmp	r0, #0
+ 291 0120 A7D0     		beq	.L13
+ 292 0122 9FE7     		b	.L12
+ 293              	.L18:
+ 225:Core/Src/freertos.c ****     {
+ 294              		.loc 1 225 39 discriminator 1 view .LVU66
+ 295 0124 0520     		movs	r0, #5
+ 296 0126 FFF7FEFF 		bl	Key_IsRepeat
+ 297              	.LVL42:
+ 225:Core/Src/freertos.c ****     {
+ 298              		.loc 1 225 36 discriminator 1 view .LVU67
+ 299 012a 0028     		cmp	r0, #0
+ 300 012c ADD0     		beq	.L15
+ 301 012e A5E7     		b	.L14
+ 302              	.L20:
+ 303              		.align	2
+ 304              	.L19:
+ 305 0130 00000000 		.word	g_uart1Drv
+ 306 0134 00000000 		.word	huart1
+ 307 0138 00000000 		.word	keyConfigs
+ 308 013c 00000000 		.word	htim3
+ 309 0140 00000000 		.word	.LC0
+ 310 0144 18000000 		.word	.LC1
+ 311 0148 00000000 		.word	twinkle_twinkle
+ 312 014c 40000000 		.word	.LC2
+ 313 0150 8C000000 		.word	.LC7
+ 314 0154 98000000 		.word	.LC8
+ 315 0158 6C000000 		.word	.LC3
+ 316 015c 74000000 		.word	.LC4
+ 317 0160 7C000000 		.word	.LC5
+ 318 0164 84000000 		.word	.LC6
+ 319              		.cfi_endproc
+ 320              	.LFE247:
+ 322              		.section	.text.MX_FREERTOS_Init,"ax",%progbits
+ 323              		.align	1
+ 324              		.global	MX_FREERTOS_Init
+ 325              		.syntax unified
+ 326              		.thumb
+ 327              		.thumb_func
+ 329              	MX_FREERTOS_Init:
+ 330              	.LFB246:
+ 107:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
+ 331              		.loc 1 107 29 is_stmt 1 view -0
+ 332              		.cfi_startproc
+ 333              		@ args = 0, pretend = 0, frame = 0
+ 334              		@ frame_needed = 0, uses_anonymous_args = 0
+ 335 0000 08B5     		push	{r3, lr}
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccSBddGY.s 			page 12
+
+
+ 336              		.cfi_def_cfa_offset 8
+ 337              		.cfi_offset 3, -8
+ 338              		.cfi_offset 14, -4
+ 130:Core/Src/freertos.c **** 
+ 339              		.loc 1 130 3 view .LVU69
+ 130:Core/Src/freertos.c **** 
+ 340              		.loc 1 130 22 is_stmt 0 view .LVU70
+ 341 0002 044A     		ldr	r2, .L23
+ 342 0004 0021     		movs	r1, #0
+ 343 0006 0448     		ldr	r0, .L23+4
+ 344 0008 FFF7FEFF 		bl	osThreadNew
+ 345              	.LVL43:
+ 130:Core/Src/freertos.c **** 
+ 346              		.loc 1 130 20 discriminator 1 view .LVU71
+ 347 000c 034B     		ldr	r3, .L23+8
+ 348 000e 1860     		str	r0, [r3]
+ 140:Core/Src/freertos.c **** 
+ 349              		.loc 1 140 1 view .LVU72
+ 350 0010 08BD     		pop	{r3, pc}
+ 351              	.L24:
+ 352 0012 00BF     		.align	2
+ 353              	.L23:
+ 354 0014 00000000 		.word	buzzerTask_attributes
+ 355 0018 00000000 		.word	StartBuzzerTask
+ 356 001c 00000000 		.word	buzzerTaskHandle
+ 357              		.cfi_endproc
+ 358              	.LFE246:
+ 360              		.section	.data.twinkle_twinkle,"aw"
+ 361              		.align	2
+ 364              	twinkle_twinkle:
+ 365 0000 69030100 		.word	66409
+ 366 0004 69030100 		.word	66409
+ 367 0008 6D030100 		.word	66413
+ 368 000c 6D030100 		.word	66413
+ 369 0010 6E030100 		.word	66414
+ 370 0014 6E030100 		.word	66414
+ 371 0018 CD060200 		.word	132813
+ 372 001c 6C030100 		.word	66412
+ 373 0020 6C030100 		.word	66412
+ 374 0024 6B030100 		.word	66411
+ 375 0028 6B030100 		.word	66411
+ 376 002c 6A030100 		.word	66410
+ 377 0030 6A030100 		.word	66410
+ 378 0034 C9060200 		.word	132809
+ 379 0038 6D030100 		.word	66413
+ 380 003c 6D030100 		.word	66413
+ 381 0040 6C030100 		.word	66412
+ 382 0044 6C030100 		.word	66412
+ 383 0048 6B030100 		.word	66411
+ 384 004c 6B030100 		.word	66411
+ 385 0050 CA060200 		.word	132810
+ 386 0054 6D030100 		.word	66413
+ 387 0058 6D030100 		.word	66413
+ 388 005c 6C030100 		.word	66412
+ 389 0060 6C030100 		.word	66412
+ 390 0064 6B030100 		.word	66411
+ 391 0068 6B030100 		.word	66411
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccSBddGY.s 			page 13
+
+
+ 392 006c CA060200 		.word	132810
+ 393 0070 69030100 		.word	66409
+ 394 0074 69030100 		.word	66409
+ 395 0078 6D030100 		.word	66413
+ 396 007c 6D030100 		.word	66413
+ 397 0080 6E030100 		.word	66414
+ 398 0084 6E030100 		.word	66414
+ 399 0088 CD060200 		.word	132813
+ 400 008c 6C030100 		.word	66412
+ 401 0090 6C030100 		.word	66412
+ 402 0094 6B030100 		.word	66411
+ 403 0098 6B030100 		.word	66411
+ 404 009c 6A030100 		.word	66410
+ 405 00a0 6A030100 		.word	66410
+ 406 00a4 C9060200 		.word	132809
+ 407              		.global	buzzerTask_attributes
+ 408              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 409              		.align	2
+ 410              	.LC9:
+ 411 0000 62757A7A 		.ascii	"buzzerTask\000"
+ 411      65725461 
+ 411      736B00
+ 412              		.section	.rodata.buzzerTask_attributes,"a"
+ 413              		.align	2
+ 416              	buzzerTask_attributes:
+ 417 0000 00000000 		.word	.LC9
+ 418 0004 00000000 		.space	16
+ 418      00000000 
+ 418      00000000 
+ 418      00000000 
+ 419 0014 00080000 		.word	2048
+ 420 0018 18000000 		.word	24
+ 421 001c 00000000 		.space	8
+ 421      00000000 
+ 422              		.global	buzzerTaskHandle
+ 423              		.section	.bss.buzzerTaskHandle,"aw",%nobits
+ 424              		.align	2
+ 427              	buzzerTaskHandle:
+ 428 0000 00000000 		.space	4
+ 429              		.section	.rodata.keyConfigs,"a"
+ 430              		.align	2
+ 433              	keyConfigs:
+ 434 0000 00100240 		.word	1073876992
+ 435 0004 0200     		.short	2
+ 436 0006 00       		.byte	0
+ 437 0007 00       		.space	1
+ 438 0008 00100240 		.word	1073876992
+ 439 000c 0400     		.short	4
+ 440 000e 00       		.byte	0
+ 441 000f 00       		.space	1
+ 442 0010 00100240 		.word	1073876992
+ 443 0014 0800     		.short	8
+ 444 0016 00       		.byte	0
+ 445 0017 00       		.space	1
+ 446 0018 00100240 		.word	1073876992
+ 447 001c 1000     		.short	16
+ 448 001e 00       		.byte	0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccSBddGY.s 			page 14
+
+
+ 449 001f 00       		.space	1
+ 450 0020 00100240 		.word	1073876992
+ 451 0024 2000     		.short	32
+ 452 0026 01       		.byte	1
+ 453 0027 00       		.space	1
+ 454 0028 00100240 		.word	1073876992
+ 455 002c 4000     		.short	64
+ 456 002e 01       		.byte	1
+ 457 002f 00       		.space	1
+ 458              		.section	.bss.g_uart1Drv,"aw",%nobits
+ 459              		.align	2
+ 462              	g_uart1Drv:
+ 463 0000 00000000 		.space	536
+ 463      00000000 
+ 463      00000000 
+ 463      00000000 
+ 463      00000000 
+ 464              		.text
+ 465              	.Letext0:
+ 466              		.file 2 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_default_t
+ 467              		.file 3 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h"
+ 468              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 469              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 470              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 471              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 472              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
+ 473              		.file 9 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 474              		.file 10 "../Bsp/MIDI/midi.h"
+ 475              		.file 11 "../Bsp/Key/key.h"
+ 476              		.file 12 "../Bsp/UartDrv/uart_drv.h"
+ 477              		.file 13 "Core/Inc/tim.h"
+ 478              		.file 14 "Core/Inc/usart.h"
+ 479              		.file 15 "<built-in>"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccSBddGY.s 			page 15
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 freertos.c
+C:\Users\fish\AppData\Local\Temp\ccSBddGY.s:21     .rodata.StartBuzzerTask.str1.4:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccSBddGY.s:49     .text.StartBuzzerTask:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccSBddGY.s:55     .text.StartBuzzerTask:00000000 StartBuzzerTask
+C:\Users\fish\AppData\Local\Temp\ccSBddGY.s:305    .text.StartBuzzerTask:00000130 $d
+C:\Users\fish\AppData\Local\Temp\ccSBddGY.s:462    .bss.g_uart1Drv:00000000 g_uart1Drv
+C:\Users\fish\AppData\Local\Temp\ccSBddGY.s:433    .rodata.keyConfigs:00000000 keyConfigs
+C:\Users\fish\AppData\Local\Temp\ccSBddGY.s:364    .data.twinkle_twinkle:00000000 twinkle_twinkle
+C:\Users\fish\AppData\Local\Temp\ccSBddGY.s:323    .text.MX_FREERTOS_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccSBddGY.s:329    .text.MX_FREERTOS_Init:00000000 MX_FREERTOS_Init
+C:\Users\fish\AppData\Local\Temp\ccSBddGY.s:354    .text.MX_FREERTOS_Init:00000014 $d
+C:\Users\fish\AppData\Local\Temp\ccSBddGY.s:416    .rodata.buzzerTask_attributes:00000000 buzzerTask_attributes
+C:\Users\fish\AppData\Local\Temp\ccSBddGY.s:427    .bss.buzzerTaskHandle:00000000 buzzerTaskHandle
+C:\Users\fish\AppData\Local\Temp\ccSBddGY.s:361    .data.twinkle_twinkle:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccSBddGY.s:409    .rodata.str1.4:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccSBddGY.s:413    .rodata.buzzerTask_attributes:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccSBddGY.s:424    .bss.buzzerTaskHandle:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccSBddGY.s:430    .rodata.keyConfigs:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccSBddGY.s:459    .bss.g_uart1Drv:00000000 $d
+
+UNDEFINED SYMBOLS
+UartDrv_Init
+UartDrv_SetDebugPort
+Key_Init
+MIDI_Init
+MIDI_SetVolume
+puts
+MIDI_SetMusic
+MIDI_SetDuration
+MIDI_Play
+MIDI_Tick
+osDelay
+MIDI_GetState
+MIDI_Beep
+Key_IsShortPressed
+Key_Scan
+Key_IsRepeat
+huart1
+htim3
+osThreadNew

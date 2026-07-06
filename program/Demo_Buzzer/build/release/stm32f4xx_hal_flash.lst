@@ -1,0 +1,771 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccbtOidU.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"stm32f4xx_hal_flash.c"
+  16              		.text
+  17              		.section	.text.FLASH_Program_DoubleWord,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  23              	FLASH_Program_DoubleWord:
+  24              		@ args = 0, pretend = 0, frame = 0
+  25              		@ frame_needed = 0, uses_anonymous_args = 0
+  26              		@ link register save eliminated.
+  27 0000 10B4     		push	{r4}
+  28 0002 0A49     		ldr	r1, .L3
+  29 0004 0C69     		ldr	r4, [r1, #16]
+  30 0006 24F44074 		bic	r4, r4, #768
+  31 000a 0C61     		str	r4, [r1, #16]
+  32 000c 0C69     		ldr	r4, [r1, #16]
+  33 000e 44F44074 		orr	r4, r4, #768
+  34 0012 0C61     		str	r4, [r1, #16]
+  35 0014 0C69     		ldr	r4, [r1, #16]
+  36 0016 44F00104 		orr	r4, r4, #1
+  37 001a 0C61     		str	r4, [r1, #16]
+  38 001c 0260     		str	r2, [r0]
+  39              		.syntax unified
+  40              	@ 260 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+  41 001e BFF36F8F 		isb 0xF
+  42              	@ 0 "" 2
+  43              		.thumb
+  44              		.syntax unified
+  45 0022 4360     		str	r3, [r0, #4]
+  46 0024 5DF8044B 		ldr	r4, [sp], #4
+  47 0028 7047     		bx	lr
+  48              	.L4:
+  49 002a 00BF     		.align	2
+  50              	.L3:
+  51 002c 003C0240 		.word	1073888256
+  53              		.section	.text.FLASH_Program_Word,"ax",%progbits
+  54              		.align	1
+  55              		.syntax unified
+  56              		.thumb
+  57              		.thumb_func
+  59              	FLASH_Program_Word:
+  60              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccbtOidU.s 			page 2
+
+
+  61              		@ frame_needed = 0, uses_anonymous_args = 0
+  62              		@ link register save eliminated.
+  63 0000 074B     		ldr	r3, .L6
+  64 0002 1A69     		ldr	r2, [r3, #16]
+  65 0004 22F44072 		bic	r2, r2, #768
+  66 0008 1A61     		str	r2, [r3, #16]
+  67 000a 1A69     		ldr	r2, [r3, #16]
+  68 000c 42F40072 		orr	r2, r2, #512
+  69 0010 1A61     		str	r2, [r3, #16]
+  70 0012 1A69     		ldr	r2, [r3, #16]
+  71 0014 42F00102 		orr	r2, r2, #1
+  72 0018 1A61     		str	r2, [r3, #16]
+  73 001a 0160     		str	r1, [r0]
+  74 001c 7047     		bx	lr
+  75              	.L7:
+  76 001e 00BF     		.align	2
+  77              	.L6:
+  78 0020 003C0240 		.word	1073888256
+  80              		.section	.text.FLASH_Program_HalfWord,"ax",%progbits
+  81              		.align	1
+  82              		.syntax unified
+  83              		.thumb
+  84              		.thumb_func
+  86              	FLASH_Program_HalfWord:
+  87              		@ args = 0, pretend = 0, frame = 0
+  88              		@ frame_needed = 0, uses_anonymous_args = 0
+  89              		@ link register save eliminated.
+  90 0000 074B     		ldr	r3, .L9
+  91 0002 1A69     		ldr	r2, [r3, #16]
+  92 0004 22F44072 		bic	r2, r2, #768
+  93 0008 1A61     		str	r2, [r3, #16]
+  94 000a 1A69     		ldr	r2, [r3, #16]
+  95 000c 42F48072 		orr	r2, r2, #256
+  96 0010 1A61     		str	r2, [r3, #16]
+  97 0012 1A69     		ldr	r2, [r3, #16]
+  98 0014 42F00102 		orr	r2, r2, #1
+  99 0018 1A61     		str	r2, [r3, #16]
+ 100 001a 0180     		strh	r1, [r0]	@ movhi
+ 101 001c 7047     		bx	lr
+ 102              	.L10:
+ 103 001e 00BF     		.align	2
+ 104              	.L9:
+ 105 0020 003C0240 		.word	1073888256
+ 107              		.section	.text.FLASH_Program_Byte,"ax",%progbits
+ 108              		.align	1
+ 109              		.syntax unified
+ 110              		.thumb
+ 111              		.thumb_func
+ 113              	FLASH_Program_Byte:
+ 114              		@ args = 0, pretend = 0, frame = 0
+ 115              		@ frame_needed = 0, uses_anonymous_args = 0
+ 116              		@ link register save eliminated.
+ 117 0000 064B     		ldr	r3, .L12
+ 118 0002 1A69     		ldr	r2, [r3, #16]
+ 119 0004 22F44072 		bic	r2, r2, #768
+ 120 0008 1A61     		str	r2, [r3, #16]
+ 121 000a 1A69     		ldr	r2, [r3, #16]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccbtOidU.s 			page 3
+
+
+ 122 000c 1A61     		str	r2, [r3, #16]
+ 123 000e 1A69     		ldr	r2, [r3, #16]
+ 124 0010 42F00102 		orr	r2, r2, #1
+ 125 0014 1A61     		str	r2, [r3, #16]
+ 126 0016 0170     		strb	r1, [r0]
+ 127 0018 7047     		bx	lr
+ 128              	.L13:
+ 129 001a 00BF     		.align	2
+ 130              	.L12:
+ 131 001c 003C0240 		.word	1073888256
+ 133              		.section	.text.FLASH_SetErrorCode,"ax",%progbits
+ 134              		.align	1
+ 135              		.syntax unified
+ 136              		.thumb
+ 137              		.thumb_func
+ 139              	FLASH_SetErrorCode:
+ 140              		@ args = 0, pretend = 0, frame = 0
+ 141              		@ frame_needed = 0, uses_anonymous_args = 0
+ 142              		@ link register save eliminated.
+ 143 0000 204B     		ldr	r3, .L20
+ 144 0002 DB68     		ldr	r3, [r3, #12]
+ 145 0004 13F0100F 		tst	r3, #16
+ 146 0008 07D0     		beq	.L15
+ 147 000a 1F4A     		ldr	r2, .L20+4
+ 148 000c D369     		ldr	r3, [r2, #28]
+ 149 000e 43F01003 		orr	r3, r3, #16
+ 150 0012 D361     		str	r3, [r2, #28]
+ 151 0014 1B4B     		ldr	r3, .L20
+ 152 0016 1022     		movs	r2, #16
+ 153 0018 DA60     		str	r2, [r3, #12]
+ 154              	.L15:
+ 155 001a 1A4B     		ldr	r3, .L20
+ 156 001c DB68     		ldr	r3, [r3, #12]
+ 157 001e 13F0200F 		tst	r3, #32
+ 158 0022 07D0     		beq	.L16
+ 159 0024 184A     		ldr	r2, .L20+4
+ 160 0026 D369     		ldr	r3, [r2, #28]
+ 161 0028 43F00803 		orr	r3, r3, #8
+ 162 002c D361     		str	r3, [r2, #28]
+ 163 002e 154B     		ldr	r3, .L20
+ 164 0030 2022     		movs	r2, #32
+ 165 0032 DA60     		str	r2, [r3, #12]
+ 166              	.L16:
+ 167 0034 134B     		ldr	r3, .L20
+ 168 0036 DB68     		ldr	r3, [r3, #12]
+ 169 0038 13F0400F 		tst	r3, #64
+ 170 003c 07D0     		beq	.L17
+ 171 003e 124A     		ldr	r2, .L20+4
+ 172 0040 D369     		ldr	r3, [r2, #28]
+ 173 0042 43F00403 		orr	r3, r3, #4
+ 174 0046 D361     		str	r3, [r2, #28]
+ 175 0048 0E4B     		ldr	r3, .L20
+ 176 004a 4022     		movs	r2, #64
+ 177 004c DA60     		str	r2, [r3, #12]
+ 178              	.L17:
+ 179 004e 0D4B     		ldr	r3, .L20
+ 180 0050 DB68     		ldr	r3, [r3, #12]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccbtOidU.s 			page 4
+
+
+ 181 0052 13F0800F 		tst	r3, #128
+ 182 0056 07D0     		beq	.L18
+ 183 0058 0B4A     		ldr	r2, .L20+4
+ 184 005a D369     		ldr	r3, [r2, #28]
+ 185 005c 43F00203 		orr	r3, r3, #2
+ 186 0060 D361     		str	r3, [r2, #28]
+ 187 0062 084B     		ldr	r3, .L20
+ 188 0064 8022     		movs	r2, #128
+ 189 0066 DA60     		str	r2, [r3, #12]
+ 190              	.L18:
+ 191 0068 064B     		ldr	r3, .L20
+ 192 006a DB68     		ldr	r3, [r3, #12]
+ 193 006c 13F0020F 		tst	r3, #2
+ 194 0070 07D0     		beq	.L14
+ 195 0072 054A     		ldr	r2, .L20+4
+ 196 0074 D369     		ldr	r3, [r2, #28]
+ 197 0076 43F02003 		orr	r3, r3, #32
+ 198 007a D361     		str	r3, [r2, #28]
+ 199 007c 014B     		ldr	r3, .L20
+ 200 007e 0222     		movs	r2, #2
+ 201 0080 DA60     		str	r2, [r3, #12]
+ 202              	.L14:
+ 203 0082 7047     		bx	lr
+ 204              	.L21:
+ 205              		.align	2
+ 206              	.L20:
+ 207 0084 003C0240 		.word	1073888256
+ 208 0088 00000000 		.word	pFlash
+ 210              		.section	.text.HAL_FLASH_Program_IT,"ax",%progbits
+ 211              		.align	1
+ 212              		.global	HAL_FLASH_Program_IT
+ 213              		.syntax unified
+ 214              		.thumb
+ 215              		.thumb_func
+ 217              	HAL_FLASH_Program_IT:
+ 218              		@ args = 0, pretend = 0, frame = 0
+ 219              		@ frame_needed = 0, uses_anonymous_args = 0
+ 220 0000 70B5     		push	{r4, r5, r6, lr}
+ 221 0002 0646     		mov	r6, r0
+ 222 0004 0846     		mov	r0, r1
+ 223 0006 114C     		ldr	r4, .L31
+ 224 0008 2569     		ldr	r5, [r4, #16]
+ 225 000a 45F08075 		orr	r5, r5, #16777216
+ 226 000e 2561     		str	r5, [r4, #16]
+ 227 0010 2569     		ldr	r5, [r4, #16]
+ 228 0012 45F00075 		orr	r5, r5, #33554432
+ 229 0016 2561     		str	r5, [r4, #16]
+ 230 0018 0D49     		ldr	r1, .L31+4
+ 231 001a 0324     		movs	r4, #3
+ 232 001c 0C70     		strb	r4, [r1]
+ 233 001e 4861     		str	r0, [r1, #20]
+ 234 0020 3EB1     		cbz	r6, .L28
+ 235 0022 012E     		cmp	r6, #1
+ 236 0024 09D0     		beq	.L29
+ 237 0026 022E     		cmp	r6, #2
+ 238 0028 0BD0     		beq	.L30
+ 239 002a FFF7FEFF 		bl	FLASH_Program_DoubleWord
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccbtOidU.s 			page 5
+
+
+ 240              	.L24:
+ 241 002e 0020     		movs	r0, #0
+ 242 0030 70BD     		pop	{r4, r5, r6, pc}
+ 243              	.L28:
+ 244 0032 D1B2     		uxtb	r1, r2
+ 245 0034 FFF7FEFF 		bl	FLASH_Program_Byte
+ 246 0038 F9E7     		b	.L24
+ 247              	.L29:
+ 248 003a 91B2     		uxth	r1, r2
+ 249 003c FFF7FEFF 		bl	FLASH_Program_HalfWord
+ 250 0040 F5E7     		b	.L24
+ 251              	.L30:
+ 252 0042 1146     		mov	r1, r2
+ 253 0044 FFF7FEFF 		bl	FLASH_Program_Word
+ 254 0048 F1E7     		b	.L24
+ 255              	.L32:
+ 256 004a 00BF     		.align	2
+ 257              	.L31:
+ 258 004c 003C0240 		.word	1073888256
+ 259 0050 00000000 		.word	pFlash
+ 261              		.section	.text.HAL_FLASH_EndOfOperationCallback,"ax",%progbits
+ 262              		.align	1
+ 263              		.weak	HAL_FLASH_EndOfOperationCallback
+ 264              		.syntax unified
+ 265              		.thumb
+ 266              		.thumb_func
+ 268              	HAL_FLASH_EndOfOperationCallback:
+ 269              		@ args = 0, pretend = 0, frame = 0
+ 270              		@ frame_needed = 0, uses_anonymous_args = 0
+ 271              		@ link register save eliminated.
+ 272 0000 7047     		bx	lr
+ 274              		.section	.text.HAL_FLASH_OperationErrorCallback,"ax",%progbits
+ 275              		.align	1
+ 276              		.weak	HAL_FLASH_OperationErrorCallback
+ 277              		.syntax unified
+ 278              		.thumb
+ 279              		.thumb_func
+ 281              	HAL_FLASH_OperationErrorCallback:
+ 282              		@ args = 0, pretend = 0, frame = 0
+ 283              		@ frame_needed = 0, uses_anonymous_args = 0
+ 284              		@ link register save eliminated.
+ 285 0000 7047     		bx	lr
+ 287              		.section	.text.HAL_FLASH_IRQHandler,"ax",%progbits
+ 288              		.align	1
+ 289              		.global	HAL_FLASH_IRQHandler
+ 290              		.syntax unified
+ 291              		.thumb
+ 292              		.thumb_func
+ 294              	HAL_FLASH_IRQHandler:
+ 295              		@ args = 0, pretend = 0, frame = 0
+ 296              		@ frame_needed = 0, uses_anonymous_args = 0
+ 297 0000 10B5     		push	{r4, lr}
+ 298 0002 364B     		ldr	r3, .L51
+ 299 0004 DB68     		ldr	r3, [r3, #12]
+ 300 0006 13F0F20F 		tst	r3, #242
+ 301 000a 11D0     		beq	.L36
+ 302 000c 344B     		ldr	r3, .L51+4
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccbtOidU.s 			page 6
+
+
+ 303 000e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 304 0010 012B     		cmp	r3, #1
+ 305 0012 35D0     		beq	.L47
+ 306 0014 324B     		ldr	r3, .L51+4
+ 307 0016 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 308 0018 022B     		cmp	r3, #2
+ 309 001a 37D0     		beq	.L48
+ 310 001c 304B     		ldr	r3, .L51+4
+ 311 001e 5C69     		ldr	r4, [r3, #20]
+ 312              	.L38:
+ 313 0020 FFF7FEFF 		bl	FLASH_SetErrorCode
+ 314 0024 2046     		mov	r0, r4
+ 315 0026 FFF7FEFF 		bl	HAL_FLASH_OperationErrorCallback
+ 316 002a 2D4B     		ldr	r3, .L51+4
+ 317 002c 0022     		movs	r2, #0
+ 318 002e 1A70     		strb	r2, [r3]
+ 319              	.L36:
+ 320 0030 2A4B     		ldr	r3, .L51
+ 321 0032 DB68     		ldr	r3, [r3, #12]
+ 322 0034 13F0010F 		tst	r3, #1
+ 323 0038 11D0     		beq	.L40
+ 324 003a 284B     		ldr	r3, .L51
+ 325 003c 0122     		movs	r2, #1
+ 326 003e DA60     		str	r2, [r3, #12]
+ 327 0040 274B     		ldr	r3, .L51+4
+ 328 0042 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 329 0044 9342     		cmp	r3, r2
+ 330 0046 24D0     		beq	.L49
+ 331 0048 254B     		ldr	r3, .L51+4
+ 332 004a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 333 004c 022B     		cmp	r3, #2
+ 334 004e 3ED0     		beq	.L50
+ 335 0050 234B     		ldr	r3, .L51+4
+ 336 0052 5869     		ldr	r0, [r3, #20]
+ 337 0054 FFF7FEFF 		bl	HAL_FLASH_EndOfOperationCallback
+ 338              	.L44:
+ 339 0058 214B     		ldr	r3, .L51+4
+ 340 005a 0022     		movs	r2, #0
+ 341 005c 1A70     		strb	r2, [r3]
+ 342              	.L40:
+ 343 005e 204B     		ldr	r3, .L51+4
+ 344 0060 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 345 0062 63B9     		cbnz	r3, .L35
+ 346 0064 1D4B     		ldr	r3, .L51
+ 347 0066 1A69     		ldr	r2, [r3, #16]
+ 348 0068 22F07F02 		bic	r2, r2, #127
+ 349 006c 1A61     		str	r2, [r3, #16]
+ 350 006e 1A69     		ldr	r2, [r3, #16]
+ 351 0070 22F08072 		bic	r2, r2, #16777216
+ 352 0074 1A61     		str	r2, [r3, #16]
+ 353 0076 1A69     		ldr	r2, [r3, #16]
+ 354 0078 22F00072 		bic	r2, r2, #33554432
+ 355 007c 1A61     		str	r2, [r3, #16]
+ 356              	.L35:
+ 357 007e 10BD     		pop	{r4, pc}
+ 358              	.L47:
+ 359 0080 174B     		ldr	r3, .L51+4
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccbtOidU.s 			page 7
+
+
+ 360 0082 DC68     		ldr	r4, [r3, #12]
+ 361 0084 4FF0FF32 		mov	r2, #-1
+ 362 0088 DA60     		str	r2, [r3, #12]
+ 363 008a C9E7     		b	.L38
+ 364              	.L48:
+ 365 008c 144B     		ldr	r3, .L51+4
+ 366 008e 1C69     		ldr	r4, [r3, #16]
+ 367 0090 C6E7     		b	.L38
+ 368              	.L49:
+ 369 0092 134B     		ldr	r3, .L51+4
+ 370 0094 5A68     		ldr	r2, [r3, #4]
+ 371 0096 013A     		subs	r2, r2, #1
+ 372 0098 5A60     		str	r2, [r3, #4]
+ 373 009a 5B68     		ldr	r3, [r3, #4]
+ 374 009c 5BB1     		cbz	r3, .L42
+ 375 009e 104C     		ldr	r4, .L51+4
+ 376 00a0 E068     		ldr	r0, [r4, #12]
+ 377 00a2 FFF7FEFF 		bl	HAL_FLASH_EndOfOperationCallback
+ 378 00a6 E368     		ldr	r3, [r4, #12]
+ 379 00a8 0133     		adds	r3, r3, #1
+ 380 00aa E360     		str	r3, [r4, #12]
+ 381 00ac E068     		ldr	r0, [r4, #12]
+ 382 00ae 217A     		ldrb	r1, [r4, #8]	@ zero_extendqisi2
+ 383 00b0 FFF7FEFF 		bl	FLASH_Erase_Sector
+ 384 00b4 D3E7     		b	.L40
+ 385              	.L42:
+ 386 00b6 0A4B     		ldr	r3, .L51+4
+ 387 00b8 4FF0FF34 		mov	r4, #-1
+ 388 00bc DC60     		str	r4, [r3, #12]
+ 389 00be 0022     		movs	r2, #0
+ 390 00c0 1A70     		strb	r2, [r3]
+ 391 00c2 FFF7FEFF 		bl	FLASH_FlushCaches
+ 392 00c6 2046     		mov	r0, r4
+ 393 00c8 FFF7FEFF 		bl	HAL_FLASH_EndOfOperationCallback
+ 394 00cc C7E7     		b	.L40
+ 395              	.L50:
+ 396 00ce FFF7FEFF 		bl	FLASH_FlushCaches
+ 397 00d2 034B     		ldr	r3, .L51+4
+ 398 00d4 1869     		ldr	r0, [r3, #16]
+ 399 00d6 FFF7FEFF 		bl	HAL_FLASH_EndOfOperationCallback
+ 400 00da BDE7     		b	.L44
+ 401              	.L52:
+ 402              		.align	2
+ 403              	.L51:
+ 404 00dc 003C0240 		.word	1073888256
+ 405 00e0 00000000 		.word	pFlash
+ 407              		.section	.text.HAL_FLASH_Unlock,"ax",%progbits
+ 408              		.align	1
+ 409              		.global	HAL_FLASH_Unlock
+ 410              		.syntax unified
+ 411              		.thumb
+ 412              		.thumb_func
+ 414              	HAL_FLASH_Unlock:
+ 415              		@ args = 0, pretend = 0, frame = 0
+ 416              		@ frame_needed = 0, uses_anonymous_args = 0
+ 417              		@ link register save eliminated.
+ 418 0000 094B     		ldr	r3, .L58
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccbtOidU.s 			page 8
+
+
+ 419 0002 1B69     		ldr	r3, [r3, #16]
+ 420 0004 002B     		cmp	r3, #0
+ 421 0006 01DB     		blt	.L57
+ 422 0008 0020     		movs	r0, #0
+ 423 000a 7047     		bx	lr
+ 424              	.L57:
+ 425 000c 064B     		ldr	r3, .L58
+ 426 000e 074A     		ldr	r2, .L58+4
+ 427 0010 5A60     		str	r2, [r3, #4]
+ 428 0012 02F18832 		add	r2, r2, #-2004318072
+ 429 0016 5A60     		str	r2, [r3, #4]
+ 430 0018 1B69     		ldr	r3, [r3, #16]
+ 431 001a 002B     		cmp	r3, #0
+ 432 001c 01DB     		blt	.L56
+ 433 001e 0020     		movs	r0, #0
+ 434 0020 7047     		bx	lr
+ 435              	.L56:
+ 436 0022 0120     		movs	r0, #1
+ 437 0024 7047     		bx	lr
+ 438              	.L59:
+ 439 0026 00BF     		.align	2
+ 440              	.L58:
+ 441 0028 003C0240 		.word	1073888256
+ 442 002c 23016745 		.word	1164378403
+ 444              		.section	.text.HAL_FLASH_Lock,"ax",%progbits
+ 445              		.align	1
+ 446              		.global	HAL_FLASH_Lock
+ 447              		.syntax unified
+ 448              		.thumb
+ 449              		.thumb_func
+ 451              	HAL_FLASH_Lock:
+ 452              		@ args = 0, pretend = 0, frame = 0
+ 453              		@ frame_needed = 0, uses_anonymous_args = 0
+ 454              		@ link register save eliminated.
+ 455 0000 034A     		ldr	r2, .L61
+ 456 0002 1369     		ldr	r3, [r2, #16]
+ 457 0004 43F00043 		orr	r3, r3, #-2147483648
+ 458 0008 1361     		str	r3, [r2, #16]
+ 459 000a 0020     		movs	r0, #0
+ 460 000c 7047     		bx	lr
+ 461              	.L62:
+ 462 000e 00BF     		.align	2
+ 463              	.L61:
+ 464 0010 003C0240 		.word	1073888256
+ 466              		.section	.text.HAL_FLASH_OB_Unlock,"ax",%progbits
+ 467              		.align	1
+ 468              		.global	HAL_FLASH_OB_Unlock
+ 469              		.syntax unified
+ 470              		.thumb
+ 471              		.thumb_func
+ 473              	HAL_FLASH_OB_Unlock:
+ 474              		@ args = 0, pretend = 0, frame = 0
+ 475              		@ frame_needed = 0, uses_anonymous_args = 0
+ 476              		@ link register save eliminated.
+ 477 0000 074B     		ldr	r3, .L66
+ 478 0002 5B69     		ldr	r3, [r3, #20]
+ 479 0004 13F0010F 		tst	r3, #1
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccbtOidU.s 			page 9
+
+
+ 480 0008 07D0     		beq	.L65
+ 481 000a 054B     		ldr	r3, .L66
+ 482 000c 054A     		ldr	r2, .L66+4
+ 483 000e 9A60     		str	r2, [r3, #8]
+ 484 0010 02F14432 		add	r2, r2, #1145324612
+ 485 0014 9A60     		str	r2, [r3, #8]
+ 486 0016 0020     		movs	r0, #0
+ 487 0018 7047     		bx	lr
+ 488              	.L65:
+ 489 001a 0120     		movs	r0, #1
+ 490 001c 7047     		bx	lr
+ 491              	.L67:
+ 492 001e 00BF     		.align	2
+ 493              	.L66:
+ 494 0020 003C0240 		.word	1073888256
+ 495 0024 3B2A1908 		.word	135866939
+ 497              		.section	.text.HAL_FLASH_OB_Lock,"ax",%progbits
+ 498              		.align	1
+ 499              		.global	HAL_FLASH_OB_Lock
+ 500              		.syntax unified
+ 501              		.thumb
+ 502              		.thumb_func
+ 504              	HAL_FLASH_OB_Lock:
+ 505              		@ args = 0, pretend = 0, frame = 0
+ 506              		@ frame_needed = 0, uses_anonymous_args = 0
+ 507              		@ link register save eliminated.
+ 508 0000 034A     		ldr	r2, .L69
+ 509 0002 5369     		ldr	r3, [r2, #20]
+ 510 0004 43F00103 		orr	r3, r3, #1
+ 511 0008 5361     		str	r3, [r2, #20]
+ 512 000a 0020     		movs	r0, #0
+ 513 000c 7047     		bx	lr
+ 514              	.L70:
+ 515 000e 00BF     		.align	2
+ 516              	.L69:
+ 517 0010 003C0240 		.word	1073888256
+ 519              		.section	.text.HAL_FLASH_GetError,"ax",%progbits
+ 520              		.align	1
+ 521              		.global	HAL_FLASH_GetError
+ 522              		.syntax unified
+ 523              		.thumb
+ 524              		.thumb_func
+ 526              	HAL_FLASH_GetError:
+ 527              		@ args = 0, pretend = 0, frame = 0
+ 528              		@ frame_needed = 0, uses_anonymous_args = 0
+ 529              		@ link register save eliminated.
+ 530 0000 014B     		ldr	r3, .L72
+ 531 0002 D869     		ldr	r0, [r3, #28]
+ 532 0004 7047     		bx	lr
+ 533              	.L73:
+ 534 0006 00BF     		.align	2
+ 535              	.L72:
+ 536 0008 00000000 		.word	pFlash
+ 538              		.section	.text.FLASH_WaitForLastOperation,"ax",%progbits
+ 539              		.align	1
+ 540              		.global	FLASH_WaitForLastOperation
+ 541              		.syntax unified
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccbtOidU.s 			page 10
+
+
+ 542              		.thumb
+ 543              		.thumb_func
+ 545              	FLASH_WaitForLastOperation:
+ 546              		@ args = 0, pretend = 0, frame = 0
+ 547              		@ frame_needed = 0, uses_anonymous_args = 0
+ 548 0000 38B5     		push	{r3, r4, r5, lr}
+ 549 0002 0446     		mov	r4, r0
+ 550 0004 144B     		ldr	r3, .L85
+ 551 0006 0022     		movs	r2, #0
+ 552 0008 DA61     		str	r2, [r3, #28]
+ 553 000a FFF7FEFF 		bl	HAL_GetTick
+ 554 000e 0546     		mov	r5, r0
+ 555              	.L76:
+ 556 0010 124B     		ldr	r3, .L85+4
+ 557 0012 DB68     		ldr	r3, [r3, #12]
+ 558 0014 13F4803F 		tst	r3, #65536
+ 559 0018 0AD0     		beq	.L83
+ 560 001a B4F1FF3F 		cmp	r4, #-1
+ 561 001e F7D0     		beq	.L76
+ 562 0020 24B1     		cbz	r4, .L77
+ 563 0022 FFF7FEFF 		bl	HAL_GetTick
+ 564 0026 401B     		subs	r0, r0, r5
+ 565 0028 A042     		cmp	r0, r4
+ 566 002a F1D9     		bls	.L76
+ 567              	.L77:
+ 568 002c 0320     		movs	r0, #3
+ 569 002e 0DE0     		b	.L78
+ 570              	.L83:
+ 571 0030 0A4B     		ldr	r3, .L85+4
+ 572 0032 DB68     		ldr	r3, [r3, #12]
+ 573 0034 13F0010F 		tst	r3, #1
+ 574 0038 02D0     		beq	.L80
+ 575 003a 084B     		ldr	r3, .L85+4
+ 576 003c 0122     		movs	r2, #1
+ 577 003e DA60     		str	r2, [r3, #12]
+ 578              	.L80:
+ 579 0040 064B     		ldr	r3, .L85+4
+ 580 0042 DB68     		ldr	r3, [r3, #12]
+ 581 0044 13F0F20F 		tst	r3, #242
+ 582 0048 01D1     		bne	.L84
+ 583 004a 0020     		movs	r0, #0
+ 584              	.L78:
+ 585 004c 38BD     		pop	{r3, r4, r5, pc}
+ 586              	.L84:
+ 587 004e FFF7FEFF 		bl	FLASH_SetErrorCode
+ 588 0052 0120     		movs	r0, #1
+ 589 0054 FAE7     		b	.L78
+ 590              	.L86:
+ 591 0056 00BF     		.align	2
+ 592              	.L85:
+ 593 0058 00000000 		.word	pFlash
+ 594 005c 003C0240 		.word	1073888256
+ 596              		.section	.text.HAL_FLASH_Program,"ax",%progbits
+ 597              		.align	1
+ 598              		.global	HAL_FLASH_Program
+ 599              		.syntax unified
+ 600              		.thumb
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccbtOidU.s 			page 11
+
+
+ 601              		.thumb_func
+ 603              	HAL_FLASH_Program:
+ 604              		@ args = 0, pretend = 0, frame = 0
+ 605              		@ frame_needed = 0, uses_anonymous_args = 0
+ 606 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 607 0002 1646     		mov	r6, r2
+ 608 0004 1B4A     		ldr	r2, .L99
+ 609 0006 127E     		ldrb	r2, [r2, #24]	@ zero_extendqisi2
+ 610 0008 012A     		cmp	r2, #1
+ 611 000a 30D0     		beq	.L94
+ 612 000c 0446     		mov	r4, r0
+ 613 000e 0D46     		mov	r5, r1
+ 614 0010 1F46     		mov	r7, r3
+ 615 0012 184B     		ldr	r3, .L99
+ 616 0014 0122     		movs	r2, #1
+ 617 0016 1A76     		strb	r2, [r3, #24]
+ 618 0018 4CF25030 		movw	r0, #50000
+ 619 001c FFF7FEFF 		bl	FLASH_WaitForLastOperation
+ 620 0020 90B9     		cbnz	r0, .L89
+ 621 0022 ACB1     		cbz	r4, .L96
+ 622 0024 012C     		cmp	r4, #1
+ 623 0026 18D0     		beq	.L97
+ 624 0028 022C     		cmp	r4, #2
+ 625 002a 1BD0     		beq	.L98
+ 626 002c 3246     		mov	r2, r6
+ 627 002e 3B46     		mov	r3, r7
+ 628 0030 2846     		mov	r0, r5
+ 629 0032 FFF7FEFF 		bl	FLASH_Program_DoubleWord
+ 630              	.L91:
+ 631 0036 4CF25030 		movw	r0, #50000
+ 632 003a FFF7FEFF 		bl	FLASH_WaitForLastOperation
+ 633 003e 0E4A     		ldr	r2, .L99+4
+ 634 0040 1369     		ldr	r3, [r2, #16]
+ 635 0042 23F00103 		bic	r3, r3, #1
+ 636 0046 1361     		str	r3, [r2, #16]
+ 637              	.L89:
+ 638 0048 0A4B     		ldr	r3, .L99
+ 639 004a 0022     		movs	r2, #0
+ 640 004c 1A76     		strb	r2, [r3, #24]
+ 641              	.L88:
+ 642 004e F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 643              	.L96:
+ 644 0050 F1B2     		uxtb	r1, r6
+ 645 0052 2846     		mov	r0, r5
+ 646 0054 FFF7FEFF 		bl	FLASH_Program_Byte
+ 647 0058 EDE7     		b	.L91
+ 648              	.L97:
+ 649 005a B1B2     		uxth	r1, r6
+ 650 005c 2846     		mov	r0, r5
+ 651 005e FFF7FEFF 		bl	FLASH_Program_HalfWord
+ 652 0062 E8E7     		b	.L91
+ 653              	.L98:
+ 654 0064 3146     		mov	r1, r6
+ 655 0066 2846     		mov	r0, r5
+ 656 0068 FFF7FEFF 		bl	FLASH_Program_Word
+ 657 006c E3E7     		b	.L91
+ 658              	.L94:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccbtOidU.s 			page 12
+
+
+ 659 006e 0220     		movs	r0, #2
+ 660 0070 EDE7     		b	.L88
+ 661              	.L100:
+ 662 0072 00BF     		.align	2
+ 663              	.L99:
+ 664 0074 00000000 		.word	pFlash
+ 665 0078 003C0240 		.word	1073888256
+ 667              		.section	.text.HAL_FLASH_OB_Launch,"ax",%progbits
+ 668              		.align	1
+ 669              		.global	HAL_FLASH_OB_Launch
+ 670              		.syntax unified
+ 671              		.thumb
+ 672              		.thumb_func
+ 674              	HAL_FLASH_OB_Launch:
+ 675              		@ args = 0, pretend = 0, frame = 0
+ 676              		@ frame_needed = 0, uses_anonymous_args = 0
+ 677 0000 08B5     		push	{r3, lr}
+ 678 0002 054A     		ldr	r2, .L103
+ 679 0004 137D     		ldrb	r3, [r2, #20]	@ zero_extendqisi2
+ 680 0006 43F00203 		orr	r3, r3, #2
+ 681 000a 1375     		strb	r3, [r2, #20]
+ 682 000c 4CF25030 		movw	r0, #50000
+ 683 0010 FFF7FEFF 		bl	FLASH_WaitForLastOperation
+ 684 0014 08BD     		pop	{r3, pc}
+ 685              	.L104:
+ 686 0016 00BF     		.align	2
+ 687              	.L103:
+ 688 0018 003C0240 		.word	1073888256
+ 690              		.global	pFlash
+ 691              		.section	.data.pFlash,"aw"
+ 692              		.align	2
+ 695              	pFlash:
+ 696 0000 00       		.byte	0
+ 697 0001 000000   		.space	3
+ 698 0004 00000000 		.word	0
+ 699 0008 00       		.byte	0
+ 700 0009 000000   		.space	3
+ 701 000c 00000000 		.word	0
+ 702 0010 01000000 		.word	1
+ 703 0014 00000000 		.word	0
+ 704 0018 00       		.byte	0
+ 705 0019 000000   		.space	3
+ 706 001c 00000000 		.word	0
+ 707              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccbtOidU.s 			page 13
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 stm32f4xx_hal_flash.c
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:18     .text.FLASH_Program_DoubleWord:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:23     .text.FLASH_Program_DoubleWord:00000000 FLASH_Program_DoubleWord
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:51     .text.FLASH_Program_DoubleWord:0000002c $d
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:54     .text.FLASH_Program_Word:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:59     .text.FLASH_Program_Word:00000000 FLASH_Program_Word
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:78     .text.FLASH_Program_Word:00000020 $d
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:81     .text.FLASH_Program_HalfWord:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:86     .text.FLASH_Program_HalfWord:00000000 FLASH_Program_HalfWord
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:105    .text.FLASH_Program_HalfWord:00000020 $d
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:108    .text.FLASH_Program_Byte:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:113    .text.FLASH_Program_Byte:00000000 FLASH_Program_Byte
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:131    .text.FLASH_Program_Byte:0000001c $d
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:134    .text.FLASH_SetErrorCode:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:139    .text.FLASH_SetErrorCode:00000000 FLASH_SetErrorCode
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:207    .text.FLASH_SetErrorCode:00000084 $d
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:695    .data.pFlash:00000000 pFlash
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:211    .text.HAL_FLASH_Program_IT:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:217    .text.HAL_FLASH_Program_IT:00000000 HAL_FLASH_Program_IT
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:258    .text.HAL_FLASH_Program_IT:0000004c $d
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:262    .text.HAL_FLASH_EndOfOperationCallback:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:268    .text.HAL_FLASH_EndOfOperationCallback:00000000 HAL_FLASH_EndOfOperationCallback
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:275    .text.HAL_FLASH_OperationErrorCallback:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:281    .text.HAL_FLASH_OperationErrorCallback:00000000 HAL_FLASH_OperationErrorCallback
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:288    .text.HAL_FLASH_IRQHandler:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:294    .text.HAL_FLASH_IRQHandler:00000000 HAL_FLASH_IRQHandler
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:404    .text.HAL_FLASH_IRQHandler:000000dc $d
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:408    .text.HAL_FLASH_Unlock:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:414    .text.HAL_FLASH_Unlock:00000000 HAL_FLASH_Unlock
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:441    .text.HAL_FLASH_Unlock:00000028 $d
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:445    .text.HAL_FLASH_Lock:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:451    .text.HAL_FLASH_Lock:00000000 HAL_FLASH_Lock
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:464    .text.HAL_FLASH_Lock:00000010 $d
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:467    .text.HAL_FLASH_OB_Unlock:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:473    .text.HAL_FLASH_OB_Unlock:00000000 HAL_FLASH_OB_Unlock
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:494    .text.HAL_FLASH_OB_Unlock:00000020 $d
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:498    .text.HAL_FLASH_OB_Lock:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:504    .text.HAL_FLASH_OB_Lock:00000000 HAL_FLASH_OB_Lock
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:517    .text.HAL_FLASH_OB_Lock:00000010 $d
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:520    .text.HAL_FLASH_GetError:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:526    .text.HAL_FLASH_GetError:00000000 HAL_FLASH_GetError
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:536    .text.HAL_FLASH_GetError:00000008 $d
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:539    .text.FLASH_WaitForLastOperation:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:545    .text.FLASH_WaitForLastOperation:00000000 FLASH_WaitForLastOperation
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:593    .text.FLASH_WaitForLastOperation:00000058 $d
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:597    .text.HAL_FLASH_Program:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:603    .text.HAL_FLASH_Program:00000000 HAL_FLASH_Program
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:664    .text.HAL_FLASH_Program:00000074 $d
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:668    .text.HAL_FLASH_OB_Launch:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:674    .text.HAL_FLASH_OB_Launch:00000000 HAL_FLASH_OB_Launch
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:688    .text.HAL_FLASH_OB_Launch:00000018 $d
+C:\Users\fish\AppData\Local\Temp\ccbtOidU.s:692    .data.pFlash:00000000 $d
+
+UNDEFINED SYMBOLS
+FLASH_Erase_Sector
+FLASH_FlushCaches
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccbtOidU.s 			page 14
+
+
+HAL_GetTick

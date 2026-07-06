@@ -1,0 +1,716 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cccGYWgN.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"freertos.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/freertos.c"
+  20              		.section	.rodata.StartNfcTask.str1.4,"aMS",%progbits,1
+  21              		.align	2
+  22              	.LC0:
+  23 0000 52433532 		.ascii	"RC522 NFC Reader Demo Started\015\000"
+  23      32204E46 
+  23      43205265 
+  23      61646572 
+  23      2044656D 
+  24 001f 00       		.align	2
+  25              	.LC1:
+  26 0020 0D0A3D3D 		.ascii	"\015\012=== Card Detected! UID: %02X-%02X-%02X-%02X"
+  26      3D204361 
+  26      72642044 
+  26      65746563 
+  26      74656421 
+  27 004d 203D3D3D 		.ascii	" ===\015\012\000"
+  27      0D0A00
+  28              		.align	2
+  29              	.LC2:
+  30 0054 0D0A2D2D 		.ascii	"\015\012--- Sector %d ---\015\012\000"
+  30      2D205365 
+  30      63746F72 
+  30      20256420 
+  30      2D2D2D0D 
+  31 006a 0000     		.align	2
+  32              	.LC3:
+  33 006c 2020426C 		.ascii	"  Block %2d (0x%02X): \000"
+  33      6F636B20 
+  33      25326420 
+  33      28307825 
+  33      30325829 
+  34 0083 00       		.align	2
+  35              	.LC4:
+  36 0084 25303258 		.ascii	"%02X \000"
+  36      2000
+  37 008a 0000     		.align	2
+  38              	.LC5:
+  39 008c 0D00     		.ascii	"\015\000"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cccGYWgN.s 			page 2
+
+
+  40 008e 0000     		.align	2
+  41              	.LC6:
+  42 0090 0D0A3D3D 		.ascii	"\015\012=== All sectors read complete ===\015\000"
+  42      3D20416C 
+  42      6C207365 
+  42      63746F72 
+  42      73207265 
+  43 00b5 000000   		.align	2
+  44              	.LC7:
+  45 00b8 52656164 		.ascii	"Read all sectors failed!\015\000"
+  45      20616C6C 
+  45      20736563 
+  45      746F7273 
+  45      20666169 
+  46 00d2 0000     		.align	2
+  47              	.LC8:
+  48 00d4 43617264 		.ascii	"Card removed.\015\000"
+  48      2072656D 
+  48      6F766564 
+  48      2E0D00
+  49              		.section	.text.StartNfcTask,"ax",%progbits
+  50              		.align	1
+  51              		.global	StartNfcTask
+  52              		.syntax unified
+  53              		.thumb
+  54              		.thumb_func
+  56              	StartNfcTask:
+  57              	.LVL0:
+  58              	.LFB247:
+   1:Core/Src/freertos.c **** /* USER CODE BEGIN Header */
+   2:Core/Src/freertos.c **** /**
+   3:Core/Src/freertos.c ****   ******************************************************************************
+   4:Core/Src/freertos.c ****   * File Name          : freertos.c
+   5:Core/Src/freertos.c ****   * Description        : Code for freertos applications
+   6:Core/Src/freertos.c ****   ******************************************************************************
+   7:Core/Src/freertos.c ****   * @attention
+   8:Core/Src/freertos.c ****   *
+   9:Core/Src/freertos.c ****   * Copyright (c) 2026 STMicroelectronics.
+  10:Core/Src/freertos.c ****   * All rights reserved.
+  11:Core/Src/freertos.c ****   *
+  12:Core/Src/freertos.c ****   * This software is licensed under terms that can be found in the LICENSE file
+  13:Core/Src/freertos.c ****   * in the root directory of this software component.
+  14:Core/Src/freertos.c ****   * If no LICENSE file comes with this software, it is provided AS-IS.
+  15:Core/Src/freertos.c ****   *
+  16:Core/Src/freertos.c ****   ******************************************************************************
+  17:Core/Src/freertos.c ****   */
+  18:Core/Src/freertos.c **** /* USER CODE END Header */
+  19:Core/Src/freertos.c **** 
+  20:Core/Src/freertos.c **** /* Includes ------------------------------------------------------------------*/
+  21:Core/Src/freertos.c **** #include "FreeRTOS.h"
+  22:Core/Src/freertos.c **** #include "task.h"
+  23:Core/Src/freertos.c **** #include "main.h"
+  24:Core/Src/freertos.c **** #include "cmsis_os.h"
+  25:Core/Src/freertos.c **** #include "rc522.h"
+  26:Core/Src/freertos.c **** #include "uart_drv.h"
+  27:Core/Src/freertos.c **** #include <stdio.h>
+  28:Core/Src/freertos.c **** #include <string.h>
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cccGYWgN.s 			page 3
+
+
+  29:Core/Src/freertos.c **** 
+  30:Core/Src/freertos.c **** /* Private includes ----------------------------------------------------------*/
+  31:Core/Src/freertos.c **** /* USER CODE BEGIN Includes */
+  32:Core/Src/freertos.c **** #include "usart.h"
+  33:Core/Src/freertos.c **** /* USER CODE END Includes */
+  34:Core/Src/freertos.c **** 
+  35:Core/Src/freertos.c **** /* Private typedef -----------------------------------------------------------*/
+  36:Core/Src/freertos.c **** /* USER CODE BEGIN PTD */
+  37:Core/Src/freertos.c **** 
+  38:Core/Src/freertos.c **** /* USER CODE END PTD */
+  39:Core/Src/freertos.c **** 
+  40:Core/Src/freertos.c **** /* Private define ------------------------------------------------------------*/
+  41:Core/Src/freertos.c **** /* USER CODE BEGIN PD */
+  42:Core/Src/freertos.c **** 
+  43:Core/Src/freertos.c **** /* USER CODE END PD */
+  44:Core/Src/freertos.c **** 
+  45:Core/Src/freertos.c **** /* Private macro -------------------------------------------------------------*/
+  46:Core/Src/freertos.c **** /* USER CODE BEGIN PM */
+  47:Core/Src/freertos.c **** 
+  48:Core/Src/freertos.c **** /* USER CODE END PM */
+  49:Core/Src/freertos.c **** 
+  50:Core/Src/freertos.c **** /* Private variables ---------------------------------------------------------*/
+  51:Core/Src/freertos.c **** /* USER CODE BEGIN Variables */
+  52:Core/Src/freertos.c **** /* USART1 驱动实例 (用于 printf 调试输出) */
+  53:Core/Src/freertos.c **** static UartDrv_t g_uart1Drv;
+  54:Core/Src/freertos.c **** /* USER CODE END Variables */
+  55:Core/Src/freertos.c **** 
+  56:Core/Src/freertos.c **** /* Definitions for nfcTask */
+  57:Core/Src/freertos.c **** osThreadId_t nfcTaskHandle;
+  58:Core/Src/freertos.c **** const osThreadAttr_t nfcTask_attributes = {
+  59:Core/Src/freertos.c ****   .name = "nfcTask",
+  60:Core/Src/freertos.c ****   .stack_size = 1024 * 4,
+  61:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityNormal,
+  62:Core/Src/freertos.c **** };
+  63:Core/Src/freertos.c **** 
+  64:Core/Src/freertos.c **** /* Private function prototypes -----------------------------------------------*/
+  65:Core/Src/freertos.c **** /* USER CODE BEGIN FunctionPrototypes */
+  66:Core/Src/freertos.c **** 
+  67:Core/Src/freertos.c **** /* USER CODE END FunctionPrototypes */
+  68:Core/Src/freertos.c **** 
+  69:Core/Src/freertos.c **** void StartNfcTask(void *argument);
+  70:Core/Src/freertos.c **** 
+  71:Core/Src/freertos.c **** void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+  72:Core/Src/freertos.c **** 
+  73:Core/Src/freertos.c **** /**
+  74:Core/Src/freertos.c ****   * @brief  FreeRTOS initialization
+  75:Core/Src/freertos.c ****   * @param  None
+  76:Core/Src/freertos.c ****   * @retval None
+  77:Core/Src/freertos.c ****   */
+  78:Core/Src/freertos.c **** void MX_FREERTOS_Init(void) {
+  79:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
+  80:Core/Src/freertos.c **** 
+  81:Core/Src/freertos.c ****   /* USER CODE END Init */
+  82:Core/Src/freertos.c **** 
+  83:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_MUTEX */
+  84:Core/Src/freertos.c ****   /* add mutexes, ... */
+  85:Core/Src/freertos.c ****   /* USER CODE END RTOS_MUTEX */
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cccGYWgN.s 			page 4
+
+
+  86:Core/Src/freertos.c **** 
+  87:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_SEMAPHORES */
+  88:Core/Src/freertos.c ****   /* add semaphores, ... */
+  89:Core/Src/freertos.c ****   /* USER CODE END RTOS_SEMAPHORES */
+  90:Core/Src/freertos.c **** 
+  91:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_TIMERS */
+  92:Core/Src/freertos.c ****   /* start timers, add new ones, ... */
+  93:Core/Src/freertos.c ****   /* USER CODE END RTOS_TIMERS */
+  94:Core/Src/freertos.c **** 
+  95:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_QUEUES */
+  96:Core/Src/freertos.c ****   /* add queues, ... */
+  97:Core/Src/freertos.c ****   /* USER CODE END RTOS_QUEUES */
+  98:Core/Src/freertos.c **** 
+  99:Core/Src/freertos.c ****   /* Create the thread(s) */
+ 100:Core/Src/freertos.c ****   /* creation of nfcTask */
+ 101:Core/Src/freertos.c ****   nfcTaskHandle = osThreadNew(StartNfcTask, NULL, &nfcTask_attributes);
+ 102:Core/Src/freertos.c **** 
+ 103:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_THREADS */
+ 104:Core/Src/freertos.c ****   /* add threads, ... */
+ 105:Core/Src/freertos.c ****   /* USER CODE END RTOS_THREADS */
+ 106:Core/Src/freertos.c **** 
+ 107:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_EVENTS */
+ 108:Core/Src/freertos.c ****   /* add events, ... */
+ 109:Core/Src/freertos.c ****   /* USER CODE END RTOS_EVENTS */
+ 110:Core/Src/freertos.c **** 
+ 111:Core/Src/freertos.c **** }
+ 112:Core/Src/freertos.c **** 
+ 113:Core/Src/freertos.c **** /* USER CODE BEGIN Header_StartNfcTask */
+ 114:Core/Src/freertos.c **** /**
+ 115:Core/Src/freertos.c ****   * @brief  Function implementing the nfcTask thread.
+ 116:Core/Src/freertos.c ****   * @param  argument: Not used
+ 117:Core/Src/freertos.c ****   * @retval None
+ 118:Core/Src/freertos.c ****   */
+ 119:Core/Src/freertos.c **** /* USER CODE END Header_StartNfcTask */
+ 120:Core/Src/freertos.c **** void StartNfcTask(void *argument)
+ 121:Core/Src/freertos.c **** {
+  59              		.loc 1 121 1 view -0
+  60              		.cfi_startproc
+  61              		@ args = 0, pretend = 0, frame = 1032
+  62              		@ frame_needed = 0, uses_anonymous_args = 0
+  63              		.loc 1 121 1 is_stmt 0 view .LVU1
+  64 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+  65              		.cfi_def_cfa_offset 24
+  66              		.cfi_offset 4, -24
+  67              		.cfi_offset 5, -20
+  68              		.cfi_offset 6, -16
+  69              		.cfi_offset 7, -12
+  70              		.cfi_offset 8, -8
+  71              		.cfi_offset 14, -4
+  72 0004 ADF5826D 		sub	sp, sp, #1040
+  73              		.cfi_def_cfa_offset 1064
+ 122:Core/Src/freertos.c ****   /* USER CODE BEGIN StartNfcTask */
+ 123:Core/Src/freertos.c ****   char status;
+  74              		.loc 1 123 3 is_stmt 1 view .LVU2
+ 124:Core/Src/freertos.c ****   uint8_t cardID[4];
+  75              		.loc 1 124 3 view .LVU3
+ 125:Core/Src/freertos.c ****   uint8_t allData[64][16];  /* 64 块, 每块 16 字节 */
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cccGYWgN.s 			page 5
+
+
+  76              		.loc 1 125 3 view .LVU4
+ 126:Core/Src/freertos.c ****   int cardPresent = 0;
+  77              		.loc 1 126 3 view .LVU5
+  78              	.LVL1:
+ 127:Core/Src/freertos.c **** 
+ 128:Core/Src/freertos.c ****   /* 初始化 USART1 驱动实例 (用于 printf 调试输出) */
+ 129:Core/Src/freertos.c ****   UartDrv_Init(&g_uart1Drv, &huart1);
+  79              		.loc 1 129 3 view .LVU6
+  80 0008 354C     		ldr	r4, .L19
+  81 000a 3649     		ldr	r1, .L19+4
+  82 000c 2046     		mov	r0, r4
+  83              	.LVL2:
+  84              		.loc 1 129 3 is_stmt 0 view .LVU7
+  85 000e FFF7FEFF 		bl	UartDrv_Init
+  86              	.LVL3:
+ 130:Core/Src/freertos.c ****   UartDrv_SetDebugPort(&g_uart1Drv);
+  87              		.loc 1 130 3 is_stmt 1 view .LVU8
+  88 0012 2046     		mov	r0, r4
+  89 0014 FFF7FEFF 		bl	UartDrv_SetDebugPort
+  90              	.LVL4:
+ 131:Core/Src/freertos.c **** 
+ 132:Core/Src/freertos.c ****   /* 初始化 RC522 平台 (软件 SPI + GPIO) */
+ 133:Core/Src/freertos.c ****   RC522_Platform_Init();
+  91              		.loc 1 133 3 view .LVU9
+  92 0018 FFF7FEFF 		bl	RC522_Platform_Init
+  93              	.LVL5:
+ 134:Core/Src/freertos.c ****   RC522_ConfigISOType('A');
+  94              		.loc 1 134 3 view .LVU10
+  95 001c 4120     		movs	r0, #65
+  96 001e FFF7FEFF 		bl	RC522_ConfigISOType
+  97              	.LVL6:
+ 135:Core/Src/freertos.c **** 
+ 136:Core/Src/freertos.c ****   printf("RC522 NFC Reader Demo Started\r\n");
+  98              		.loc 1 136 3 view .LVU11
+  99 0022 3148     		ldr	r0, .L19+8
+ 100 0024 FFF7FEFF 		bl	puts
+ 101              	.LVL7:
+ 126:Core/Src/freertos.c **** 
+ 102              		.loc 1 126 7 is_stmt 0 view .LVU12
+ 103 0028 4FF00008 		mov	r8, #0
+ 104 002c 36E0     		b	.L11
+ 105              	.LVL8:
+ 106              	.L8:
+ 107              	.LBB2:
+ 108              	.LBB3:
+ 109              	.LBB4:
+ 110              	.LBB5:
+ 137:Core/Src/freertos.c **** 
+ 138:Core/Src/freertos.c ****   /* Infinite loop */
+ 139:Core/Src/freertos.c ****   for(;;)
+ 140:Core/Src/freertos.c ****   {
+ 141:Core/Src/freertos.c ****     /* 寻卡: 检测是否有 IC 卡靠近 */
+ 142:Core/Src/freertos.c ****     status = RC522_ScanCard(cardID);
+ 143:Core/Src/freertos.c **** 
+ 144:Core/Src/freertos.c ****     if (status == RC522_OK)
+ 145:Core/Src/freertos.c ****     {
+ 146:Core/Src/freertos.c ****       if (!cardPresent)
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cccGYWgN.s 			page 6
+
+
+ 147:Core/Src/freertos.c ****       {
+ 148:Core/Src/freertos.c ****         cardPresent = 1;
+ 149:Core/Src/freertos.c ****         printf("\r\n=== Card Detected! UID: %02X-%02X-%02X-%02X ===\r\n",
+ 150:Core/Src/freertos.c ****                 cardID[0], cardID[1], cardID[2], cardID[3]);
+ 151:Core/Src/freertos.c **** 
+ 152:Core/Src/freertos.c ****         /* 读取所有扇区数据 */
+ 153:Core/Src/freertos.c ****         status = RC522_ReadAllSectors(allData);
+ 154:Core/Src/freertos.c **** 
+ 155:Core/Src/freertos.c ****         if (status == RC522_OK)
+ 156:Core/Src/freertos.c ****         {
+ 157:Core/Src/freertos.c ****           /* 打印所有扇区数据 */
+ 158:Core/Src/freertos.c ****           for (int sec = 0; sec < 16; sec++)
+ 159:Core/Src/freertos.c ****           {
+ 160:Core/Src/freertos.c ****             printf("\r\n--- Sector %d ---\r\n", sec);
+ 161:Core/Src/freertos.c **** 
+ 162:Core/Src/freertos.c ****             for (int blk = 0; blk < 4; blk++)
+ 163:Core/Src/freertos.c ****             {
+ 164:Core/Src/freertos.c ****               int blockIdx = sec * 4 + blk;
+ 165:Core/Src/freertos.c ****               printf("  Block %2d (0x%02X): ", blockIdx, blockIdx);
+ 166:Core/Src/freertos.c **** 
+ 167:Core/Src/freertos.c ****               for (int i = 0; i < 16; i++)
+ 168:Core/Src/freertos.c ****               {
+ 169:Core/Src/freertos.c ****                 printf("%02X ", allData[blockIdx][i]);
+ 111              		.loc 1 169 17 is_stmt 1 view .LVU13
+ 112              		.loc 1 169 50 is_stmt 0 view .LVU14
+ 113 002e 03AB     		add	r3, sp, #12
+ 114 0030 03EB0513 		add	r3, r3, r5, lsl #4
+ 115              		.loc 1 169 17 view .LVU15
+ 116 0034 195D     		ldrb	r1, [r3, r4]	@ zero_extendqisi2
+ 117 0036 2D48     		ldr	r0, .L19+12
+ 118 0038 FFF7FEFF 		bl	printf
+ 119              	.LVL9:
+ 167:Core/Src/freertos.c ****               {
+ 120              		.loc 1 167 40 is_stmt 1 discriminator 3 view .LVU16
+ 121 003c 0134     		adds	r4, r4, #1
+ 122              	.LVL10:
+ 123              	.L7:
+ 167:Core/Src/freertos.c ****               {
+ 124              		.loc 1 167 33 discriminator 1 view .LVU17
+ 125 003e 0F2C     		cmp	r4, #15
+ 126 0040 F5DD     		ble	.L8
+ 127              	.LBE5:
+ 170:Core/Src/freertos.c ****               }
+ 171:Core/Src/freertos.c ****               printf("\r\n");
+ 128              		.loc 1 171 15 view .LVU18
+ 129 0042 2B48     		ldr	r0, .L19+16
+ 130 0044 FFF7FEFF 		bl	puts
+ 131              	.LVL11:
+ 132              	.LBE4:
+ 162:Core/Src/freertos.c ****             {
+ 133              		.loc 1 162 43 discriminator 2 view .LVU19
+ 134 0048 0136     		adds	r6, r6, #1
+ 135              	.LVL12:
+ 136              	.L6:
+ 162:Core/Src/freertos.c ****             {
+ 137              		.loc 1 162 35 discriminator 1 view .LVU20
+ 138 004a 032E     		cmp	r6, #3
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cccGYWgN.s 			page 7
+
+
+ 139 004c 08DC     		bgt	.L15
+ 140              	.LBB7:
+ 164:Core/Src/freertos.c ****               printf("  Block %2d (0x%02X): ", blockIdx, blockIdx);
+ 141              		.loc 1 164 15 view .LVU21
+ 164:Core/Src/freertos.c ****               printf("  Block %2d (0x%02X): ", blockIdx, blockIdx);
+ 142              		.loc 1 164 19 is_stmt 0 view .LVU22
+ 143 004e 06EB8705 		add	r5, r6, r7, lsl #2
+ 144              	.LVL13:
+ 165:Core/Src/freertos.c **** 
+ 145              		.loc 1 165 15 is_stmt 1 view .LVU23
+ 146 0052 2A46     		mov	r2, r5
+ 147 0054 2946     		mov	r1, r5
+ 148 0056 2748     		ldr	r0, .L19+20
+ 149 0058 FFF7FEFF 		bl	printf
+ 150              	.LVL14:
+ 167:Core/Src/freertos.c ****               {
+ 151              		.loc 1 167 15 view .LVU24
+ 152              	.LBB6:
+ 167:Core/Src/freertos.c ****               {
+ 153              		.loc 1 167 20 view .LVU25
+ 167:Core/Src/freertos.c ****               {
+ 154              		.loc 1 167 24 is_stmt 0 view .LVU26
+ 155 005c 4446     		mov	r4, r8
+ 167:Core/Src/freertos.c ****               {
+ 156              		.loc 1 167 15 view .LVU27
+ 157 005e EEE7     		b	.L7
+ 158              	.LVL15:
+ 159              	.L15:
+ 167:Core/Src/freertos.c ****               {
+ 160              		.loc 1 167 15 view .LVU28
+ 161              	.LBE6:
+ 162              	.LBE7:
+ 163              	.LBE3:
+ 158:Core/Src/freertos.c ****           {
+ 164              		.loc 1 158 42 is_stmt 1 discriminator 2 view .LVU29
+ 165 0060 0137     		adds	r7, r7, #1
+ 166              	.LVL16:
+ 167              	.L4:
+ 158:Core/Src/freertos.c ****           {
+ 168              		.loc 1 158 33 discriminator 1 view .LVU30
+ 169 0062 0F2F     		cmp	r7, #15
+ 170 0064 05DC     		bgt	.L16
+ 160:Core/Src/freertos.c **** 
+ 171              		.loc 1 160 13 view .LVU31
+ 172 0066 3946     		mov	r1, r7
+ 173 0068 2348     		ldr	r0, .L19+24
+ 174 006a FFF7FEFF 		bl	printf
+ 175              	.LVL17:
+ 162:Core/Src/freertos.c ****             {
+ 176              		.loc 1 162 13 view .LVU32
+ 177              	.LBB8:
+ 162:Core/Src/freertos.c ****             {
+ 178              		.loc 1 162 18 view .LVU33
+ 162:Core/Src/freertos.c ****             {
+ 179              		.loc 1 162 22 is_stmt 0 view .LVU34
+ 180 006e 4646     		mov	r6, r8
+ 162:Core/Src/freertos.c ****             {
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cccGYWgN.s 			page 8
+
+
+ 181              		.loc 1 162 13 view .LVU35
+ 182 0070 EBE7     		b	.L6
+ 183              	.LVL18:
+ 184              	.L16:
+ 162:Core/Src/freertos.c ****             {
+ 185              		.loc 1 162 13 view .LVU36
+ 186              	.LBE8:
+ 187              	.LBE2:
+ 172:Core/Src/freertos.c ****             }
+ 173:Core/Src/freertos.c ****           }
+ 174:Core/Src/freertos.c ****           printf("\r\n=== All sectors read complete ===\r\n");
+ 188              		.loc 1 174 11 is_stmt 1 view .LVU37
+ 189 0072 2248     		ldr	r0, .L19+28
+ 190 0074 FFF7FEFF 		bl	puts
+ 191              	.LVL19:
+ 148:Core/Src/freertos.c ****         printf("\r\n=== Card Detected! UID: %02X-%02X-%02X-%02X ===\r\n",
+ 192              		.loc 1 148 21 is_stmt 0 view .LVU38
+ 193 0078 4FF00108 		mov	r8, #1
+ 194 007c 0AE0     		b	.L3
+ 195              	.LVL20:
+ 196              	.L18:
+ 175:Core/Src/freertos.c ****         }
+ 176:Core/Src/freertos.c ****         else
+ 177:Core/Src/freertos.c ****         {
+ 178:Core/Src/freertos.c ****           printf("Read all sectors failed!\r\n");
+ 197              		.loc 1 178 11 is_stmt 1 view .LVU39
+ 198 007e 2048     		ldr	r0, .L19+32
+ 199              	.LVL21:
+ 200              		.loc 1 178 11 is_stmt 0 view .LVU40
+ 201 0080 FFF7FEFF 		bl	puts
+ 202              	.LVL22:
+ 179:Core/Src/freertos.c ****           /* 确保卡片回到 HALT 状态，以便后续重新检测 */
+ 180:Core/Src/freertos.c ****           RC522_Halt();
+ 203              		.loc 1 180 11 is_stmt 1 view .LVU41
+ 204 0084 FFF7FEFF 		bl	RC522_Halt
+ 205              	.LVL23:
+ 148:Core/Src/freertos.c ****         printf("\r\n=== Card Detected! UID: %02X-%02X-%02X-%02X ===\r\n",
+ 206              		.loc 1 148 21 is_stmt 0 view .LVU42
+ 207 0088 4FF00108 		mov	r8, #1
+ 208 008c 02E0     		b	.L3
+ 209              	.LVL24:
+ 210              	.L2:
+ 181:Core/Src/freertos.c ****         }
+ 182:Core/Src/freertos.c ****       }
+ 183:Core/Src/freertos.c ****     }
+ 184:Core/Src/freertos.c ****     else
+ 185:Core/Src/freertos.c ****     {
+ 186:Core/Src/freertos.c ****       if (cardPresent)
+ 211              		.loc 1 186 7 is_stmt 1 view .LVU43
+ 212              		.loc 1 186 10 is_stmt 0 view .LVU44
+ 213 008e B8F1000F 		cmp	r8, #0
+ 214 0092 1FD1     		bne	.L17
+ 215              	.LVL25:
+ 216              	.L3:
+ 187:Core/Src/freertos.c ****       {
+ 188:Core/Src/freertos.c ****         cardPresent = 0;
+ 189:Core/Src/freertos.c ****         printf("Card removed.\r\n");
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cccGYWgN.s 			page 9
+
+
+ 190:Core/Src/freertos.c ****       }
+ 191:Core/Src/freertos.c ****     }
+ 192:Core/Src/freertos.c **** 
+ 193:Core/Src/freertos.c ****     osDelay(500);  /* 每 500ms 检测一次 */
+ 217              		.loc 1 193 5 is_stmt 1 view .LVU45
+ 218 0094 4FF4FA70 		mov	r0, #500
+ 219 0098 FFF7FEFF 		bl	osDelay
+ 220              	.LVL26:
+ 139:Core/Src/freertos.c ****   {
+ 221              		.loc 1 139 3 view .LVU46
+ 222              	.L11:
+ 139:Core/Src/freertos.c ****   {
+ 223              		.loc 1 139 3 view .LVU47
+ 142:Core/Src/freertos.c **** 
+ 224              		.loc 1 142 5 view .LVU48
+ 142:Core/Src/freertos.c **** 
+ 225              		.loc 1 142 14 is_stmt 0 view .LVU49
+ 226 009c 0DF20C40 		addw	r0, sp, #1036
+ 227 00a0 FFF7FEFF 		bl	RC522_ScanCard
+ 228              	.LVL27:
+ 144:Core/Src/freertos.c ****     {
+ 229              		.loc 1 144 5 is_stmt 1 view .LVU50
+ 144:Core/Src/freertos.c ****     {
+ 230              		.loc 1 144 8 is_stmt 0 view .LVU51
+ 231 00a4 0028     		cmp	r0, #0
+ 232 00a6 F2D1     		bne	.L2
+ 146:Core/Src/freertos.c ****       {
+ 233              		.loc 1 146 7 is_stmt 1 view .LVU52
+ 146:Core/Src/freertos.c ****       {
+ 234              		.loc 1 146 10 is_stmt 0 view .LVU53
+ 235 00a8 B8F1000F 		cmp	r8, #0
+ 236 00ac F2D1     		bne	.L3
+ 148:Core/Src/freertos.c ****         printf("\r\n=== Card Detected! UID: %02X-%02X-%02X-%02X ===\r\n",
+ 237              		.loc 1 148 9 is_stmt 1 view .LVU54
+ 238              	.LVL28:
+ 149:Core/Src/freertos.c ****                 cardID[0], cardID[1], cardID[2], cardID[3]);
+ 239              		.loc 1 149 9 view .LVU55
+ 150:Core/Src/freertos.c **** 
+ 240              		.loc 1 150 56 is_stmt 0 view .LVU56
+ 241 00ae 9DF80F34 		ldrb	r3, [sp, #1039]	@ zero_extendqisi2
+ 149:Core/Src/freertos.c ****                 cardID[0], cardID[1], cardID[2], cardID[3]);
+ 242              		.loc 1 149 9 view .LVU57
+ 243 00b2 0093     		str	r3, [sp]
+ 244 00b4 9DF80E34 		ldrb	r3, [sp, #1038]	@ zero_extendqisi2
+ 245 00b8 9DF80D24 		ldrb	r2, [sp, #1037]	@ zero_extendqisi2
+ 246 00bc 9DF80C14 		ldrb	r1, [sp, #1036]	@ zero_extendqisi2
+ 247 00c0 1048     		ldr	r0, .L19+36
+ 248              	.LVL29:
+ 149:Core/Src/freertos.c ****                 cardID[0], cardID[1], cardID[2], cardID[3]);
+ 249              		.loc 1 149 9 view .LVU58
+ 250 00c2 FFF7FEFF 		bl	printf
+ 251              	.LVL30:
+ 153:Core/Src/freertos.c **** 
+ 252              		.loc 1 153 9 is_stmt 1 view .LVU59
+ 153:Core/Src/freertos.c **** 
+ 253              		.loc 1 153 18 is_stmt 0 view .LVU60
+ 254 00c6 03A8     		add	r0, sp, #12
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cccGYWgN.s 			page 10
+
+
+ 255 00c8 FFF7FEFF 		bl	RC522_ReadAllSectors
+ 256              	.LVL31:
+ 155:Core/Src/freertos.c ****         {
+ 257              		.loc 1 155 9 is_stmt 1 view .LVU61
+ 155:Core/Src/freertos.c ****         {
+ 258              		.loc 1 155 12 is_stmt 0 view .LVU62
+ 259 00cc 0028     		cmp	r0, #0
+ 260 00ce D6D1     		bne	.L18
+ 261              	.LBB9:
+ 158:Core/Src/freertos.c ****           {
+ 262              		.loc 1 158 20 view .LVU63
+ 263 00d0 4746     		mov	r7, r8
+ 264 00d2 C6E7     		b	.L4
+ 265              	.LVL32:
+ 266              	.L17:
+ 158:Core/Src/freertos.c ****           {
+ 267              		.loc 1 158 20 view .LVU64
+ 268              	.LBE9:
+ 188:Core/Src/freertos.c ****         printf("Card removed.\r\n");
+ 269              		.loc 1 188 9 is_stmt 1 view .LVU65
+ 189:Core/Src/freertos.c ****       }
+ 270              		.loc 1 189 9 view .LVU66
+ 271 00d4 0C48     		ldr	r0, .L19+40
+ 272              	.LVL33:
+ 189:Core/Src/freertos.c ****       }
+ 273              		.loc 1 189 9 is_stmt 0 view .LVU67
+ 274 00d6 FFF7FEFF 		bl	puts
+ 275              	.LVL34:
+ 188:Core/Src/freertos.c ****         printf("Card removed.\r\n");
+ 276              		.loc 1 188 21 view .LVU68
+ 277 00da 4FF00008 		mov	r8, #0
+ 278 00de D9E7     		b	.L3
+ 279              	.L20:
+ 280              		.align	2
+ 281              	.L19:
+ 282 00e0 00000000 		.word	g_uart1Drv
+ 283 00e4 00000000 		.word	huart1
+ 284 00e8 00000000 		.word	.LC0
+ 285 00ec 84000000 		.word	.LC4
+ 286 00f0 8C000000 		.word	.LC5
+ 287 00f4 6C000000 		.word	.LC3
+ 288 00f8 54000000 		.word	.LC2
+ 289 00fc 90000000 		.word	.LC6
+ 290 0100 B8000000 		.word	.LC7
+ 291 0104 20000000 		.word	.LC1
+ 292 0108 D4000000 		.word	.LC8
+ 293              		.cfi_endproc
+ 294              	.LFE247:
+ 296              		.section	.text.MX_FREERTOS_Init,"ax",%progbits
+ 297              		.align	1
+ 298              		.global	MX_FREERTOS_Init
+ 299              		.syntax unified
+ 300              		.thumb
+ 301              		.thumb_func
+ 303              	MX_FREERTOS_Init:
+ 304              	.LFB246:
+  78:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cccGYWgN.s 			page 11
+
+
+ 305              		.loc 1 78 29 is_stmt 1 view -0
+ 306              		.cfi_startproc
+ 307              		@ args = 0, pretend = 0, frame = 0
+ 308              		@ frame_needed = 0, uses_anonymous_args = 0
+ 309 0000 08B5     		push	{r3, lr}
+ 310              		.cfi_def_cfa_offset 8
+ 311              		.cfi_offset 3, -8
+ 312              		.cfi_offset 14, -4
+ 101:Core/Src/freertos.c **** 
+ 313              		.loc 1 101 3 view .LVU70
+ 101:Core/Src/freertos.c **** 
+ 314              		.loc 1 101 19 is_stmt 0 view .LVU71
+ 315 0002 044A     		ldr	r2, .L23
+ 316 0004 0021     		movs	r1, #0
+ 317 0006 0448     		ldr	r0, .L23+4
+ 318 0008 FFF7FEFF 		bl	osThreadNew
+ 319              	.LVL35:
+ 101:Core/Src/freertos.c **** 
+ 320              		.loc 1 101 17 discriminator 1 view .LVU72
+ 321 000c 034B     		ldr	r3, .L23+8
+ 322 000e 1860     		str	r0, [r3]
+ 111:Core/Src/freertos.c **** 
+ 323              		.loc 1 111 1 view .LVU73
+ 324 0010 08BD     		pop	{r3, pc}
+ 325              	.L24:
+ 326 0012 00BF     		.align	2
+ 327              	.L23:
+ 328 0014 00000000 		.word	nfcTask_attributes
+ 329 0018 00000000 		.word	StartNfcTask
+ 330 001c 00000000 		.word	nfcTaskHandle
+ 331              		.cfi_endproc
+ 332              	.LFE246:
+ 334              		.global	nfcTask_attributes
+ 335              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 336              		.align	2
+ 337              	.LC9:
+ 338 0000 6E666354 		.ascii	"nfcTask\000"
+ 338      61736B00 
+ 339              		.section	.rodata.nfcTask_attributes,"a"
+ 340              		.align	2
+ 343              	nfcTask_attributes:
+ 344 0000 00000000 		.word	.LC9
+ 345 0004 00000000 		.space	16
+ 345      00000000 
+ 345      00000000 
+ 345      00000000 
+ 346 0014 00100000 		.word	4096
+ 347 0018 18000000 		.word	24
+ 348 001c 00000000 		.space	8
+ 348      00000000 
+ 349              		.global	nfcTaskHandle
+ 350              		.section	.bss.nfcTaskHandle,"aw",%nobits
+ 351              		.align	2
+ 354              	nfcTaskHandle:
+ 355 0000 00000000 		.space	4
+ 356              		.section	.bss.g_uart1Drv,"aw",%nobits
+ 357              		.align	2
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cccGYWgN.s 			page 12
+
+
+ 360              	g_uart1Drv:
+ 361 0000 00000000 		.space	536
+ 361      00000000 
+ 361      00000000 
+ 361      00000000 
+ 361      00000000 
+ 362              		.text
+ 363              	.Letext0:
+ 364              		.file 2 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_default_t
+ 365              		.file 3 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h"
+ 366              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 367              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 368              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 369              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
+ 370              		.file 8 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 371              		.file 9 "../Bsp/UartDrv/uart_drv.h"
+ 372              		.file 10 "Core/Inc/usart.h"
+ 373              		.file 11 "../Bsp/NFC/rc522.h"
+ 374              		.file 12 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/stdio.h"
+ 375              		.file 13 "<built-in>"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cccGYWgN.s 			page 13
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 freertos.c
+C:\Users\fish\AppData\Local\Temp\cccGYWgN.s:21     .rodata.StartNfcTask.str1.4:00000000 $d
+C:\Users\fish\AppData\Local\Temp\cccGYWgN.s:50     .text.StartNfcTask:00000000 $t
+C:\Users\fish\AppData\Local\Temp\cccGYWgN.s:56     .text.StartNfcTask:00000000 StartNfcTask
+C:\Users\fish\AppData\Local\Temp\cccGYWgN.s:282    .text.StartNfcTask:000000e0 $d
+C:\Users\fish\AppData\Local\Temp\cccGYWgN.s:360    .bss.g_uart1Drv:00000000 g_uart1Drv
+C:\Users\fish\AppData\Local\Temp\cccGYWgN.s:297    .text.MX_FREERTOS_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\cccGYWgN.s:303    .text.MX_FREERTOS_Init:00000000 MX_FREERTOS_Init
+C:\Users\fish\AppData\Local\Temp\cccGYWgN.s:328    .text.MX_FREERTOS_Init:00000014 $d
+C:\Users\fish\AppData\Local\Temp\cccGYWgN.s:343    .rodata.nfcTask_attributes:00000000 nfcTask_attributes
+C:\Users\fish\AppData\Local\Temp\cccGYWgN.s:354    .bss.nfcTaskHandle:00000000 nfcTaskHandle
+C:\Users\fish\AppData\Local\Temp\cccGYWgN.s:336    .rodata.str1.4:00000000 $d
+C:\Users\fish\AppData\Local\Temp\cccGYWgN.s:340    .rodata.nfcTask_attributes:00000000 $d
+C:\Users\fish\AppData\Local\Temp\cccGYWgN.s:351    .bss.nfcTaskHandle:00000000 $d
+C:\Users\fish\AppData\Local\Temp\cccGYWgN.s:357    .bss.g_uart1Drv:00000000 $d
+
+UNDEFINED SYMBOLS
+UartDrv_Init
+UartDrv_SetDebugPort
+RC522_Platform_Init
+RC522_ConfigISOType
+puts
+printf
+RC522_Halt
+osDelay
+RC522_ScanCard
+RC522_ReadAllSectors
+huart1
+osThreadNew

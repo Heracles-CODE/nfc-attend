@@ -1,0 +1,1084 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"key.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "../Bsp/Key/key.c"
+  20              		.section	.text.Key_Init,"ax",%progbits
+  21              		.align	1
+  22              		.global	Key_Init
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	Key_Init:
+  28              	.LVL0:
+  29              	.LFB239:
+   1:../Bsp/Key/key.c **** /**
+   2:../Bsp/Key/key.c ****  * @file    key.c
+   3:../Bsp/Key/key.c ****  * @brief   通用按键驱动实现 - 计数消抖 + 短按/长按/连按检测
+   4:../Bsp/Key/key.c ****  */
+   5:../Bsp/Key/key.c **** 
+   6:../Bsp/Key/key.c **** #include "key.h"
+   7:../Bsp/Key/key.c **** #include <string.h>
+   8:../Bsp/Key/key.c **** 
+   9:../Bsp/Key/key.c **** /* ====== 私有变量 ====== */
+  10:../Bsp/Key/key.c **** 
+  11:../Bsp/Key/key.c **** static Key_Config_t s_configs[KEY_MAX_COUNT];
+  12:../Bsp/Key/key.c **** static Key_State_t  s_states[KEY_MAX_COUNT];
+  13:../Bsp/Key/key.c **** static uint8_t      s_keyCount = 0;
+  14:../Bsp/Key/key.c **** 
+  15:../Bsp/Key/key.c **** /* ====== 导出函数实现 ====== */
+  16:../Bsp/Key/key.c **** 
+  17:../Bsp/Key/key.c **** void Key_Init(const Key_Config_t *configs, uint8_t count)
+  18:../Bsp/Key/key.c **** {
+  30              		.loc 1 18 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 18 1 is_stmt 0 view .LVU1
+  35 0000 10B5     		push	{r4, lr}
+  36              		.cfi_def_cfa_offset 8
+  37              		.cfi_offset 4, -8
+  38              		.cfi_offset 14, -4
+  19:../Bsp/Key/key.c ****     if (count > KEY_MAX_COUNT)
+  39              		.loc 1 19 5 is_stmt 1 view .LVU2
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 2
+
+
+  40              		.loc 1 19 8 is_stmt 0 view .LVU3
+  41 0002 0629     		cmp	r1, #6
+  42 0004 00D9     		bls	.L2
+  20:../Bsp/Key/key.c ****         count = KEY_MAX_COUNT;
+  43              		.loc 1 20 15 view .LVU4
+  44 0006 0621     		movs	r1, #6
+  45              	.LVL1:
+  46              	.L2:
+  21:../Bsp/Key/key.c **** 
+  22:../Bsp/Key/key.c ****     s_keyCount = count;
+  47              		.loc 1 22 5 is_stmt 1 view .LVU5
+  48              		.loc 1 22 16 is_stmt 0 view .LVU6
+  49 0008 064B     		ldr	r3, .L5
+  50 000a 1970     		strb	r1, [r3]
+  23:../Bsp/Key/key.c ****     memcpy(s_configs, configs, count * sizeof(Key_Config_t));
+  51              		.loc 1 23 5 is_stmt 1 view .LVU7
+  52 000c CC00     		lsls	r4, r1, #3
+  53 000e 2246     		mov	r2, r4
+  54 0010 0146     		mov	r1, r0
+  55              	.LVL2:
+  56              		.loc 1 23 5 is_stmt 0 view .LVU8
+  57 0012 0548     		ldr	r0, .L5+4
+  58              	.LVL3:
+  59              		.loc 1 23 5 view .LVU9
+  60 0014 FFF7FEFF 		bl	memcpy
+  61              	.LVL4:
+  24:../Bsp/Key/key.c ****     memset(s_states, 0, count * sizeof(Key_State_t));
+  62              		.loc 1 24 5 is_stmt 1 view .LVU10
+  63 0018 2246     		mov	r2, r4
+  64 001a 0021     		movs	r1, #0
+  65 001c 0348     		ldr	r0, .L5+8
+  66 001e FFF7FEFF 		bl	memset
+  67              	.LVL5:
+  25:../Bsp/Key/key.c **** }
+  68              		.loc 1 25 1 is_stmt 0 view .LVU11
+  69 0022 10BD     		pop	{r4, pc}
+  70              	.L6:
+  71              		.align	2
+  72              	.L5:
+  73 0024 00000000 		.word	s_keyCount
+  74 0028 00000000 		.word	s_configs
+  75 002c 00000000 		.word	s_states
+  76              		.cfi_endproc
+  77              	.LFE239:
+  79              		.section	.text.Key_Scan,"ax",%progbits
+  80              		.align	1
+  81              		.global	Key_Scan
+  82              		.syntax unified
+  83              		.thumb
+  84              		.thumb_func
+  86              	Key_Scan:
+  87              	.LFB240:
+  26:../Bsp/Key/key.c **** 
+  27:../Bsp/Key/key.c **** void Key_Scan(void)
+  28:../Bsp/Key/key.c **** {
+  88              		.loc 1 28 1 is_stmt 1 view -0
+  89              		.cfi_startproc
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 3
+
+
+  90              		@ args = 0, pretend = 0, frame = 0
+  91              		@ frame_needed = 0, uses_anonymous_args = 0
+  92 0000 70B5     		push	{r4, r5, r6, lr}
+  93              		.cfi_def_cfa_offset 16
+  94              		.cfi_offset 4, -16
+  95              		.cfi_offset 5, -12
+  96              		.cfi_offset 6, -8
+  97              		.cfi_offset 14, -4
+  29:../Bsp/Key/key.c ****     uint8_t i;
+  98              		.loc 1 29 5 view .LVU13
+  30:../Bsp/Key/key.c **** 
+  31:../Bsp/Key/key.c ****     for (i = 0; i < s_keyCount; i++)
+  99              		.loc 1 31 5 view .LVU14
+ 100              	.LVL6:
+ 101              		.loc 1 31 12 is_stmt 0 view .LVU15
+ 102 0002 0024     		movs	r4, #0
+ 103              		.loc 1 31 5 view .LVU16
+ 104 0004 1BE0     		b	.L8
+ 105              	.LVL7:
+ 106              	.L9:
+ 107              	.LBB2:
+  32:../Bsp/Key/key.c ****     {
+  33:../Bsp/Key/key.c ****         Key_State_t *st = &s_states[i];
+  34:../Bsp/Key/key.c ****         const Key_Config_t *cfg = &s_configs[i];
+  35:../Bsp/Key/key.c **** 
+  36:../Bsp/Key/key.c ****         /* 读取原始电平并转换为逻辑状态 (1=按下, 0=释放) */
+  37:../Bsp/Key/key.c ****         GPIO_PinState raw = HAL_GPIO_ReadPin(cfg->port, cfg->pin);
+  38:../Bsp/Key/key.c ****         uint8_t logicState;
+  39:../Bsp/Key/key.c ****         if (cfg->activeLevel == KEY_ACTIVE_LOW)
+  40:../Bsp/Key/key.c ****             logicState = (raw == GPIO_PIN_RESET) ? 1 : 0;
+  41:../Bsp/Key/key.c ****         else
+  42:../Bsp/Key/key.c ****             logicState = (raw == GPIO_PIN_SET) ? 1 : 0;
+ 108              		.loc 1 42 13 is_stmt 1 view .LVU17
+ 109              		.loc 1 42 52 is_stmt 0 view .LVU18
+ 110 0006 0128     		cmp	r0, #1
+ 111 0008 14BF     		ite	ne
+ 112 000a 0020     		movne	r0, #0
+ 113              	.LVL8:
+ 114              		.loc 1 42 52 view .LVU19
+ 115 000c 0120     		moveq	r0, #1
+ 116 000e 29E0     		b	.L10
+ 117              	.LVL9:
+ 118              	.L23:
+  43:../Bsp/Key/key.c **** 
+  44:../Bsp/Key/key.c ****         /* ---- 计数消抖 ---- */
+  45:../Bsp/Key/key.c ****         if (logicState == st->stableState)
+  46:../Bsp/Key/key.c ****         {
+  47:../Bsp/Key/key.c ****             /* 状态一致, 计数器可保持 (不超出阈值) */
+  48:../Bsp/Key/key.c ****             if (st->debounceCnt < 255)
+ 119              		.loc 1 48 13 is_stmt 1 view .LVU20
+ 120              		.loc 1 48 19 is_stmt 0 view .LVU21
+ 121 0010 484B     		ldr	r3, .L24
+ 122 0012 13F83530 		ldrb	r3, [r3, r5, lsl #3]	@ zero_extendqisi2
+ 123              		.loc 1 48 16 view .LVU22
+ 124 0016 FF2B     		cmp	r3, #255
+ 125 0018 03D0     		beq	.L12
+  49:../Bsp/Key/key.c ****                 st->debounceCnt++;
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 4
+
+
+ 126              		.loc 1 49 17 is_stmt 1 view .LVU23
+ 127              		.loc 1 49 32 is_stmt 0 view .LVU24
+ 128 001a 0133     		adds	r3, r3, #1
+ 129 001c 454A     		ldr	r2, .L24
+ 130 001e 02F83530 		strb	r3, [r2, r5, lsl #3]
+ 131              	.L12:
+  50:../Bsp/Key/key.c ****         }
+  51:../Bsp/Key/key.c ****         else
+  52:../Bsp/Key/key.c ****         {
+  53:../Bsp/Key/key.c ****             /* 状态变化, 开始计数 */
+  54:../Bsp/Key/key.c ****             st->debounceCnt++;
+  55:../Bsp/Key/key.c ****             if (st->debounceCnt >= KEY_DEBOUNCE_COUNT)
+  56:../Bsp/Key/key.c ****             {
+  57:../Bsp/Key/key.c ****                 /* 确认状态翻转 */
+  58:../Bsp/Key/key.c ****                 st->stableState = logicState;
+  59:../Bsp/Key/key.c ****                 st->debounceCnt = 0;
+  60:../Bsp/Key/key.c ****             }
+  61:../Bsp/Key/key.c ****         }
+  62:../Bsp/Key/key.c **** 
+  63:../Bsp/Key/key.c ****         /* ---- 事件判定 ---- */
+  64:../Bsp/Key/key.c ****         if (st->stableState == 1)
+ 132              		.loc 1 64 9 is_stmt 1 view .LVU25
+ 133              		.loc 1 64 15 is_stmt 0 view .LVU26
+ 134 0022 444B     		ldr	r3, .L24
+ 135 0024 03EBC503 		add	r3, r3, r5, lsl #3
+ 136 0028 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
+ 137              		.loc 1 64 12 view .LVU27
+ 138 002a 012B     		cmp	r3, #1
+ 139 002c 31D0     		beq	.L20
+  65:../Bsp/Key/key.c ****         {
+  66:../Bsp/Key/key.c ****             /* 按下中 */
+  67:../Bsp/Key/key.c ****             if (st->prevState == 0)
+  68:../Bsp/Key/key.c ****             {
+  69:../Bsp/Key/key.c ****                 /* 刚按下 (下降沿/上升沿) */
+  70:../Bsp/Key/key.c ****                 st->prevState = 1;
+  71:../Bsp/Key/key.c ****                 st->pressDuration = 0;
+  72:../Bsp/Key/key.c ****                 st->longPressed = 0;
+  73:../Bsp/Key/key.c ****                 st->events |= KEY_EVENT_PRESSED;
+  74:../Bsp/Key/key.c ****             }
+  75:../Bsp/Key/key.c ****             else
+  76:../Bsp/Key/key.c ****             {
+  77:../Bsp/Key/key.c ****                 /* 持续按下 */
+  78:../Bsp/Key/key.c ****                 st->pressDuration += KEY_SCAN_INTERVAL_MS;
+  79:../Bsp/Key/key.c **** 
+  80:../Bsp/Key/key.c ****                 /* 长按检测 */
+  81:../Bsp/Key/key.c ****                 if (!st->longPressed && st->pressDuration >= KEY_LONG_PRESS_MS)
+  82:../Bsp/Key/key.c ****                 {
+  83:../Bsp/Key/key.c ****                     st->longPressed = 1;
+  84:../Bsp/Key/key.c ****                     st->events |= KEY_EVENT_LONG_PRESS;
+  85:../Bsp/Key/key.c ****                 }
+  86:../Bsp/Key/key.c **** 
+  87:../Bsp/Key/key.c ****                 /* 长按连发 */
+  88:../Bsp/Key/key.c ****                 if (st->longPressed && st->pressDuration >= KEY_LONG_PRESS_MS + KEY_REPEAT_INTERVAL
+  89:../Bsp/Key/key.c ****                 {
+  90:../Bsp/Key/key.c ****                     st->events |= KEY_EVENT_REPEAT;
+  91:../Bsp/Key/key.c ****                     /* 重置持续时间以连发, 保留长按标志 */
+  92:../Bsp/Key/key.c ****                     st->pressDuration = KEY_LONG_PRESS_MS;
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 5
+
+
+  93:../Bsp/Key/key.c ****                 }
+  94:../Bsp/Key/key.c ****             }
+  95:../Bsp/Key/key.c ****         }
+  96:../Bsp/Key/key.c ****         else
+  97:../Bsp/Key/key.c ****         {
+  98:../Bsp/Key/key.c ****             /* 释放中 */
+  99:../Bsp/Key/key.c ****             if (st->prevState == 1)
+ 140              		.loc 1 99 13 is_stmt 1 view .LVU28
+ 141              		.loc 1 99 19 is_stmt 0 view .LVU29
+ 142 002e 414B     		ldr	r3, .L24
+ 143 0030 03EBC503 		add	r3, r3, r5, lsl #3
+ 144 0034 9B78     		ldrb	r3, [r3, #2]	@ zero_extendqisi2
+ 145              		.loc 1 99 16 view .LVU30
+ 146 0036 012B     		cmp	r3, #1
+ 147 0038 66D0     		beq	.L21
+ 148              	.L15:
+ 149              	.LBE2:
+  31:../Bsp/Key/key.c ****     {
+ 150              		.loc 1 31 34 is_stmt 1 discriminator 2 view .LVU31
+ 151 003a 0134     		adds	r4, r4, #1
+ 152              	.LVL10:
+  31:../Bsp/Key/key.c ****     {
+ 153              		.loc 1 31 34 is_stmt 0 discriminator 2 view .LVU32
+ 154 003c E4B2     		uxtb	r4, r4
+ 155              	.LVL11:
+ 156              	.L8:
+  31:../Bsp/Key/key.c ****     {
+ 157              		.loc 1 31 19 is_stmt 1 discriminator 1 view .LVU33
+ 158 003e 3E4B     		ldr	r3, .L24+4
+ 159 0040 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 160 0042 A342     		cmp	r3, r4
+ 161 0044 75D9     		bls	.L22
+ 162              	.LBB3:
+  33:../Bsp/Key/key.c ****         const Key_Config_t *cfg = &s_configs[i];
+ 163              		.loc 1 33 9 view .LVU34
+  33:../Bsp/Key/key.c ****         const Key_Config_t *cfg = &s_configs[i];
+ 164              		.loc 1 33 36 is_stmt 0 view .LVU35
+ 165 0046 2546     		mov	r5, r4
+ 166              	.LVL12:
+  34:../Bsp/Key/key.c **** 
+ 167              		.loc 1 34 9 is_stmt 1 view .LVU36
+  37:../Bsp/Key/key.c ****         uint8_t logicState;
+ 168              		.loc 1 37 9 view .LVU37
+  37:../Bsp/Key/key.c ****         uint8_t logicState;
+ 169              		.loc 1 37 49 is_stmt 0 view .LVU38
+ 170 0048 3C4B     		ldr	r3, .L24+8
+  37:../Bsp/Key/key.c ****         uint8_t logicState;
+ 171              		.loc 1 37 60 view .LVU39
+ 172 004a 03EBC406 		add	r6, r3, r4, lsl #3
+ 173              	.LVL13:
+  37:../Bsp/Key/key.c ****         uint8_t logicState;
+ 174              		.loc 1 37 29 view .LVU40
+ 175 004e B188     		ldrh	r1, [r6, #4]
+ 176 0050 53F83400 		ldr	r0, [r3, r4, lsl #3]
+ 177 0054 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 178              	.LVL14:
+  38:../Bsp/Key/key.c ****         if (cfg->activeLevel == KEY_ACTIVE_LOW)
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 6
+
+
+ 179              		.loc 1 38 9 is_stmt 1 view .LVU41
+  39:../Bsp/Key/key.c ****             logicState = (raw == GPIO_PIN_RESET) ? 1 : 0;
+ 180              		.loc 1 39 9 view .LVU42
+  39:../Bsp/Key/key.c ****             logicState = (raw == GPIO_PIN_RESET) ? 1 : 0;
+ 181              		.loc 1 39 16 is_stmt 0 view .LVU43
+ 182 0058 B379     		ldrb	r3, [r6, #6]	@ zero_extendqisi2
+  39:../Bsp/Key/key.c ****             logicState = (raw == GPIO_PIN_RESET) ? 1 : 0;
+ 183              		.loc 1 39 12 view .LVU44
+ 184 005a 002B     		cmp	r3, #0
+ 185 005c D3D1     		bne	.L9
+  40:../Bsp/Key/key.c ****         else
+ 186              		.loc 1 40 13 is_stmt 1 view .LVU45
+  40:../Bsp/Key/key.c ****         else
+ 187              		.loc 1 40 54 is_stmt 0 view .LVU46
+ 188 005e B0FA80F0 		clz	r0, r0
+ 189              	.LVL15:
+  40:../Bsp/Key/key.c ****         else
+ 190              		.loc 1 40 54 view .LVU47
+ 191 0062 4009     		lsrs	r0, r0, #5
+ 192              	.LVL16:
+ 193              	.L10:
+  45:../Bsp/Key/key.c ****         {
+ 194              		.loc 1 45 9 is_stmt 1 view .LVU48
+  45:../Bsp/Key/key.c ****         {
+ 195              		.loc 1 45 29 is_stmt 0 view .LVU49
+ 196 0064 334B     		ldr	r3, .L24
+ 197 0066 03EBC503 		add	r3, r3, r5, lsl #3
+ 198 006a 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
+  45:../Bsp/Key/key.c ****         {
+ 199              		.loc 1 45 12 view .LVU50
+ 200 006c 8342     		cmp	r3, r0
+ 201 006e CFD0     		beq	.L23
+  54:../Bsp/Key/key.c ****             if (st->debounceCnt >= KEY_DEBOUNCE_COUNT)
+ 202              		.loc 1 54 13 is_stmt 1 view .LVU51
+  54:../Bsp/Key/key.c ****             if (st->debounceCnt >= KEY_DEBOUNCE_COUNT)
+ 203              		.loc 1 54 15 is_stmt 0 view .LVU52
+ 204 0070 304A     		ldr	r2, .L24
+ 205 0072 12F83530 		ldrb	r3, [r2, r5, lsl #3]	@ zero_extendqisi2
+  54:../Bsp/Key/key.c ****             if (st->debounceCnt >= KEY_DEBOUNCE_COUNT)
+ 206              		.loc 1 54 28 view .LVU53
+ 207 0076 0133     		adds	r3, r3, #1
+ 208 0078 DBB2     		uxtb	r3, r3
+ 209 007a 02F83530 		strb	r3, [r2, r5, lsl #3]
+  55:../Bsp/Key/key.c ****             {
+ 210              		.loc 1 55 13 is_stmt 1 view .LVU54
+  55:../Bsp/Key/key.c ****             {
+ 211              		.loc 1 55 16 is_stmt 0 view .LVU55
+ 212 007e 012B     		cmp	r3, #1
+ 213 0080 CFD9     		bls	.L12
+  58:../Bsp/Key/key.c ****                 st->debounceCnt = 0;
+ 214              		.loc 1 58 17 is_stmt 1 view .LVU56
+  58:../Bsp/Key/key.c ****                 st->debounceCnt = 0;
+ 215              		.loc 1 58 33 is_stmt 0 view .LVU57
+ 216 0082 1346     		mov	r3, r2
+ 217 0084 02EBC502 		add	r2, r2, r5, lsl #3
+ 218 0088 5070     		strb	r0, [r2, #1]
+  59:../Bsp/Key/key.c ****             }
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 7
+
+
+ 219              		.loc 1 59 17 is_stmt 1 view .LVU58
+  59:../Bsp/Key/key.c ****             }
+ 220              		.loc 1 59 33 is_stmt 0 view .LVU59
+ 221 008a 0022     		movs	r2, #0
+ 222 008c 03F83520 		strb	r2, [r3, r5, lsl #3]
+ 223 0090 C7E7     		b	.L12
+ 224              	.L20:
+  67:../Bsp/Key/key.c ****             {
+ 225              		.loc 1 67 13 is_stmt 1 view .LVU60
+  67:../Bsp/Key/key.c ****             {
+ 226              		.loc 1 67 19 is_stmt 0 view .LVU61
+ 227 0092 284B     		ldr	r3, .L24
+ 228 0094 03EBC503 		add	r3, r3, r5, lsl #3
+ 229 0098 9B78     		ldrb	r3, [r3, #2]	@ zero_extendqisi2
+  67:../Bsp/Key/key.c ****             {
+ 230              		.loc 1 67 16 view .LVU62
+ 231 009a 63B9     		cbnz	r3, .L14
+  70:../Bsp/Key/key.c ****                 st->pressDuration = 0;
+ 232              		.loc 1 70 17 is_stmt 1 view .LVU63
+  70:../Bsp/Key/key.c ****                 st->pressDuration = 0;
+ 233              		.loc 1 70 31 is_stmt 0 view .LVU64
+ 234 009c 254B     		ldr	r3, .L24
+ 235 009e 03EBC503 		add	r3, r3, r5, lsl #3
+ 236 00a2 0122     		movs	r2, #1
+ 237 00a4 9A70     		strb	r2, [r3, #2]
+  71:../Bsp/Key/key.c ****                 st->longPressed = 0;
+ 238              		.loc 1 71 17 is_stmt 1 view .LVU65
+  71:../Bsp/Key/key.c ****                 st->longPressed = 0;
+ 239              		.loc 1 71 35 is_stmt 0 view .LVU66
+ 240 00a6 0022     		movs	r2, #0
+ 241 00a8 9A80     		strh	r2, [r3, #4]	@ movhi
+  72:../Bsp/Key/key.c ****                 st->events |= KEY_EVENT_PRESSED;
+ 242              		.loc 1 72 17 is_stmt 1 view .LVU67
+  72:../Bsp/Key/key.c ****                 st->events |= KEY_EVENT_PRESSED;
+ 243              		.loc 1 72 33 is_stmt 0 view .LVU68
+ 244 00aa 9A71     		strb	r2, [r3, #6]
+  73:../Bsp/Key/key.c ****             }
+ 245              		.loc 1 73 17 is_stmt 1 view .LVU69
+  73:../Bsp/Key/key.c ****             }
+ 246              		.loc 1 73 19 is_stmt 0 view .LVU70
+ 247 00ac DA79     		ldrb	r2, [r3, #7]	@ zero_extendqisi2
+  73:../Bsp/Key/key.c ****             }
+ 248              		.loc 1 73 28 view .LVU71
+ 249 00ae 42F00102 		orr	r2, r2, #1
+ 250 00b2 DA71     		strb	r2, [r3, #7]
+ 251 00b4 C1E7     		b	.L15
+ 252              	.L14:
+  78:../Bsp/Key/key.c **** 
+ 253              		.loc 1 78 17 is_stmt 1 view .LVU72
+  78:../Bsp/Key/key.c **** 
+ 254              		.loc 1 78 19 is_stmt 0 view .LVU73
+ 255 00b6 1F4A     		ldr	r2, .L24
+ 256 00b8 02EBC502 		add	r2, r2, r5, lsl #3
+ 257 00bc 9388     		ldrh	r3, [r2, #4]
+  78:../Bsp/Key/key.c **** 
+ 258              		.loc 1 78 35 view .LVU74
+ 259 00be 0A33     		adds	r3, r3, #10
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 8
+
+
+ 260 00c0 9BB2     		uxth	r3, r3
+ 261 00c2 9380     		strh	r3, [r2, #4]	@ movhi
+  81:../Bsp/Key/key.c ****                 {
+ 262              		.loc 1 81 17 is_stmt 1 view .LVU75
+  81:../Bsp/Key/key.c ****                 {
+ 263              		.loc 1 81 24 is_stmt 0 view .LVU76
+ 264 00c4 9279     		ldrb	r2, [r2, #6]	@ zero_extendqisi2
+  81:../Bsp/Key/key.c ****                 {
+ 265              		.loc 1 81 20 view .LVU77
+ 266 00c6 5AB9     		cbnz	r2, .L16
+  81:../Bsp/Key/key.c ****                 {
+ 267              		.loc 1 81 38 discriminator 1 view .LVU78
+ 268 00c8 B3F5487F 		cmp	r3, #800
+ 269 00cc 08D3     		bcc	.L16
+  83:../Bsp/Key/key.c ****                     st->events |= KEY_EVENT_LONG_PRESS;
+ 270              		.loc 1 83 21 is_stmt 1 view .LVU79
+  83:../Bsp/Key/key.c ****                     st->events |= KEY_EVENT_LONG_PRESS;
+ 271              		.loc 1 83 37 is_stmt 0 view .LVU80
+ 272 00ce 194A     		ldr	r2, .L24
+ 273 00d0 02EBC502 		add	r2, r2, r5, lsl #3
+ 274 00d4 0121     		movs	r1, #1
+ 275 00d6 9171     		strb	r1, [r2, #6]
+  84:../Bsp/Key/key.c ****                 }
+ 276              		.loc 1 84 21 is_stmt 1 view .LVU81
+  84:../Bsp/Key/key.c ****                 }
+ 277              		.loc 1 84 23 is_stmt 0 view .LVU82
+ 278 00d8 D179     		ldrb	r1, [r2, #7]	@ zero_extendqisi2
+  84:../Bsp/Key/key.c ****                 }
+ 279              		.loc 1 84 32 view .LVU83
+ 280 00da 41F00401 		orr	r1, r1, #4
+ 281 00de D171     		strb	r1, [r2, #7]
+ 282              	.L16:
+  88:../Bsp/Key/key.c ****                 {
+ 283              		.loc 1 88 17 is_stmt 1 view .LVU84
+  88:../Bsp/Key/key.c ****                 {
+ 284              		.loc 1 88 23 is_stmt 0 view .LVU85
+ 285 00e0 144A     		ldr	r2, .L24
+ 286 00e2 02EBC502 		add	r2, r2, r5, lsl #3
+ 287 00e6 9279     		ldrb	r2, [r2, #6]	@ zero_extendqisi2
+  88:../Bsp/Key/key.c ****                 {
+ 288              		.loc 1 88 20 view .LVU86
+ 289 00e8 002A     		cmp	r2, #0
+ 290 00ea A6D0     		beq	.L15
+  88:../Bsp/Key/key.c ****                 {
+ 291              		.loc 1 88 37 discriminator 1 view .LVU87
+ 292 00ec B3F5617F 		cmp	r3, #900
+ 293 00f0 A3D3     		bcc	.L15
+  90:../Bsp/Key/key.c ****                     /* 重置持续时间以连发, 保留长按标志 */
+ 294              		.loc 1 90 21 is_stmt 1 view .LVU88
+  90:../Bsp/Key/key.c ****                     /* 重置持续时间以连发, 保留长按标志 */
+ 295              		.loc 1 90 23 is_stmt 0 view .LVU89
+ 296 00f2 104B     		ldr	r3, .L24
+ 297 00f4 03EBC503 		add	r3, r3, r5, lsl #3
+ 298 00f8 DA79     		ldrb	r2, [r3, #7]	@ zero_extendqisi2
+  90:../Bsp/Key/key.c ****                     /* 重置持续时间以连发, 保留长按标志 */
+ 299              		.loc 1 90 32 view .LVU90
+ 300 00fa 42F00802 		orr	r2, r2, #8
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 9
+
+
+ 301 00fe DA71     		strb	r2, [r3, #7]
+  92:../Bsp/Key/key.c ****                 }
+ 302              		.loc 1 92 21 is_stmt 1 view .LVU91
+  92:../Bsp/Key/key.c ****                 }
+ 303              		.loc 1 92 39 is_stmt 0 view .LVU92
+ 304 0100 4FF44872 		mov	r2, #800
+ 305 0104 9A80     		strh	r2, [r3, #4]	@ movhi
+ 306 0106 98E7     		b	.L15
+ 307              	.L21:
+ 100:../Bsp/Key/key.c ****             {
+ 101:../Bsp/Key/key.c ****                 /* 刚释放 (上升沿/下降沿) */
+ 102:../Bsp/Key/key.c ****                 st->prevState = 0;
+ 308              		.loc 1 102 17 is_stmt 1 view .LVU93
+ 309              		.loc 1 102 31 is_stmt 0 view .LVU94
+ 310 0108 0A4B     		ldr	r3, .L24
+ 311 010a 03EBC503 		add	r3, r3, r5, lsl #3
+ 312 010e 0022     		movs	r2, #0
+ 313 0110 9A70     		strb	r2, [r3, #2]
+ 103:../Bsp/Key/key.c **** 
+ 104:../Bsp/Key/key.c ****                 /* 如果未触发长按, 则为短按 */
+ 105:../Bsp/Key/key.c ****                 if (!st->longPressed)
+ 314              		.loc 1 105 17 is_stmt 1 view .LVU95
+ 315              		.loc 1 105 24 is_stmt 0 view .LVU96
+ 316 0112 9B79     		ldrb	r3, [r3, #6]	@ zero_extendqisi2
+ 317              		.loc 1 105 20 view .LVU97
+ 318 0114 33B9     		cbnz	r3, .L17
+ 106:../Bsp/Key/key.c ****                 {
+ 107:../Bsp/Key/key.c ****                     st->events |= KEY_EVENT_SHORT_PRESS;
+ 319              		.loc 1 107 21 is_stmt 1 view .LVU98
+ 320              		.loc 1 107 23 is_stmt 0 view .LVU99
+ 321 0116 074B     		ldr	r3, .L24
+ 322 0118 03EBC503 		add	r3, r3, r5, lsl #3
+ 323 011c DA79     		ldrb	r2, [r3, #7]	@ zero_extendqisi2
+ 324              		.loc 1 107 32 view .LVU100
+ 325 011e 42F00202 		orr	r2, r2, #2
+ 326 0122 DA71     		strb	r2, [r3, #7]
+ 327              	.L17:
+ 108:../Bsp/Key/key.c ****                 }
+ 109:../Bsp/Key/key.c ****                 st->pressDuration = 0;
+ 328              		.loc 1 109 17 is_stmt 1 view .LVU101
+ 329              		.loc 1 109 35 is_stmt 0 view .LVU102
+ 330 0124 034B     		ldr	r3, .L24
+ 331 0126 03EBC503 		add	r3, r3, r5, lsl #3
+ 332 012a 0022     		movs	r2, #0
+ 333 012c 9A80     		strh	r2, [r3, #4]	@ movhi
+ 110:../Bsp/Key/key.c ****                 st->longPressed = 0;
+ 334              		.loc 1 110 17 is_stmt 1 view .LVU103
+ 335              		.loc 1 110 33 is_stmt 0 view .LVU104
+ 336 012e 9A71     		strb	r2, [r3, #6]
+ 337 0130 83E7     		b	.L15
+ 338              	.LVL17:
+ 339              	.L22:
+ 340              		.loc 1 110 33 view .LVU105
+ 341              	.LBE3:
+ 111:../Bsp/Key/key.c ****             }
+ 112:../Bsp/Key/key.c ****         }
+ 113:../Bsp/Key/key.c ****     }
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 10
+
+
+ 114:../Bsp/Key/key.c **** }
+ 342              		.loc 1 114 1 view .LVU106
+ 343 0132 70BD     		pop	{r4, r5, r6, pc}
+ 344              	.LVL18:
+ 345              	.L25:
+ 346              		.loc 1 114 1 view .LVU107
+ 347              		.align	2
+ 348              	.L24:
+ 349 0134 00000000 		.word	s_states
+ 350 0138 00000000 		.word	s_keyCount
+ 351 013c 00000000 		.word	s_configs
+ 352              		.cfi_endproc
+ 353              	.LFE240:
+ 355              		.section	.text.Key_IsPressed,"ax",%progbits
+ 356              		.align	1
+ 357              		.global	Key_IsPressed
+ 358              		.syntax unified
+ 359              		.thumb
+ 360              		.thumb_func
+ 362              	Key_IsPressed:
+ 363              	.LVL19:
+ 364              	.LFB241:
+ 115:../Bsp/Key/key.c **** 
+ 116:../Bsp/Key/key.c **** uint8_t Key_IsPressed(uint8_t index)
+ 117:../Bsp/Key/key.c **** {
+ 365              		.loc 1 117 1 is_stmt 1 view -0
+ 366              		.cfi_startproc
+ 367              		@ args = 0, pretend = 0, frame = 0
+ 368              		@ frame_needed = 0, uses_anonymous_args = 0
+ 369              		@ link register save eliminated.
+ 118:../Bsp/Key/key.c ****     if (index >= s_keyCount)
+ 370              		.loc 1 118 5 view .LVU109
+ 371              		.loc 1 118 15 is_stmt 0 view .LVU110
+ 372 0000 054B     		ldr	r3, .L29
+ 373 0002 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 374              		.loc 1 118 8 view .LVU111
+ 375 0004 8342     		cmp	r3, r0
+ 376 0006 04D9     		bls	.L28
+ 119:../Bsp/Key/key.c ****         return 0;
+ 120:../Bsp/Key/key.c ****     return s_states[index].stableState;
+ 377              		.loc 1 120 5 is_stmt 1 view .LVU112
+ 378              		.loc 1 120 27 is_stmt 0 view .LVU113
+ 379 0008 044B     		ldr	r3, .L29+4
+ 380 000a 03EBC003 		add	r3, r3, r0, lsl #3
+ 381 000e 5878     		ldrb	r0, [r3, #1]	@ zero_extendqisi2
+ 382              	.LVL20:
+ 383              		.loc 1 120 27 view .LVU114
+ 384 0010 7047     		bx	lr
+ 385              	.LVL21:
+ 386              	.L28:
+ 119:../Bsp/Key/key.c ****         return 0;
+ 387              		.loc 1 119 16 view .LVU115
+ 388 0012 0020     		movs	r0, #0
+ 389              	.LVL22:
+ 121:../Bsp/Key/key.c **** }
+ 390              		.loc 1 121 1 view .LVU116
+ 391 0014 7047     		bx	lr
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 11
+
+
+ 392              	.L30:
+ 393 0016 00BF     		.align	2
+ 394              	.L29:
+ 395 0018 00000000 		.word	s_keyCount
+ 396 001c 00000000 		.word	s_states
+ 397              		.cfi_endproc
+ 398              	.LFE241:
+ 400              		.section	.text.Key_IsShortPressed,"ax",%progbits
+ 401              		.align	1
+ 402              		.global	Key_IsShortPressed
+ 403              		.syntax unified
+ 404              		.thumb
+ 405              		.thumb_func
+ 407              	Key_IsShortPressed:
+ 408              	.LVL23:
+ 409              	.LFB242:
+ 122:../Bsp/Key/key.c **** 
+ 123:../Bsp/Key/key.c **** uint8_t Key_IsShortPressed(uint8_t index)
+ 124:../Bsp/Key/key.c **** {
+ 410              		.loc 1 124 1 is_stmt 1 view -0
+ 411              		.cfi_startproc
+ 412              		@ args = 0, pretend = 0, frame = 0
+ 413              		@ frame_needed = 0, uses_anonymous_args = 0
+ 414              		@ link register save eliminated.
+ 415              		.loc 1 124 1 is_stmt 0 view .LVU118
+ 416 0000 0346     		mov	r3, r0
+ 125:../Bsp/Key/key.c ****     if (index >= s_keyCount)
+ 417              		.loc 1 125 5 is_stmt 1 view .LVU119
+ 418              		.loc 1 125 15 is_stmt 0 view .LVU120
+ 419 0002 0B4A     		ldr	r2, .L35
+ 420 0004 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 421              		.loc 1 125 8 view .LVU121
+ 422 0006 8242     		cmp	r2, r0
+ 423 0008 0FD9     		bls	.L33
+ 126:../Bsp/Key/key.c ****         return 0;
+ 127:../Bsp/Key/key.c ****     if (s_states[index].events & KEY_EVENT_SHORT_PRESS)
+ 424              		.loc 1 127 5 is_stmt 1 view .LVU122
+ 425              		.loc 1 127 24 is_stmt 0 view .LVU123
+ 426 000a 0A4A     		ldr	r2, .L35+4
+ 427 000c 02EBC002 		add	r2, r2, r0, lsl #3
+ 428 0010 D279     		ldrb	r2, [r2, #7]	@ zero_extendqisi2
+ 429              		.loc 1 127 8 view .LVU124
+ 430 0012 12F00200 		ands	r0, r2, #2
+ 431              	.LVL24:
+ 432              		.loc 1 127 8 view .LVU125
+ 433 0016 00D1     		bne	.L34
+ 434              	.L32:
+ 128:../Bsp/Key/key.c ****     {
+ 129:../Bsp/Key/key.c ****         s_states[index].events &= ~KEY_EVENT_SHORT_PRESS;
+ 130:../Bsp/Key/key.c ****         return 1;
+ 131:../Bsp/Key/key.c ****     }
+ 132:../Bsp/Key/key.c ****     return 0;
+ 133:../Bsp/Key/key.c **** }
+ 435              		.loc 1 133 1 view .LVU126
+ 436 0018 7047     		bx	lr
+ 437              	.L34:
+ 129:../Bsp/Key/key.c ****         return 1;
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 12
+
+
+ 438              		.loc 1 129 9 is_stmt 1 view .LVU127
+ 129:../Bsp/Key/key.c ****         return 1;
+ 439              		.loc 1 129 32 is_stmt 0 view .LVU128
+ 440 001a 0649     		ldr	r1, .L35+4
+ 441 001c 01EBC303 		add	r3, r1, r3, lsl #3
+ 442              	.LVL25:
+ 129:../Bsp/Key/key.c ****         return 1;
+ 443              		.loc 1 129 32 view .LVU129
+ 444 0020 22F00202 		bic	r2, r2, #2
+ 445 0024 DA71     		strb	r2, [r3, #7]
+ 130:../Bsp/Key/key.c ****     }
+ 446              		.loc 1 130 9 is_stmt 1 view .LVU130
+ 130:../Bsp/Key/key.c ****     }
+ 447              		.loc 1 130 16 is_stmt 0 view .LVU131
+ 448 0026 0120     		movs	r0, #1
+ 449 0028 7047     		bx	lr
+ 450              	.LVL26:
+ 451              	.L33:
+ 126:../Bsp/Key/key.c ****     if (s_states[index].events & KEY_EVENT_SHORT_PRESS)
+ 452              		.loc 1 126 16 view .LVU132
+ 453 002a 0020     		movs	r0, #0
+ 454              	.LVL27:
+ 126:../Bsp/Key/key.c ****     if (s_states[index].events & KEY_EVENT_SHORT_PRESS)
+ 455              		.loc 1 126 16 view .LVU133
+ 456 002c F4E7     		b	.L32
+ 457              	.L36:
+ 458 002e 00BF     		.align	2
+ 459              	.L35:
+ 460 0030 00000000 		.word	s_keyCount
+ 461 0034 00000000 		.word	s_states
+ 462              		.cfi_endproc
+ 463              	.LFE242:
+ 465              		.section	.text.Key_IsLongPressed,"ax",%progbits
+ 466              		.align	1
+ 467              		.global	Key_IsLongPressed
+ 468              		.syntax unified
+ 469              		.thumb
+ 470              		.thumb_func
+ 472              	Key_IsLongPressed:
+ 473              	.LVL28:
+ 474              	.LFB243:
+ 134:../Bsp/Key/key.c **** 
+ 135:../Bsp/Key/key.c **** uint8_t Key_IsLongPressed(uint8_t index)
+ 136:../Bsp/Key/key.c **** {
+ 475              		.loc 1 136 1 is_stmt 1 view -0
+ 476              		.cfi_startproc
+ 477              		@ args = 0, pretend = 0, frame = 0
+ 478              		@ frame_needed = 0, uses_anonymous_args = 0
+ 479              		@ link register save eliminated.
+ 480              		.loc 1 136 1 is_stmt 0 view .LVU135
+ 481 0000 0346     		mov	r3, r0
+ 137:../Bsp/Key/key.c ****     if (index >= s_keyCount)
+ 482              		.loc 1 137 5 is_stmt 1 view .LVU136
+ 483              		.loc 1 137 15 is_stmt 0 view .LVU137
+ 484 0002 0B4A     		ldr	r2, .L41
+ 485 0004 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 486              		.loc 1 137 8 view .LVU138
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 13
+
+
+ 487 0006 8242     		cmp	r2, r0
+ 488 0008 0FD9     		bls	.L39
+ 138:../Bsp/Key/key.c ****         return 0;
+ 139:../Bsp/Key/key.c ****     if (s_states[index].events & KEY_EVENT_LONG_PRESS)
+ 489              		.loc 1 139 5 is_stmt 1 view .LVU139
+ 490              		.loc 1 139 24 is_stmt 0 view .LVU140
+ 491 000a 0A4A     		ldr	r2, .L41+4
+ 492 000c 02EBC002 		add	r2, r2, r0, lsl #3
+ 493 0010 D279     		ldrb	r2, [r2, #7]	@ zero_extendqisi2
+ 494              		.loc 1 139 8 view .LVU141
+ 495 0012 12F00400 		ands	r0, r2, #4
+ 496              	.LVL29:
+ 497              		.loc 1 139 8 view .LVU142
+ 498 0016 00D1     		bne	.L40
+ 499              	.L38:
+ 140:../Bsp/Key/key.c ****     {
+ 141:../Bsp/Key/key.c ****         s_states[index].events &= ~KEY_EVENT_LONG_PRESS;
+ 142:../Bsp/Key/key.c ****         return 1;
+ 143:../Bsp/Key/key.c ****     }
+ 144:../Bsp/Key/key.c ****     return 0;
+ 145:../Bsp/Key/key.c **** }
+ 500              		.loc 1 145 1 view .LVU143
+ 501 0018 7047     		bx	lr
+ 502              	.L40:
+ 141:../Bsp/Key/key.c ****         return 1;
+ 503              		.loc 1 141 9 is_stmt 1 view .LVU144
+ 141:../Bsp/Key/key.c ****         return 1;
+ 504              		.loc 1 141 32 is_stmt 0 view .LVU145
+ 505 001a 0649     		ldr	r1, .L41+4
+ 506 001c 01EBC303 		add	r3, r1, r3, lsl #3
+ 507              	.LVL30:
+ 141:../Bsp/Key/key.c ****         return 1;
+ 508              		.loc 1 141 32 view .LVU146
+ 509 0020 22F00402 		bic	r2, r2, #4
+ 510 0024 DA71     		strb	r2, [r3, #7]
+ 142:../Bsp/Key/key.c ****     }
+ 511              		.loc 1 142 9 is_stmt 1 view .LVU147
+ 142:../Bsp/Key/key.c ****     }
+ 512              		.loc 1 142 16 is_stmt 0 view .LVU148
+ 513 0026 0120     		movs	r0, #1
+ 514 0028 7047     		bx	lr
+ 515              	.LVL31:
+ 516              	.L39:
+ 138:../Bsp/Key/key.c ****     if (s_states[index].events & KEY_EVENT_LONG_PRESS)
+ 517              		.loc 1 138 16 view .LVU149
+ 518 002a 0020     		movs	r0, #0
+ 519              	.LVL32:
+ 138:../Bsp/Key/key.c ****     if (s_states[index].events & KEY_EVENT_LONG_PRESS)
+ 520              		.loc 1 138 16 view .LVU150
+ 521 002c F4E7     		b	.L38
+ 522              	.L42:
+ 523 002e 00BF     		.align	2
+ 524              	.L41:
+ 525 0030 00000000 		.word	s_keyCount
+ 526 0034 00000000 		.word	s_states
+ 527              		.cfi_endproc
+ 528              	.LFE243:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 14
+
+
+ 530              		.section	.text.Key_IsRepeat,"ax",%progbits
+ 531              		.align	1
+ 532              		.global	Key_IsRepeat
+ 533              		.syntax unified
+ 534              		.thumb
+ 535              		.thumb_func
+ 537              	Key_IsRepeat:
+ 538              	.LVL33:
+ 539              	.LFB244:
+ 146:../Bsp/Key/key.c **** 
+ 147:../Bsp/Key/key.c **** uint8_t Key_IsRepeat(uint8_t index)
+ 148:../Bsp/Key/key.c **** {
+ 540              		.loc 1 148 1 is_stmt 1 view -0
+ 541              		.cfi_startproc
+ 542              		@ args = 0, pretend = 0, frame = 0
+ 543              		@ frame_needed = 0, uses_anonymous_args = 0
+ 544              		@ link register save eliminated.
+ 545              		.loc 1 148 1 is_stmt 0 view .LVU152
+ 546 0000 0346     		mov	r3, r0
+ 149:../Bsp/Key/key.c ****     if (index >= s_keyCount)
+ 547              		.loc 1 149 5 is_stmt 1 view .LVU153
+ 548              		.loc 1 149 15 is_stmt 0 view .LVU154
+ 549 0002 0B4A     		ldr	r2, .L47
+ 550 0004 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 551              		.loc 1 149 8 view .LVU155
+ 552 0006 8242     		cmp	r2, r0
+ 553 0008 0FD9     		bls	.L45
+ 150:../Bsp/Key/key.c ****         return 0;
+ 151:../Bsp/Key/key.c ****     if (s_states[index].events & KEY_EVENT_REPEAT)
+ 554              		.loc 1 151 5 is_stmt 1 view .LVU156
+ 555              		.loc 1 151 24 is_stmt 0 view .LVU157
+ 556 000a 0A4A     		ldr	r2, .L47+4
+ 557 000c 02EBC002 		add	r2, r2, r0, lsl #3
+ 558 0010 D279     		ldrb	r2, [r2, #7]	@ zero_extendqisi2
+ 559              		.loc 1 151 8 view .LVU158
+ 560 0012 12F00800 		ands	r0, r2, #8
+ 561              	.LVL34:
+ 562              		.loc 1 151 8 view .LVU159
+ 563 0016 00D1     		bne	.L46
+ 564              	.L44:
+ 152:../Bsp/Key/key.c ****     {
+ 153:../Bsp/Key/key.c ****         s_states[index].events &= ~KEY_EVENT_REPEAT;
+ 154:../Bsp/Key/key.c ****         return 1;
+ 155:../Bsp/Key/key.c ****     }
+ 156:../Bsp/Key/key.c ****     return 0;
+ 157:../Bsp/Key/key.c **** }
+ 565              		.loc 1 157 1 view .LVU160
+ 566 0018 7047     		bx	lr
+ 567              	.L46:
+ 153:../Bsp/Key/key.c ****         return 1;
+ 568              		.loc 1 153 9 is_stmt 1 view .LVU161
+ 153:../Bsp/Key/key.c ****         return 1;
+ 569              		.loc 1 153 32 is_stmt 0 view .LVU162
+ 570 001a 0649     		ldr	r1, .L47+4
+ 571 001c 01EBC303 		add	r3, r1, r3, lsl #3
+ 572              	.LVL35:
+ 153:../Bsp/Key/key.c ****         return 1;
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 15
+
+
+ 573              		.loc 1 153 32 view .LVU163
+ 574 0020 22F00802 		bic	r2, r2, #8
+ 575 0024 DA71     		strb	r2, [r3, #7]
+ 154:../Bsp/Key/key.c ****     }
+ 576              		.loc 1 154 9 is_stmt 1 view .LVU164
+ 154:../Bsp/Key/key.c ****     }
+ 577              		.loc 1 154 16 is_stmt 0 view .LVU165
+ 578 0026 0120     		movs	r0, #1
+ 579 0028 7047     		bx	lr
+ 580              	.LVL36:
+ 581              	.L45:
+ 150:../Bsp/Key/key.c ****     if (s_states[index].events & KEY_EVENT_REPEAT)
+ 582              		.loc 1 150 16 view .LVU166
+ 583 002a 0020     		movs	r0, #0
+ 584              	.LVL37:
+ 150:../Bsp/Key/key.c ****     if (s_states[index].events & KEY_EVENT_REPEAT)
+ 585              		.loc 1 150 16 view .LVU167
+ 586 002c F4E7     		b	.L44
+ 587              	.L48:
+ 588 002e 00BF     		.align	2
+ 589              	.L47:
+ 590 0030 00000000 		.word	s_keyCount
+ 591 0034 00000000 		.word	s_states
+ 592              		.cfi_endproc
+ 593              	.LFE244:
+ 595              		.section	.text.Key_AnyPressed,"ax",%progbits
+ 596              		.align	1
+ 597              		.global	Key_AnyPressed
+ 598              		.syntax unified
+ 599              		.thumb
+ 600              		.thumb_func
+ 602              	Key_AnyPressed:
+ 603              	.LFB245:
+ 158:../Bsp/Key/key.c **** 
+ 159:../Bsp/Key/key.c **** uint16_t Key_AnyPressed(void)
+ 160:../Bsp/Key/key.c **** {
+ 604              		.loc 1 160 1 is_stmt 1 view -0
+ 605              		.cfi_startproc
+ 606              		@ args = 0, pretend = 0, frame = 0
+ 607              		@ frame_needed = 0, uses_anonymous_args = 0
+ 608              		@ link register save eliminated.
+ 161:../Bsp/Key/key.c ****     uint8_t i;
+ 609              		.loc 1 161 5 view .LVU169
+ 162:../Bsp/Key/key.c ****     uint16_t mask = 0;
+ 610              		.loc 1 162 5 view .LVU170
+ 611              	.LVL38:
+ 163:../Bsp/Key/key.c ****     for (i = 0; i < s_keyCount; i++)
+ 612              		.loc 1 163 5 view .LVU171
+ 162:../Bsp/Key/key.c ****     uint16_t mask = 0;
+ 613              		.loc 1 162 14 is_stmt 0 view .LVU172
+ 614 0000 0020     		movs	r0, #0
+ 615              		.loc 1 163 12 view .LVU173
+ 616 0002 0346     		mov	r3, r0
+ 617              		.loc 1 163 5 view .LVU174
+ 618 0004 01E0     		b	.L50
+ 619              	.LVL39:
+ 620              	.L51:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 16
+
+
+ 621              		.loc 1 163 34 is_stmt 1 discriminator 2 view .LVU175
+ 622 0006 0133     		adds	r3, r3, #1
+ 623              	.LVL40:
+ 624              		.loc 1 163 34 is_stmt 0 discriminator 2 view .LVU176
+ 625 0008 DBB2     		uxtb	r3, r3
+ 626              	.LVL41:
+ 627              	.L50:
+ 628              		.loc 1 163 19 is_stmt 1 discriminator 1 view .LVU177
+ 629 000a 084A     		ldr	r2, .L54
+ 630 000c 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 631 000e 9A42     		cmp	r2, r3
+ 632 0010 0AD9     		bls	.L53
+ 164:../Bsp/Key/key.c ****     {
+ 165:../Bsp/Key/key.c ****         if (s_states[i].stableState)
+ 633              		.loc 1 165 9 view .LVU178
+ 634              		.loc 1 165 24 is_stmt 0 view .LVU179
+ 635 0012 074A     		ldr	r2, .L54+4
+ 636 0014 02EBC302 		add	r2, r2, r3, lsl #3
+ 637 0018 5278     		ldrb	r2, [r2, #1]	@ zero_extendqisi2
+ 638              		.loc 1 165 12 view .LVU180
+ 639 001a 002A     		cmp	r2, #0
+ 640 001c F3D0     		beq	.L51
+ 166:../Bsp/Key/key.c ****             mask |= (1 << i);
+ 641              		.loc 1 166 13 is_stmt 1 view .LVU181
+ 642              		.loc 1 166 24 is_stmt 0 view .LVU182
+ 643 001e 0122     		movs	r2, #1
+ 644 0020 9A40     		lsls	r2, r2, r3
+ 645              		.loc 1 166 18 view .LVU183
+ 646 0022 1043     		orrs	r0, r0, r2
+ 647              	.LVL42:
+ 648              		.loc 1 166 18 view .LVU184
+ 649 0024 80B2     		uxth	r0, r0
+ 650 0026 EEE7     		b	.L51
+ 651              	.LVL43:
+ 652              	.L53:
+ 167:../Bsp/Key/key.c ****     }
+ 168:../Bsp/Key/key.c ****     return mask;
+ 653              		.loc 1 168 5 is_stmt 1 view .LVU185
+ 169:../Bsp/Key/key.c **** }
+ 654              		.loc 1 169 1 is_stmt 0 view .LVU186
+ 655 0028 7047     		bx	lr
+ 656              	.L55:
+ 657 002a 00BF     		.align	2
+ 658              	.L54:
+ 659 002c 00000000 		.word	s_keyCount
+ 660 0030 00000000 		.word	s_states
+ 661              		.cfi_endproc
+ 662              	.LFE245:
+ 664              		.section	.text.Key_ClearAllEvents,"ax",%progbits
+ 665              		.align	1
+ 666              		.global	Key_ClearAllEvents
+ 667              		.syntax unified
+ 668              		.thumb
+ 669              		.thumb_func
+ 671              	Key_ClearAllEvents:
+ 672              	.LFB246:
+ 170:../Bsp/Key/key.c **** 
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 17
+
+
+ 171:../Bsp/Key/key.c **** void Key_ClearAllEvents(void)
+ 172:../Bsp/Key/key.c **** {
+ 673              		.loc 1 172 1 is_stmt 1 view -0
+ 674              		.cfi_startproc
+ 675              		@ args = 0, pretend = 0, frame = 0
+ 676              		@ frame_needed = 0, uses_anonymous_args = 0
+ 677              		@ link register save eliminated.
+ 173:../Bsp/Key/key.c ****     uint8_t i;
+ 678              		.loc 1 173 5 view .LVU188
+ 174:../Bsp/Key/key.c ****     for (i = 0; i < s_keyCount; i++)
+ 679              		.loc 1 174 5 view .LVU189
+ 680              	.LVL44:
+ 681              		.loc 1 174 12 is_stmt 0 view .LVU190
+ 682 0000 0023     		movs	r3, #0
+ 683              		.loc 1 174 5 view .LVU191
+ 684 0002 06E0     		b	.L57
+ 685              	.LVL45:
+ 686              	.L58:
+ 175:../Bsp/Key/key.c ****         s_states[i].events = KEY_EVENT_NONE;
+ 687              		.loc 1 175 9 is_stmt 1 view .LVU192
+ 688              		.loc 1 175 28 is_stmt 0 view .LVU193
+ 689 0004 054A     		ldr	r2, .L59
+ 690 0006 02EBC302 		add	r2, r2, r3, lsl #3
+ 691 000a 0021     		movs	r1, #0
+ 692 000c D171     		strb	r1, [r2, #7]
+ 174:../Bsp/Key/key.c ****     for (i = 0; i < s_keyCount; i++)
+ 693              		.loc 1 174 34 is_stmt 1 discriminator 3 view .LVU194
+ 694 000e 0133     		adds	r3, r3, #1
+ 695              	.LVL46:
+ 174:../Bsp/Key/key.c ****     for (i = 0; i < s_keyCount; i++)
+ 696              		.loc 1 174 34 is_stmt 0 discriminator 3 view .LVU195
+ 697 0010 DBB2     		uxtb	r3, r3
+ 698              	.LVL47:
+ 699              	.L57:
+ 174:../Bsp/Key/key.c ****     for (i = 0; i < s_keyCount; i++)
+ 700              		.loc 1 174 19 is_stmt 1 discriminator 1 view .LVU196
+ 701 0012 034A     		ldr	r2, .L59+4
+ 702 0014 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 703 0016 9A42     		cmp	r2, r3
+ 704 0018 F4D8     		bhi	.L58
+ 176:../Bsp/Key/key.c **** }
+ 705              		.loc 1 176 1 is_stmt 0 view .LVU197
+ 706 001a 7047     		bx	lr
+ 707              	.L60:
+ 708              		.align	2
+ 709              	.L59:
+ 710 001c 00000000 		.word	s_states
+ 711 0020 00000000 		.word	s_keyCount
+ 712              		.cfi_endproc
+ 713              	.LFE246:
+ 715              		.section	.bss.s_keyCount,"aw",%nobits
+ 718              	s_keyCount:
+ 719 0000 00       		.space	1
+ 720              		.section	.bss.s_states,"aw",%nobits
+ 721              		.align	2
+ 724              	s_states:
+ 725 0000 00000000 		.space	48
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 18
+
+
+ 725      00000000 
+ 725      00000000 
+ 725      00000000 
+ 725      00000000 
+ 726              		.section	.bss.s_configs,"aw",%nobits
+ 727              		.align	2
+ 730              	s_configs:
+ 731 0000 00000000 		.space	48
+ 731      00000000 
+ 731      00000000 
+ 731      00000000 
+ 731      00000000 
+ 732              		.text
+ 733              	.Letext0:
+ 734              		.file 2 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_default_t
+ 735              		.file 3 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h"
+ 736              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 737              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 738              		.file 6 "../Bsp/Key/key.h"
+ 739              		.file 7 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/string.h"
+ 740              		.file 8 "<built-in>"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s 			page 19
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 key.c
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:21     .text.Key_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:27     .text.Key_Init:00000000 Key_Init
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:73     .text.Key_Init:00000024 $d
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:718    .bss.s_keyCount:00000000 s_keyCount
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:730    .bss.s_configs:00000000 s_configs
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:724    .bss.s_states:00000000 s_states
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:80     .text.Key_Scan:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:86     .text.Key_Scan:00000000 Key_Scan
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:349    .text.Key_Scan:00000134 $d
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:356    .text.Key_IsPressed:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:362    .text.Key_IsPressed:00000000 Key_IsPressed
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:395    .text.Key_IsPressed:00000018 $d
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:401    .text.Key_IsShortPressed:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:407    .text.Key_IsShortPressed:00000000 Key_IsShortPressed
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:460    .text.Key_IsShortPressed:00000030 $d
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:466    .text.Key_IsLongPressed:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:472    .text.Key_IsLongPressed:00000000 Key_IsLongPressed
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:525    .text.Key_IsLongPressed:00000030 $d
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:531    .text.Key_IsRepeat:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:537    .text.Key_IsRepeat:00000000 Key_IsRepeat
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:590    .text.Key_IsRepeat:00000030 $d
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:596    .text.Key_AnyPressed:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:602    .text.Key_AnyPressed:00000000 Key_AnyPressed
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:659    .text.Key_AnyPressed:0000002c $d
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:665    .text.Key_ClearAllEvents:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:671    .text.Key_ClearAllEvents:00000000 Key_ClearAllEvents
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:710    .text.Key_ClearAllEvents:0000001c $d
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:719    .bss.s_keyCount:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:721    .bss.s_states:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccK5PJeg.s:727    .bss.s_configs:00000000 $d
+
+UNDEFINED SYMBOLS
+memcpy
+memset
+HAL_GPIO_ReadPin

@@ -1,0 +1,869 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"bsp_rtc.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "../Bsp/RTC/bsp_rtc.c"
+  20              		.section	.text.BSP_RTC_IsFirstPowerOn,"ax",%progbits
+  21              		.align	1
+  22              		.global	BSP_RTC_IsFirstPowerOn
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	BSP_RTC_IsFirstPowerOn:
+  28              	.LFB239:
+   1:../Bsp/RTC/bsp_rtc.c **** /**
+   2:../Bsp/RTC/bsp_rtc.c ****  * @file    bsp_rtc.c
+   3:../Bsp/RTC/bsp_rtc.c ****  * @brief   RTC 日历驱动实现
+   4:../Bsp/RTC/bsp_rtc.c ****  */
+   5:../Bsp/RTC/bsp_rtc.c **** #include "bsp_rtc.h"
+   6:../Bsp/RTC/bsp_rtc.c **** 
+   7:../Bsp/RTC/bsp_rtc.c **** /* CubeMX 生成的 RTC 句柄, 由 MX_RTC_Init() 初始化 */
+   8:../Bsp/RTC/bsp_rtc.c **** extern RTC_HandleTypeDef hrtc;
+   9:../Bsp/RTC/bsp_rtc.c **** 
+  10:../Bsp/RTC/bsp_rtc.c **** /* 全局日期时间变量, 每次 BSP_RTC_GetDateTime() 读取后自动更新 */
+  11:../Bsp/RTC/bsp_rtc.c **** BSP_RTC_DateTime_t g_rtc_datetime = {0};
+  12:../Bsp/RTC/bsp_rtc.c **** 
+  13:../Bsp/RTC/bsp_rtc.c **** /* -----------------------------------------------------------
+  14:../Bsp/RTC/bsp_rtc.c ****  *  备份寄存器 —— 上电判断
+  15:../Bsp/RTC/bsp_rtc.c ****  * --------------------------------------------------------- */
+  16:../Bsp/RTC/bsp_rtc.c **** uint8_t BSP_RTC_IsFirstPowerOn(void)
+  17:../Bsp/RTC/bsp_rtc.c **** {
+  29              		.loc 1 17 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 08B5     		push	{r3, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 3, -8
+  36              		.cfi_offset 14, -4
+  18:../Bsp/RTC/bsp_rtc.c ****     return (HAL_RTCEx_BKUPRead(&hrtc, BSP_RTC_BKUP_DR) != BSP_RTC_BKUP_MAGIC);
+  37              		.loc 1 18 5 view .LVU1
+  38              		.loc 1 18 13 is_stmt 0 view .LVU2
+  39 0002 0021     		movs	r1, #0
+  40 0004 0448     		ldr	r0, .L3
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s 			page 2
+
+
+  41 0006 FFF7FEFF 		bl	HAL_RTCEx_BKUPRead
+  42              	.LVL0:
+  19:../Bsp/RTC/bsp_rtc.c **** }
+  43              		.loc 1 19 1 view .LVU3
+  44 000a 45F25003 		movw	r3, #20560
+  45 000e C01A     		subs	r0, r0, r3
+  46 0010 18BF     		it	ne
+  47 0012 0120     		movne	r0, #1
+  48 0014 08BD     		pop	{r3, pc}
+  49              	.L4:
+  50 0016 00BF     		.align	2
+  51              	.L3:
+  52 0018 00000000 		.word	hrtc
+  53              		.cfi_endproc
+  54              	.LFE239:
+  56              		.section	.text.BSP_RTC_MarkInitialized,"ax",%progbits
+  57              		.align	1
+  58              		.global	BSP_RTC_MarkInitialized
+  59              		.syntax unified
+  60              		.thumb
+  61              		.thumb_func
+  63              	BSP_RTC_MarkInitialized:
+  64              	.LFB240:
+  20:../Bsp/RTC/bsp_rtc.c **** 
+  21:../Bsp/RTC/bsp_rtc.c **** void BSP_RTC_MarkInitialized(void)
+  22:../Bsp/RTC/bsp_rtc.c **** {
+  65              		.loc 1 22 1 is_stmt 1 view -0
+  66              		.cfi_startproc
+  67              		@ args = 0, pretend = 0, frame = 0
+  68              		@ frame_needed = 0, uses_anonymous_args = 0
+  69 0000 08B5     		push	{r3, lr}
+  70              		.cfi_def_cfa_offset 8
+  71              		.cfi_offset 3, -8
+  72              		.cfi_offset 14, -4
+  23:../Bsp/RTC/bsp_rtc.c ****     HAL_RTCEx_BKUPWrite(&hrtc, BSP_RTC_BKUP_DR, BSP_RTC_BKUP_MAGIC);
+  73              		.loc 1 23 5 view .LVU5
+  74 0002 45F25002 		movw	r2, #20560
+  75 0006 0021     		movs	r1, #0
+  76 0008 0148     		ldr	r0, .L7
+  77 000a FFF7FEFF 		bl	HAL_RTCEx_BKUPWrite
+  78              	.LVL1:
+  24:../Bsp/RTC/bsp_rtc.c **** }
+  79              		.loc 1 24 1 is_stmt 0 view .LVU6
+  80 000e 08BD     		pop	{r3, pc}
+  81              	.L8:
+  82              		.align	2
+  83              	.L7:
+  84 0010 00000000 		.word	hrtc
+  85              		.cfi_endproc
+  86              	.LFE240:
+  88              		.section	.text.BSP_RTC_SetDate,"ax",%progbits
+  89              		.align	1
+  90              		.global	BSP_RTC_SetDate
+  91              		.syntax unified
+  92              		.thumb
+  93              		.thumb_func
+  95              	BSP_RTC_SetDate:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s 			page 3
+
+
+  96              	.LVL2:
+  97              	.LFB242:
+  25:../Bsp/RTC/bsp_rtc.c **** 
+  26:../Bsp/RTC/bsp_rtc.c **** /* -----------------------------------------------------------
+  27:../Bsp/RTC/bsp_rtc.c ****  *  日期时间读写
+  28:../Bsp/RTC/bsp_rtc.c ****  * --------------------------------------------------------- */
+  29:../Bsp/RTC/bsp_rtc.c **** HAL_StatusTypeDef BSP_RTC_GetDateTime(BSP_RTC_DateTime_t *dt)
+  30:../Bsp/RTC/bsp_rtc.c **** {
+  31:../Bsp/RTC/bsp_rtc.c ****     RTC_TimeTypeDef sTime = {0};
+  32:../Bsp/RTC/bsp_rtc.c ****     RTC_DateTypeDef sDate = {0};
+  33:../Bsp/RTC/bsp_rtc.c **** 
+  34:../Bsp/RTC/bsp_rtc.c ****     /*
+  35:../Bsp/RTC/bsp_rtc.c ****      * STM32 RTC 影子寄存器要求: 必须先读 Time 再读 Date,
+  36:../Bsp/RTC/bsp_rtc.c ****      * 读取 Date 才会解锁/锁定影子寄存器, 顺序不能颠倒。
+  37:../Bsp/RTC/bsp_rtc.c ****      */
+  38:../Bsp/RTC/bsp_rtc.c ****     if (HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN) != HAL_OK)
+  39:../Bsp/RTC/bsp_rtc.c ****         return HAL_ERROR;
+  40:../Bsp/RTC/bsp_rtc.c ****     if (HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK)
+  41:../Bsp/RTC/bsp_rtc.c ****         return HAL_ERROR;
+  42:../Bsp/RTC/bsp_rtc.c **** 
+  43:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.year    = 2000U + sDate.Year;
+  44:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.month   = sDate.Month;
+  45:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.day     = sDate.Date;
+  46:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.hour    = sTime.Hours;
+  47:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.minute  = sTime.Minutes;
+  48:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.second  = sTime.Seconds;
+  49:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.weekday = BSP_RTC_CalcWeekday(g_rtc_datetime.year,
+  50:../Bsp/RTC/bsp_rtc.c ****                                                  g_rtc_datetime.month,
+  51:../Bsp/RTC/bsp_rtc.c ****                                                  g_rtc_datetime.day);
+  52:../Bsp/RTC/bsp_rtc.c **** 
+  53:../Bsp/RTC/bsp_rtc.c ****     if (dt != NULL)
+  54:../Bsp/RTC/bsp_rtc.c ****         *dt = g_rtc_datetime;
+  55:../Bsp/RTC/bsp_rtc.c **** 
+  56:../Bsp/RTC/bsp_rtc.c ****     return HAL_OK;
+  57:../Bsp/RTC/bsp_rtc.c **** }
+  58:../Bsp/RTC/bsp_rtc.c **** 
+  59:../Bsp/RTC/bsp_rtc.c **** HAL_StatusTypeDef BSP_RTC_SetDate(uint16_t year, uint8_t month, uint8_t day)
+  60:../Bsp/RTC/bsp_rtc.c **** {
+  98              		.loc 1 60 1 is_stmt 1 view -0
+  99              		.cfi_startproc
+ 100              		@ args = 0, pretend = 0, frame = 8
+ 101              		@ frame_needed = 0, uses_anonymous_args = 0
+ 102              		.loc 1 60 1 is_stmt 0 view .LVU8
+ 103 0000 00B5     		push	{lr}
+ 104              		.cfi_def_cfa_offset 4
+ 105              		.cfi_offset 14, -4
+ 106 0002 83B0     		sub	sp, sp, #12
+ 107              		.cfi_def_cfa_offset 16
+ 108 0004 9446     		mov	ip, r2
+  61:../Bsp/RTC/bsp_rtc.c ****     RTC_DateTypeDef sDate = {0};
+ 109              		.loc 1 61 5 is_stmt 1 view .LVU9
+ 110              		.loc 1 61 21 is_stmt 0 view .LVU10
+ 111 0006 0022     		movs	r2, #0
+ 112              	.LVL3:
+ 113              		.loc 1 61 21 view .LVU11
+ 114 0008 0192     		str	r2, [sp, #4]
+  62:../Bsp/RTC/bsp_rtc.c ****     sDate.Year  = year % 2000U;
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s 			page 4
+
+
+ 115              		.loc 1 62 5 is_stmt 1 view .LVU12
+ 116              		.loc 1 62 17 is_stmt 0 view .LVU13
+ 117 000a 0A4B     		ldr	r3, .L11
+ 118 000c A3FB00E3 		umull	lr, r3, r3, r0
+ 119 0010 DB09     		lsrs	r3, r3, #7
+ 120 0012 4FF4FA6E 		mov	lr, #2000
+ 121 0016 0EFB1300 		mls	r0, lr, r3, r0
+ 122              	.LVL4:
+ 123              		.loc 1 62 17 view .LVU14
+ 124 001a 8DF80700 		strb	r0, [sp, #7]
+  63:../Bsp/RTC/bsp_rtc.c ****     sDate.Month = month;
+ 125              		.loc 1 63 5 is_stmt 1 view .LVU15
+ 126              		.loc 1 63 17 is_stmt 0 view .LVU16
+ 127 001e 8DF80510 		strb	r1, [sp, #5]
+  64:../Bsp/RTC/bsp_rtc.c ****     sDate.Date  = day;
+ 128              		.loc 1 64 5 is_stmt 1 view .LVU17
+ 129              		.loc 1 64 17 is_stmt 0 view .LVU18
+ 130 0022 8DF806C0 		strb	ip, [sp, #6]
+  65:../Bsp/RTC/bsp_rtc.c ****     return HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+ 131              		.loc 1 65 5 is_stmt 1 view .LVU19
+ 132              		.loc 1 65 12 is_stmt 0 view .LVU20
+ 133 0026 01A9     		add	r1, sp, #4
+ 134              	.LVL5:
+ 135              		.loc 1 65 12 view .LVU21
+ 136 0028 0348     		ldr	r0, .L11+4
+ 137 002a FFF7FEFF 		bl	HAL_RTC_SetDate
+ 138              	.LVL6:
+  66:../Bsp/RTC/bsp_rtc.c **** }
+ 139              		.loc 1 66 1 view .LVU22
+ 140 002e 03B0     		add	sp, sp, #12
+ 141              		.cfi_def_cfa_offset 4
+ 142              		@ sp needed
+ 143 0030 5DF804FB 		ldr	pc, [sp], #4
+ 144              	.L12:
+ 145              		.align	2
+ 146              	.L11:
+ 147 0034 D34D6210 		.word	274877907
+ 148 0038 00000000 		.word	hrtc
+ 149              		.cfi_endproc
+ 150              	.LFE242:
+ 152              		.section	.text.BSP_RTC_SetTime,"ax",%progbits
+ 153              		.align	1
+ 154              		.global	BSP_RTC_SetTime
+ 155              		.syntax unified
+ 156              		.thumb
+ 157              		.thumb_func
+ 159              	BSP_RTC_SetTime:
+ 160              	.LVL7:
+ 161              	.LFB243:
+  67:../Bsp/RTC/bsp_rtc.c **** 
+  68:../Bsp/RTC/bsp_rtc.c **** HAL_StatusTypeDef BSP_RTC_SetTime(uint8_t hour, uint8_t minute, uint8_t second)
+  69:../Bsp/RTC/bsp_rtc.c **** {
+ 162              		.loc 1 69 1 is_stmt 1 view -0
+ 163              		.cfi_startproc
+ 164              		@ args = 0, pretend = 0, frame = 24
+ 165              		@ frame_needed = 0, uses_anonymous_args = 0
+ 166              		.loc 1 69 1 is_stmt 0 view .LVU24
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s 			page 5
+
+
+ 167 0000 00B5     		push	{lr}
+ 168              		.cfi_def_cfa_offset 4
+ 169              		.cfi_offset 14, -4
+ 170 0002 87B0     		sub	sp, sp, #28
+ 171              		.cfi_def_cfa_offset 32
+ 172 0004 8C46     		mov	ip, r1
+  70:../Bsp/RTC/bsp_rtc.c ****     RTC_TimeTypeDef sTime = {0};
+ 173              		.loc 1 70 5 is_stmt 1 view .LVU25
+ 174              		.loc 1 70 21 is_stmt 0 view .LVU26
+ 175 0006 01A9     		add	r1, sp, #4
+ 176              	.LVL8:
+ 177              		.loc 1 70 21 view .LVU27
+ 178 0008 0023     		movs	r3, #0
+ 179 000a 0193     		str	r3, [sp, #4]
+ 180 000c 4B60     		str	r3, [r1, #4]
+ 181 000e 8B60     		str	r3, [r1, #8]
+ 182 0010 CB60     		str	r3, [r1, #12]
+ 183 0012 0B61     		str	r3, [r1, #16]
+  71:../Bsp/RTC/bsp_rtc.c ****     sTime.Hours          = hour;
+ 184              		.loc 1 71 5 is_stmt 1 view .LVU28
+ 185              		.loc 1 71 26 is_stmt 0 view .LVU29
+ 186 0014 8DF80400 		strb	r0, [sp, #4]
+  72:../Bsp/RTC/bsp_rtc.c ****     sTime.Minutes        = minute;
+ 187              		.loc 1 72 5 is_stmt 1 view .LVU30
+ 188              		.loc 1 72 26 is_stmt 0 view .LVU31
+ 189 0018 8DF805C0 		strb	ip, [sp, #5]
+  73:../Bsp/RTC/bsp_rtc.c ****     sTime.Seconds        = second;
+ 190              		.loc 1 73 5 is_stmt 1 view .LVU32
+ 191              		.loc 1 73 26 is_stmt 0 view .LVU33
+ 192 001c 8DF80620 		strb	r2, [sp, #6]
+  74:../Bsp/RTC/bsp_rtc.c ****     sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+ 193              		.loc 1 74 5 is_stmt 1 view .LVU34
+  75:../Bsp/RTC/bsp_rtc.c ****     sTime.StoreOperation = RTC_STOREOPERATION_RESET;
+ 194              		.loc 1 75 5 view .LVU35
+  76:../Bsp/RTC/bsp_rtc.c ****     return HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+ 195              		.loc 1 76 5 view .LVU36
+ 196              		.loc 1 76 12 is_stmt 0 view .LVU37
+ 197 0020 1A46     		mov	r2, r3
+ 198              	.LVL9:
+ 199              		.loc 1 76 12 view .LVU38
+ 200 0022 0348     		ldr	r0, .L15
+ 201              	.LVL10:
+ 202              		.loc 1 76 12 view .LVU39
+ 203 0024 FFF7FEFF 		bl	HAL_RTC_SetTime
+ 204              	.LVL11:
+  77:../Bsp/RTC/bsp_rtc.c **** }
+ 205              		.loc 1 77 1 view .LVU40
+ 206 0028 07B0     		add	sp, sp, #28
+ 207              		.cfi_def_cfa_offset 4
+ 208              		@ sp needed
+ 209 002a 5DF804FB 		ldr	pc, [sp], #4
+ 210              	.L16:
+ 211 002e 00BF     		.align	2
+ 212              	.L15:
+ 213 0030 00000000 		.word	hrtc
+ 214              		.cfi_endproc
+ 215              	.LFE243:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s 			page 6
+
+
+ 217              		.section	.text.BSP_RTC_SetDateTime,"ax",%progbits
+ 218              		.align	1
+ 219              		.global	BSP_RTC_SetDateTime
+ 220              		.syntax unified
+ 221              		.thumb
+ 222              		.thumb_func
+ 224              	BSP_RTC_SetDateTime:
+ 225              	.LVL12:
+ 226              	.LFB244:
+  78:../Bsp/RTC/bsp_rtc.c **** 
+  79:../Bsp/RTC/bsp_rtc.c **** HAL_StatusTypeDef BSP_RTC_SetDateTime(const BSP_RTC_DateTime_t *dt)
+  80:../Bsp/RTC/bsp_rtc.c **** {
+ 227              		.loc 1 80 1 is_stmt 1 view -0
+ 228              		.cfi_startproc
+ 229              		@ args = 0, pretend = 0, frame = 0
+ 230              		@ frame_needed = 0, uses_anonymous_args = 0
+ 231              		.loc 1 80 1 is_stmt 0 view .LVU42
+ 232 0000 10B5     		push	{r4, lr}
+ 233              		.cfi_def_cfa_offset 8
+ 234              		.cfi_offset 4, -8
+ 235              		.cfi_offset 14, -4
+ 236 0002 0446     		mov	r4, r0
+  81:../Bsp/RTC/bsp_rtc.c ****     HAL_StatusTypeDef ret;
+ 237              		.loc 1 81 5 is_stmt 1 view .LVU43
+  82:../Bsp/RTC/bsp_rtc.c ****     ret = BSP_RTC_SetDate(dt->year, dt->month, dt->day);
+ 238              		.loc 1 82 5 view .LVU44
+ 239              		.loc 1 82 11 is_stmt 0 view .LVU45
+ 240 0004 C278     		ldrb	r2, [r0, #3]	@ zero_extendqisi2
+ 241 0006 8178     		ldrb	r1, [r0, #2]	@ zero_extendqisi2
+ 242 0008 0088     		ldrh	r0, [r0]
+ 243              	.LVL13:
+ 244              		.loc 1 82 11 view .LVU46
+ 245 000a FFF7FEFF 		bl	BSP_RTC_SetDate
+ 246              	.LVL14:
+  83:../Bsp/RTC/bsp_rtc.c ****     if (ret != HAL_OK)
+ 247              		.loc 1 83 5 is_stmt 1 view .LVU47
+ 248              		.loc 1 83 8 is_stmt 0 view .LVU48
+ 249 000e 00B1     		cbz	r0, .L20
+ 250              	.L18:
+  84:../Bsp/RTC/bsp_rtc.c ****         return ret;
+  85:../Bsp/RTC/bsp_rtc.c ****     return BSP_RTC_SetTime(dt->hour, dt->minute, dt->second);
+  86:../Bsp/RTC/bsp_rtc.c **** }
+ 251              		.loc 1 86 1 view .LVU49
+ 252 0010 10BD     		pop	{r4, pc}
+ 253              	.LVL15:
+ 254              	.L20:
+  85:../Bsp/RTC/bsp_rtc.c **** }
+ 255              		.loc 1 85 5 is_stmt 1 view .LVU50
+  85:../Bsp/RTC/bsp_rtc.c **** }
+ 256              		.loc 1 85 12 is_stmt 0 view .LVU51
+ 257 0012 E279     		ldrb	r2, [r4, #7]	@ zero_extendqisi2
+ 258 0014 A179     		ldrb	r1, [r4, #6]	@ zero_extendqisi2
+ 259 0016 6079     		ldrb	r0, [r4, #5]	@ zero_extendqisi2
+ 260 0018 FFF7FEFF 		bl	BSP_RTC_SetTime
+ 261              	.LVL16:
+ 262 001c F8E7     		b	.L18
+ 263              		.cfi_endproc
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s 			page 7
+
+
+ 264              	.LFE244:
+ 266              		.section	.text.BSP_RTC_IsLeapYear,"ax",%progbits
+ 267              		.align	1
+ 268              		.global	BSP_RTC_IsLeapYear
+ 269              		.syntax unified
+ 270              		.thumb
+ 271              		.thumb_func
+ 273              	BSP_RTC_IsLeapYear:
+ 274              	.LVL17:
+ 275              	.LFB245:
+  87:../Bsp/RTC/bsp_rtc.c **** 
+  88:../Bsp/RTC/bsp_rtc.c **** /* -----------------------------------------------------------
+  89:../Bsp/RTC/bsp_rtc.c ****  *  日历辅助函数
+  90:../Bsp/RTC/bsp_rtc.c ****  * --------------------------------------------------------- */
+  91:../Bsp/RTC/bsp_rtc.c **** uint8_t BSP_RTC_IsLeapYear(uint16_t year)
+  92:../Bsp/RTC/bsp_rtc.c **** {
+ 276              		.loc 1 92 1 is_stmt 1 view -0
+ 277              		.cfi_startproc
+ 278              		@ args = 0, pretend = 0, frame = 0
+ 279              		@ frame_needed = 0, uses_anonymous_args = 0
+ 280              		@ link register save eliminated.
+  93:../Bsp/RTC/bsp_rtc.c ****     return ((year % 4U == 0U && year % 100U != 0U) || (year % 400U == 0U));
+ 281              		.loc 1 93 5 view .LVU53
+ 282              		.loc 1 93 52 is_stmt 0 view .LVU54
+ 283 0000 10F0030F 		tst	r0, #3
+ 284 0004 08D1     		bne	.L22
+ 285              		.loc 1 93 45 discriminator 1 view .LVU55
+ 286 0006 0C4B     		ldr	r3, .L26
+ 287 0008 A3FB0023 		umull	r2, r3, r3, r0
+ 288 000c 5B09     		lsrs	r3, r3, #5
+ 289 000e 6422     		movs	r2, #100
+ 290 0010 02FB1303 		mls	r3, r2, r3, r0
+ 291 0014 9BB2     		uxth	r3, r3
+ 292              		.loc 1 93 30 discriminator 1 view .LVU56
+ 293 0016 5BB9     		cbnz	r3, .L24
+ 294              	.L22:
+ 295              		.loc 1 93 68 discriminator 4 view .LVU57
+ 296 0018 074B     		ldr	r3, .L26
+ 297 001a A3FB0023 		umull	r2, r3, r3, r0
+ 298 001e DB09     		lsrs	r3, r3, #7
+ 299 0020 4FF4C872 		mov	r2, #400
+ 300 0024 02FB1300 		mls	r0, r2, r3, r0
+ 301              	.LVL18:
+ 302              		.loc 1 93 68 discriminator 4 view .LVU58
+ 303 0028 80B2     		uxth	r0, r0
+ 304              		.loc 1 93 52 discriminator 4 view .LVU59
+ 305 002a 18B9     		cbnz	r0, .L25
+ 306              		.loc 1 93 52 discriminator 5 view .LVU60
+ 307 002c 0120     		movs	r0, #1
+ 308 002e 7047     		bx	lr
+ 309              	.LVL19:
+ 310              	.L24:
+ 311              		.loc 1 93 52 discriminator 5 view .LVU61
+ 312 0030 0120     		movs	r0, #1
+ 313              	.LVL20:
+ 314              		.loc 1 93 52 discriminator 5 view .LVU62
+ 315 0032 7047     		bx	lr
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s 			page 8
+
+
+ 316              	.L25:
+ 317              		.loc 1 93 52 discriminator 6 view .LVU63
+ 318 0034 0020     		movs	r0, #0
+  94:../Bsp/RTC/bsp_rtc.c **** }
+ 319              		.loc 1 94 1 view .LVU64
+ 320 0036 7047     		bx	lr
+ 321              	.L27:
+ 322              		.align	2
+ 323              	.L26:
+ 324 0038 1F85EB51 		.word	1374389535
+ 325              		.cfi_endproc
+ 326              	.LFE245:
+ 328              		.section	.text.BSP_RTC_DaysInMonth,"ax",%progbits
+ 329              		.align	1
+ 330              		.global	BSP_RTC_DaysInMonth
+ 331              		.syntax unified
+ 332              		.thumb
+ 333              		.thumb_func
+ 335              	BSP_RTC_DaysInMonth:
+ 336              	.LVL21:
+ 337              	.LFB246:
+  95:../Bsp/RTC/bsp_rtc.c **** 
+  96:../Bsp/RTC/bsp_rtc.c **** uint8_t BSP_RTC_DaysInMonth(uint16_t year, uint8_t month)
+  97:../Bsp/RTC/bsp_rtc.c **** {
+ 338              		.loc 1 97 1 is_stmt 1 view -0
+ 339              		.cfi_startproc
+ 340              		@ args = 0, pretend = 0, frame = 0
+ 341              		@ frame_needed = 0, uses_anonymous_args = 0
+  98:../Bsp/RTC/bsp_rtc.c ****     static const uint8_t days[] = {0, 31, 28, 31, 30, 31, 30,
+ 342              		.loc 1 98 5 view .LVU66
+  99:../Bsp/RTC/bsp_rtc.c ****                                    31, 31, 30, 31, 30, 31};
+ 100:../Bsp/RTC/bsp_rtc.c ****     if (month < 1U || month > 12U)
+ 343              		.loc 1 100 5 view .LVU67
+ 344              		.loc 1 100 20 is_stmt 0 view .LVU68
+ 345 0000 4B1E     		subs	r3, r1, #1
+ 346 0002 DBB2     		uxtb	r3, r3
+ 347              		.loc 1 100 8 view .LVU69
+ 348 0004 0B2B     		cmp	r3, #11
+ 349 0006 0CD8     		bhi	.L31
+  97:../Bsp/RTC/bsp_rtc.c ****     static const uint8_t days[] = {0, 31, 28, 31, 30, 31, 30,
+ 350              		.loc 1 97 1 view .LVU70
+ 351 0008 10B5     		push	{r4, lr}
+ 352              		.cfi_def_cfa_offset 8
+ 353              		.cfi_offset 4, -8
+ 354              		.cfi_offset 14, -4
+ 355 000a 0C46     		mov	r4, r1
+ 101:../Bsp/RTC/bsp_rtc.c ****         return 0U;
+ 102:../Bsp/RTC/bsp_rtc.c ****     if (month == 2U && BSP_RTC_IsLeapYear(year))
+ 356              		.loc 1 102 5 is_stmt 1 view .LVU71
+ 357              		.loc 1 102 8 is_stmt 0 view .LVU72
+ 358 000c 0229     		cmp	r1, #2
+ 359 000e 02D0     		beq	.L37
+ 360              	.LVL22:
+ 361              	.L30:
+ 103:../Bsp/RTC/bsp_rtc.c ****         return 29U;
+ 104:../Bsp/RTC/bsp_rtc.c ****     return days[month];
+ 362              		.loc 1 104 5 is_stmt 1 view .LVU73
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s 			page 9
+
+
+ 363              		.loc 1 104 16 is_stmt 0 view .LVU74
+ 364 0010 054B     		ldr	r3, .L38
+ 365 0012 185D     		ldrb	r0, [r3, r4]	@ zero_extendqisi2
+ 366              	.L29:
+ 105:../Bsp/RTC/bsp_rtc.c **** }
+ 367              		.loc 1 105 1 view .LVU75
+ 368 0014 10BD     		pop	{r4, pc}
+ 369              	.LVL23:
+ 370              	.L37:
+ 102:../Bsp/RTC/bsp_rtc.c ****         return 29U;
+ 371              		.loc 1 102 24 discriminator 1 view .LVU76
+ 372 0016 FFF7FEFF 		bl	BSP_RTC_IsLeapYear
+ 373              	.LVL24:
+ 102:../Bsp/RTC/bsp_rtc.c ****         return 29U;
+ 374              		.loc 1 102 21 discriminator 1 view .LVU77
+ 375 001a 0028     		cmp	r0, #0
+ 376 001c F8D0     		beq	.L30
+ 103:../Bsp/RTC/bsp_rtc.c ****         return 29U;
+ 377              		.loc 1 103 16 view .LVU78
+ 378 001e 1D20     		movs	r0, #29
+ 379 0020 F8E7     		b	.L29
+ 380              	.LVL25:
+ 381              	.L31:
+ 382              		.cfi_def_cfa_offset 0
+ 383              		.cfi_restore 4
+ 384              		.cfi_restore 14
+ 101:../Bsp/RTC/bsp_rtc.c ****     if (month == 2U && BSP_RTC_IsLeapYear(year))
+ 385              		.loc 1 101 16 view .LVU79
+ 386 0022 0020     		movs	r0, #0
+ 387              	.LVL26:
+ 388              		.loc 1 105 1 view .LVU80
+ 389 0024 7047     		bx	lr
+ 390              	.L39:
+ 391 0026 00BF     		.align	2
+ 392              	.L38:
+ 393 0028 00000000 		.word	days.1
+ 394              		.cfi_endproc
+ 395              	.LFE246:
+ 397              		.section	.text.BSP_RTC_CalcWeekday,"ax",%progbits
+ 398              		.align	1
+ 399              		.global	BSP_RTC_CalcWeekday
+ 400              		.syntax unified
+ 401              		.thumb
+ 402              		.thumb_func
+ 404              	BSP_RTC_CalcWeekday:
+ 405              	.LVL27:
+ 406              	.LFB247:
+ 106:../Bsp/RTC/bsp_rtc.c **** 
+ 107:../Bsp/RTC/bsp_rtc.c **** uint8_t BSP_RTC_CalcWeekday(uint16_t year, uint8_t month, uint8_t day)
+ 108:../Bsp/RTC/bsp_rtc.c **** {
+ 407              		.loc 1 108 1 is_stmt 1 view -0
+ 408              		.cfi_startproc
+ 409              		@ args = 0, pretend = 0, frame = 0
+ 410              		@ frame_needed = 0, uses_anonymous_args = 0
+ 411              		@ link register save eliminated.
+ 412              		.loc 1 108 1 is_stmt 0 view .LVU82
+ 413 0000 10B4     		push	{r4}
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s 			page 10
+
+
+ 414              		.cfi_def_cfa_offset 4
+ 415              		.cfi_offset 4, -4
+ 109:../Bsp/RTC/bsp_rtc.c ****     /* Tomohiko Sakamoto 算法 —— 返回 0=周日, 1=周一, ... 6=周六 */
+ 110:../Bsp/RTC/bsp_rtc.c ****     static const uint8_t t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
+ 416              		.loc 1 110 5 is_stmt 1 view .LVU83
+ 111:../Bsp/RTC/bsp_rtc.c ****     if (month < 3U)
+ 417              		.loc 1 111 5 view .LVU84
+ 418              		.loc 1 111 8 is_stmt 0 view .LVU85
+ 419 0002 0229     		cmp	r1, #2
+ 420 0004 01D8     		bhi	.L41
+ 112:../Bsp/RTC/bsp_rtc.c ****         year--;
+ 421              		.loc 1 112 9 is_stmt 1 view .LVU86
+ 422              		.loc 1 112 13 is_stmt 0 view .LVU87
+ 423 0006 0138     		subs	r0, r0, #1
+ 424              	.LVL28:
+ 425              		.loc 1 112 13 view .LVU88
+ 426 0008 80B2     		uxth	r0, r0
+ 427              	.LVL29:
+ 428              	.L41:
+ 113:../Bsp/RTC/bsp_rtc.c ****     return (uint8_t)((year + year / 4U - year / 100U + year / 400U
+ 429              		.loc 1 113 5 is_stmt 1 view .LVU89
+ 430              		.loc 1 113 28 is_stmt 0 view .LVU90
+ 431 000a 00EB9003 		add	r3, r0, r0, lsr #2
+ 432              		.loc 1 113 47 view .LVU91
+ 433 000e 0E4C     		ldr	r4, .L43
+ 434 0010 A4FB0040 		umull	r4, r0, r4, r0
+ 435              	.LVL30:
+ 436              		.loc 1 113 47 view .LVU92
+ 437 0014 C0F34F14 		ubfx	r4, r0, #5, #16
+ 438              		.loc 1 113 40 view .LVU93
+ 439 0018 1B1B     		subs	r3, r3, r4
+ 440              		.loc 1 113 61 view .LVU94
+ 441 001a C0F3CF10 		ubfx	r0, r0, #7, #16
+ 442              		.loc 1 113 54 view .LVU95
+ 443 001e 0344     		add	r3, r3, r0
+ 114:../Bsp/RTC/bsp_rtc.c ****                       + t[month - 1U] + day) % 7U);
+ 444              		.loc 1 114 33 view .LVU96
+ 445 0020 0139     		subs	r1, r1, #1
+ 446              	.LVL31:
+ 447              		.loc 1 114 26 view .LVU97
+ 448 0022 0A48     		ldr	r0, .L43+4
+ 449 0024 415C     		ldrb	r1, [r0, r1]	@ zero_extendqisi2
+ 450              		.loc 1 114 23 view .LVU98
+ 451 0026 0B44     		add	r3, r3, r1
+ 452              		.loc 1 114 39 view .LVU99
+ 453 0028 1A44     		add	r2, r2, r3
+ 454              	.LVL32:
+ 455              		.loc 1 114 46 view .LVU100
+ 456 002a 0948     		ldr	r0, .L43+8
+ 457 002c A0FB0230 		umull	r3, r0, r0, r2
+ 458 0030 131A     		subs	r3, r2, r0
+ 459 0032 00EB5300 		add	r0, r0, r3, lsr #1
+ 460 0036 8008     		lsrs	r0, r0, #2
+ 461 0038 C0EBC000 		rsb	r0, r0, r0, lsl #3
+ 462 003c 101A     		subs	r0, r2, r0
+ 115:../Bsp/RTC/bsp_rtc.c **** }
+ 463              		.loc 1 115 1 view .LVU101
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s 			page 11
+
+
+ 464 003e C0B2     		uxtb	r0, r0
+ 465 0040 5DF8044B 		ldr	r4, [sp], #4
+ 466              		.cfi_restore 4
+ 467              		.cfi_def_cfa_offset 0
+ 468 0044 7047     		bx	lr
+ 469              	.L44:
+ 470 0046 00BF     		.align	2
+ 471              	.L43:
+ 472 0048 1F85EB51 		.word	1374389535
+ 473 004c 00000000 		.word	t.0
+ 474 0050 25499224 		.word	613566757
+ 475              		.cfi_endproc
+ 476              	.LFE247:
+ 478              		.section	.text.BSP_RTC_GetDateTime,"ax",%progbits
+ 479              		.align	1
+ 480              		.global	BSP_RTC_GetDateTime
+ 481              		.syntax unified
+ 482              		.thumb
+ 483              		.thumb_func
+ 485              	BSP_RTC_GetDateTime:
+ 486              	.LVL33:
+ 487              	.LFB241:
+  30:../Bsp/RTC/bsp_rtc.c ****     RTC_TimeTypeDef sTime = {0};
+ 488              		.loc 1 30 1 is_stmt 1 view -0
+ 489              		.cfi_startproc
+ 490              		@ args = 0, pretend = 0, frame = 24
+ 491              		@ frame_needed = 0, uses_anonymous_args = 0
+  30:../Bsp/RTC/bsp_rtc.c ****     RTC_TimeTypeDef sTime = {0};
+ 492              		.loc 1 30 1 is_stmt 0 view .LVU103
+ 493 0000 70B5     		push	{r4, r5, r6, lr}
+ 494              		.cfi_def_cfa_offset 16
+ 495              		.cfi_offset 4, -16
+ 496              		.cfi_offset 5, -12
+ 497              		.cfi_offset 6, -8
+ 498              		.cfi_offset 14, -4
+ 499 0002 86B0     		sub	sp, sp, #24
+ 500              		.cfi_def_cfa_offset 40
+ 501 0004 0646     		mov	r6, r0
+  31:../Bsp/RTC/bsp_rtc.c ****     RTC_DateTypeDef sDate = {0};
+ 502              		.loc 1 31 5 is_stmt 1 view .LVU104
+  31:../Bsp/RTC/bsp_rtc.c ****     RTC_DateTypeDef sDate = {0};
+ 503              		.loc 1 31 21 is_stmt 0 view .LVU105
+ 504 0006 01A9     		add	r1, sp, #4
+ 505 0008 0022     		movs	r2, #0
+ 506 000a 0192     		str	r2, [sp, #4]
+ 507 000c 4A60     		str	r2, [r1, #4]
+ 508 000e 8A60     		str	r2, [r1, #8]
+ 509 0010 CA60     		str	r2, [r1, #12]
+ 510 0012 0A61     		str	r2, [r1, #16]
+  32:../Bsp/RTC/bsp_rtc.c **** 
+ 511              		.loc 1 32 5 is_stmt 1 view .LVU106
+  32:../Bsp/RTC/bsp_rtc.c **** 
+ 512              		.loc 1 32 21 is_stmt 0 view .LVU107
+ 513 0014 0092     		str	r2, [sp]
+  38:../Bsp/RTC/bsp_rtc.c ****         return HAL_ERROR;
+ 514              		.loc 1 38 5 is_stmt 1 view .LVU108
+  38:../Bsp/RTC/bsp_rtc.c ****         return HAL_ERROR;
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s 			page 12
+
+
+ 515              		.loc 1 38 9 is_stmt 0 view .LVU109
+ 516 0016 1848     		ldr	r0, .L51
+ 517              	.LVL34:
+  38:../Bsp/RTC/bsp_rtc.c ****         return HAL_ERROR;
+ 518              		.loc 1 38 9 view .LVU110
+ 519 0018 FFF7FEFF 		bl	HAL_RTC_GetTime
+ 520              	.LVL35:
+  38:../Bsp/RTC/bsp_rtc.c ****         return HAL_ERROR;
+ 521              		.loc 1 38 8 discriminator 1 view .LVU111
+ 522 001c 18B1     		cbz	r0, .L50
+  39:../Bsp/RTC/bsp_rtc.c ****     if (HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK)
+ 523              		.loc 1 39 16 view .LVU112
+ 524 001e 0125     		movs	r5, #1
+ 525              	.L46:
+  57:../Bsp/RTC/bsp_rtc.c **** 
+ 526              		.loc 1 57 1 view .LVU113
+ 527 0020 2846     		mov	r0, r5
+ 528 0022 06B0     		add	sp, sp, #24
+ 529              		.cfi_remember_state
+ 530              		.cfi_def_cfa_offset 16
+ 531              		@ sp needed
+ 532 0024 70BD     		pop	{r4, r5, r6, pc}
+ 533              	.LVL36:
+ 534              	.L50:
+ 535              		.cfi_restore_state
+  40:../Bsp/RTC/bsp_rtc.c ****         return HAL_ERROR;
+ 536              		.loc 1 40 5 is_stmt 1 view .LVU114
+  40:../Bsp/RTC/bsp_rtc.c ****         return HAL_ERROR;
+ 537              		.loc 1 40 9 is_stmt 0 view .LVU115
+ 538 0026 0022     		movs	r2, #0
+ 539 0028 6946     		mov	r1, sp
+ 540 002a 1348     		ldr	r0, .L51
+ 541 002c FFF7FEFF 		bl	HAL_RTC_GetDate
+ 542              	.LVL37:
+  40:../Bsp/RTC/bsp_rtc.c ****         return HAL_ERROR;
+ 543              		.loc 1 40 8 discriminator 1 view .LVU116
+ 544 0030 0546     		mov	r5, r0
+ 545 0032 F0B9     		cbnz	r0, .L48
+  43:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.month   = sDate.Month;
+ 546              		.loc 1 43 5 is_stmt 1 view .LVU117
+  43:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.month   = sDate.Month;
+ 547              		.loc 1 43 43 is_stmt 0 view .LVU118
+ 548 0034 9DF80300 		ldrb	r0, [sp, #3]	@ zero_extendqisi2
+  43:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.month   = sDate.Month;
+ 549              		.loc 1 43 36 view .LVU119
+ 550 0038 00F5FA60 		add	r0, r0, #2000
+  43:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.month   = sDate.Month;
+ 551              		.loc 1 43 28 view .LVU120
+ 552 003c 0F4C     		ldr	r4, .L51+4
+ 553 003e 2080     		strh	r0, [r4]	@ movhi
+  44:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.day     = sDate.Date;
+ 554              		.loc 1 44 5 is_stmt 1 view .LVU121
+  44:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.day     = sDate.Date;
+ 555              		.loc 1 44 35 is_stmt 0 view .LVU122
+ 556 0040 9DF80110 		ldrb	r1, [sp, #1]	@ zero_extendqisi2
+  44:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.day     = sDate.Date;
+ 557              		.loc 1 44 28 view .LVU123
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s 			page 13
+
+
+ 558 0044 A170     		strb	r1, [r4, #2]
+  45:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.hour    = sTime.Hours;
+ 559              		.loc 1 45 5 is_stmt 1 view .LVU124
+  45:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.hour    = sTime.Hours;
+ 560              		.loc 1 45 35 is_stmt 0 view .LVU125
+ 561 0046 9DF80220 		ldrb	r2, [sp, #2]	@ zero_extendqisi2
+  45:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.hour    = sTime.Hours;
+ 562              		.loc 1 45 28 view .LVU126
+ 563 004a E270     		strb	r2, [r4, #3]
+  46:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.minute  = sTime.Minutes;
+ 564              		.loc 1 46 5 is_stmt 1 view .LVU127
+  46:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.minute  = sTime.Minutes;
+ 565              		.loc 1 46 35 is_stmt 0 view .LVU128
+ 566 004c 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
+  46:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.minute  = sTime.Minutes;
+ 567              		.loc 1 46 28 view .LVU129
+ 568 0050 6371     		strb	r3, [r4, #5]
+  47:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.second  = sTime.Seconds;
+ 569              		.loc 1 47 5 is_stmt 1 view .LVU130
+  47:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.second  = sTime.Seconds;
+ 570              		.loc 1 47 35 is_stmt 0 view .LVU131
+ 571 0052 9DF80530 		ldrb	r3, [sp, #5]	@ zero_extendqisi2
+  47:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.second  = sTime.Seconds;
+ 572              		.loc 1 47 28 view .LVU132
+ 573 0056 A371     		strb	r3, [r4, #6]
+  48:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.weekday = BSP_RTC_CalcWeekday(g_rtc_datetime.year,
+ 574              		.loc 1 48 5 is_stmt 1 view .LVU133
+  48:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.weekday = BSP_RTC_CalcWeekday(g_rtc_datetime.year,
+ 575              		.loc 1 48 35 is_stmt 0 view .LVU134
+ 576 0058 9DF80630 		ldrb	r3, [sp, #6]	@ zero_extendqisi2
+  48:../Bsp/RTC/bsp_rtc.c ****     g_rtc_datetime.weekday = BSP_RTC_CalcWeekday(g_rtc_datetime.year,
+ 577              		.loc 1 48 28 view .LVU135
+ 578 005c E371     		strb	r3, [r4, #7]
+  49:../Bsp/RTC/bsp_rtc.c ****                                                  g_rtc_datetime.month,
+ 579              		.loc 1 49 5 is_stmt 1 view .LVU136
+  49:../Bsp/RTC/bsp_rtc.c ****                                                  g_rtc_datetime.month,
+ 580              		.loc 1 49 30 is_stmt 0 view .LVU137
+ 581 005e FFF7FEFF 		bl	BSP_RTC_CalcWeekday
+ 582              	.LVL38:
+  49:../Bsp/RTC/bsp_rtc.c ****                                                  g_rtc_datetime.month,
+ 583              		.loc 1 49 28 discriminator 1 view .LVU138
+ 584 0062 2071     		strb	r0, [r4, #4]
+  53:../Bsp/RTC/bsp_rtc.c ****         *dt = g_rtc_datetime;
+ 585              		.loc 1 53 5 is_stmt 1 view .LVU139
+  53:../Bsp/RTC/bsp_rtc.c ****         *dt = g_rtc_datetime;
+ 586              		.loc 1 53 8 is_stmt 0 view .LVU140
+ 587 0064 002E     		cmp	r6, #0
+ 588 0066 DBD0     		beq	.L46
+  54:../Bsp/RTC/bsp_rtc.c **** 
+ 589              		.loc 1 54 9 is_stmt 1 view .LVU141
+  54:../Bsp/RTC/bsp_rtc.c **** 
+ 590              		.loc 1 54 13 is_stmt 0 view .LVU142
+ 591 0068 2346     		mov	r3, r4
+ 592 006a 03CB     		ldmia	r3!, {r0, r1}
+ 593 006c 3060     		str	r0, [r6]	@ unaligned
+ 594 006e 7160     		str	r1, [r6, #4]	@ unaligned
+ 595 0070 D6E7     		b	.L46
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s 			page 14
+
+
+ 596              	.L48:
+  41:../Bsp/RTC/bsp_rtc.c **** 
+ 597              		.loc 1 41 16 view .LVU143
+ 598 0072 0125     		movs	r5, #1
+ 599 0074 D4E7     		b	.L46
+ 600              	.L52:
+ 601 0076 00BF     		.align	2
+ 602              	.L51:
+ 603 0078 00000000 		.word	hrtc
+ 604 007c 00000000 		.word	g_rtc_datetime
+ 605              		.cfi_endproc
+ 606              	.LFE241:
+ 608              		.section	.rodata.t.0,"a"
+ 609              		.align	2
+ 612              	t.0:
+ 613 0000 00030205 		.ascii	"\000\003\002\005\000\003\005\001\004\006\002\004"
+ 613      00030501 
+ 613      04060204 
+ 614              		.section	.rodata.days.1,"a"
+ 615              		.align	2
+ 618              	days.1:
+ 619 0000 001F1C1F 		.ascii	"\000\037\034\037\036\037\036\037\037\036\037\036\037"
+ 619      1E1F1E1F 
+ 619      1F1E1F1E 
+ 619      1F
+ 620              		.global	g_rtc_datetime
+ 621              		.section	.bss.g_rtc_datetime,"aw",%nobits
+ 622              		.align	2
+ 625              	g_rtc_datetime:
+ 626 0000 00000000 		.space	8
+ 626      00000000 
+ 627              		.text
+ 628              	.Letext0:
+ 629              		.file 2 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_default_t
+ 630              		.file 3 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h"
+ 631              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 632              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 633              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rtc.h"
+ 634              		.file 7 "../Bsp/RTC/bsp_rtc.h"
+ 635              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rtc_ex.h"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s 			page 15
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 bsp_rtc.c
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:21     .text.BSP_RTC_IsFirstPowerOn:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:27     .text.BSP_RTC_IsFirstPowerOn:00000000 BSP_RTC_IsFirstPowerOn
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:52     .text.BSP_RTC_IsFirstPowerOn:00000018 $d
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:57     .text.BSP_RTC_MarkInitialized:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:63     .text.BSP_RTC_MarkInitialized:00000000 BSP_RTC_MarkInitialized
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:84     .text.BSP_RTC_MarkInitialized:00000010 $d
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:89     .text.BSP_RTC_SetDate:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:95     .text.BSP_RTC_SetDate:00000000 BSP_RTC_SetDate
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:147    .text.BSP_RTC_SetDate:00000034 $d
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:153    .text.BSP_RTC_SetTime:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:159    .text.BSP_RTC_SetTime:00000000 BSP_RTC_SetTime
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:213    .text.BSP_RTC_SetTime:00000030 $d
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:218    .text.BSP_RTC_SetDateTime:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:224    .text.BSP_RTC_SetDateTime:00000000 BSP_RTC_SetDateTime
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:267    .text.BSP_RTC_IsLeapYear:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:273    .text.BSP_RTC_IsLeapYear:00000000 BSP_RTC_IsLeapYear
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:324    .text.BSP_RTC_IsLeapYear:00000038 $d
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:329    .text.BSP_RTC_DaysInMonth:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:335    .text.BSP_RTC_DaysInMonth:00000000 BSP_RTC_DaysInMonth
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:393    .text.BSP_RTC_DaysInMonth:00000028 $d
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:618    .rodata.days.1:00000000 days.1
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:398    .text.BSP_RTC_CalcWeekday:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:404    .text.BSP_RTC_CalcWeekday:00000000 BSP_RTC_CalcWeekday
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:472    .text.BSP_RTC_CalcWeekday:00000048 $d
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:612    .rodata.t.0:00000000 t.0
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:479    .text.BSP_RTC_GetDateTime:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:485    .text.BSP_RTC_GetDateTime:00000000 BSP_RTC_GetDateTime
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:603    .text.BSP_RTC_GetDateTime:00000078 $d
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:625    .bss.g_rtc_datetime:00000000 g_rtc_datetime
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:609    .rodata.t.0:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:615    .rodata.days.1:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccDZH1B0.s:622    .bss.g_rtc_datetime:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_RTCEx_BKUPRead
+hrtc
+HAL_RTCEx_BKUPWrite
+HAL_RTC_SetDate
+HAL_RTC_SetTime
+HAL_RTC_GetTime
+HAL_RTC_GetDate

@@ -1,0 +1,189 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccU4ptbb.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"spi.c"
+  16              		.text
+  17              		.section	.text.MX_SPI1_Init,"ax",%progbits
+  18              		.align	1
+  19              		.global	MX_SPI1_Init
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	MX_SPI1_Init:
+  25              		@ args = 0, pretend = 0, frame = 0
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27 0000 08B5     		push	{r3, lr}
+  28 0002 0D48     		ldr	r0, .L5
+  29 0004 0D4B     		ldr	r3, .L5+4
+  30 0006 0360     		str	r3, [r0]
+  31 0008 4FF48273 		mov	r3, #260
+  32 000c 4360     		str	r3, [r0, #4]
+  33 000e 0023     		movs	r3, #0
+  34 0010 8360     		str	r3, [r0, #8]
+  35 0012 C360     		str	r3, [r0, #12]
+  36 0014 0361     		str	r3, [r0, #16]
+  37 0016 4361     		str	r3, [r0, #20]
+  38 0018 4FF40072 		mov	r2, #512
+  39 001c 8261     		str	r2, [r0, #24]
+  40 001e C361     		str	r3, [r0, #28]
+  41 0020 0362     		str	r3, [r0, #32]
+  42 0022 4362     		str	r3, [r0, #36]
+  43 0024 8362     		str	r3, [r0, #40]
+  44 0026 0A23     		movs	r3, #10
+  45 0028 C362     		str	r3, [r0, #44]
+  46 002a FFF7FEFF 		bl	HAL_SPI_Init
+  47 002e 00B9     		cbnz	r0, .L4
+  48              	.L1:
+  49 0030 08BD     		pop	{r3, pc}
+  50              	.L4:
+  51 0032 FFF7FEFF 		bl	Error_Handler
+  52 0036 FBE7     		b	.L1
+  53              	.L6:
+  54              		.align	2
+  55              	.L5:
+  56 0038 00000000 		.word	hspi1
+  57 003c 00300140 		.word	1073819648
+  59              		.section	.text.HAL_SPI_MspInit,"ax",%progbits
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccU4ptbb.s 			page 2
+
+
+  60              		.align	1
+  61              		.global	HAL_SPI_MspInit
+  62              		.syntax unified
+  63              		.thumb
+  64              		.thumb_func
+  66              	HAL_SPI_MspInit:
+  67              		@ args = 0, pretend = 0, frame = 32
+  68              		@ frame_needed = 0, uses_anonymous_args = 0
+  69 0000 00B5     		push	{lr}
+  70 0002 89B0     		sub	sp, sp, #36
+  71 0004 0023     		movs	r3, #0
+  72 0006 0393     		str	r3, [sp, #12]
+  73 0008 0493     		str	r3, [sp, #16]
+  74 000a 0593     		str	r3, [sp, #20]
+  75 000c 0693     		str	r3, [sp, #24]
+  76 000e 0793     		str	r3, [sp, #28]
+  77 0010 0268     		ldr	r2, [r0]
+  78 0012 154B     		ldr	r3, .L11
+  79 0014 9A42     		cmp	r2, r3
+  80 0016 02D0     		beq	.L10
+  81              	.L7:
+  82 0018 09B0     		add	sp, sp, #36
+  83              		@ sp needed
+  84 001a 5DF804FB 		ldr	pc, [sp], #4
+  85              	.L10:
+  86 001e 0021     		movs	r1, #0
+  87 0020 0191     		str	r1, [sp, #4]
+  88 0022 03F58433 		add	r3, r3, #67584
+  89 0026 5A6C     		ldr	r2, [r3, #68]
+  90 0028 42F48052 		orr	r2, r2, #4096
+  91 002c 5A64     		str	r2, [r3, #68]
+  92 002e 5A6C     		ldr	r2, [r3, #68]
+  93 0030 02F48052 		and	r2, r2, #4096
+  94 0034 0192     		str	r2, [sp, #4]
+  95 0036 019A     		ldr	r2, [sp, #4]
+  96 0038 0291     		str	r1, [sp, #8]
+  97 003a 1A6B     		ldr	r2, [r3, #48]
+  98 003c 42F00102 		orr	r2, r2, #1
+  99 0040 1A63     		str	r2, [r3, #48]
+ 100 0042 1B6B     		ldr	r3, [r3, #48]
+ 101 0044 03F00103 		and	r3, r3, #1
+ 102 0048 0293     		str	r3, [sp, #8]
+ 103 004a 029B     		ldr	r3, [sp, #8]
+ 104 004c E023     		movs	r3, #224
+ 105 004e 0393     		str	r3, [sp, #12]
+ 106 0050 0223     		movs	r3, #2
+ 107 0052 0493     		str	r3, [sp, #16]
+ 108 0054 0323     		movs	r3, #3
+ 109 0056 0693     		str	r3, [sp, #24]
+ 110 0058 0523     		movs	r3, #5
+ 111 005a 0793     		str	r3, [sp, #28]
+ 112 005c 03A9     		add	r1, sp, #12
+ 113 005e 0348     		ldr	r0, .L11+4
+ 114 0060 FFF7FEFF 		bl	HAL_GPIO_Init
+ 115 0064 D8E7     		b	.L7
+ 116              	.L12:
+ 117 0066 00BF     		.align	2
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccU4ptbb.s 			page 3
+
+
+ 118              	.L11:
+ 119 0068 00300140 		.word	1073819648
+ 120 006c 00000240 		.word	1073872896
+ 122              		.section	.text.HAL_SPI_MspDeInit,"ax",%progbits
+ 123              		.align	1
+ 124              		.global	HAL_SPI_MspDeInit
+ 125              		.syntax unified
+ 126              		.thumb
+ 127              		.thumb_func
+ 129              	HAL_SPI_MspDeInit:
+ 130              		@ args = 0, pretend = 0, frame = 0
+ 131              		@ frame_needed = 0, uses_anonymous_args = 0
+ 132 0000 08B5     		push	{r3, lr}
+ 133 0002 0268     		ldr	r2, [r0]
+ 134 0004 064B     		ldr	r3, .L17
+ 135 0006 9A42     		cmp	r2, r3
+ 136 0008 00D0     		beq	.L16
+ 137              	.L13:
+ 138 000a 08BD     		pop	{r3, pc}
+ 139              	.L16:
+ 140 000c 054A     		ldr	r2, .L17+4
+ 141 000e 536C     		ldr	r3, [r2, #68]
+ 142 0010 23F48053 		bic	r3, r3, #4096
+ 143 0014 5364     		str	r3, [r2, #68]
+ 144 0016 E021     		movs	r1, #224
+ 145 0018 0348     		ldr	r0, .L17+8
+ 146 001a FFF7FEFF 		bl	HAL_GPIO_DeInit
+ 147 001e F4E7     		b	.L13
+ 148              	.L18:
+ 149              		.align	2
+ 150              	.L17:
+ 151 0020 00300140 		.word	1073819648
+ 152 0024 00380240 		.word	1073887232
+ 153 0028 00000240 		.word	1073872896
+ 155              		.global	hspi1
+ 156              		.section	.bss.hspi1,"aw",%nobits
+ 157              		.align	2
+ 160              	hspi1:
+ 161 0000 00000000 		.space	88
+ 161      00000000 
+ 161      00000000 
+ 161      00000000 
+ 161      00000000 
+ 162              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccU4ptbb.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 spi.c
+C:\Users\fish\AppData\Local\Temp\ccU4ptbb.s:18     .text.MX_SPI1_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccU4ptbb.s:24     .text.MX_SPI1_Init:00000000 MX_SPI1_Init
+C:\Users\fish\AppData\Local\Temp\ccU4ptbb.s:56     .text.MX_SPI1_Init:00000038 $d
+C:\Users\fish\AppData\Local\Temp\ccU4ptbb.s:160    .bss.hspi1:00000000 hspi1
+C:\Users\fish\AppData\Local\Temp\ccU4ptbb.s:60     .text.HAL_SPI_MspInit:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccU4ptbb.s:66     .text.HAL_SPI_MspInit:00000000 HAL_SPI_MspInit
+C:\Users\fish\AppData\Local\Temp\ccU4ptbb.s:119    .text.HAL_SPI_MspInit:00000068 $d
+C:\Users\fish\AppData\Local\Temp\ccU4ptbb.s:123    .text.HAL_SPI_MspDeInit:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccU4ptbb.s:129    .text.HAL_SPI_MspDeInit:00000000 HAL_SPI_MspDeInit
+C:\Users\fish\AppData\Local\Temp\ccU4ptbb.s:151    .text.HAL_SPI_MspDeInit:00000020 $d
+C:\Users\fish\AppData\Local\Temp\ccU4ptbb.s:157    .bss.hspi1:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_SPI_Init
+Error_Handler
+HAL_GPIO_Init
+HAL_GPIO_DeInit

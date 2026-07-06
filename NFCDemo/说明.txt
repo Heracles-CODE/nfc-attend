@@ -1,0 +1,2 @@
+NFCDemo.hex程序用flymcu程序进行ISP下载，烧入STM32F407
+DXQCard程序配合演示发卡功能

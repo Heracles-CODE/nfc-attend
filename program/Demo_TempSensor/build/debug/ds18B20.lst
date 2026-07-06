@@ -1,0 +1,1032 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"ds18B20.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "../Bsp/ds18b20/ds18B20.c"
+  20              		.section	.text.ResetDS18B20,"ax",%progbits
+  21              		.align	1
+  22              		.global	ResetDS18B20
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	ResetDS18B20:
+  28              	.LFB243:
+   1:../Bsp/ds18b20/ds18B20.c **** #include "ds18B20.h"
+   2:../Bsp/ds18b20/ds18B20.c **** #include "delay_us.h"   /* 公共微秒延时服务 */
+   3:../Bsp/ds18b20/ds18B20.c **** #include "FreeRTOS.h"   /* FreeRTOS 基础头文件，须在 task.h 之前 */
+   4:../Bsp/ds18b20/ds18B20.c **** #include "task.h"       /* taskENTER_CRITICAL / taskEXIT_CRITICAL */
+   5:../Bsp/ds18b20/ds18B20.c **** #define EnableINT()
+   6:../Bsp/ds18b20/ds18B20.c **** #define DisableINT()
+   7:../Bsp/ds18b20/ds18B20.c **** 
+   8:../Bsp/ds18b20/ds18B20.c **** #define DS_PRECISION 		0x7f   //精度配置寄存器 1f=9位; 3f=10位; 5f=11位; 7f=12位;
+   9:../Bsp/ds18b20/ds18B20.c **** #define DS_AlarmTH  		0x64
+  10:../Bsp/ds18b20/ds18B20.c **** #define DS_AlarmTL  		0x8a
+  11:../Bsp/ds18b20/ds18B20.c **** #define DS_CONVERT_TICK 1000
+  12:../Bsp/ds18b20/ds18B20.c **** 
+  13:../Bsp/ds18b20/ds18B20.c **** #define ResetDQ() HAL_GPIO_WritePin(DATA_GPIO_Port, DATA_Pin, GPIO_PIN_RESET)
+  14:../Bsp/ds18b20/ds18B20.c **** #define SetDQ()  	HAL_GPIO_WritePin(DATA_GPIO_Port, DATA_Pin, GPIO_PIN_SET)
+  15:../Bsp/ds18b20/ds18B20.c **** #define GetDQ()  	HAL_GPIO_ReadPin(DATA_GPIO_Port, DATA_Pin) 
+  16:../Bsp/ds18b20/ds18B20.c **** 
+  17:../Bsp/ds18b20/ds18B20.c **** unsigned char ResetDS18B20(void)
+  18:../Bsp/ds18b20/ds18B20.c **** {
+  29              		.loc 1 18 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 10B5     		push	{r4, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  19:../Bsp/ds18b20/ds18B20.c **** 	unsigned char resport;
+  37              		.loc 1 19 2 view .LVU1
+  20:../Bsp/ds18b20/ds18B20.c **** 	SetDQ();
+  38              		.loc 1 20 2 view .LVU2
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s 			page 2
+
+
+  39 0002 1F4C     		ldr	r4, .L8
+  40 0004 0122     		movs	r2, #1
+  41 0006 1146     		mov	r1, r2
+  42 0008 2046     		mov	r0, r4
+  43 000a FFF7FEFF 		bl	HAL_GPIO_WritePin
+  44              	.LVL0:
+  21:../Bsp/ds18b20/ds18B20.c **** 	delay_us(50);
+  45              		.loc 1 21 2 view .LVU3
+  46 000e 3220     		movs	r0, #50
+  47 0010 FFF7FEFF 		bl	delay_us
+  48              	.LVL1:
+  22:../Bsp/ds18b20/ds18B20.c **** 
+  23:../Bsp/ds18b20/ds18B20.c **** 	ResetDQ();
+  49              		.loc 1 23 2 view .LVU4
+  50 0014 0022     		movs	r2, #0
+  51 0016 0121     		movs	r1, #1
+  52 0018 2046     		mov	r0, r4
+  53 001a FFF7FEFF 		bl	HAL_GPIO_WritePin
+  54              	.LVL2:
+  24:../Bsp/ds18b20/ds18B20.c **** 	delay_us(500);  //500us （该时间的时间范围可以从480到960微秒）
+  55              		.loc 1 24 2 view .LVU5
+  56 001e 4FF4FA70 		mov	r0, #500
+  57 0022 FFF7FEFF 		bl	delay_us
+  58              	.LVL3:
+  25:../Bsp/ds18b20/ds18B20.c **** 	SetDQ();
+  59              		.loc 1 25 2 view .LVU6
+  60 0026 0122     		movs	r2, #1
+  61 0028 1146     		mov	r1, r2
+  62 002a 2046     		mov	r0, r4
+  63 002c FFF7FEFF 		bl	HAL_GPIO_WritePin
+  64              	.LVL4:
+  26:../Bsp/ds18b20/ds18B20.c **** 
+  27:../Bsp/ds18b20/ds18B20.c **** 	/* 临界区：采样应答脉冲的窗口仅 15 µs，不能被抢占 */
+  28:../Bsp/ds18b20/ds18B20.c **** 	taskENTER_CRITICAL();
+  65              		.loc 1 28 2 view .LVU7
+  66 0030 FFF7FEFF 		bl	vPortEnterCritical
+  67              	.LVL5:
+  29:../Bsp/ds18b20/ds18B20.c **** 
+  30:../Bsp/ds18b20/ds18B20.c **** 	delay_us(40);
+  68              		.loc 1 30 2 view .LVU8
+  69 0034 2820     		movs	r0, #40
+  70 0036 FFF7FEFF 		bl	delay_us
+  71              	.LVL6:
+  31:../Bsp/ds18b20/ds18B20.c **** 	uint16_t cnt = 0;
+  72              		.loc 1 31 2 view .LVU9
+  32:../Bsp/ds18b20/ds18B20.c **** 	while(GetDQ() && cnt < 500)
+  73              		.loc 1 32 2 view .LVU10
+  31:../Bsp/ds18b20/ds18B20.c **** 	uint16_t cnt = 0;
+  74              		.loc 1 31 11 is_stmt 0 view .LVU11
+  75 003a 0024     		movs	r4, #0
+  76              	.LVL7:
+  77              	.L2:
+  78              		.loc 1 32 16 is_stmt 1 view .LVU12
+  79              		.loc 1 32 8 is_stmt 0 view .LVU13
+  80 003c 0121     		movs	r1, #1
+  81 003e 1048     		ldr	r0, .L8
+  82 0040 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s 			page 3
+
+
+  83              	.LVL8:
+  84              		.loc 1 32 16 discriminator 1 view .LVU14
+  85 0044 40B1     		cbz	r0, .L3
+  86 0046 B4F5FA7F 		cmp	r4, #500
+  87 004a 05D2     		bcs	.L3
+  33:../Bsp/ds18b20/ds18B20.c **** 	{
+  34:../Bsp/ds18b20/ds18B20.c **** 		++cnt;
+  88              		.loc 1 34 3 is_stmt 1 view .LVU15
+  89 004c 0134     		adds	r4, r4, #1
+  90              	.LVL9:
+  91              		.loc 1 34 3 is_stmt 0 view .LVU16
+  92 004e A4B2     		uxth	r4, r4
+  93              	.LVL10:
+  35:../Bsp/ds18b20/ds18B20.c **** 		delay_us(1);
+  94              		.loc 1 35 3 is_stmt 1 view .LVU17
+  95 0050 0120     		movs	r0, #1
+  96 0052 FFF7FEFF 		bl	delay_us
+  97              	.LVL11:
+  98 0056 F1E7     		b	.L2
+  99              	.L3:
+  36:../Bsp/ds18b20/ds18B20.c **** 	}
+  37:../Bsp/ds18b20/ds18B20.c **** 	if (cnt >= 500)
+ 100              		.loc 1 37 2 view .LVU18
+ 101              		.loc 1 37 5 is_stmt 0 view .LVU19
+ 102 0058 B4F5FA7F 		cmp	r4, #500
+ 103 005c 0DD3     		bcc	.L6
+  38:../Bsp/ds18b20/ds18B20.c **** 		resport = 1;
+ 104              		.loc 1 38 11 view .LVU20
+ 105 005e 0124     		movs	r4, #1
+ 106              	.LVL12:
+ 107              	.L5:
+  39:../Bsp/ds18b20/ds18B20.c **** 	else
+  40:../Bsp/ds18b20/ds18B20.c **** 		resport = 0;
+  41:../Bsp/ds18b20/ds18B20.c **** 
+  42:../Bsp/ds18b20/ds18B20.c **** 	taskEXIT_CRITICAL();
+ 108              		.loc 1 42 2 is_stmt 1 view .LVU21
+ 109 0060 FFF7FEFF 		bl	vPortExitCritical
+ 110              	.LVL13:
+  43:../Bsp/ds18b20/ds18B20.c **** 
+  44:../Bsp/ds18b20/ds18B20.c **** 	delay_us(500);  //500us
+ 111              		.loc 1 44 2 view .LVU22
+ 112 0064 4FF4FA70 		mov	r0, #500
+ 113 0068 FFF7FEFF 		bl	delay_us
+ 114              	.LVL14:
+  45:../Bsp/ds18b20/ds18B20.c **** 	SetDQ();
+ 115              		.loc 1 45 2 view .LVU23
+ 116 006c 0122     		movs	r2, #1
+ 117 006e 1146     		mov	r1, r2
+ 118 0070 0348     		ldr	r0, .L8
+ 119 0072 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 120              	.LVL15:
+  46:../Bsp/ds18b20/ds18B20.c **** 	return resport;
+ 121              		.loc 1 46 2 view .LVU24
+  47:../Bsp/ds18b20/ds18B20.c **** }
+ 122              		.loc 1 47 1 is_stmt 0 view .LVU25
+ 123 0076 2046     		mov	r0, r4
+ 124 0078 10BD     		pop	{r4, pc}
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s 			page 4
+
+
+ 125              	.LVL16:
+ 126              	.L6:
+  40:../Bsp/ds18b20/ds18B20.c **** 
+ 127              		.loc 1 40 11 view .LVU26
+ 128 007a 0024     		movs	r4, #0
+ 129              	.LVL17:
+  40:../Bsp/ds18b20/ds18B20.c **** 
+ 130              		.loc 1 40 11 view .LVU27
+ 131 007c F0E7     		b	.L5
+ 132              	.L9:
+ 133 007e 00BF     		.align	2
+ 134              	.L8:
+ 135 0080 00100240 		.word	1073876992
+ 136              		.cfi_endproc
+ 137              	.LFE243:
+ 139              		.section	.text.DS18B20WriteByte,"ax",%progbits
+ 140              		.align	1
+ 141              		.global	DS18B20WriteByte
+ 142              		.syntax unified
+ 143              		.thumb
+ 144              		.thumb_func
+ 146              	DS18B20WriteByte:
+ 147              	.LVL18:
+ 148              	.LFB244:
+  48:../Bsp/ds18b20/ds18B20.c **** 
+  49:../Bsp/ds18b20/ds18B20.c **** void DS18B20WriteByte(unsigned char Dat)
+  50:../Bsp/ds18b20/ds18B20.c **** {
+ 149              		.loc 1 50 1 is_stmt 1 view -0
+ 150              		.cfi_startproc
+ 151              		@ args = 0, pretend = 0, frame = 0
+ 152              		@ frame_needed = 0, uses_anonymous_args = 0
+ 153              		.loc 1 50 1 is_stmt 0 view .LVU29
+ 154 0000 38B5     		push	{r3, r4, r5, lr}
+ 155              		.cfi_def_cfa_offset 16
+ 156              		.cfi_offset 3, -16
+ 157              		.cfi_offset 4, -12
+ 158              		.cfi_offset 5, -8
+ 159              		.cfi_offset 14, -4
+ 160 0002 0546     		mov	r5, r0
+  51:../Bsp/ds18b20/ds18B20.c **** 	unsigned char i;
+ 161              		.loc 1 51 2 is_stmt 1 view .LVU30
+  52:../Bsp/ds18b20/ds18B20.c **** 	for(i = 8; i > 0; i--)
+ 162              		.loc 1 52 2 view .LVU31
+ 163              	.LVL19:
+ 164              		.loc 1 52 8 is_stmt 0 view .LVU32
+ 165 0004 0824     		movs	r4, #8
+ 166              		.loc 1 52 2 view .LVU33
+ 167 0006 14E0     		b	.L11
+ 168              	.LVL20:
+ 169              	.L12:
+  53:../Bsp/ds18b20/ds18B20.c **** 	{
+  54:../Bsp/ds18b20/ds18B20.c **** 		/* 临界区：防止在写 '1' 时低电平被拉长超过 15 µs
+  55:../Bsp/ds18b20/ds18B20.c **** 		 * 保护时间约 5-7 µs/bit，8 bit 合计约 48 µs */
+  56:../Bsp/ds18b20/ds18B20.c **** 		taskENTER_CRITICAL();
+  57:../Bsp/ds18b20/ds18B20.c **** 
+  58:../Bsp/ds18b20/ds18B20.c **** 		ResetDQ();
+  59:../Bsp/ds18b20/ds18B20.c **** 		delay_us(5);
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s 			page 5
+
+
+  60:../Bsp/ds18b20/ds18B20.c **** 		if(Dat & 0x01)
+  61:../Bsp/ds18b20/ds18B20.c **** 			SetDQ();
+  62:../Bsp/ds18b20/ds18B20.c **** 		else
+  63:../Bsp/ds18b20/ds18B20.c **** 			ResetDQ();
+ 170              		.loc 1 63 4 is_stmt 1 view .LVU34
+ 171 0008 0022     		movs	r2, #0
+ 172 000a 0121     		movs	r1, #1
+ 173 000c 1348     		ldr	r0, .L17
+ 174 000e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 175              	.LVL21:
+ 176              	.L13:
+  64:../Bsp/ds18b20/ds18B20.c **** 
+  65:../Bsp/ds18b20/ds18B20.c **** 		taskEXIT_CRITICAL();
+ 177              		.loc 1 65 3 view .LVU35
+ 178 0012 FFF7FEFF 		bl	vPortExitCritical
+ 179              	.LVL22:
+  66:../Bsp/ds18b20/ds18B20.c **** 
+  67:../Bsp/ds18b20/ds18B20.c **** 		delay_us(65);
+ 180              		.loc 1 67 3 view .LVU36
+ 181 0016 4120     		movs	r0, #65
+ 182 0018 FFF7FEFF 		bl	delay_us
+ 183              	.LVL23:
+  68:../Bsp/ds18b20/ds18B20.c **** 		SetDQ();
+ 184              		.loc 1 68 3 view .LVU37
+ 185 001c 0122     		movs	r2, #1
+ 186 001e 1146     		mov	r1, r2
+ 187 0020 0E48     		ldr	r0, .L17
+ 188 0022 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 189              	.LVL24:
+  69:../Bsp/ds18b20/ds18B20.c **** 		delay_us(2);
+ 190              		.loc 1 69 3 view .LVU38
+ 191 0026 0220     		movs	r0, #2
+ 192 0028 FFF7FEFF 		bl	delay_us
+ 193              	.LVL25:
+  70:../Bsp/ds18b20/ds18B20.c **** 		Dat >>= 1;
+ 194              		.loc 1 70 3 view .LVU39
+ 195              		.loc 1 70 7 is_stmt 0 view .LVU40
+ 196 002c 6D08     		lsrs	r5, r5, #1
+ 197              	.LVL26:
+  52:../Bsp/ds18b20/ds18B20.c **** 	{
+ 198              		.loc 1 52 21 is_stmt 1 discriminator 2 view .LVU41
+ 199 002e 013C     		subs	r4, r4, #1
+ 200              	.LVL27:
+  52:../Bsp/ds18b20/ds18B20.c **** 	{
+ 201              		.loc 1 52 21 is_stmt 0 discriminator 2 view .LVU42
+ 202 0030 E4B2     		uxtb	r4, r4
+ 203              	.LVL28:
+ 204              	.L11:
+  52:../Bsp/ds18b20/ds18B20.c **** 	{
+ 205              		.loc 1 52 15 is_stmt 1 discriminator 1 view .LVU43
+ 206 0032 94B1     		cbz	r4, .L16
+  56:../Bsp/ds18b20/ds18B20.c **** 
+ 207              		.loc 1 56 3 view .LVU44
+ 208 0034 FFF7FEFF 		bl	vPortEnterCritical
+ 209              	.LVL29:
+  58:../Bsp/ds18b20/ds18B20.c **** 		delay_us(5);
+ 210              		.loc 1 58 3 view .LVU45
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s 			page 6
+
+
+ 211 0038 0022     		movs	r2, #0
+ 212 003a 0121     		movs	r1, #1
+ 213 003c 0748     		ldr	r0, .L17
+ 214 003e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 215              	.LVL30:
+  59:../Bsp/ds18b20/ds18B20.c **** 		if(Dat & 0x01)
+ 216              		.loc 1 59 3 view .LVU46
+ 217 0042 0520     		movs	r0, #5
+ 218 0044 FFF7FEFF 		bl	delay_us
+ 219              	.LVL31:
+  60:../Bsp/ds18b20/ds18B20.c **** 			SetDQ();
+ 220              		.loc 1 60 3 view .LVU47
+  60:../Bsp/ds18b20/ds18B20.c **** 			SetDQ();
+ 221              		.loc 1 60 5 is_stmt 0 view .LVU48
+ 222 0048 15F0010F 		tst	r5, #1
+ 223 004c DCD0     		beq	.L12
+  61:../Bsp/ds18b20/ds18B20.c **** 		else
+ 224              		.loc 1 61 4 is_stmt 1 view .LVU49
+ 225 004e 0122     		movs	r2, #1
+ 226 0050 1146     		mov	r1, r2
+ 227 0052 0248     		ldr	r0, .L17
+ 228 0054 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 229              	.LVL32:
+ 230 0058 DBE7     		b	.L13
+ 231              	.L16:
+  71:../Bsp/ds18b20/ds18B20.c **** 	}
+  72:../Bsp/ds18b20/ds18B20.c **** }
+ 232              		.loc 1 72 1 is_stmt 0 view .LVU50
+ 233 005a 38BD     		pop	{r3, r4, r5, pc}
+ 234              	.LVL33:
+ 235              	.L18:
+ 236              		.loc 1 72 1 view .LVU51
+ 237              		.align	2
+ 238              	.L17:
+ 239 005c 00100240 		.word	1073876992
+ 240              		.cfi_endproc
+ 241              	.LFE244:
+ 243              		.section	.text.DS18B20ReadByte,"ax",%progbits
+ 244              		.align	1
+ 245              		.global	DS18B20ReadByte
+ 246              		.syntax unified
+ 247              		.thumb
+ 248              		.thumb_func
+ 250              	DS18B20ReadByte:
+ 251              	.LFB245:
+  73:../Bsp/ds18b20/ds18B20.c **** 
+  74:../Bsp/ds18b20/ds18B20.c **** 
+  75:../Bsp/ds18b20/ds18B20.c **** unsigned char DS18B20ReadByte(void)
+  76:../Bsp/ds18b20/ds18B20.c **** {
+ 252              		.loc 1 76 1 is_stmt 1 view -0
+ 253              		.cfi_startproc
+ 254              		@ args = 0, pretend = 0, frame = 0
+ 255              		@ frame_needed = 0, uses_anonymous_args = 0
+ 256 0000 70B5     		push	{r4, r5, r6, lr}
+ 257              		.cfi_def_cfa_offset 16
+ 258              		.cfi_offset 4, -16
+ 259              		.cfi_offset 5, -12
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s 			page 7
+
+
+ 260              		.cfi_offset 6, -8
+ 261              		.cfi_offset 14, -4
+ 262 0002 0025     		movs	r5, #0
+  77:../Bsp/ds18b20/ds18B20.c **** 	unsigned char i,Dat;
+ 263              		.loc 1 77 2 view .LVU53
+  78:../Bsp/ds18b20/ds18B20.c **** 	SetDQ();
+ 264              		.loc 1 78 2 view .LVU54
+ 265 0004 0122     		movs	r2, #1
+ 266 0006 1146     		mov	r1, r2
+ 267 0008 1A48     		ldr	r0, .L25
+ 268 000a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 269              	.LVL34:
+  79:../Bsp/ds18b20/ds18B20.c **** 	delay_us(5);
+ 270              		.loc 1 79 2 view .LVU55
+ 271 000e 0520     		movs	r0, #5
+ 272 0010 FFF7FEFF 		bl	delay_us
+ 273              	.LVL35:
+  80:../Bsp/ds18b20/ds18B20.c **** 	for(i = 8; i > 0; i--)
+ 274              		.loc 1 80 2 view .LVU56
+ 275              		.loc 1 80 8 is_stmt 0 view .LVU57
+ 276 0014 0824     		movs	r4, #8
+ 277              		.loc 1 80 2 view .LVU58
+ 278 0016 0BE0     		b	.L20
+ 279              	.LVL36:
+ 280              	.L21:
+  81:../Bsp/ds18b20/ds18B20.c **** 	{
+  82:../Bsp/ds18b20/ds18B20.c **** 		Dat >>= 1;
+  83:../Bsp/ds18b20/ds18B20.c **** 
+  84:../Bsp/ds18b20/ds18B20.c **** 		/* 临界区：从拉低到采样必须在 15 µs 内完成
+  85:../Bsp/ds18b20/ds18B20.c **** 		 * 保护时间约 15 µs/bit，8 bit 合计约 120 µs */
+  86:../Bsp/ds18b20/ds18B20.c **** 		taskENTER_CRITICAL();
+  87:../Bsp/ds18b20/ds18B20.c **** 
+  88:../Bsp/ds18b20/ds18B20.c **** 		ResetDQ();
+  89:../Bsp/ds18b20/ds18B20.c **** 		delay_us(5);
+  90:../Bsp/ds18b20/ds18B20.c **** 		SetDQ();
+  91:../Bsp/ds18b20/ds18B20.c **** 		delay_us(5);
+  92:../Bsp/ds18b20/ds18B20.c **** 		if(GetDQ())
+  93:../Bsp/ds18b20/ds18B20.c **** 			Dat |= 0x80;
+  94:../Bsp/ds18b20/ds18B20.c **** 		else
+  95:../Bsp/ds18b20/ds18B20.c **** 			Dat &= 0x7f;
+  96:../Bsp/ds18b20/ds18B20.c **** 
+  97:../Bsp/ds18b20/ds18B20.c **** 		taskEXIT_CRITICAL();
+ 281              		.loc 1 97 3 is_stmt 1 view .LVU59
+ 282 0018 FFF7FEFF 		bl	vPortExitCritical
+ 283              	.LVL37:
+  98:../Bsp/ds18b20/ds18B20.c **** 
+  99:../Bsp/ds18b20/ds18B20.c **** 		delay_us(65);
+ 284              		.loc 1 99 3 view .LVU60
+ 285 001c 4120     		movs	r0, #65
+ 286 001e FFF7FEFF 		bl	delay_us
+ 287              	.LVL38:
+ 100:../Bsp/ds18b20/ds18B20.c **** 		SetDQ();
+ 288              		.loc 1 100 3 view .LVU61
+ 289 0022 0122     		movs	r2, #1
+ 290 0024 1146     		mov	r1, r2
+ 291 0026 1348     		ldr	r0, .L25
+ 292 0028 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s 			page 8
+
+
+ 293              	.LVL39:
+  80:../Bsp/ds18b20/ds18B20.c **** 	{
+ 294              		.loc 1 80 21 discriminator 2 view .LVU62
+ 295 002c 013C     		subs	r4, r4, #1
+ 296              	.LVL40:
+  80:../Bsp/ds18b20/ds18B20.c **** 	{
+ 297              		.loc 1 80 21 is_stmt 0 discriminator 2 view .LVU63
+ 298 002e E4B2     		uxtb	r4, r4
+ 299              	.LVL41:
+ 300              	.L20:
+  80:../Bsp/ds18b20/ds18B20.c **** 	{
+ 301              		.loc 1 80 15 is_stmt 1 discriminator 1 view .LVU64
+ 302 0030 ECB1     		cbz	r4, .L24
+  82:../Bsp/ds18b20/ds18B20.c **** 
+ 303              		.loc 1 82 3 view .LVU65
+  82:../Bsp/ds18b20/ds18B20.c **** 
+ 304              		.loc 1 82 7 is_stmt 0 view .LVU66
+ 305 0032 6D08     		lsrs	r5, r5, #1
+ 306              	.LVL42:
+  86:../Bsp/ds18b20/ds18B20.c **** 
+ 307              		.loc 1 86 3 is_stmt 1 view .LVU67
+ 308 0034 FFF7FEFF 		bl	vPortEnterCritical
+ 309              	.LVL43:
+  88:../Bsp/ds18b20/ds18B20.c **** 		delay_us(5);
+ 310              		.loc 1 88 3 view .LVU68
+ 311 0038 0E4E     		ldr	r6, .L25
+ 312 003a 0022     		movs	r2, #0
+ 313 003c 0121     		movs	r1, #1
+ 314 003e 3046     		mov	r0, r6
+ 315 0040 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 316              	.LVL44:
+  89:../Bsp/ds18b20/ds18B20.c **** 		SetDQ();
+ 317              		.loc 1 89 3 view .LVU69
+ 318 0044 0520     		movs	r0, #5
+ 319 0046 FFF7FEFF 		bl	delay_us
+ 320              	.LVL45:
+  90:../Bsp/ds18b20/ds18B20.c **** 		delay_us(5);
+ 321              		.loc 1 90 3 view .LVU70
+ 322 004a 0122     		movs	r2, #1
+ 323 004c 1146     		mov	r1, r2
+ 324 004e 3046     		mov	r0, r6
+ 325 0050 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 326              	.LVL46:
+  91:../Bsp/ds18b20/ds18B20.c **** 		if(GetDQ())
+ 327              		.loc 1 91 3 view .LVU71
+ 328 0054 0520     		movs	r0, #5
+ 329 0056 FFF7FEFF 		bl	delay_us
+ 330              	.LVL47:
+  92:../Bsp/ds18b20/ds18B20.c **** 			Dat |= 0x80;
+ 331              		.loc 1 92 3 view .LVU72
+  92:../Bsp/ds18b20/ds18B20.c **** 			Dat |= 0x80;
+ 332              		.loc 1 92 6 is_stmt 0 view .LVU73
+ 333 005a 0121     		movs	r1, #1
+ 334 005c 3046     		mov	r0, r6
+ 335 005e FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 336              	.LVL48:
+  92:../Bsp/ds18b20/ds18B20.c **** 			Dat |= 0x80;
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s 			page 9
+
+
+ 337              		.loc 1 92 5 discriminator 1 view .LVU74
+ 338 0062 0028     		cmp	r0, #0
+ 339 0064 D8D0     		beq	.L21
+  93:../Bsp/ds18b20/ds18B20.c **** 		else
+ 340              		.loc 1 93 4 is_stmt 1 view .LVU75
+  93:../Bsp/ds18b20/ds18B20.c **** 		else
+ 341              		.loc 1 93 8 is_stmt 0 view .LVU76
+ 342 0066 65F07F05 		orn	r5, r5, #127
+ 343              	.LVL49:
+  93:../Bsp/ds18b20/ds18B20.c **** 		else
+ 344              		.loc 1 93 8 view .LVU77
+ 345 006a EDB2     		uxtb	r5, r5
+ 346 006c D4E7     		b	.L21
+ 347              	.LVL50:
+ 348              	.L24:
+ 101:../Bsp/ds18b20/ds18B20.c **** 	}
+ 102:../Bsp/ds18b20/ds18B20.c **** 	return Dat;
+ 349              		.loc 1 102 2 is_stmt 1 view .LVU78
+ 103:../Bsp/ds18b20/ds18B20.c **** }
+ 350              		.loc 1 103 1 is_stmt 0 view .LVU79
+ 351 006e 2846     		mov	r0, r5
+ 352 0070 70BD     		pop	{r4, r5, r6, pc}
+ 353              	.LVL51:
+ 354              	.L26:
+ 355              		.loc 1 103 1 view .LVU80
+ 356 0072 00BF     		.align	2
+ 357              	.L25:
+ 358 0074 00100240 		.word	1073876992
+ 359              		.cfi_endproc
+ 360              	.LFE245:
+ 362              		.section	.text.ReadRom,"ax",%progbits
+ 363              		.align	1
+ 364              		.global	ReadRom
+ 365              		.syntax unified
+ 366              		.thumb
+ 367              		.thumb_func
+ 369              	ReadRom:
+ 370              	.LVL52:
+ 371              	.LFB246:
+ 104:../Bsp/ds18b20/ds18B20.c **** 
+ 105:../Bsp/ds18b20/ds18B20.c **** void ReadRom(unsigned char *Read_Addr)
+ 106:../Bsp/ds18b20/ds18B20.c **** {
+ 372              		.loc 1 106 1 is_stmt 1 view -0
+ 373              		.cfi_startproc
+ 374              		@ args = 0, pretend = 0, frame = 0
+ 375              		@ frame_needed = 0, uses_anonymous_args = 0
+ 376              		.loc 1 106 1 is_stmt 0 view .LVU82
+ 377 0000 38B5     		push	{r3, r4, r5, lr}
+ 378              		.cfi_def_cfa_offset 16
+ 379              		.cfi_offset 3, -16
+ 380              		.cfi_offset 4, -12
+ 381              		.cfi_offset 5, -8
+ 382              		.cfi_offset 14, -4
+ 383 0002 0546     		mov	r5, r0
+ 107:../Bsp/ds18b20/ds18B20.c **** 	unsigned char i;
+ 384              		.loc 1 107 2 is_stmt 1 view .LVU83
+ 108:../Bsp/ds18b20/ds18B20.c **** 
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s 			page 10
+
+
+ 109:../Bsp/ds18b20/ds18B20.c **** 	DS18B20WriteByte(ReadROM);
+ 385              		.loc 1 109 2 view .LVU84
+ 386 0004 3320     		movs	r0, #51
+ 387              	.LVL53:
+ 388              		.loc 1 109 2 is_stmt 0 view .LVU85
+ 389 0006 FFF7FEFF 		bl	DS18B20WriteByte
+ 390              	.LVL54:
+ 110:../Bsp/ds18b20/ds18B20.c **** 	for(i = 8; i > 0; i--)
+ 391              		.loc 1 110 2 is_stmt 1 view .LVU86
+ 392              		.loc 1 110 8 is_stmt 0 view .LVU87
+ 393 000a 0824     		movs	r4, #8
+ 394              		.loc 1 110 2 view .LVU88
+ 395 000c 05E0     		b	.L28
+ 396              	.LVL55:
+ 397              	.L29:
+ 111:../Bsp/ds18b20/ds18B20.c **** 	{
+ 112:../Bsp/ds18b20/ds18B20.c **** 		*Read_Addr = DS18B20ReadByte();
+ 398              		.loc 1 112 3 is_stmt 1 view .LVU89
+ 399              		.loc 1 112 16 is_stmt 0 view .LVU90
+ 400 000e FFF7FEFF 		bl	DS18B20ReadByte
+ 401              	.LVL56:
+ 402              		.loc 1 112 14 discriminator 1 view .LVU91
+ 403 0012 05F8010B 		strb	r0, [r5], #1
+ 404              	.LVL57:
+ 113:../Bsp/ds18b20/ds18B20.c **** 		Read_Addr++;
+ 405              		.loc 1 113 3 is_stmt 1 view .LVU92
+ 110:../Bsp/ds18b20/ds18B20.c **** 	for(i = 8; i > 0; i--)
+ 406              		.loc 1 110 21 discriminator 3 view .LVU93
+ 407 0016 013C     		subs	r4, r4, #1
+ 408              	.LVL58:
+ 110:../Bsp/ds18b20/ds18B20.c **** 	for(i = 8; i > 0; i--)
+ 409              		.loc 1 110 21 is_stmt 0 discriminator 3 view .LVU94
+ 410 0018 E4B2     		uxtb	r4, r4
+ 411              	.LVL59:
+ 412              	.L28:
+ 110:../Bsp/ds18b20/ds18B20.c **** 	for(i = 8; i > 0; i--)
+ 413              		.loc 1 110 15 is_stmt 1 discriminator 1 view .LVU95
+ 414 001a 002C     		cmp	r4, #0
+ 415 001c F7D1     		bne	.L29
+ 114:../Bsp/ds18b20/ds18B20.c **** 	}
+ 115:../Bsp/ds18b20/ds18B20.c **** }
+ 416              		.loc 1 115 1 is_stmt 0 view .LVU96
+ 417 001e 38BD     		pop	{r3, r4, r5, pc}
+ 418              		.loc 1 115 1 view .LVU97
+ 419              		.cfi_endproc
+ 420              	.LFE246:
+ 422              		.section	.text.DS18B20Init,"ax",%progbits
+ 423              		.align	1
+ 424              		.global	DS18B20Init
+ 425              		.syntax unified
+ 426              		.thumb
+ 427              		.thumb_func
+ 429              	DS18B20Init:
+ 430              	.LVL60:
+ 431              	.LFB247:
+ 116:../Bsp/ds18b20/ds18B20.c **** 
+ 117:../Bsp/ds18b20/ds18B20.c **** void DS18B20Init(unsigned char Precision,unsigned char AlarmTH,unsigned char AlarmTL)
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s 			page 11
+
+
+ 118:../Bsp/ds18b20/ds18B20.c **** {
+ 432              		.loc 1 118 1 is_stmt 1 view -0
+ 433              		.cfi_startproc
+ 434              		@ args = 0, pretend = 0, frame = 0
+ 435              		@ frame_needed = 0, uses_anonymous_args = 0
+ 436              		.loc 1 118 1 is_stmt 0 view .LVU99
+ 437 0000 70B5     		push	{r4, r5, r6, lr}
+ 438              		.cfi_def_cfa_offset 16
+ 439              		.cfi_offset 4, -16
+ 440              		.cfi_offset 5, -12
+ 441              		.cfi_offset 6, -8
+ 442              		.cfi_offset 14, -4
+ 443 0002 0446     		mov	r4, r0
+ 444 0004 0D46     		mov	r5, r1
+ 445 0006 1646     		mov	r6, r2
+ 119:../Bsp/ds18b20/ds18B20.c **** 	DisableINT();
+ 446              		.loc 1 119 14 is_stmt 1 view .LVU100
+ 120:../Bsp/ds18b20/ds18B20.c **** 	ResetDS18B20();
+ 447              		.loc 1 120 2 view .LVU101
+ 448 0008 FFF7FEFF 		bl	ResetDS18B20
+ 449              	.LVL61:
+ 121:../Bsp/ds18b20/ds18B20.c **** 	
+ 122:../Bsp/ds18b20/ds18B20.c **** 	DS18B20WriteByte(SkipROM); 
+ 450              		.loc 1 122 2 view .LVU102
+ 451 000c CC20     		movs	r0, #204
+ 452 000e FFF7FEFF 		bl	DS18B20WriteByte
+ 453              	.LVL62:
+ 123:../Bsp/ds18b20/ds18B20.c **** 	DS18B20WriteByte(WriteScratchpad);
+ 454              		.loc 1 123 2 view .LVU103
+ 455 0012 4E20     		movs	r0, #78
+ 456 0014 FFF7FEFF 		bl	DS18B20WriteByte
+ 457              	.LVL63:
+ 124:../Bsp/ds18b20/ds18B20.c **** 	DS18B20WriteByte(AlarmTL);
+ 458              		.loc 1 124 2 view .LVU104
+ 459 0018 3046     		mov	r0, r6
+ 460 001a FFF7FEFF 		bl	DS18B20WriteByte
+ 461              	.LVL64:
+ 125:../Bsp/ds18b20/ds18B20.c **** 	DS18B20WriteByte(AlarmTH);
+ 462              		.loc 1 125 2 view .LVU105
+ 463 001e 2846     		mov	r0, r5
+ 464 0020 FFF7FEFF 		bl	DS18B20WriteByte
+ 465              	.LVL65:
+ 126:../Bsp/ds18b20/ds18B20.c **** 	DS18B20WriteByte(Precision);
+ 466              		.loc 1 126 2 view .LVU106
+ 467 0024 2046     		mov	r0, r4
+ 468 0026 FFF7FEFF 		bl	DS18B20WriteByte
+ 469              	.LVL66:
+ 127:../Bsp/ds18b20/ds18B20.c **** 
+ 128:../Bsp/ds18b20/ds18B20.c **** 	ResetDS18B20();
+ 470              		.loc 1 128 2 view .LVU107
+ 471 002a FFF7FEFF 		bl	ResetDS18B20
+ 472              	.LVL67:
+ 129:../Bsp/ds18b20/ds18B20.c **** 	DS18B20WriteByte(SkipROM); 
+ 473              		.loc 1 129 2 view .LVU108
+ 474 002e CC20     		movs	r0, #204
+ 475 0030 FFF7FEFF 		bl	DS18B20WriteByte
+ 476              	.LVL68:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s 			page 12
+
+
+ 130:../Bsp/ds18b20/ds18B20.c **** 	DS18B20WriteByte(CopyScratchpad);
+ 477              		.loc 1 130 2 view .LVU109
+ 478 0034 4820     		movs	r0, #72
+ 479 0036 FFF7FEFF 		bl	DS18B20WriteByte
+ 480              	.LVL69:
+ 131:../Bsp/ds18b20/ds18B20.c **** 	EnableINT();
+ 481              		.loc 1 131 13 view .LVU110
+ 132:../Bsp/ds18b20/ds18B20.c **** 
+ 133:../Bsp/ds18b20/ds18B20.c **** 	while(!GetDQ());  //等待复制完成 ///////////
+ 482              		.loc 1 133 2 view .LVU111
+ 483              	.L32:
+ 484              		.loc 1 133 8 discriminator 1 view .LVU112
+ 485              		.loc 1 133 9 is_stmt 0 discriminator 1 view .LVU113
+ 486 003a 0121     		movs	r1, #1
+ 487 003c 0248     		ldr	r0, .L34
+ 488 003e FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 489              	.LVL70:
+ 490              		.loc 1 133 8 discriminator 1 view .LVU114
+ 491 0042 0028     		cmp	r0, #0
+ 492 0044 F9D0     		beq	.L32
+ 134:../Bsp/ds18b20/ds18B20.c **** }
+ 493              		.loc 1 134 1 view .LVU115
+ 494 0046 70BD     		pop	{r4, r5, r6, pc}
+ 495              	.LVL71:
+ 496              	.L35:
+ 497              		.loc 1 134 1 view .LVU116
+ 498              		.align	2
+ 499              	.L34:
+ 500 0048 00100240 		.word	1073876992
+ 501              		.cfi_endproc
+ 502              	.LFE247:
+ 504              		.section	.text.DS18B20StartConvert,"ax",%progbits
+ 505              		.align	1
+ 506              		.global	DS18B20StartConvert
+ 507              		.syntax unified
+ 508              		.thumb
+ 509              		.thumb_func
+ 511              	DS18B20StartConvert:
+ 512              	.LFB248:
+ 135:../Bsp/ds18b20/ds18B20.c **** 
+ 136:../Bsp/ds18b20/ds18B20.c **** void DS18B20StartConvert(void)
+ 137:../Bsp/ds18b20/ds18B20.c **** {
+ 513              		.loc 1 137 1 is_stmt 1 view -0
+ 514              		.cfi_startproc
+ 515              		@ args = 0, pretend = 0, frame = 0
+ 516              		@ frame_needed = 0, uses_anonymous_args = 0
+ 517 0000 08B5     		push	{r3, lr}
+ 518              		.cfi_def_cfa_offset 8
+ 519              		.cfi_offset 3, -8
+ 520              		.cfi_offset 14, -4
+ 138:../Bsp/ds18b20/ds18B20.c **** 	DisableINT();
+ 521              		.loc 1 138 14 view .LVU118
+ 139:../Bsp/ds18b20/ds18B20.c **** 	ResetDS18B20();
+ 522              		.loc 1 139 2 view .LVU119
+ 523 0002 FFF7FEFF 		bl	ResetDS18B20
+ 524              	.LVL72:
+ 140:../Bsp/ds18b20/ds18B20.c **** 	DS18B20WriteByte(SkipROM); 
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s 			page 13
+
+
+ 525              		.loc 1 140 2 view .LVU120
+ 526 0006 CC20     		movs	r0, #204
+ 527 0008 FFF7FEFF 		bl	DS18B20WriteByte
+ 528              	.LVL73:
+ 141:../Bsp/ds18b20/ds18B20.c **** 	DS18B20WriteByte(StartConvert); 
+ 529              		.loc 1 141 2 view .LVU121
+ 530 000c 4420     		movs	r0, #68
+ 531 000e FFF7FEFF 		bl	DS18B20WriteByte
+ 532              	.LVL74:
+ 142:../Bsp/ds18b20/ds18B20.c **** 	EnableINT();
+ 533              		.loc 1 142 13 view .LVU122
+ 143:../Bsp/ds18b20/ds18B20.c **** }
+ 534              		.loc 1 143 1 is_stmt 0 view .LVU123
+ 535 0012 08BD     		pop	{r3, pc}
+ 536              		.cfi_endproc
+ 537              	.LFE248:
+ 539              		.section	.text.DS18B20_Configuration,"ax",%progbits
+ 540              		.align	1
+ 541              		.global	DS18B20_Configuration
+ 542              		.syntax unified
+ 543              		.thumb
+ 544              		.thumb_func
+ 546              	DS18B20_Configuration:
+ 547              	.LFB249:
+ 144:../Bsp/ds18b20/ds18B20.c **** 
+ 145:../Bsp/ds18b20/ds18B20.c **** void DS18B20_Configuration(void)
+ 146:../Bsp/ds18b20/ds18B20.c **** {
+ 548              		.loc 1 146 1 is_stmt 1 view -0
+ 549              		.cfi_startproc
+ 550              		@ args = 0, pretend = 0, frame = 24
+ 551              		@ frame_needed = 0, uses_anonymous_args = 0
+ 552 0000 00B5     		push	{lr}
+ 553              		.cfi_def_cfa_offset 4
+ 554              		.cfi_offset 14, -4
+ 555 0002 87B0     		sub	sp, sp, #28
+ 556              		.cfi_def_cfa_offset 32
+ 147:../Bsp/ds18b20/ds18B20.c ****   GPIO_InitTypeDef GPIO_InitStruct = {0};
+ 557              		.loc 1 147 3 view .LVU125
+ 558              		.loc 1 147 20 is_stmt 0 view .LVU126
+ 559 0004 01A9     		add	r1, sp, #4
+ 560 0006 0023     		movs	r3, #0
+ 561 0008 0193     		str	r3, [sp, #4]
+ 562 000a 4B60     		str	r3, [r1, #4]
+ 563 000c 8B60     		str	r3, [r1, #8]
+ 564 000e CB60     		str	r3, [r1, #12]
+ 565 0010 0B61     		str	r3, [r1, #16]
+ 148:../Bsp/ds18b20/ds18B20.c **** 
+ 149:../Bsp/ds18b20/ds18B20.c ****   /* GPIO Ports Clock Enable */
+ 150:../Bsp/ds18b20/ds18B20.c ****   __HAL_RCC_GPIOE_CLK_ENABLE();
+ 566              		.loc 1 150 3 is_stmt 1 view .LVU127
+ 567              	.LBB2:
+ 568              		.loc 1 150 3 view .LVU128
+ 569 0012 0093     		str	r3, [sp]
+ 570              		.loc 1 150 3 view .LVU129
+ 571 0014 094B     		ldr	r3, .L40
+ 572 0016 1A6B     		ldr	r2, [r3, #48]
+ 573 0018 42F01002 		orr	r2, r2, #16
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s 			page 14
+
+
+ 574 001c 1A63     		str	r2, [r3, #48]
+ 575              		.loc 1 150 3 view .LVU130
+ 576 001e 1B6B     		ldr	r3, [r3, #48]
+ 577 0020 03F01003 		and	r3, r3, #16
+ 578 0024 0093     		str	r3, [sp]
+ 579              		.loc 1 150 3 view .LVU131
+ 580 0026 009B     		ldr	r3, [sp]
+ 581              	.LBE2:
+ 582              		.loc 1 150 3 view .LVU132
+ 151:../Bsp/ds18b20/ds18B20.c ****   GPIO_InitStruct.Pin = DATA_Pin;
+ 583              		.loc 1 151 3 view .LVU133
+ 584              		.loc 1 151 23 is_stmt 0 view .LVU134
+ 585 0028 0123     		movs	r3, #1
+ 586 002a 0193     		str	r3, [sp, #4]
+ 152:../Bsp/ds18b20/ds18B20.c ****   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+ 587              		.loc 1 152 3 is_stmt 1 view .LVU135
+ 588              		.loc 1 152 24 is_stmt 0 view .LVU136
+ 589 002c 0293     		str	r3, [sp, #8]
+ 153:../Bsp/ds18b20/ds18B20.c ****   GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 590              		.loc 1 153 3 is_stmt 1 view .LVU137
+ 154:../Bsp/ds18b20/ds18B20.c ****   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+ 591              		.loc 1 154 3 view .LVU138
+ 155:../Bsp/ds18b20/ds18B20.c ****   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+ 592              		.loc 1 155 3 view .LVU139
+ 593 002e 0448     		ldr	r0, .L40+4
+ 594 0030 FFF7FEFF 		bl	HAL_GPIO_Init
+ 595              	.LVL75:
+ 156:../Bsp/ds18b20/ds18B20.c **** }
+ 596              		.loc 1 156 1 is_stmt 0 view .LVU140
+ 597 0034 07B0     		add	sp, sp, #28
+ 598              		.cfi_def_cfa_offset 4
+ 599              		@ sp needed
+ 600 0036 5DF804FB 		ldr	pc, [sp], #4
+ 601              	.L41:
+ 602 003a 00BF     		.align	2
+ 603              	.L40:
+ 604 003c 00380240 		.word	1073887232
+ 605 0040 00100240 		.word	1073876992
+ 606              		.cfi_endproc
+ 607              	.LFE249:
+ 609              		.section	.text.ds18b20_init,"ax",%progbits
+ 610              		.align	1
+ 611              		.global	ds18b20_init
+ 612              		.syntax unified
+ 613              		.thumb
+ 614              		.thumb_func
+ 616              	ds18b20_init:
+ 617              	.LFB250:
+ 157:../Bsp/ds18b20/ds18B20.c **** 
+ 158:../Bsp/ds18b20/ds18B20.c **** 
+ 159:../Bsp/ds18b20/ds18B20.c **** void ds18b20_init(void)
+ 160:../Bsp/ds18b20/ds18B20.c **** {
+ 618              		.loc 1 160 1 is_stmt 1 view -0
+ 619              		.cfi_startproc
+ 620              		@ args = 0, pretend = 0, frame = 0
+ 621              		@ frame_needed = 0, uses_anonymous_args = 0
+ 622 0000 08B5     		push	{r3, lr}
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s 			page 15
+
+
+ 623              		.cfi_def_cfa_offset 8
+ 624              		.cfi_offset 3, -8
+ 625              		.cfi_offset 14, -4
+ 161:../Bsp/ds18b20/ds18B20.c **** 	delay_us_init();
+ 626              		.loc 1 161 2 view .LVU142
+ 627 0002 FFF7FEFF 		bl	delay_us_init
+ 628              	.LVL76:
+ 162:../Bsp/ds18b20/ds18B20.c **** 	
+ 163:../Bsp/ds18b20/ds18B20.c **** 	DS18B20_Configuration();
+ 629              		.loc 1 163 2 view .LVU143
+ 630 0006 FFF7FEFF 		bl	DS18B20_Configuration
+ 631              	.LVL77:
+ 164:../Bsp/ds18b20/ds18B20.c **** 	ResetDS18B20();
+ 632              		.loc 1 164 2 view .LVU144
+ 633 000a FFF7FEFF 		bl	ResetDS18B20
+ 634              	.LVL78:
+ 165:../Bsp/ds18b20/ds18B20.c **** 	DS18B20Init(DS_PRECISION, DS_AlarmTH, DS_AlarmTL);
+ 635              		.loc 1 165 2 view .LVU145
+ 636 000e 8A22     		movs	r2, #138
+ 637 0010 6421     		movs	r1, #100
+ 638 0012 7F20     		movs	r0, #127
+ 639 0014 FFF7FEFF 		bl	DS18B20Init
+ 640              	.LVL79:
+ 166:../Bsp/ds18b20/ds18B20.c **** 	DS18B20StartConvert();
+ 641              		.loc 1 166 2 view .LVU146
+ 642 0018 FFF7FEFF 		bl	DS18B20StartConvert
+ 643              	.LVL80:
+ 167:../Bsp/ds18b20/ds18B20.c **** }
+ 644              		.loc 1 167 1 is_stmt 0 view .LVU147
+ 645 001c 08BD     		pop	{r3, pc}
+ 646              		.cfi_endproc
+ 647              	.LFE250:
+ 649              		.section	.text.ds18b20_read,"ax",%progbits
+ 650              		.align	1
+ 651              		.global	ds18b20_read
+ 652              		.syntax unified
+ 653              		.thumb
+ 654              		.thumb_func
+ 656              	ds18b20_read:
+ 657              	.LFB251:
+ 168:../Bsp/ds18b20/ds18B20.c **** 
+ 169:../Bsp/ds18b20/ds18B20.c **** 
+ 170:../Bsp/ds18b20/ds18B20.c **** float ds18b20_read(void)
+ 171:../Bsp/ds18b20/ds18B20.c **** {
+ 658              		.loc 1 171 1 is_stmt 1 view -0
+ 659              		.cfi_startproc
+ 660              		@ args = 0, pretend = 0, frame = 0
+ 661              		@ frame_needed = 0, uses_anonymous_args = 0
+ 662 0000 10B5     		push	{r4, lr}
+ 663              		.cfi_def_cfa_offset 8
+ 664              		.cfi_offset 4, -8
+ 665              		.cfi_offset 14, -4
+ 172:../Bsp/ds18b20/ds18B20.c **** 	unsigned char DL, DH;
+ 666              		.loc 1 172 2 view .LVU149
+ 173:../Bsp/ds18b20/ds18B20.c **** 	unsigned short TemperatureData;
+ 667              		.loc 1 173 2 view .LVU150
+ 174:../Bsp/ds18b20/ds18B20.c **** 	float Temperature;
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s 			page 16
+
+
+ 668              		.loc 1 174 2 view .LVU151
+ 175:../Bsp/ds18b20/ds18B20.c **** 
+ 176:../Bsp/ds18b20/ds18B20.c **** 	DisableINT();
+ 669              		.loc 1 176 14 view .LVU152
+ 177:../Bsp/ds18b20/ds18B20.c **** 	DS18B20StartConvert();
+ 670              		.loc 1 177 2 view .LVU153
+ 671 0002 FFF7FEFF 		bl	DS18B20StartConvert
+ 672              	.LVL81:
+ 178:../Bsp/ds18b20/ds18B20.c **** 	ResetDS18B20();
+ 673              		.loc 1 178 2 view .LVU154
+ 674 0006 FFF7FEFF 		bl	ResetDS18B20
+ 675              	.LVL82:
+ 179:../Bsp/ds18b20/ds18B20.c **** 	DS18B20WriteByte(SkipROM); 
+ 676              		.loc 1 179 2 view .LVU155
+ 677 000a CC20     		movs	r0, #204
+ 678 000c FFF7FEFF 		bl	DS18B20WriteByte
+ 679              	.LVL83:
+ 180:../Bsp/ds18b20/ds18B20.c **** 	DS18B20WriteByte(ReadScratchpad);
+ 680              		.loc 1 180 2 view .LVU156
+ 681 0010 BE20     		movs	r0, #190
+ 682 0012 FFF7FEFF 		bl	DS18B20WriteByte
+ 683              	.LVL84:
+ 181:../Bsp/ds18b20/ds18B20.c **** 	DL = DS18B20ReadByte();
+ 684              		.loc 1 181 2 view .LVU157
+ 685              		.loc 1 181 7 is_stmt 0 view .LVU158
+ 686 0016 FFF7FEFF 		bl	DS18B20ReadByte
+ 687              	.LVL85:
+ 688 001a 0446     		mov	r4, r0
+ 689              	.LVL86:
+ 182:../Bsp/ds18b20/ds18B20.c **** 	DH = DS18B20ReadByte(); 
+ 690              		.loc 1 182 2 is_stmt 1 view .LVU159
+ 691              		.loc 1 182 7 is_stmt 0 view .LVU160
+ 692 001c FFF7FEFF 		bl	DS18B20ReadByte
+ 693              	.LVL87:
+ 183:../Bsp/ds18b20/ds18B20.c **** 	EnableINT();
+ 694              		.loc 1 183 13 is_stmt 1 view .LVU161
+ 184:../Bsp/ds18b20/ds18B20.c **** 
+ 185:../Bsp/ds18b20/ds18B20.c **** 	TemperatureData = DH;
+ 695              		.loc 1 185 2 view .LVU162
+ 186:../Bsp/ds18b20/ds18B20.c **** 	TemperatureData <<= 8;
+ 696              		.loc 1 186 2 view .LVU163
+ 697              		.loc 1 186 18 is_stmt 0 view .LVU164
+ 698 0020 0002     		lsls	r0, r0, #8
+ 699              	.LVL88:
+ 700              		.loc 1 186 18 view .LVU165
+ 701 0022 80B2     		uxth	r0, r0
+ 702              	.LVL89:
+ 187:../Bsp/ds18b20/ds18B20.c **** 	TemperatureData |= DL;
+ 703              		.loc 1 187 2 is_stmt 1 view .LVU166
+ 704              		.loc 1 187 18 is_stmt 0 view .LVU167
+ 705 0024 0443     		orrs	r4, r4, r0
+ 706              	.LVL90:
+ 707              		.loc 1 187 18 view .LVU168
+ 708 0026 A4B2     		uxth	r4, r4
+ 709              	.LVL91:
+ 188:../Bsp/ds18b20/ds18B20.c **** 
+ 189:../Bsp/ds18b20/ds18B20.c **** 	Temperature = (float)((float)TemperatureData * 0.0625); //分辨率为0.0625度
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s 			page 17
+
+
+ 710              		.loc 1 189 2 is_stmt 1 view .LVU169
+ 711              		.loc 1 189 24 is_stmt 0 view .LVU170
+ 712 0028 07EE904A 		vmov	s15, r4	@ int
+ 713 002c B8EE670A 		vcvt.f32.u32	s0, s15
+ 714              	.LVL92:
+ 190:../Bsp/ds18b20/ds18B20.c **** 
+ 191:../Bsp/ds18b20/ds18B20.c **** 	return  Temperature;
+ 715              		.loc 1 191 2 is_stmt 1 view .LVU171
+ 192:../Bsp/ds18b20/ds18B20.c **** }
+ 716              		.loc 1 192 1 is_stmt 0 view .LVU172
+ 717 0030 DFED027A 		vldr.32	s15, .L46
+ 718 0034 20EE270A 		vmul.f32	s0, s0, s15
+ 719              	.LVL93:
+ 720              		.loc 1 192 1 view .LVU173
+ 721 0038 10BD     		pop	{r4, pc}
+ 722              	.LVL94:
+ 723              	.L47:
+ 724              		.loc 1 192 1 view .LVU174
+ 725 003a 00BF     		.align	2
+ 726              	.L46:
+ 727 003c 0000803D 		.word	1031798784
+ 728              		.cfi_endproc
+ 729              	.LFE251:
+ 731              		.text
+ 732              	.Letext0:
+ 733              		.file 2 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_default_t
+ 734              		.file 3 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h"
+ 735              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 736              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 737              		.file 6 "../Bsp/delay/delay_us.h"
+ 738              		.file 7 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s 			page 18
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 ds18B20.c
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:21     .text.ResetDS18B20:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:27     .text.ResetDS18B20:00000000 ResetDS18B20
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:135    .text.ResetDS18B20:00000080 $d
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:140    .text.DS18B20WriteByte:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:146    .text.DS18B20WriteByte:00000000 DS18B20WriteByte
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:239    .text.DS18B20WriteByte:0000005c $d
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:244    .text.DS18B20ReadByte:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:250    .text.DS18B20ReadByte:00000000 DS18B20ReadByte
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:358    .text.DS18B20ReadByte:00000074 $d
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:363    .text.ReadRom:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:369    .text.ReadRom:00000000 ReadRom
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:423    .text.DS18B20Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:429    .text.DS18B20Init:00000000 DS18B20Init
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:500    .text.DS18B20Init:00000048 $d
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:505    .text.DS18B20StartConvert:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:511    .text.DS18B20StartConvert:00000000 DS18B20StartConvert
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:540    .text.DS18B20_Configuration:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:546    .text.DS18B20_Configuration:00000000 DS18B20_Configuration
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:604    .text.DS18B20_Configuration:0000003c $d
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:610    .text.ds18b20_init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:616    .text.ds18b20_init:00000000 ds18b20_init
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:650    .text.ds18b20_read:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:656    .text.ds18b20_read:00000000 ds18b20_read
+C:\Users\fish\AppData\Local\Temp\ccDVQ4J2.s:727    .text.ds18b20_read:0000003c $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_WritePin
+delay_us
+vPortEnterCritical
+HAL_GPIO_ReadPin
+vPortExitCritical
+HAL_GPIO_Init
+delay_us_init

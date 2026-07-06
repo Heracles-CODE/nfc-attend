@@ -1,0 +1,477 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"usart.c"
+  16              		.text
+  17              		.section	.text.MX_USART1_UART_Init,"ax",%progbits
+  18              		.align	1
+  19              		.global	MX_USART1_UART_Init
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	MX_USART1_UART_Init:
+  25              		@ args = 0, pretend = 0, frame = 0
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27 0000 08B5     		push	{r3, lr}
+  28 0002 0A48     		ldr	r0, .L5
+  29 0004 0A4B     		ldr	r3, .L5+4
+  30 0006 0360     		str	r3, [r0]
+  31 0008 4FF4E133 		mov	r3, #115200
+  32 000c 4360     		str	r3, [r0, #4]
+  33 000e 0023     		movs	r3, #0
+  34 0010 8360     		str	r3, [r0, #8]
+  35 0012 C360     		str	r3, [r0, #12]
+  36 0014 0361     		str	r3, [r0, #16]
+  37 0016 0C22     		movs	r2, #12
+  38 0018 4261     		str	r2, [r0, #20]
+  39 001a 8361     		str	r3, [r0, #24]
+  40 001c C361     		str	r3, [r0, #28]
+  41 001e FFF7FEFF 		bl	HAL_UART_Init
+  42 0022 00B9     		cbnz	r0, .L4
+  43              	.L1:
+  44 0024 08BD     		pop	{r3, pc}
+  45              	.L4:
+  46 0026 FFF7FEFF 		bl	Error_Handler
+  47 002a FBE7     		b	.L1
+  48              	.L6:
+  49              		.align	2
+  50              	.L5:
+  51 002c 00000000 		.word	huart1
+  52 0030 00100140 		.word	1073811456
+  54              		.section	.text.MX_USART6_UART_Init,"ax",%progbits
+  55              		.align	1
+  56              		.global	MX_USART6_UART_Init
+  57              		.syntax unified
+  58              		.thumb
+  59              		.thumb_func
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s 			page 2
+
+
+  61              	MX_USART6_UART_Init:
+  62              		@ args = 0, pretend = 0, frame = 0
+  63              		@ frame_needed = 0, uses_anonymous_args = 0
+  64 0000 08B5     		push	{r3, lr}
+  65 0002 0A48     		ldr	r0, .L11
+  66 0004 0A4B     		ldr	r3, .L11+4
+  67 0006 0360     		str	r3, [r0]
+  68 0008 4FF4E133 		mov	r3, #115200
+  69 000c 4360     		str	r3, [r0, #4]
+  70 000e 0023     		movs	r3, #0
+  71 0010 8360     		str	r3, [r0, #8]
+  72 0012 C360     		str	r3, [r0, #12]
+  73 0014 0361     		str	r3, [r0, #16]
+  74 0016 0C22     		movs	r2, #12
+  75 0018 4261     		str	r2, [r0, #20]
+  76 001a 8361     		str	r3, [r0, #24]
+  77 001c C361     		str	r3, [r0, #28]
+  78 001e FFF7FEFF 		bl	HAL_UART_Init
+  79 0022 00B9     		cbnz	r0, .L10
+  80              	.L7:
+  81 0024 08BD     		pop	{r3, pc}
+  82              	.L10:
+  83 0026 FFF7FEFF 		bl	Error_Handler
+  84 002a FBE7     		b	.L7
+  85              	.L12:
+  86              		.align	2
+  87              	.L11:
+  88 002c 00000000 		.word	huart6
+  89 0030 00140140 		.word	1073812480
+  91              		.section	.text.HAL_UART_MspInit,"ax",%progbits
+  92              		.align	1
+  93              		.global	HAL_UART_MspInit
+  94              		.syntax unified
+  95              		.thumb
+  96              		.thumb_func
+  98              	HAL_UART_MspInit:
+  99              		@ args = 0, pretend = 0, frame = 40
+ 100              		@ frame_needed = 0, uses_anonymous_args = 0
+ 101 0000 30B5     		push	{r4, r5, lr}
+ 102 0002 8BB0     		sub	sp, sp, #44
+ 103 0004 0446     		mov	r4, r0
+ 104 0006 0023     		movs	r3, #0
+ 105 0008 0593     		str	r3, [sp, #20]
+ 106 000a 0693     		str	r3, [sp, #24]
+ 107 000c 0793     		str	r3, [sp, #28]
+ 108 000e 0893     		str	r3, [sp, #32]
+ 109 0010 0993     		str	r3, [sp, #36]
+ 110 0012 0368     		ldr	r3, [r0]
+ 111 0014 634A     		ldr	r2, .L27
+ 112 0016 9342     		cmp	r3, r2
+ 113 0018 04D0     		beq	.L21
+ 114 001a 634A     		ldr	r2, .L27+4
+ 115 001c 9342     		cmp	r3, r2
+ 116 001e 61D0     		beq	.L22
+ 117              	.L13:
+ 118 0020 0BB0     		add	sp, sp, #44
+ 119              		@ sp needed
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s 			page 3
+
+
+ 120 0022 30BD     		pop	{r4, r5, pc}
+ 121              	.L21:
+ 122 0024 0025     		movs	r5, #0
+ 123 0026 0195     		str	r5, [sp, #4]
+ 124 0028 604B     		ldr	r3, .L27+8
+ 125 002a 5A6C     		ldr	r2, [r3, #68]
+ 126 002c 42F01002 		orr	r2, r2, #16
+ 127 0030 5A64     		str	r2, [r3, #68]
+ 128 0032 5A6C     		ldr	r2, [r3, #68]
+ 129 0034 02F01002 		and	r2, r2, #16
+ 130 0038 0192     		str	r2, [sp, #4]
+ 131 003a 019A     		ldr	r2, [sp, #4]
+ 132 003c 0295     		str	r5, [sp, #8]
+ 133 003e 1A6B     		ldr	r2, [r3, #48]
+ 134 0040 42F00102 		orr	r2, r2, #1
+ 135 0044 1A63     		str	r2, [r3, #48]
+ 136 0046 1B6B     		ldr	r3, [r3, #48]
+ 137 0048 03F00103 		and	r3, r3, #1
+ 138 004c 0293     		str	r3, [sp, #8]
+ 139 004e 029B     		ldr	r3, [sp, #8]
+ 140 0050 4FF4C063 		mov	r3, #1536
+ 141 0054 0593     		str	r3, [sp, #20]
+ 142 0056 0223     		movs	r3, #2
+ 143 0058 0693     		str	r3, [sp, #24]
+ 144 005a 0323     		movs	r3, #3
+ 145 005c 0893     		str	r3, [sp, #32]
+ 146 005e 0723     		movs	r3, #7
+ 147 0060 0993     		str	r3, [sp, #36]
+ 148 0062 05A9     		add	r1, sp, #20
+ 149 0064 5248     		ldr	r0, .L27+12
+ 150 0066 FFF7FEFF 		bl	HAL_GPIO_Init
+ 151 006a 5248     		ldr	r0, .L27+16
+ 152 006c 524B     		ldr	r3, .L27+20
+ 153 006e 0360     		str	r3, [r0]
+ 154 0070 4FF00063 		mov	r3, #134217728
+ 155 0074 4360     		str	r3, [r0, #4]
+ 156 0076 8560     		str	r5, [r0, #8]
+ 157 0078 C560     		str	r5, [r0, #12]
+ 158 007a 4FF48063 		mov	r3, #1024
+ 159 007e 0361     		str	r3, [r0, #16]
+ 160 0080 4561     		str	r5, [r0, #20]
+ 161 0082 8561     		str	r5, [r0, #24]
+ 162 0084 C561     		str	r5, [r0, #28]
+ 163 0086 0562     		str	r5, [r0, #32]
+ 164 0088 4562     		str	r5, [r0, #36]
+ 165 008a FFF7FEFF 		bl	HAL_DMA_Init
+ 166 008e 18BB     		cbnz	r0, .L23
+ 167              	.L15:
+ 168 0090 484B     		ldr	r3, .L27+16
+ 169 0092 E363     		str	r3, [r4, #60]
+ 170 0094 9C63     		str	r4, [r3, #56]
+ 171 0096 4948     		ldr	r0, .L27+24
+ 172 0098 494B     		ldr	r3, .L27+28
+ 173 009a 0360     		str	r3, [r0]
+ 174 009c 4FF00063 		mov	r3, #134217728
+ 175 00a0 4360     		str	r3, [r0, #4]
+ 176 00a2 4023     		movs	r3, #64
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s 			page 4
+
+
+ 177 00a4 8360     		str	r3, [r0, #8]
+ 178 00a6 0023     		movs	r3, #0
+ 179 00a8 C360     		str	r3, [r0, #12]
+ 180 00aa 4FF48062 		mov	r2, #1024
+ 181 00ae 0261     		str	r2, [r0, #16]
+ 182 00b0 4361     		str	r3, [r0, #20]
+ 183 00b2 8361     		str	r3, [r0, #24]
+ 184 00b4 C361     		str	r3, [r0, #28]
+ 185 00b6 0362     		str	r3, [r0, #32]
+ 186 00b8 4362     		str	r3, [r0, #36]
+ 187 00ba FFF7FEFF 		bl	HAL_DMA_Init
+ 188 00be 70B9     		cbnz	r0, .L24
+ 189              	.L16:
+ 190 00c0 3E4B     		ldr	r3, .L27+24
+ 191 00c2 A363     		str	r3, [r4, #56]
+ 192 00c4 9C63     		str	r4, [r3, #56]
+ 193 00c6 0022     		movs	r2, #0
+ 194 00c8 0521     		movs	r1, #5
+ 195 00ca 2520     		movs	r0, #37
+ 196 00cc FFF7FEFF 		bl	HAL_NVIC_SetPriority
+ 197 00d0 2520     		movs	r0, #37
+ 198 00d2 FFF7FEFF 		bl	HAL_NVIC_EnableIRQ
+ 199 00d6 A3E7     		b	.L13
+ 200              	.L23:
+ 201 00d8 FFF7FEFF 		bl	Error_Handler
+ 202 00dc D8E7     		b	.L15
+ 203              	.L24:
+ 204 00de FFF7FEFF 		bl	Error_Handler
+ 205 00e2 EDE7     		b	.L16
+ 206              	.L22:
+ 207 00e4 0025     		movs	r5, #0
+ 208 00e6 0395     		str	r5, [sp, #12]
+ 209 00e8 304B     		ldr	r3, .L27+8
+ 210 00ea 5A6C     		ldr	r2, [r3, #68]
+ 211 00ec 42F02002 		orr	r2, r2, #32
+ 212 00f0 5A64     		str	r2, [r3, #68]
+ 213 00f2 5A6C     		ldr	r2, [r3, #68]
+ 214 00f4 02F02002 		and	r2, r2, #32
+ 215 00f8 0392     		str	r2, [sp, #12]
+ 216 00fa 039A     		ldr	r2, [sp, #12]
+ 217 00fc 0495     		str	r5, [sp, #16]
+ 218 00fe 1A6B     		ldr	r2, [r3, #48]
+ 219 0100 42F00402 		orr	r2, r2, #4
+ 220 0104 1A63     		str	r2, [r3, #48]
+ 221 0106 1B6B     		ldr	r3, [r3, #48]
+ 222 0108 03F00403 		and	r3, r3, #4
+ 223 010c 0493     		str	r3, [sp, #16]
+ 224 010e 049B     		ldr	r3, [sp, #16]
+ 225 0110 C023     		movs	r3, #192
+ 226 0112 0593     		str	r3, [sp, #20]
+ 227 0114 0223     		movs	r3, #2
+ 228 0116 0693     		str	r3, [sp, #24]
+ 229 0118 0323     		movs	r3, #3
+ 230 011a 0893     		str	r3, [sp, #32]
+ 231 011c 0823     		movs	r3, #8
+ 232 011e 0993     		str	r3, [sp, #36]
+ 233 0120 05A9     		add	r1, sp, #20
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s 			page 5
+
+
+ 234 0122 2848     		ldr	r0, .L27+32
+ 235 0124 FFF7FEFF 		bl	HAL_GPIO_Init
+ 236 0128 2748     		ldr	r0, .L27+36
+ 237 012a 284B     		ldr	r3, .L27+40
+ 238 012c 0360     		str	r3, [r0]
+ 239 012e 4FF02063 		mov	r3, #167772160
+ 240 0132 4360     		str	r3, [r0, #4]
+ 241 0134 8560     		str	r5, [r0, #8]
+ 242 0136 C560     		str	r5, [r0, #12]
+ 243 0138 4FF48063 		mov	r3, #1024
+ 244 013c 0361     		str	r3, [r0, #16]
+ 245 013e 4561     		str	r5, [r0, #20]
+ 246 0140 8561     		str	r5, [r0, #24]
+ 247 0142 C561     		str	r5, [r0, #28]
+ 248 0144 0562     		str	r5, [r0, #32]
+ 249 0146 4562     		str	r5, [r0, #36]
+ 250 0148 FFF7FEFF 		bl	HAL_DMA_Init
+ 251 014c 18BB     		cbnz	r0, .L25
+ 252              	.L18:
+ 253 014e 1E4B     		ldr	r3, .L27+36
+ 254 0150 E363     		str	r3, [r4, #60]
+ 255 0152 9C63     		str	r4, [r3, #56]
+ 256 0154 1E48     		ldr	r0, .L27+44
+ 257 0156 1F4B     		ldr	r3, .L27+48
+ 258 0158 0360     		str	r3, [r0]
+ 259 015a 4FF02063 		mov	r3, #167772160
+ 260 015e 4360     		str	r3, [r0, #4]
+ 261 0160 4023     		movs	r3, #64
+ 262 0162 8360     		str	r3, [r0, #8]
+ 263 0164 0023     		movs	r3, #0
+ 264 0166 C360     		str	r3, [r0, #12]
+ 265 0168 4FF48062 		mov	r2, #1024
+ 266 016c 0261     		str	r2, [r0, #16]
+ 267 016e 4361     		str	r3, [r0, #20]
+ 268 0170 8361     		str	r3, [r0, #24]
+ 269 0172 C361     		str	r3, [r0, #28]
+ 270 0174 0362     		str	r3, [r0, #32]
+ 271 0176 4362     		str	r3, [r0, #36]
+ 272 0178 FFF7FEFF 		bl	HAL_DMA_Init
+ 273 017c 70B9     		cbnz	r0, .L26
+ 274              	.L19:
+ 275 017e 144B     		ldr	r3, .L27+44
+ 276 0180 A363     		str	r3, [r4, #56]
+ 277 0182 9C63     		str	r4, [r3, #56]
+ 278 0184 0022     		movs	r2, #0
+ 279 0186 0521     		movs	r1, #5
+ 280 0188 4720     		movs	r0, #71
+ 281 018a FFF7FEFF 		bl	HAL_NVIC_SetPriority
+ 282 018e 4720     		movs	r0, #71
+ 283 0190 FFF7FEFF 		bl	HAL_NVIC_EnableIRQ
+ 284 0194 44E7     		b	.L13
+ 285              	.L25:
+ 286 0196 FFF7FEFF 		bl	Error_Handler
+ 287 019a D8E7     		b	.L18
+ 288              	.L26:
+ 289 019c FFF7FEFF 		bl	Error_Handler
+ 290 01a0 EDE7     		b	.L19
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s 			page 6
+
+
+ 291              	.L28:
+ 292 01a2 00BF     		.align	2
+ 293              	.L27:
+ 294 01a4 00100140 		.word	1073811456
+ 295 01a8 00140140 		.word	1073812480
+ 296 01ac 00380240 		.word	1073887232
+ 297 01b0 00000240 		.word	1073872896
+ 298 01b4 00000000 		.word	hdma_usart1_rx
+ 299 01b8 40640240 		.word	1073898560
+ 300 01bc 00000000 		.word	hdma_usart1_tx
+ 301 01c0 B8640240 		.word	1073898680
+ 302 01c4 00080240 		.word	1073874944
+ 303 01c8 00000000 		.word	hdma_usart6_rx
+ 304 01cc 28640240 		.word	1073898536
+ 305 01d0 00000000 		.word	hdma_usart6_tx
+ 306 01d4 A0640240 		.word	1073898656
+ 308              		.section	.text.HAL_UART_MspDeInit,"ax",%progbits
+ 309              		.align	1
+ 310              		.global	HAL_UART_MspDeInit
+ 311              		.syntax unified
+ 312              		.thumb
+ 313              		.thumb_func
+ 315              	HAL_UART_MspDeInit:
+ 316              		@ args = 0, pretend = 0, frame = 0
+ 317              		@ frame_needed = 0, uses_anonymous_args = 0
+ 318 0000 10B5     		push	{r4, lr}
+ 319 0002 0446     		mov	r4, r0
+ 320 0004 0368     		ldr	r3, [r0]
+ 321 0006 184A     		ldr	r2, .L35
+ 322 0008 9342     		cmp	r3, r2
+ 323 000a 03D0     		beq	.L33
+ 324 000c 174A     		ldr	r2, .L35+4
+ 325 000e 9342     		cmp	r3, r2
+ 326 0010 15D0     		beq	.L34
+ 327              	.L29:
+ 328 0012 10BD     		pop	{r4, pc}
+ 329              	.L33:
+ 330 0014 02F59432 		add	r2, r2, #75776
+ 331 0018 536C     		ldr	r3, [r2, #68]
+ 332 001a 23F01003 		bic	r3, r3, #16
+ 333 001e 5364     		str	r3, [r2, #68]
+ 334 0020 4FF4C061 		mov	r1, #1536
+ 335 0024 1248     		ldr	r0, .L35+8
+ 336 0026 FFF7FEFF 		bl	HAL_GPIO_DeInit
+ 337 002a E06B     		ldr	r0, [r4, #60]
+ 338 002c FFF7FEFF 		bl	HAL_DMA_DeInit
+ 339 0030 A06B     		ldr	r0, [r4, #56]
+ 340 0032 FFF7FEFF 		bl	HAL_DMA_DeInit
+ 341 0036 2520     		movs	r0, #37
+ 342 0038 FFF7FEFF 		bl	HAL_NVIC_DisableIRQ
+ 343 003c E9E7     		b	.L29
+ 344              	.L34:
+ 345 003e 02F59232 		add	r2, r2, #74752
+ 346 0042 536C     		ldr	r3, [r2, #68]
+ 347 0044 23F02003 		bic	r3, r3, #32
+ 348 0048 5364     		str	r3, [r2, #68]
+ 349 004a C021     		movs	r1, #192
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s 			page 7
+
+
+ 350 004c 0948     		ldr	r0, .L35+12
+ 351 004e FFF7FEFF 		bl	HAL_GPIO_DeInit
+ 352 0052 E06B     		ldr	r0, [r4, #60]
+ 353 0054 FFF7FEFF 		bl	HAL_DMA_DeInit
+ 354 0058 A06B     		ldr	r0, [r4, #56]
+ 355 005a FFF7FEFF 		bl	HAL_DMA_DeInit
+ 356 005e 4720     		movs	r0, #71
+ 357 0060 FFF7FEFF 		bl	HAL_NVIC_DisableIRQ
+ 358 0064 D5E7     		b	.L29
+ 359              	.L36:
+ 360 0066 00BF     		.align	2
+ 361              	.L35:
+ 362 0068 00100140 		.word	1073811456
+ 363 006c 00140140 		.word	1073812480
+ 364 0070 00000240 		.word	1073872896
+ 365 0074 00080240 		.word	1073874944
+ 367              		.global	hdma_usart6_tx
+ 368              		.section	.bss.hdma_usart6_tx,"aw",%nobits
+ 369              		.align	2
+ 372              	hdma_usart6_tx:
+ 373 0000 00000000 		.space	96
+ 373      00000000 
+ 373      00000000 
+ 373      00000000 
+ 373      00000000 
+ 374              		.global	hdma_usart6_rx
+ 375              		.section	.bss.hdma_usart6_rx,"aw",%nobits
+ 376              		.align	2
+ 379              	hdma_usart6_rx:
+ 380 0000 00000000 		.space	96
+ 380      00000000 
+ 380      00000000 
+ 380      00000000 
+ 380      00000000 
+ 381              		.global	hdma_usart1_tx
+ 382              		.section	.bss.hdma_usart1_tx,"aw",%nobits
+ 383              		.align	2
+ 386              	hdma_usart1_tx:
+ 387 0000 00000000 		.space	96
+ 387      00000000 
+ 387      00000000 
+ 387      00000000 
+ 387      00000000 
+ 388              		.global	hdma_usart1_rx
+ 389              		.section	.bss.hdma_usart1_rx,"aw",%nobits
+ 390              		.align	2
+ 393              	hdma_usart1_rx:
+ 394 0000 00000000 		.space	96
+ 394      00000000 
+ 394      00000000 
+ 394      00000000 
+ 394      00000000 
+ 395              		.global	huart6
+ 396              		.section	.bss.huart6,"aw",%nobits
+ 397              		.align	2
+ 400              	huart6:
+ 401 0000 00000000 		.space	72
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s 			page 8
+
+
+ 401      00000000 
+ 401      00000000 
+ 401      00000000 
+ 401      00000000 
+ 402              		.global	huart1
+ 403              		.section	.bss.huart1,"aw",%nobits
+ 404              		.align	2
+ 407              	huart1:
+ 408 0000 00000000 		.space	72
+ 408      00000000 
+ 408      00000000 
+ 408      00000000 
+ 408      00000000 
+ 409              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 usart.c
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:18     .text.MX_USART1_UART_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:24     .text.MX_USART1_UART_Init:00000000 MX_USART1_UART_Init
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:51     .text.MX_USART1_UART_Init:0000002c $d
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:407    .bss.huart1:00000000 huart1
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:55     .text.MX_USART6_UART_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:61     .text.MX_USART6_UART_Init:00000000 MX_USART6_UART_Init
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:88     .text.MX_USART6_UART_Init:0000002c $d
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:400    .bss.huart6:00000000 huart6
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:92     .text.HAL_UART_MspInit:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:98     .text.HAL_UART_MspInit:00000000 HAL_UART_MspInit
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:294    .text.HAL_UART_MspInit:000001a4 $d
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:393    .bss.hdma_usart1_rx:00000000 hdma_usart1_rx
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:386    .bss.hdma_usart1_tx:00000000 hdma_usart1_tx
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:379    .bss.hdma_usart6_rx:00000000 hdma_usart6_rx
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:372    .bss.hdma_usart6_tx:00000000 hdma_usart6_tx
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:309    .text.HAL_UART_MspDeInit:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:315    .text.HAL_UART_MspDeInit:00000000 HAL_UART_MspDeInit
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:362    .text.HAL_UART_MspDeInit:00000068 $d
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:369    .bss.hdma_usart6_tx:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:376    .bss.hdma_usart6_rx:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:383    .bss.hdma_usart1_tx:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:390    .bss.hdma_usart1_rx:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:397    .bss.huart6:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccl3iLJY.s:404    .bss.huart1:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_UART_Init
+Error_Handler
+HAL_GPIO_Init
+HAL_DMA_Init
+HAL_NVIC_SetPriority
+HAL_NVIC_EnableIRQ
+HAL_GPIO_DeInit
+HAL_DMA_DeInit
+HAL_NVIC_DisableIRQ

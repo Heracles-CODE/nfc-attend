@@ -1,0 +1,646 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccRgXybX.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"stm32f4xx_hal_flash_ex.c"
+  16              		.text
+  17              		.section	.text.FLASH_MassErase,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  23              	FLASH_MassErase:
+  24              		@ args = 0, pretend = 0, frame = 0
+  25              		@ frame_needed = 0, uses_anonymous_args = 0
+  26              		@ link register save eliminated.
+  27 0000 074B     		ldr	r3, .L2
+  28 0002 1A69     		ldr	r2, [r3, #16]
+  29 0004 22F44072 		bic	r2, r2, #768
+  30 0008 1A61     		str	r2, [r3, #16]
+  31 000a 1A69     		ldr	r2, [r3, #16]
+  32 000c 42F00402 		orr	r2, r2, #4
+  33 0010 1A61     		str	r2, [r3, #16]
+  34 0012 1A69     		ldr	r2, [r3, #16]
+  35 0014 42EA0022 		orr	r2, r2, r0, lsl #8
+  36 0018 42F48032 		orr	r2, r2, #65536
+  37 001c 1A61     		str	r2, [r3, #16]
+  38 001e 7047     		bx	lr
+  39              	.L3:
+  40              		.align	2
+  41              	.L2:
+  42 0020 003C0240 		.word	1073888256
+  44              		.section	.text.FLASH_OB_BOR_LevelConfig,"ax",%progbits
+  45              		.align	1
+  46              		.syntax unified
+  47              		.thumb
+  48              		.thumb_func
+  50              	FLASH_OB_BOR_LevelConfig:
+  51              		@ args = 0, pretend = 0, frame = 0
+  52              		@ frame_needed = 0, uses_anonymous_args = 0
+  53              		@ link register save eliminated.
+  54 0000 044B     		ldr	r3, .L5
+  55 0002 1A7D     		ldrb	r2, [r3, #20]	@ zero_extendqisi2
+  56 0004 02F0F302 		and	r2, r2, #243
+  57 0008 1A75     		strb	r2, [r3, #20]
+  58 000a 1A7D     		ldrb	r2, [r3, #20]	@ zero_extendqisi2
+  59 000c 0243     		orrs	r2, r2, r0
+  60 000e 1A75     		strb	r2, [r3, #20]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccRgXybX.s 			page 2
+
+
+  61 0010 0020     		movs	r0, #0
+  62 0012 7047     		bx	lr
+  63              	.L6:
+  64              		.align	2
+  65              	.L5:
+  66 0014 003C0240 		.word	1073888256
+  68              		.section	.text.FLASH_OB_GetUser,"ax",%progbits
+  69              		.align	1
+  70              		.syntax unified
+  71              		.thumb
+  72              		.thumb_func
+  74              	FLASH_OB_GetUser:
+  75              		@ args = 0, pretend = 0, frame = 0
+  76              		@ frame_needed = 0, uses_anonymous_args = 0
+  77              		@ link register save eliminated.
+  78 0000 024B     		ldr	r3, .L8
+  79 0002 5869     		ldr	r0, [r3, #20]
+  80 0004 00F0E000 		and	r0, r0, #224
+  81 0008 7047     		bx	lr
+  82              	.L9:
+  83 000a 00BF     		.align	2
+  84              	.L8:
+  85 000c 003C0240 		.word	1073888256
+  87              		.section	.text.FLASH_OB_GetWRP,"ax",%progbits
+  88              		.align	1
+  89              		.syntax unified
+  90              		.thumb
+  91              		.thumb_func
+  93              	FLASH_OB_GetWRP:
+  94              		@ args = 0, pretend = 0, frame = 0
+  95              		@ frame_needed = 0, uses_anonymous_args = 0
+  96              		@ link register save eliminated.
+  97 0000 014B     		ldr	r3, .L11
+  98 0002 D88A     		ldrh	r0, [r3, #22]
+  99 0004 80B2     		uxth	r0, r0
+ 100 0006 7047     		bx	lr
+ 101              	.L12:
+ 102              		.align	2
+ 103              	.L11:
+ 104 0008 003C0240 		.word	1073888256
+ 106              		.section	.text.FLASH_OB_GetRDP,"ax",%progbits
+ 107              		.align	1
+ 108              		.syntax unified
+ 109              		.thumb
+ 110              		.thumb_func
+ 112              	FLASH_OB_GetRDP:
+ 113              		@ args = 0, pretend = 0, frame = 0
+ 114              		@ frame_needed = 0, uses_anonymous_args = 0
+ 115              		@ link register save eliminated.
+ 116 0000 054B     		ldr	r3, .L16
+ 117 0002 5B7D     		ldrb	r3, [r3, #21]	@ zero_extendqisi2
+ 118 0004 D8B2     		uxtb	r0, r3
+ 119 0006 CC2B     		cmp	r3, #204
+ 120 0008 05D0     		beq	.L14
+ 121 000a 034B     		ldr	r3, .L16
+ 122 000c 5B7D     		ldrb	r3, [r3, #21]	@ zero_extendqisi2
+ 123 000e D8B2     		uxtb	r0, r3
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccRgXybX.s 			page 3
+
+
+ 124 0010 AA2B     		cmp	r3, #170
+ 125 0012 00D0     		beq	.L14
+ 126 0014 5520     		movs	r0, #85
+ 127              	.L14:
+ 128 0016 7047     		bx	lr
+ 129              	.L17:
+ 130              		.align	2
+ 131              	.L16:
+ 132 0018 003C0240 		.word	1073888256
+ 134              		.section	.text.FLASH_OB_GetBOR,"ax",%progbits
+ 135              		.align	1
+ 136              		.syntax unified
+ 137              		.thumb
+ 138              		.thumb_func
+ 140              	FLASH_OB_GetBOR:
+ 141              		@ args = 0, pretend = 0, frame = 0
+ 142              		@ frame_needed = 0, uses_anonymous_args = 0
+ 143              		@ link register save eliminated.
+ 144 0000 024B     		ldr	r3, .L19
+ 145 0002 187D     		ldrb	r0, [r3, #20]	@ zero_extendqisi2
+ 146 0004 00F00C00 		and	r0, r0, #12
+ 147 0008 7047     		bx	lr
+ 148              	.L20:
+ 149 000a 00BF     		.align	2
+ 150              	.L19:
+ 151 000c 003C0240 		.word	1073888256
+ 153              		.section	.text.FLASH_OB_EnableWRP,"ax",%progbits
+ 154              		.align	1
+ 155              		.syntax unified
+ 156              		.thumb
+ 157              		.thumb_func
+ 159              	FLASH_OB_EnableWRP:
+ 160              		@ args = 0, pretend = 0, frame = 0
+ 161              		@ frame_needed = 0, uses_anonymous_args = 0
+ 162 0000 10B5     		push	{r4, lr}
+ 163 0002 0446     		mov	r4, r0
+ 164 0004 4CF25030 		movw	r0, #50000
+ 165 0008 FFF7FEFF 		bl	FLASH_WaitForLastOperation
+ 166 000c 28B9     		cbnz	r0, .L22
+ 167 000e 034A     		ldr	r2, .L24
+ 168 0010 D38A     		ldrh	r3, [r2, #22]
+ 169 0012 9BB2     		uxth	r3, r3
+ 170 0014 23EA0403 		bic	r3, r3, r4
+ 171 0018 D382     		strh	r3, [r2, #22]	@ movhi
+ 172              	.L22:
+ 173 001a 10BD     		pop	{r4, pc}
+ 174              	.L25:
+ 175              		.align	2
+ 176              	.L24:
+ 177 001c 003C0240 		.word	1073888256
+ 179              		.section	.text.FLASH_OB_DisableWRP,"ax",%progbits
+ 180              		.align	1
+ 181              		.syntax unified
+ 182              		.thumb
+ 183              		.thumb_func
+ 185              	FLASH_OB_DisableWRP:
+ 186              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccRgXybX.s 			page 4
+
+
+ 187              		@ frame_needed = 0, uses_anonymous_args = 0
+ 188 0000 10B5     		push	{r4, lr}
+ 189 0002 0446     		mov	r4, r0
+ 190 0004 4CF25030 		movw	r0, #50000
+ 191 0008 FFF7FEFF 		bl	FLASH_WaitForLastOperation
+ 192 000c 28B9     		cbnz	r0, .L27
+ 193 000e 034A     		ldr	r2, .L29
+ 194 0010 D38A     		ldrh	r3, [r2, #22]
+ 195 0012 9BB2     		uxth	r3, r3
+ 196 0014 A4B2     		uxth	r4, r4
+ 197 0016 2343     		orrs	r3, r3, r4
+ 198 0018 D382     		strh	r3, [r2, #22]	@ movhi
+ 199              	.L27:
+ 200 001a 10BD     		pop	{r4, pc}
+ 201              	.L30:
+ 202              		.align	2
+ 203              	.L29:
+ 204 001c 003C0240 		.word	1073888256
+ 206              		.section	.text.FLASH_OB_RDP_LevelConfig,"ax",%progbits
+ 207              		.align	1
+ 208              		.syntax unified
+ 209              		.thumb
+ 210              		.thumb_func
+ 212              	FLASH_OB_RDP_LevelConfig:
+ 213              		@ args = 0, pretend = 0, frame = 0
+ 214              		@ frame_needed = 0, uses_anonymous_args = 0
+ 215 0000 10B5     		push	{r4, lr}
+ 216 0002 0446     		mov	r4, r0
+ 217 0004 4CF25030 		movw	r0, #50000
+ 218 0008 FFF7FEFF 		bl	FLASH_WaitForLastOperation
+ 219 000c 08B9     		cbnz	r0, .L32
+ 220 000e 014B     		ldr	r3, .L34
+ 221 0010 5C75     		strb	r4, [r3, #21]
+ 222              	.L32:
+ 223 0012 10BD     		pop	{r4, pc}
+ 224              	.L35:
+ 225              		.align	2
+ 226              	.L34:
+ 227 0014 003C0240 		.word	1073888256
+ 229              		.section	.text.FLASH_OB_UserConfig,"ax",%progbits
+ 230              		.align	1
+ 231              		.syntax unified
+ 232              		.thumb
+ 233              		.thumb_func
+ 235              	FLASH_OB_UserConfig:
+ 236              		@ args = 0, pretend = 0, frame = 0
+ 237              		@ frame_needed = 0, uses_anonymous_args = 0
+ 238 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 239 0002 0446     		mov	r4, r0
+ 240 0004 0E46     		mov	r6, r1
+ 241 0006 1546     		mov	r5, r2
+ 242 0008 4CF25030 		movw	r0, #50000
+ 243 000c FFF7FEFF 		bl	FLASH_WaitForLastOperation
+ 244 0010 48B9     		cbnz	r0, .L37
+ 245 0012 054F     		ldr	r7, .L39
+ 246 0014 3B7D     		ldrb	r3, [r7, #20]	@ zero_extendqisi2
+ 247 0016 03F01F03 		and	r3, r3, #31
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccRgXybX.s 			page 5
+
+
+ 248 001a 43EA0601 		orr	r1, r3, r6
+ 249 001e 41EA0502 		orr	r2, r1, r5
+ 250 0022 2243     		orrs	r2, r2, r4
+ 251 0024 3A75     		strb	r2, [r7, #20]
+ 252              	.L37:
+ 253 0026 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 254              	.L40:
+ 255              		.align	2
+ 256              	.L39:
+ 257 0028 003C0240 		.word	1073888256
+ 259              		.section	.text.HAL_FLASHEx_OBProgram,"ax",%progbits
+ 260              		.align	1
+ 261              		.global	HAL_FLASHEx_OBProgram
+ 262              		.syntax unified
+ 263              		.thumb
+ 264              		.thumb_func
+ 266              	HAL_FLASHEx_OBProgram:
+ 267              		@ args = 0, pretend = 0, frame = 0
+ 268              		@ frame_needed = 0, uses_anonymous_args = 0
+ 269 0000 1F4B     		ldr	r3, .L58
+ 270 0002 1B7E     		ldrb	r3, [r3, #24]	@ zero_extendqisi2
+ 271 0004 012B     		cmp	r3, #1
+ 272 0006 38D0     		beq	.L48
+ 273 0008 10B5     		push	{r4, lr}
+ 274 000a 0446     		mov	r4, r0
+ 275 000c 1C4B     		ldr	r3, .L58
+ 276 000e 0122     		movs	r2, #1
+ 277 0010 1A76     		strb	r2, [r3, #24]
+ 278 0012 0368     		ldr	r3, [r0]
+ 279 0014 13F0010F 		tst	r3, #1
+ 280 0018 0CD0     		beq	.L49
+ 281 001a 4368     		ldr	r3, [r0, #4]
+ 282 001c 9342     		cmp	r3, r2
+ 283 001e 04D0     		beq	.L54
+ 284 0020 C168     		ldr	r1, [r0, #12]
+ 285 0022 8068     		ldr	r0, [r0, #8]
+ 286 0024 FFF7FEFF 		bl	FLASH_OB_DisableWRP
+ 287 0028 05E0     		b	.L43
+ 288              	.L54:
+ 289 002a C168     		ldr	r1, [r0, #12]
+ 290 002c 8068     		ldr	r0, [r0, #8]
+ 291 002e FFF7FEFF 		bl	FLASH_OB_EnableWRP
+ 292 0032 00E0     		b	.L43
+ 293              	.L49:
+ 294 0034 0120     		movs	r0, #1
+ 295              	.L43:
+ 296 0036 2368     		ldr	r3, [r4]
+ 297 0038 13F0020F 		tst	r3, #2
+ 298 003c 0BD1     		bne	.L55
+ 299              	.L45:
+ 300 003e 2368     		ldr	r3, [r4]
+ 301 0040 13F0040F 		tst	r3, #4
+ 302 0044 0BD1     		bne	.L56
+ 303              	.L46:
+ 304 0046 2368     		ldr	r3, [r4]
+ 305 0048 13F0080F 		tst	r3, #8
+ 306 004c 11D1     		bne	.L57
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccRgXybX.s 			page 6
+
+
+ 307              	.L47:
+ 308 004e 0C4B     		ldr	r3, .L58
+ 309 0050 0022     		movs	r2, #0
+ 310 0052 1A76     		strb	r2, [r3, #24]
+ 311 0054 10BD     		pop	{r4, pc}
+ 312              	.L55:
+ 313 0056 207C     		ldrb	r0, [r4, #16]	@ zero_extendqisi2
+ 314 0058 FFF7FEFF 		bl	FLASH_OB_RDP_LevelConfig
+ 315 005c EFE7     		b	.L45
+ 316              	.L56:
+ 317 005e 207E     		ldrb	r0, [r4, #24]	@ zero_extendqisi2
+ 318 0060 00F08002 		and	r2, r0, #128
+ 319 0064 00F04001 		and	r1, r0, #64
+ 320 0068 00F02000 		and	r0, r0, #32
+ 321 006c FFF7FEFF 		bl	FLASH_OB_UserConfig
+ 322 0070 E9E7     		b	.L46
+ 323              	.L57:
+ 324 0072 207D     		ldrb	r0, [r4, #20]	@ zero_extendqisi2
+ 325 0074 FFF7FEFF 		bl	FLASH_OB_BOR_LevelConfig
+ 326 0078 E9E7     		b	.L47
+ 327              	.L48:
+ 328 007a 0220     		movs	r0, #2
+ 329 007c 7047     		bx	lr
+ 330              	.L59:
+ 331 007e 00BF     		.align	2
+ 332              	.L58:
+ 333 0080 00000000 		.word	pFlash
+ 335              		.section	.text.HAL_FLASHEx_OBGetConfig,"ax",%progbits
+ 336              		.align	1
+ 337              		.global	HAL_FLASHEx_OBGetConfig
+ 338              		.syntax unified
+ 339              		.thumb
+ 340              		.thumb_func
+ 342              	HAL_FLASHEx_OBGetConfig:
+ 343              		@ args = 0, pretend = 0, frame = 0
+ 344              		@ frame_needed = 0, uses_anonymous_args = 0
+ 345 0000 10B5     		push	{r4, lr}
+ 346 0002 0446     		mov	r4, r0
+ 347 0004 0F23     		movs	r3, #15
+ 348 0006 0360     		str	r3, [r0]
+ 349 0008 FFF7FEFF 		bl	FLASH_OB_GetWRP
+ 350 000c A060     		str	r0, [r4, #8]
+ 351 000e FFF7FEFF 		bl	FLASH_OB_GetRDP
+ 352 0012 2061     		str	r0, [r4, #16]
+ 353 0014 FFF7FEFF 		bl	FLASH_OB_GetUser
+ 354 0018 2076     		strb	r0, [r4, #24]
+ 355 001a FFF7FEFF 		bl	FLASH_OB_GetBOR
+ 356 001e 6061     		str	r0, [r4, #20]
+ 357 0020 10BD     		pop	{r4, pc}
+ 359              		.section	.text.FLASH_Erase_Sector,"ax",%progbits
+ 360              		.align	1
+ 361              		.global	FLASH_Erase_Sector
+ 362              		.syntax unified
+ 363              		.thumb
+ 364              		.thumb_func
+ 366              	FLASH_Erase_Sector:
+ 367              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccRgXybX.s 			page 7
+
+
+ 368              		@ frame_needed = 0, uses_anonymous_args = 0
+ 369              		@ link register save eliminated.
+ 370 0000 0129     		cmp	r1, #1
+ 371 0002 05D0     		beq	.L64
+ 372 0004 0229     		cmp	r1, #2
+ 373 0006 06D0     		beq	.L65
+ 374 0008 39B1     		cbz	r1, .L63
+ 375 000a 4FF44071 		mov	r1, #768
+ 376 000e 04E0     		b	.L63
+ 377              	.L64:
+ 378 0010 4FF48071 		mov	r1, #256
+ 379 0014 01E0     		b	.L63
+ 380              	.L65:
+ 381 0016 4FF40071 		mov	r1, #512
+ 382              	.L63:
+ 383 001a 0B4B     		ldr	r3, .L67
+ 384 001c 1A69     		ldr	r2, [r3, #16]
+ 385 001e 22F44072 		bic	r2, r2, #768
+ 386 0022 1A61     		str	r2, [r3, #16]
+ 387 0024 1A69     		ldr	r2, [r3, #16]
+ 388 0026 0A43     		orrs	r2, r2, r1
+ 389 0028 1A61     		str	r2, [r3, #16]
+ 390 002a 1A69     		ldr	r2, [r3, #16]
+ 391 002c 22F07802 		bic	r2, r2, #120
+ 392 0030 1A61     		str	r2, [r3, #16]
+ 393 0032 1A69     		ldr	r2, [r3, #16]
+ 394 0034 42EAC000 		orr	r0, r2, r0, lsl #3
+ 395 0038 40F00200 		orr	r0, r0, #2
+ 396 003c 1861     		str	r0, [r3, #16]
+ 397 003e 1A69     		ldr	r2, [r3, #16]
+ 398 0040 42F48032 		orr	r2, r2, #65536
+ 399 0044 1A61     		str	r2, [r3, #16]
+ 400 0046 7047     		bx	lr
+ 401              	.L68:
+ 402              		.align	2
+ 403              	.L67:
+ 404 0048 003C0240 		.word	1073888256
+ 406              		.section	.text.HAL_FLASHEx_Erase_IT,"ax",%progbits
+ 407              		.align	1
+ 408              		.global	HAL_FLASHEx_Erase_IT
+ 409              		.syntax unified
+ 410              		.thumb
+ 411              		.thumb_func
+ 413              	HAL_FLASHEx_Erase_IT:
+ 414              		@ args = 0, pretend = 0, frame = 0
+ 415              		@ frame_needed = 0, uses_anonymous_args = 0
+ 416 0000 08B5     		push	{r3, lr}
+ 417 0002 124B     		ldr	r3, .L74
+ 418 0004 1A69     		ldr	r2, [r3, #16]
+ 419 0006 42F08072 		orr	r2, r2, #16777216
+ 420 000a 1A61     		str	r2, [r3, #16]
+ 421 000c 1A69     		ldr	r2, [r3, #16]
+ 422 000e 42F00072 		orr	r2, r2, #33554432
+ 423 0012 1A61     		str	r2, [r3, #16]
+ 424 0014 F322     		movs	r2, #243
+ 425 0016 DA60     		str	r2, [r3, #12]
+ 426 0018 0368     		ldr	r3, [r0]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccRgXybX.s 			page 8
+
+
+ 427 001a 012B     		cmp	r3, #1
+ 428 001c 0DD0     		beq	.L73
+ 429 001e 0C4B     		ldr	r3, .L74+4
+ 430 0020 0122     		movs	r2, #1
+ 431 0022 1A70     		strb	r2, [r3]
+ 432 0024 C268     		ldr	r2, [r0, #12]
+ 433 0026 5A60     		str	r2, [r3, #4]
+ 434 0028 8268     		ldr	r2, [r0, #8]
+ 435 002a DA60     		str	r2, [r3, #12]
+ 436 002c 017C     		ldrb	r1, [r0, #16]	@ zero_extendqisi2
+ 437 002e 1972     		strb	r1, [r3, #8]
+ 438 0030 8068     		ldr	r0, [r0, #8]
+ 439 0032 FFF7FEFF 		bl	FLASH_Erase_Sector
+ 440              	.L71:
+ 441 0036 0020     		movs	r0, #0
+ 442 0038 08BD     		pop	{r3, pc}
+ 443              	.L73:
+ 444 003a 054B     		ldr	r3, .L74+4
+ 445 003c 0222     		movs	r2, #2
+ 446 003e 1A70     		strb	r2, [r3]
+ 447 0040 4168     		ldr	r1, [r0, #4]
+ 448 0042 1961     		str	r1, [r3, #16]
+ 449 0044 007C     		ldrb	r0, [r0, #16]	@ zero_extendqisi2
+ 450 0046 FFF7FEFF 		bl	FLASH_MassErase
+ 451 004a F4E7     		b	.L71
+ 452              	.L75:
+ 453              		.align	2
+ 454              	.L74:
+ 455 004c 003C0240 		.word	1073888256
+ 456 0050 00000000 		.word	pFlash
+ 458              		.section	.text.FLASH_FlushCaches,"ax",%progbits
+ 459              		.align	1
+ 460              		.global	FLASH_FlushCaches
+ 461              		.syntax unified
+ 462              		.thumb
+ 463              		.thumb_func
+ 465              	FLASH_FlushCaches:
+ 466              		@ args = 0, pretend = 0, frame = 0
+ 467              		@ frame_needed = 0, uses_anonymous_args = 0
+ 468              		@ link register save eliminated.
+ 469 0000 164B     		ldr	r3, .L79
+ 470 0002 1B68     		ldr	r3, [r3]
+ 471 0004 13F4007F 		tst	r3, #512
+ 472 0008 10D0     		beq	.L77
+ 473 000a 144B     		ldr	r3, .L79
+ 474 000c 1A68     		ldr	r2, [r3]
+ 475 000e 22F40072 		bic	r2, r2, #512
+ 476 0012 1A60     		str	r2, [r3]
+ 477 0014 1A68     		ldr	r2, [r3]
+ 478 0016 42F40062 		orr	r2, r2, #2048
+ 479 001a 1A60     		str	r2, [r3]
+ 480 001c 1A68     		ldr	r2, [r3]
+ 481 001e 22F40062 		bic	r2, r2, #2048
+ 482 0022 1A60     		str	r2, [r3]
+ 483 0024 1A68     		ldr	r2, [r3]
+ 484 0026 42F40072 		orr	r2, r2, #512
+ 485 002a 1A60     		str	r2, [r3]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccRgXybX.s 			page 9
+
+
+ 486              	.L77:
+ 487 002c 0B4B     		ldr	r3, .L79
+ 488 002e 1B68     		ldr	r3, [r3]
+ 489 0030 13F4806F 		tst	r3, #1024
+ 490 0034 10D0     		beq	.L76
+ 491 0036 094B     		ldr	r3, .L79
+ 492 0038 1A68     		ldr	r2, [r3]
+ 493 003a 22F48062 		bic	r2, r2, #1024
+ 494 003e 1A60     		str	r2, [r3]
+ 495 0040 1A68     		ldr	r2, [r3]
+ 496 0042 42F48052 		orr	r2, r2, #4096
+ 497 0046 1A60     		str	r2, [r3]
+ 498 0048 1A68     		ldr	r2, [r3]
+ 499 004a 22F48052 		bic	r2, r2, #4096
+ 500 004e 1A60     		str	r2, [r3]
+ 501 0050 1A68     		ldr	r2, [r3]
+ 502 0052 42F48062 		orr	r2, r2, #1024
+ 503 0056 1A60     		str	r2, [r3]
+ 504              	.L76:
+ 505 0058 7047     		bx	lr
+ 506              	.L80:
+ 507 005a 00BF     		.align	2
+ 508              	.L79:
+ 509 005c 003C0240 		.word	1073888256
+ 511              		.section	.text.HAL_FLASHEx_Erase,"ax",%progbits
+ 512              		.align	1
+ 513              		.global	HAL_FLASHEx_Erase
+ 514              		.syntax unified
+ 515              		.thumb
+ 516              		.thumb_func
+ 518              	HAL_FLASHEx_Erase:
+ 519              		@ args = 0, pretend = 0, frame = 0
+ 520              		@ frame_needed = 0, uses_anonymous_args = 0
+ 521 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 522 0002 224B     		ldr	r3, .L93
+ 523 0004 1B7E     		ldrb	r3, [r3, #24]	@ zero_extendqisi2
+ 524 0006 012B     		cmp	r3, #1
+ 525 0008 3ED0     		beq	.L89
+ 526 000a 0446     		mov	r4, r0
+ 527 000c 0E46     		mov	r6, r1
+ 528 000e 1F4B     		ldr	r3, .L93
+ 529 0010 0122     		movs	r2, #1
+ 530 0012 1A76     		strb	r2, [r3, #24]
+ 531 0014 4CF25030 		movw	r0, #50000
+ 532 0018 FFF7FEFF 		bl	FLASH_WaitForLastOperation
+ 533 001c 0746     		mov	r7, r0
+ 534 001e 70BB     		cbnz	r0, .L83
+ 535 0020 4FF0FF33 		mov	r3, #-1
+ 536 0024 3360     		str	r3, [r6]
+ 537 0026 2368     		ldr	r3, [r4]
+ 538 0028 012B     		cmp	r3, #1
+ 539 002a 16D0     		beq	.L91
+ 540 002c A568     		ldr	r5, [r4, #8]
+ 541              	.L86:
+ 542 002e E368     		ldr	r3, [r4, #12]
+ 543 0030 A268     		ldr	r2, [r4, #8]
+ 544 0032 1344     		add	r3, r3, r2
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccRgXybX.s 			page 10
+
+
+ 545 0034 AB42     		cmp	r3, r5
+ 546 0036 20D9     		bls	.L85
+ 547 0038 217C     		ldrb	r1, [r4, #16]	@ zero_extendqisi2
+ 548 003a 2846     		mov	r0, r5
+ 549 003c FFF7FEFF 		bl	FLASH_Erase_Sector
+ 550 0040 4CF25030 		movw	r0, #50000
+ 551 0044 FFF7FEFF 		bl	FLASH_WaitForLastOperation
+ 552 0048 114A     		ldr	r2, .L93+4
+ 553 004a 1369     		ldr	r3, [r2, #16]
+ 554 004c 23F07A03 		bic	r3, r3, #122
+ 555 0050 1361     		str	r3, [r2, #16]
+ 556 0052 0746     		mov	r7, r0
+ 557 0054 80B9     		cbnz	r0, .L92
+ 558 0056 0135     		adds	r5, r5, #1
+ 559 0058 E9E7     		b	.L86
+ 560              	.L91:
+ 561 005a 6168     		ldr	r1, [r4, #4]
+ 562 005c 207C     		ldrb	r0, [r4, #16]	@ zero_extendqisi2
+ 563 005e FFF7FEFF 		bl	FLASH_MassErase
+ 564 0062 4CF25030 		movw	r0, #50000
+ 565 0066 FFF7FEFF 		bl	FLASH_WaitForLastOperation
+ 566 006a 0746     		mov	r7, r0
+ 567 006c 084A     		ldr	r2, .L93+4
+ 568 006e 1369     		ldr	r3, [r2, #16]
+ 569 0070 23F00403 		bic	r3, r3, #4
+ 570 0074 1361     		str	r3, [r2, #16]
+ 571 0076 00E0     		b	.L85
+ 572              	.L92:
+ 573 0078 3560     		str	r5, [r6]
+ 574              	.L85:
+ 575 007a FFF7FEFF 		bl	FLASH_FlushCaches
+ 576              	.L83:
+ 577 007e 034B     		ldr	r3, .L93
+ 578 0080 0022     		movs	r2, #0
+ 579 0082 1A76     		strb	r2, [r3, #24]
+ 580              	.L82:
+ 581 0084 3846     		mov	r0, r7
+ 582 0086 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 583              	.L89:
+ 584 0088 0227     		movs	r7, #2
+ 585 008a FBE7     		b	.L82
+ 586              	.L94:
+ 587              		.align	2
+ 588              	.L93:
+ 589 008c 00000000 		.word	pFlash
+ 590 0090 003C0240 		.word	1073888256
+ 592              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccRgXybX.s 			page 11
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 stm32f4xx_hal_flash_ex.c
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:18     .text.FLASH_MassErase:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:23     .text.FLASH_MassErase:00000000 FLASH_MassErase
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:42     .text.FLASH_MassErase:00000020 $d
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:45     .text.FLASH_OB_BOR_LevelConfig:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:50     .text.FLASH_OB_BOR_LevelConfig:00000000 FLASH_OB_BOR_LevelConfig
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:66     .text.FLASH_OB_BOR_LevelConfig:00000014 $d
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:69     .text.FLASH_OB_GetUser:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:74     .text.FLASH_OB_GetUser:00000000 FLASH_OB_GetUser
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:85     .text.FLASH_OB_GetUser:0000000c $d
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:88     .text.FLASH_OB_GetWRP:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:93     .text.FLASH_OB_GetWRP:00000000 FLASH_OB_GetWRP
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:104    .text.FLASH_OB_GetWRP:00000008 $d
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:107    .text.FLASH_OB_GetRDP:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:112    .text.FLASH_OB_GetRDP:00000000 FLASH_OB_GetRDP
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:132    .text.FLASH_OB_GetRDP:00000018 $d
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:135    .text.FLASH_OB_GetBOR:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:140    .text.FLASH_OB_GetBOR:00000000 FLASH_OB_GetBOR
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:151    .text.FLASH_OB_GetBOR:0000000c $d
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:154    .text.FLASH_OB_EnableWRP:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:159    .text.FLASH_OB_EnableWRP:00000000 FLASH_OB_EnableWRP
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:177    .text.FLASH_OB_EnableWRP:0000001c $d
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:180    .text.FLASH_OB_DisableWRP:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:185    .text.FLASH_OB_DisableWRP:00000000 FLASH_OB_DisableWRP
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:204    .text.FLASH_OB_DisableWRP:0000001c $d
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:207    .text.FLASH_OB_RDP_LevelConfig:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:212    .text.FLASH_OB_RDP_LevelConfig:00000000 FLASH_OB_RDP_LevelConfig
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:227    .text.FLASH_OB_RDP_LevelConfig:00000014 $d
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:230    .text.FLASH_OB_UserConfig:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:235    .text.FLASH_OB_UserConfig:00000000 FLASH_OB_UserConfig
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:257    .text.FLASH_OB_UserConfig:00000028 $d
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:260    .text.HAL_FLASHEx_OBProgram:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:266    .text.HAL_FLASHEx_OBProgram:00000000 HAL_FLASHEx_OBProgram
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:333    .text.HAL_FLASHEx_OBProgram:00000080 $d
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:336    .text.HAL_FLASHEx_OBGetConfig:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:342    .text.HAL_FLASHEx_OBGetConfig:00000000 HAL_FLASHEx_OBGetConfig
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:360    .text.FLASH_Erase_Sector:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:366    .text.FLASH_Erase_Sector:00000000 FLASH_Erase_Sector
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:404    .text.FLASH_Erase_Sector:00000048 $d
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:407    .text.HAL_FLASHEx_Erase_IT:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:413    .text.HAL_FLASHEx_Erase_IT:00000000 HAL_FLASHEx_Erase_IT
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:455    .text.HAL_FLASHEx_Erase_IT:0000004c $d
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:459    .text.FLASH_FlushCaches:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:465    .text.FLASH_FlushCaches:00000000 FLASH_FlushCaches
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:509    .text.FLASH_FlushCaches:0000005c $d
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:512    .text.HAL_FLASHEx_Erase:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:518    .text.HAL_FLASHEx_Erase:00000000 HAL_FLASHEx_Erase
+C:\Users\fish\AppData\Local\Temp\ccRgXybX.s:589    .text.HAL_FLASHEx_Erase:0000008c $d
+
+UNDEFINED SYMBOLS
+FLASH_WaitForLastOperation
+pFlash

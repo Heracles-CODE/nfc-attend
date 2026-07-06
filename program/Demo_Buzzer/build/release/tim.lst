@@ -1,0 +1,509 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"tim.c"
+  16              		.text
+  17              		.section	.text.MX_TIM2_Init,"ax",%progbits
+  18              		.align	1
+  19              		.global	MX_TIM2_Init
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	MX_TIM2_Init:
+  25              		@ args = 0, pretend = 0, frame = 24
+  26              		@ frame_needed = 0, uses_anonymous_args = 0
+  27 0000 00B5     		push	{lr}
+  28 0002 87B0     		sub	sp, sp, #28
+  29 0004 0023     		movs	r3, #0
+  30 0006 0293     		str	r3, [sp, #8]
+  31 0008 0393     		str	r3, [sp, #12]
+  32 000a 0493     		str	r3, [sp, #16]
+  33 000c 0593     		str	r3, [sp, #20]
+  34 000e 0093     		str	r3, [sp]
+  35 0010 0193     		str	r3, [sp, #4]
+  36 0012 1648     		ldr	r0, .L9
+  37 0014 4FF08042 		mov	r2, #1073741824
+  38 0018 0260     		str	r2, [r0]
+  39 001a 5322     		movs	r2, #83
+  40 001c 4260     		str	r2, [r0, #4]
+  41 001e 8360     		str	r3, [r0, #8]
+  42 0020 7C22     		movs	r2, #124
+  43 0022 C260     		str	r2, [r0, #12]
+  44 0024 0361     		str	r3, [r0, #16]
+  45 0026 8023     		movs	r3, #128
+  46 0028 8361     		str	r3, [r0, #24]
+  47 002a FFF7FEFF 		bl	HAL_TIM_Base_Init
+  48 002e 98B9     		cbnz	r0, .L6
+  49              	.L2:
+  50 0030 4FF48053 		mov	r3, #4096
+  51 0034 0293     		str	r3, [sp, #8]
+  52 0036 02A9     		add	r1, sp, #8
+  53 0038 0C48     		ldr	r0, .L9
+  54 003a FFF7FEFF 		bl	HAL_TIM_ConfigClockSource
+  55 003e 70B9     		cbnz	r0, .L7
+  56              	.L3:
+  57 0040 2023     		movs	r3, #32
+  58 0042 0093     		str	r3, [sp]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s 			page 2
+
+
+  59 0044 0023     		movs	r3, #0
+  60 0046 0193     		str	r3, [sp, #4]
+  61 0048 6946     		mov	r1, sp
+  62 004a 0848     		ldr	r0, .L9
+  63 004c FFF7FEFF 		bl	HAL_TIMEx_MasterConfigSynchronization
+  64 0050 40B9     		cbnz	r0, .L8
+  65              	.L1:
+  66 0052 07B0     		add	sp, sp, #28
+  67              		@ sp needed
+  68 0054 5DF804FB 		ldr	pc, [sp], #4
+  69              	.L6:
+  70 0058 FFF7FEFF 		bl	Error_Handler
+  71 005c E8E7     		b	.L2
+  72              	.L7:
+  73 005e FFF7FEFF 		bl	Error_Handler
+  74 0062 EDE7     		b	.L3
+  75              	.L8:
+  76 0064 FFF7FEFF 		bl	Error_Handler
+  77 0068 F3E7     		b	.L1
+  78              	.L10:
+  79 006a 00BF     		.align	2
+  80              	.L9:
+  81 006c 00000000 		.word	htim2
+  83              		.section	.text.MX_TIM8_Init,"ax",%progbits
+  84              		.align	1
+  85              		.global	MX_TIM8_Init
+  86              		.syntax unified
+  87              		.thumb
+  88              		.thumb_func
+  90              	MX_TIM8_Init:
+  91              		@ args = 0, pretend = 0, frame = 24
+  92              		@ frame_needed = 0, uses_anonymous_args = 0
+  93 0000 00B5     		push	{lr}
+  94 0002 87B0     		sub	sp, sp, #28
+  95 0004 0023     		movs	r3, #0
+  96 0006 0293     		str	r3, [sp, #8]
+  97 0008 0393     		str	r3, [sp, #12]
+  98 000a 0493     		str	r3, [sp, #16]
+  99 000c 0593     		str	r3, [sp, #20]
+ 100 000e 0093     		str	r3, [sp]
+ 101 0010 0193     		str	r3, [sp, #4]
+ 102 0012 1548     		ldr	r0, .L19
+ 103 0014 154A     		ldr	r2, .L19+4
+ 104 0016 0260     		str	r2, [r0]
+ 105 0018 A722     		movs	r2, #167
+ 106 001a 4260     		str	r2, [r0, #4]
+ 107 001c 8360     		str	r3, [r0, #8]
+ 108 001e 6322     		movs	r2, #99
+ 109 0020 C260     		str	r2, [r0, #12]
+ 110 0022 0361     		str	r3, [r0, #16]
+ 111 0024 4361     		str	r3, [r0, #20]
+ 112 0026 8023     		movs	r3, #128
+ 113 0028 8361     		str	r3, [r0, #24]
+ 114 002a FFF7FEFF 		bl	HAL_TIM_Base_Init
+ 115 002e 90B9     		cbnz	r0, .L16
+ 116              	.L12:
+ 117 0030 4FF48053 		mov	r3, #4096
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s 			page 3
+
+
+ 118 0034 0293     		str	r3, [sp, #8]
+ 119 0036 02A9     		add	r1, sp, #8
+ 120 0038 0B48     		ldr	r0, .L19
+ 121 003a FFF7FEFF 		bl	HAL_TIM_ConfigClockSource
+ 122 003e 68B9     		cbnz	r0, .L17
+ 123              	.L13:
+ 124 0040 0023     		movs	r3, #0
+ 125 0042 0093     		str	r3, [sp]
+ 126 0044 0193     		str	r3, [sp, #4]
+ 127 0046 6946     		mov	r1, sp
+ 128 0048 0748     		ldr	r0, .L19
+ 129 004a FFF7FEFF 		bl	HAL_TIMEx_MasterConfigSynchronization
+ 130 004e 40B9     		cbnz	r0, .L18
+ 131              	.L11:
+ 132 0050 07B0     		add	sp, sp, #28
+ 133              		@ sp needed
+ 134 0052 5DF804FB 		ldr	pc, [sp], #4
+ 135              	.L16:
+ 136 0056 FFF7FEFF 		bl	Error_Handler
+ 137 005a E9E7     		b	.L12
+ 138              	.L17:
+ 139 005c FFF7FEFF 		bl	Error_Handler
+ 140 0060 EEE7     		b	.L13
+ 141              	.L18:
+ 142 0062 FFF7FEFF 		bl	Error_Handler
+ 143 0066 F3E7     		b	.L11
+ 144              	.L20:
+ 145              		.align	2
+ 146              	.L19:
+ 147 0068 00000000 		.word	htim8
+ 148 006c 00040140 		.word	1073808384
+ 150              		.section	.text.HAL_TIM_Base_MspInit,"ax",%progbits
+ 151              		.align	1
+ 152              		.global	HAL_TIM_Base_MspInit
+ 153              		.syntax unified
+ 154              		.thumb
+ 155              		.thumb_func
+ 157              	HAL_TIM_Base_MspInit:
+ 158              		@ args = 0, pretend = 0, frame = 16
+ 159              		@ frame_needed = 0, uses_anonymous_args = 0
+ 160 0000 00B5     		push	{lr}
+ 161 0002 85B0     		sub	sp, sp, #20
+ 162 0004 0368     		ldr	r3, [r0]
+ 163 0006 B3F1804F 		cmp	r3, #1073741824
+ 164 000a 08D0     		beq	.L26
+ 165 000c 1E4A     		ldr	r2, .L29
+ 166 000e 9342     		cmp	r3, r2
+ 167 0010 12D0     		beq	.L27
+ 168 0012 1E4A     		ldr	r2, .L29+4
+ 169 0014 9342     		cmp	r3, r2
+ 170 0016 23D0     		beq	.L28
+ 171              	.L21:
+ 172 0018 05B0     		add	sp, sp, #20
+ 173              		@ sp needed
+ 174 001a 5DF804FB 		ldr	pc, [sp], #4
+ 175              	.L26:
+ 176 001e 0023     		movs	r3, #0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s 			page 4
+
+
+ 177 0020 0193     		str	r3, [sp, #4]
+ 178 0022 1B4B     		ldr	r3, .L29+8
+ 179 0024 1A6C     		ldr	r2, [r3, #64]
+ 180 0026 42F00102 		orr	r2, r2, #1
+ 181 002a 1A64     		str	r2, [r3, #64]
+ 182 002c 1B6C     		ldr	r3, [r3, #64]
+ 183 002e 03F00103 		and	r3, r3, #1
+ 184 0032 0193     		str	r3, [sp, #4]
+ 185 0034 019B     		ldr	r3, [sp, #4]
+ 186 0036 EFE7     		b	.L21
+ 187              	.L27:
+ 188 0038 0022     		movs	r2, #0
+ 189 003a 0292     		str	r2, [sp, #8]
+ 190 003c 144B     		ldr	r3, .L29+8
+ 191 003e 196C     		ldr	r1, [r3, #64]
+ 192 0040 41F00201 		orr	r1, r1, #2
+ 193 0044 1964     		str	r1, [r3, #64]
+ 194 0046 1B6C     		ldr	r3, [r3, #64]
+ 195 0048 03F00203 		and	r3, r3, #2
+ 196 004c 0293     		str	r3, [sp, #8]
+ 197 004e 029B     		ldr	r3, [sp, #8]
+ 198 0050 0521     		movs	r1, #5
+ 199 0052 1D20     		movs	r0, #29
+ 200 0054 FFF7FEFF 		bl	HAL_NVIC_SetPriority
+ 201 0058 1D20     		movs	r0, #29
+ 202 005a FFF7FEFF 		bl	HAL_NVIC_EnableIRQ
+ 203 005e DBE7     		b	.L21
+ 204              	.L28:
+ 205 0060 0022     		movs	r2, #0
+ 206 0062 0392     		str	r2, [sp, #12]
+ 207 0064 0A4B     		ldr	r3, .L29+8
+ 208 0066 596C     		ldr	r1, [r3, #68]
+ 209 0068 41F00201 		orr	r1, r1, #2
+ 210 006c 5964     		str	r1, [r3, #68]
+ 211 006e 5B6C     		ldr	r3, [r3, #68]
+ 212 0070 03F00203 		and	r3, r3, #2
+ 213 0074 0393     		str	r3, [sp, #12]
+ 214 0076 039B     		ldr	r3, [sp, #12]
+ 215 0078 0521     		movs	r1, #5
+ 216 007a 2C20     		movs	r0, #44
+ 217 007c FFF7FEFF 		bl	HAL_NVIC_SetPriority
+ 218 0080 2C20     		movs	r0, #44
+ 219 0082 FFF7FEFF 		bl	HAL_NVIC_EnableIRQ
+ 220 0086 C7E7     		b	.L21
+ 221              	.L30:
+ 222              		.align	2
+ 223              	.L29:
+ 224 0088 00040040 		.word	1073742848
+ 225 008c 00040140 		.word	1073808384
+ 226 0090 00380240 		.word	1073887232
+ 228              		.section	.text.HAL_TIM_MspPostInit,"ax",%progbits
+ 229              		.align	1
+ 230              		.global	HAL_TIM_MspPostInit
+ 231              		.syntax unified
+ 232              		.thumb
+ 233              		.thumb_func
+ 235              	HAL_TIM_MspPostInit:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s 			page 5
+
+
+ 236              		@ args = 0, pretend = 0, frame = 24
+ 237              		@ frame_needed = 0, uses_anonymous_args = 0
+ 238 0000 00B5     		push	{lr}
+ 239 0002 87B0     		sub	sp, sp, #28
+ 240 0004 0023     		movs	r3, #0
+ 241 0006 0193     		str	r3, [sp, #4]
+ 242 0008 0293     		str	r3, [sp, #8]
+ 243 000a 0393     		str	r3, [sp, #12]
+ 244 000c 0493     		str	r3, [sp, #16]
+ 245 000e 0593     		str	r3, [sp, #20]
+ 246 0010 0268     		ldr	r2, [r0]
+ 247 0012 0E4B     		ldr	r3, .L35
+ 248 0014 9A42     		cmp	r2, r3
+ 249 0016 02D0     		beq	.L34
+ 250              	.L31:
+ 251 0018 07B0     		add	sp, sp, #28
+ 252              		@ sp needed
+ 253 001a 5DF804FB 		ldr	pc, [sp], #4
+ 254              	.L34:
+ 255 001e 0023     		movs	r3, #0
+ 256 0020 0093     		str	r3, [sp]
+ 257 0022 0B4B     		ldr	r3, .L35+4
+ 258 0024 1A6B     		ldr	r2, [r3, #48]
+ 259 0026 42F00202 		orr	r2, r2, #2
+ 260 002a 1A63     		str	r2, [r3, #48]
+ 261 002c 1B6B     		ldr	r3, [r3, #48]
+ 262 002e 03F00203 		and	r3, r3, #2
+ 263 0032 0093     		str	r3, [sp]
+ 264 0034 009B     		ldr	r3, [sp]
+ 265 0036 1023     		movs	r3, #16
+ 266 0038 0193     		str	r3, [sp, #4]
+ 267 003a 0223     		movs	r3, #2
+ 268 003c 0293     		str	r3, [sp, #8]
+ 269 003e 0593     		str	r3, [sp, #20]
+ 270 0040 01A9     		add	r1, sp, #4
+ 271 0042 0448     		ldr	r0, .L35+8
+ 272 0044 FFF7FEFF 		bl	HAL_GPIO_Init
+ 273 0048 E6E7     		b	.L31
+ 274              	.L36:
+ 275 004a 00BF     		.align	2
+ 276              	.L35:
+ 277 004c 00040040 		.word	1073742848
+ 278 0050 00380240 		.word	1073887232
+ 279 0054 00040240 		.word	1073873920
+ 281              		.section	.text.MX_TIM3_Init,"ax",%progbits
+ 282              		.align	1
+ 283              		.global	MX_TIM3_Init
+ 284              		.syntax unified
+ 285              		.thumb
+ 286              		.thumb_func
+ 288              	MX_TIM3_Init:
+ 289              		@ args = 0, pretend = 0, frame = 56
+ 290              		@ frame_needed = 0, uses_anonymous_args = 0
+ 291 0000 00B5     		push	{lr}
+ 292 0002 8FB0     		sub	sp, sp, #60
+ 293 0004 0023     		movs	r3, #0
+ 294 0006 0A93     		str	r3, [sp, #40]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s 			page 6
+
+
+ 295 0008 0B93     		str	r3, [sp, #44]
+ 296 000a 0C93     		str	r3, [sp, #48]
+ 297 000c 0D93     		str	r3, [sp, #52]
+ 298 000e 0893     		str	r3, [sp, #32]
+ 299 0010 0993     		str	r3, [sp, #36]
+ 300 0012 0193     		str	r3, [sp, #4]
+ 301 0014 0293     		str	r3, [sp, #8]
+ 302 0016 0393     		str	r3, [sp, #12]
+ 303 0018 0493     		str	r3, [sp, #16]
+ 304 001a 0593     		str	r3, [sp, #20]
+ 305 001c 0693     		str	r3, [sp, #24]
+ 306 001e 0793     		str	r3, [sp, #28]
+ 307 0020 2248     		ldr	r0, .L49
+ 308 0022 234A     		ldr	r2, .L49+4
+ 309 0024 0260     		str	r2, [r0]
+ 310 0026 5322     		movs	r2, #83
+ 311 0028 4260     		str	r2, [r0, #4]
+ 312 002a 8360     		str	r3, [r0, #8]
+ 313 002c 40F2E732 		movw	r2, #999
+ 314 0030 C260     		str	r2, [r0, #12]
+ 315 0032 0361     		str	r3, [r0, #16]
+ 316 0034 8023     		movs	r3, #128
+ 317 0036 8361     		str	r3, [r0, #24]
+ 318 0038 FFF7FEFF 		bl	HAL_TIM_Base_Init
+ 319 003c 30BB     		cbnz	r0, .L44
+ 320              	.L38:
+ 321 003e 4FF48053 		mov	r3, #4096
+ 322 0042 0A93     		str	r3, [sp, #40]
+ 323 0044 0AA9     		add	r1, sp, #40
+ 324 0046 1948     		ldr	r0, .L49
+ 325 0048 FFF7FEFF 		bl	HAL_TIM_ConfigClockSource
+ 326 004c 08BB     		cbnz	r0, .L45
+ 327              	.L39:
+ 328 004e 1748     		ldr	r0, .L49
+ 329 0050 FFF7FEFF 		bl	HAL_TIM_PWM_Init
+ 330 0054 00BB     		cbnz	r0, .L46
+ 331              	.L40:
+ 332 0056 0023     		movs	r3, #0
+ 333 0058 0893     		str	r3, [sp, #32]
+ 334 005a 0993     		str	r3, [sp, #36]
+ 335 005c 08A9     		add	r1, sp, #32
+ 336 005e 1348     		ldr	r0, .L49
+ 337 0060 FFF7FEFF 		bl	HAL_TIMEx_MasterConfigSynchronization
+ 338 0064 D8B9     		cbnz	r0, .L47
+ 339              	.L41:
+ 340 0066 6023     		movs	r3, #96
+ 341 0068 0193     		str	r3, [sp, #4]
+ 342 006a 4FF4FA73 		mov	r3, #500
+ 343 006e 0293     		str	r3, [sp, #8]
+ 344 0070 0022     		movs	r2, #0
+ 345 0072 0392     		str	r2, [sp, #12]
+ 346 0074 0592     		str	r2, [sp, #20]
+ 347 0076 01A9     		add	r1, sp, #4
+ 348 0078 0C48     		ldr	r0, .L49
+ 349 007a FFF7FEFF 		bl	HAL_TIM_PWM_ConfigChannel
+ 350 007e 88B9     		cbnz	r0, .L48
+ 351              	.L42:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s 			page 7
+
+
+ 352 0080 0A48     		ldr	r0, .L49
+ 353 0082 FFF7FEFF 		bl	HAL_TIM_MspPostInit
+ 354 0086 0FB0     		add	sp, sp, #60
+ 355              		@ sp needed
+ 356 0088 5DF804FB 		ldr	pc, [sp], #4
+ 357              	.L44:
+ 358 008c FFF7FEFF 		bl	Error_Handler
+ 359 0090 D5E7     		b	.L38
+ 360              	.L45:
+ 361 0092 FFF7FEFF 		bl	Error_Handler
+ 362 0096 DAE7     		b	.L39
+ 363              	.L46:
+ 364 0098 FFF7FEFF 		bl	Error_Handler
+ 365 009c DBE7     		b	.L40
+ 366              	.L47:
+ 367 009e FFF7FEFF 		bl	Error_Handler
+ 368 00a2 E0E7     		b	.L41
+ 369              	.L48:
+ 370 00a4 FFF7FEFF 		bl	Error_Handler
+ 371 00a8 EAE7     		b	.L42
+ 372              	.L50:
+ 373 00aa 00BF     		.align	2
+ 374              	.L49:
+ 375 00ac 00000000 		.word	htim3
+ 376 00b0 00040040 		.word	1073742848
+ 378              		.section	.text.HAL_TIM_Base_MspDeInit,"ax",%progbits
+ 379              		.align	1
+ 380              		.global	HAL_TIM_Base_MspDeInit
+ 381              		.syntax unified
+ 382              		.thumb
+ 383              		.thumb_func
+ 385              	HAL_TIM_Base_MspDeInit:
+ 386              		@ args = 0, pretend = 0, frame = 0
+ 387              		@ frame_needed = 0, uses_anonymous_args = 0
+ 388 0000 08B5     		push	{r3, lr}
+ 389 0002 0368     		ldr	r3, [r0]
+ 390 0004 B3F1804F 		cmp	r3, #1073741824
+ 391 0008 06D0     		beq	.L56
+ 392 000a 104A     		ldr	r2, .L59
+ 393 000c 9342     		cmp	r3, r2
+ 394 000e 09D0     		beq	.L57
+ 395 0010 0F4A     		ldr	r2, .L59+4
+ 396 0012 9342     		cmp	r3, r2
+ 397 0014 10D0     		beq	.L58
+ 398              	.L51:
+ 399 0016 08BD     		pop	{r3, pc}
+ 400              	.L56:
+ 401 0018 0E4A     		ldr	r2, .L59+8
+ 402 001a 136C     		ldr	r3, [r2, #64]
+ 403 001c 23F00103 		bic	r3, r3, #1
+ 404 0020 1364     		str	r3, [r2, #64]
+ 405 0022 F8E7     		b	.L51
+ 406              	.L57:
+ 407 0024 02F50D32 		add	r2, r2, #144384
+ 408 0028 136C     		ldr	r3, [r2, #64]
+ 409 002a 23F00203 		bic	r3, r3, #2
+ 410 002e 1364     		str	r3, [r2, #64]
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s 			page 8
+
+
+ 411 0030 1D20     		movs	r0, #29
+ 412 0032 FFF7FEFF 		bl	HAL_NVIC_DisableIRQ
+ 413 0036 EEE7     		b	.L51
+ 414              	.L58:
+ 415 0038 02F59A32 		add	r2, r2, #78848
+ 416 003c 536C     		ldr	r3, [r2, #68]
+ 417 003e 23F00203 		bic	r3, r3, #2
+ 418 0042 5364     		str	r3, [r2, #68]
+ 419 0044 2C20     		movs	r0, #44
+ 420 0046 FFF7FEFF 		bl	HAL_NVIC_DisableIRQ
+ 421 004a E4E7     		b	.L51
+ 422              	.L60:
+ 423              		.align	2
+ 424              	.L59:
+ 425 004c 00040040 		.word	1073742848
+ 426 0050 00040140 		.word	1073808384
+ 427 0054 00380240 		.word	1073887232
+ 429              		.global	htim8
+ 430              		.section	.bss.htim8,"aw",%nobits
+ 431              		.align	2
+ 434              	htim8:
+ 435 0000 00000000 		.space	72
+ 435      00000000 
+ 435      00000000 
+ 435      00000000 
+ 435      00000000 
+ 436              		.global	htim3
+ 437              		.section	.bss.htim3,"aw",%nobits
+ 438              		.align	2
+ 441              	htim3:
+ 442 0000 00000000 		.space	72
+ 442      00000000 
+ 442      00000000 
+ 442      00000000 
+ 442      00000000 
+ 443              		.global	htim2
+ 444              		.section	.bss.htim2,"aw",%nobits
+ 445              		.align	2
+ 448              	htim2:
+ 449 0000 00000000 		.space	72
+ 449      00000000 
+ 449      00000000 
+ 449      00000000 
+ 449      00000000 
+ 450              		.ident	"GCC: (xPack GNU Arm Embedded GCC x86_64) 14.2.1 20241119"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 tim.c
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:18     .text.MX_TIM2_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:24     .text.MX_TIM2_Init:00000000 MX_TIM2_Init
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:81     .text.MX_TIM2_Init:0000006c $d
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:448    .bss.htim2:00000000 htim2
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:84     .text.MX_TIM8_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:90     .text.MX_TIM8_Init:00000000 MX_TIM8_Init
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:147    .text.MX_TIM8_Init:00000068 $d
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:434    .bss.htim8:00000000 htim8
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:151    .text.HAL_TIM_Base_MspInit:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:157    .text.HAL_TIM_Base_MspInit:00000000 HAL_TIM_Base_MspInit
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:224    .text.HAL_TIM_Base_MspInit:00000088 $d
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:229    .text.HAL_TIM_MspPostInit:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:235    .text.HAL_TIM_MspPostInit:00000000 HAL_TIM_MspPostInit
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:277    .text.HAL_TIM_MspPostInit:0000004c $d
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:282    .text.MX_TIM3_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:288    .text.MX_TIM3_Init:00000000 MX_TIM3_Init
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:375    .text.MX_TIM3_Init:000000ac $d
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:441    .bss.htim3:00000000 htim3
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:379    .text.HAL_TIM_Base_MspDeInit:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:385    .text.HAL_TIM_Base_MspDeInit:00000000 HAL_TIM_Base_MspDeInit
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:425    .text.HAL_TIM_Base_MspDeInit:0000004c $d
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:431    .bss.htim8:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:438    .bss.htim3:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccjmaIkN.s:445    .bss.htim2:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_TIM_Base_Init
+HAL_TIM_ConfigClockSource
+HAL_TIMEx_MasterConfigSynchronization
+Error_Handler
+HAL_NVIC_SetPriority
+HAL_NVIC_EnableIRQ
+HAL_GPIO_Init
+HAL_TIM_PWM_Init
+HAL_TIM_PWM_ConfigChannel
+HAL_NVIC_DisableIRQ

@@ -1,0 +1,642 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc5bu24L.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"rc522_platform_stm32.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "../Bsp/NFC/rc522_platform_stm32.c"
+  20              		.section	.text.rst_control,"ax",%progbits
+  21              		.align	1
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	rst_control:
+  27              	.LVL0:
+  28              	.LFB244:
+   1:../Bsp/NFC/rc522_platform_stm32.c **** /**
+   2:../Bsp/NFC/rc522_platform_stm32.c ****  * @file    rc522_platform_stm32.c
+   3:../Bsp/NFC/rc522_platform_stm32.c ****  * @brief   RC522 STM32 平台适配层
+   4:../Bsp/NFC/rc522_platform_stm32.c ****  * @details 本文件提供针对 STM32F4 系列 (HAL 库) 的平台 IO 接口实现。
+   5:../Bsp/NFC/rc522_platform_stm32.c ****  *          使用 CubeMX 生成的 GPIO 引脚定义，通过软件模拟 SPI 与 RC522 通讯。
+   6:../Bsp/NFC/rc522_platform_stm32.c ****  *
+   7:../Bsp/NFC/rc522_platform_stm32.c ****  *          引脚连接 (默认，可在 main.h 中修改):
+   8:../Bsp/NFC/rc522_platform_stm32.c ****  *          - NFC_NSS(PE15)  -> 片选 (CS)
+   9:../Bsp/NFC/rc522_platform_stm32.c ****  *          - NFC_RST(PB15)  -> 复位 (RST)
+  10:../Bsp/NFC/rc522_platform_stm32.c ****  *          - NFC_MOSI(PA0)  -> MOSI
+  11:../Bsp/NFC/rc522_platform_stm32.c ****  *          - NFC_MISO(PB13) -> MISO
+  12:../Bsp/NFC/rc522_platform_stm32.c ****  *          - NFC_SCK(PD9)   -> SCK
+  13:../Bsp/NFC/rc522_platform_stm32.c ****  *          - NFC_GND(PB10)  -> 接地控制 (输出低电平)
+  14:../Bsp/NFC/rc522_platform_stm32.c ****  *
+  15:../Bsp/NFC/rc522_platform_stm32.c ****  *          使用方法:
+  16:../Bsp/NFC/rc522_platform_stm32.c ****  *          1. 在 CubeMX 中配置上述 GPIO 引脚 (输出: NSS, RST, MOSI, SCK; 输入: MISO)
+  17:../Bsp/NFC/rc522_platform_stm32.c ****  *          2. 调用 RC522_Platform_Init() 完成初始化
+  18:../Bsp/NFC/rc522_platform_stm32.c ****  *          3. 之后即可调用 rc522.h 中的 API 函数
+  19:../Bsp/NFC/rc522_platform_stm32.c ****  *
+  20:../Bsp/NFC/rc522_platform_stm32.c ****  * @note    编码: UTF-8
+  21:../Bsp/NFC/rc522_platform_stm32.c ****  */
+  22:../Bsp/NFC/rc522_platform_stm32.c **** 
+  23:../Bsp/NFC/rc522_platform_stm32.c **** #include "rc522.h"
+  24:../Bsp/NFC/rc522_platform_stm32.c **** #include "delay_us.h"   /* 公共微秒延时服务 */
+  25:../Bsp/NFC/rc522_platform_stm32.c **** #include "FreeRTOS.h"   /* FreeRTOS 基础头文件，须在 task.h 之前 */
+  26:../Bsp/NFC/rc522_platform_stm32.c **** #include "task.h"       /* taskENTER_CRITICAL / taskEXIT_CRITICAL */
+  27:../Bsp/NFC/rc522_platform_stm32.c **** #include "main.h"       /* 包含 NFC_XXX_Pin/GPIO_Port 定义 */
+  28:../Bsp/NFC/rc522_platform_stm32.c **** 
+  29:../Bsp/NFC/rc522_platform_stm32.c **** /* ======================================================
+  30:../Bsp/NFC/rc522_platform_stm32.c ****  *  GPIO 控制函数 (RC522_IO_t 回调实现)
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc5bu24L.s 			page 2
+
+
+  31:../Bsp/NFC/rc522_platform_stm32.c ****  * ====================================================== */
+  32:../Bsp/NFC/rc522_platform_stm32.c **** 
+  33:../Bsp/NFC/rc522_platform_stm32.c **** /**
+  34:../Bsp/NFC/rc522_platform_stm32.c ****  * @brief RC522 片选 (CS/NSS) 控制
+  35:../Bsp/NFC/rc522_platform_stm32.c ****  * @param level 0=选中 (低电平), 1=释放 (高电平)
+  36:../Bsp/NFC/rc522_platform_stm32.c ****  */
+  37:../Bsp/NFC/rc522_platform_stm32.c **** static void cs_control(uint8_t level)
+  38:../Bsp/NFC/rc522_platform_stm32.c **** {
+  39:../Bsp/NFC/rc522_platform_stm32.c ****     if (level) {
+  40:../Bsp/NFC/rc522_platform_stm32.c ****         HAL_GPIO_WritePin(NFC_NSS_GPIO_Port, NFC_NSS_Pin, GPIO_PIN_SET);
+  41:../Bsp/NFC/rc522_platform_stm32.c ****     } else {
+  42:../Bsp/NFC/rc522_platform_stm32.c ****         HAL_GPIO_WritePin(NFC_NSS_GPIO_Port, NFC_NSS_Pin, GPIO_PIN_RESET);
+  43:../Bsp/NFC/rc522_platform_stm32.c ****     }
+  44:../Bsp/NFC/rc522_platform_stm32.c **** }
+  45:../Bsp/NFC/rc522_platform_stm32.c **** 
+  46:../Bsp/NFC/rc522_platform_stm32.c **** /**
+  47:../Bsp/NFC/rc522_platform_stm32.c ****  * @brief RC522 复位 (RST) 控制
+  48:../Bsp/NFC/rc522_platform_stm32.c ****  * @param level 0=复位 (低电平), 1=正常工作 (高电平)
+  49:../Bsp/NFC/rc522_platform_stm32.c ****  */
+  50:../Bsp/NFC/rc522_platform_stm32.c **** static void rst_control(uint8_t level)
+  51:../Bsp/NFC/rc522_platform_stm32.c **** {
+  29              		.loc 1 51 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 51 1 is_stmt 0 view .LVU1
+  34 0000 08B5     		push	{r3, lr}
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 3, -8
+  37              		.cfi_offset 14, -4
+  52:../Bsp/NFC/rc522_platform_stm32.c ****     if (level) {
+  38              		.loc 1 52 5 is_stmt 1 view .LVU2
+  39              		.loc 1 52 8 is_stmt 0 view .LVU3
+  40 0002 30B1     		cbz	r0, .L2
+  53:../Bsp/NFC/rc522_platform_stm32.c ****         HAL_GPIO_WritePin(NFC_RST_GPIO_Port, NFC_RST_Pin, GPIO_PIN_SET);
+  41              		.loc 1 53 9 is_stmt 1 view .LVU4
+  42 0004 0122     		movs	r2, #1
+  43 0006 4FF40041 		mov	r1, #32768
+  44 000a 0548     		ldr	r0, .L5
+  45              	.LVL1:
+  46              		.loc 1 53 9 is_stmt 0 view .LVU5
+  47 000c FFF7FEFF 		bl	HAL_GPIO_WritePin
+  48              	.LVL2:
+  49              	.L1:
+  54:../Bsp/NFC/rc522_platform_stm32.c ****     } else {
+  55:../Bsp/NFC/rc522_platform_stm32.c ****         HAL_GPIO_WritePin(NFC_RST_GPIO_Port, NFC_RST_Pin, GPIO_PIN_RESET);
+  56:../Bsp/NFC/rc522_platform_stm32.c ****     }
+  57:../Bsp/NFC/rc522_platform_stm32.c **** }
+  50              		.loc 1 57 1 view .LVU6
+  51 0010 08BD     		pop	{r3, pc}
+  52              	.LVL3:
+  53              	.L2:
+  55:../Bsp/NFC/rc522_platform_stm32.c ****     }
+  54              		.loc 1 55 9 is_stmt 1 view .LVU7
+  55 0012 0022     		movs	r2, #0
+  56 0014 4FF40041 		mov	r1, #32768
+  57 0018 0148     		ldr	r0, .L5
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc5bu24L.s 			page 3
+
+
+  58              	.LVL4:
+  55:../Bsp/NFC/rc522_platform_stm32.c ****     }
+  59              		.loc 1 55 9 is_stmt 0 view .LVU8
+  60 001a FFF7FEFF 		bl	HAL_GPIO_WritePin
+  61              	.LVL5:
+  62              		.loc 1 57 1 view .LVU9
+  63 001e F7E7     		b	.L1
+  64              	.L6:
+  65              		.align	2
+  66              	.L5:
+  67 0020 00040240 		.word	1073873920
+  68              		.cfi_endproc
+  69              	.LFE244:
+  71              		.section	.text.cs_control,"ax",%progbits
+  72              		.align	1
+  73              		.syntax unified
+  74              		.thumb
+  75              		.thumb_func
+  77              	cs_control:
+  78              	.LVL6:
+  79              	.LFB243:
+  38:../Bsp/NFC/rc522_platform_stm32.c ****     if (level) {
+  80              		.loc 1 38 1 is_stmt 1 view -0
+  81              		.cfi_startproc
+  82              		@ args = 0, pretend = 0, frame = 0
+  83              		@ frame_needed = 0, uses_anonymous_args = 0
+  38:../Bsp/NFC/rc522_platform_stm32.c ****     if (level) {
+  84              		.loc 1 38 1 is_stmt 0 view .LVU11
+  85 0000 08B5     		push	{r3, lr}
+  86              		.cfi_def_cfa_offset 8
+  87              		.cfi_offset 3, -8
+  88              		.cfi_offset 14, -4
+  39:../Bsp/NFC/rc522_platform_stm32.c ****         HAL_GPIO_WritePin(NFC_NSS_GPIO_Port, NFC_NSS_Pin, GPIO_PIN_SET);
+  89              		.loc 1 39 5 is_stmt 1 view .LVU12
+  39:../Bsp/NFC/rc522_platform_stm32.c ****         HAL_GPIO_WritePin(NFC_NSS_GPIO_Port, NFC_NSS_Pin, GPIO_PIN_SET);
+  90              		.loc 1 39 8 is_stmt 0 view .LVU13
+  91 0002 30B1     		cbz	r0, .L8
+  40:../Bsp/NFC/rc522_platform_stm32.c ****     } else {
+  92              		.loc 1 40 9 is_stmt 1 view .LVU14
+  93 0004 0122     		movs	r2, #1
+  94 0006 4FF40041 		mov	r1, #32768
+  95 000a 0548     		ldr	r0, .L11
+  96              	.LVL7:
+  40:../Bsp/NFC/rc522_platform_stm32.c ****     } else {
+  97              		.loc 1 40 9 is_stmt 0 view .LVU15
+  98 000c FFF7FEFF 		bl	HAL_GPIO_WritePin
+  99              	.LVL8:
+ 100              	.L7:
+  44:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 101              		.loc 1 44 1 view .LVU16
+ 102 0010 08BD     		pop	{r3, pc}
+ 103              	.LVL9:
+ 104              	.L8:
+  42:../Bsp/NFC/rc522_platform_stm32.c ****     }
+ 105              		.loc 1 42 9 is_stmt 1 view .LVU17
+ 106 0012 0022     		movs	r2, #0
+ 107 0014 4FF40041 		mov	r1, #32768
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc5bu24L.s 			page 4
+
+
+ 108 0018 0148     		ldr	r0, .L11
+ 109              	.LVL10:
+  42:../Bsp/NFC/rc522_platform_stm32.c ****     }
+ 110              		.loc 1 42 9 is_stmt 0 view .LVU18
+ 111 001a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 112              	.LVL11:
+  44:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 113              		.loc 1 44 1 view .LVU19
+ 114 001e F7E7     		b	.L7
+ 115              	.L12:
+ 116              		.align	2
+ 117              	.L11:
+ 118 0020 00100240 		.word	1073876992
+ 119              		.cfi_endproc
+ 120              	.LFE243:
+ 122              		.section	.text.delay_ms,"ax",%progbits
+ 123              		.align	1
+ 124              		.syntax unified
+ 125              		.thumb
+ 126              		.thumb_func
+ 128              	delay_ms:
+ 129              	.LVL12:
+ 130              	.LFB246:
+  58:../Bsp/NFC/rc522_platform_stm32.c **** 
+  59:../Bsp/NFC/rc522_platform_stm32.c **** /**
+  60:../Bsp/NFC/rc522_platform_stm32.c ****  * @brief SPI 全双工字节传输 (软件模拟 SPI Mode 0)
+  61:../Bsp/NFC/rc522_platform_stm32.c ****  * @param data 要发送的数据字节
+  62:../Bsp/NFC/rc522_platform_stm32.c ****  * @return 接收到的数据字节
+  63:../Bsp/NFC/rc522_platform_stm32.c ****  *
+  64:../Bsp/NFC/rc522_platform_stm32.c ****  * @note  SPI Mode 0 (CPOL=0, CPHA=0):
+  65:../Bsp/NFC/rc522_platform_stm32.c ****  *        - 空闲时 SCK = 低电平
+  66:../Bsp/NFC/rc522_platform_stm32.c ****  *        - 数据在 SCK 上升沿发送 (MOSI 更新)
+  67:../Bsp/NFC/rc522_platform_stm32.c ****  *        - 数据在 SCK 下降沿接收 (MISO 采样)
+  68:../Bsp/NFC/rc522_platform_stm32.c ****  *
+  69:../Bsp/NFC/rc522_platform_stm32.c ****  *        时序:
+  70:../Bsp/NFC/rc522_platform_stm32.c ****  *        for 8 bits:
+  71:../Bsp/NFC/rc522_platform_stm32.c ****  *            SCK = LOW
+  72:../Bsp/NFC/rc522_platform_stm32.c ****  *            set MOSI (根据 data 的最高位)
+  73:../Bsp/NFC/rc522_platform_stm32.c ****  *            SCK = HIGH
+  74:../Bsp/NFC/rc522_platform_stm32.c ****  *            read MISO
+  75:../Bsp/NFC/rc522_platform_stm32.c ****  *            data <<= 1
+  76:../Bsp/NFC/rc522_platform_stm32.c ****  *            data |= MISO
+  77:../Bsp/NFC/rc522_platform_stm32.c ****  *        SCK = LOW (结束状态)
+  78:../Bsp/NFC/rc522_platform_stm32.c ****  */
+  79:../Bsp/NFC/rc522_platform_stm32.c **** static uint8_t spi_transfer_byte(uint8_t data)
+  80:../Bsp/NFC/rc522_platform_stm32.c **** {
+  81:../Bsp/NFC/rc522_platform_stm32.c ****     uint8_t rx = 0;
+  82:../Bsp/NFC/rc522_platform_stm32.c **** 
+  83:../Bsp/NFC/rc522_platform_stm32.c ****     /* 临界区保护：防止任务切换导致 SCK 时序断裂
+  84:../Bsp/NFC/rc522_platform_stm32.c ****      * 一个字节传输约 32 µs，临界区长度可接受 */
+  85:../Bsp/NFC/rc522_platform_stm32.c ****     taskENTER_CRITICAL();
+  86:../Bsp/NFC/rc522_platform_stm32.c **** 
+  87:../Bsp/NFC/rc522_platform_stm32.c ****     for (int8_t i = 7; i >= 0; i--) {
+  88:../Bsp/NFC/rc522_platform_stm32.c ****         /* SCK 下降沿 -> 拉低 SCK */
+  89:../Bsp/NFC/rc522_platform_stm32.c ****         HAL_GPIO_WritePin(NFC_SCK_GPIO_Port, NFC_SCK_Pin, GPIO_PIN_RESET);
+  90:../Bsp/NFC/rc522_platform_stm32.c ****         delay_us(1);
+  91:../Bsp/NFC/rc522_platform_stm32.c **** 
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc5bu24L.s 			page 5
+
+
+  92:../Bsp/NFC/rc522_platform_stm32.c ****         /* 设置 MOSI 数据位 (MSB 优先) */
+  93:../Bsp/NFC/rc522_platform_stm32.c ****         if (data & 0x80) {
+  94:../Bsp/NFC/rc522_platform_stm32.c ****             HAL_GPIO_WritePin(NFC_MOSI_GPIO_Port, NFC_MOSI_Pin, GPIO_PIN_SET);
+  95:../Bsp/NFC/rc522_platform_stm32.c ****         } else {
+  96:../Bsp/NFC/rc522_platform_stm32.c ****             HAL_GPIO_WritePin(NFC_MOSI_GPIO_Port, NFC_MOSI_Pin, GPIO_PIN_RESET);
+  97:../Bsp/NFC/rc522_platform_stm32.c ****         }
+  98:../Bsp/NFC/rc522_platform_stm32.c ****         delay_us(1);
+  99:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 100:../Bsp/NFC/rc522_platform_stm32.c ****         /* SCK 上升沿 -> 从机采样 MOSI */
+ 101:../Bsp/NFC/rc522_platform_stm32.c ****         HAL_GPIO_WritePin(NFC_SCK_GPIO_Port, NFC_SCK_Pin, GPIO_PIN_SET);
+ 102:../Bsp/NFC/rc522_platform_stm32.c ****         delay_us(1);
+ 103:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 104:../Bsp/NFC/rc522_platform_stm32.c ****         /* 在 SCK 高电平时采样 MISO */
+ 105:../Bsp/NFC/rc522_platform_stm32.c ****         rx <<= 1;
+ 106:../Bsp/NFC/rc522_platform_stm32.c ****         if (HAL_GPIO_ReadPin(NFC_MISO_GPIO_Port, NFC_MISO_Pin) == GPIO_PIN_SET) {
+ 107:../Bsp/NFC/rc522_platform_stm32.c ****             rx |= 0x01;
+ 108:../Bsp/NFC/rc522_platform_stm32.c ****         }
+ 109:../Bsp/NFC/rc522_platform_stm32.c ****         delay_us(1);
+ 110:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 111:../Bsp/NFC/rc522_platform_stm32.c ****         data <<= 1;
+ 112:../Bsp/NFC/rc522_platform_stm32.c ****     }
+ 113:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 114:../Bsp/NFC/rc522_platform_stm32.c ****     /* 结束状态: SCK 回到低电平 */
+ 115:../Bsp/NFC/rc522_platform_stm32.c ****     HAL_GPIO_WritePin(NFC_SCK_GPIO_Port, NFC_SCK_Pin, GPIO_PIN_RESET);
+ 116:../Bsp/NFC/rc522_platform_stm32.c ****     delay_us(1);
+ 117:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 118:../Bsp/NFC/rc522_platform_stm32.c ****     taskEXIT_CRITICAL();
+ 119:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 120:../Bsp/NFC/rc522_platform_stm32.c ****     return rx;
+ 121:../Bsp/NFC/rc522_platform_stm32.c **** }
+ 122:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 123:../Bsp/NFC/rc522_platform_stm32.c **** /**
+ 124:../Bsp/NFC/rc522_platform_stm32.c ****  * @brief 毫秒延时 (直接使用 HAL_Delay)
+ 125:../Bsp/NFC/rc522_platform_stm32.c ****  * @param ms 延时毫秒数
+ 126:../Bsp/NFC/rc522_platform_stm32.c ****  */
+ 127:../Bsp/NFC/rc522_platform_stm32.c **** static void delay_ms(uint32_t ms)
+ 128:../Bsp/NFC/rc522_platform_stm32.c **** {
+ 131              		.loc 1 128 1 is_stmt 1 view -0
+ 132              		.cfi_startproc
+ 133              		@ args = 0, pretend = 0, frame = 0
+ 134              		@ frame_needed = 0, uses_anonymous_args = 0
+ 135              		.loc 1 128 1 is_stmt 0 view .LVU21
+ 136 0000 08B5     		push	{r3, lr}
+ 137              		.cfi_def_cfa_offset 8
+ 138              		.cfi_offset 3, -8
+ 139              		.cfi_offset 14, -4
+ 129:../Bsp/NFC/rc522_platform_stm32.c ****     HAL_Delay(ms);
+ 140              		.loc 1 129 5 is_stmt 1 view .LVU22
+ 141 0002 FFF7FEFF 		bl	HAL_Delay
+ 142              	.LVL13:
+ 130:../Bsp/NFC/rc522_platform_stm32.c **** }
+ 143              		.loc 1 130 1 is_stmt 0 view .LVU23
+ 144 0006 08BD     		pop	{r3, pc}
+ 145              		.cfi_endproc
+ 146              	.LFE246:
+ 148              		.section	.text.spi_transfer_byte,"ax",%progbits
+ 149              		.align	1
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc5bu24L.s 			page 6
+
+
+ 150              		.syntax unified
+ 151              		.thumb
+ 152              		.thumb_func
+ 154              	spi_transfer_byte:
+ 155              	.LVL14:
+ 156              	.LFB245:
+  80:../Bsp/NFC/rc522_platform_stm32.c ****     uint8_t rx = 0;
+ 157              		.loc 1 80 1 is_stmt 1 view -0
+ 158              		.cfi_startproc
+ 159              		@ args = 0, pretend = 0, frame = 0
+ 160              		@ frame_needed = 0, uses_anonymous_args = 0
+  80:../Bsp/NFC/rc522_platform_stm32.c ****     uint8_t rx = 0;
+ 161              		.loc 1 80 1 is_stmt 0 view .LVU25
+ 162 0000 70B5     		push	{r4, r5, r6, lr}
+ 163              		.cfi_def_cfa_offset 16
+ 164              		.cfi_offset 4, -16
+ 165              		.cfi_offset 5, -12
+ 166              		.cfi_offset 6, -8
+ 167              		.cfi_offset 14, -4
+ 168 0002 0446     		mov	r4, r0
+  81:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 169              		.loc 1 81 5 is_stmt 1 view .LVU26
+ 170              	.LVL15:
+  85:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 171              		.loc 1 85 5 view .LVU27
+ 172 0004 FFF7FEFF 		bl	vPortEnterCritical
+ 173              	.LVL16:
+  87:../Bsp/NFC/rc522_platform_stm32.c ****         /* SCK 下降沿 -> 拉低 SCK */
+ 174              		.loc 1 87 5 view .LVU28
+ 175              	.LBB2:
+  87:../Bsp/NFC/rc522_platform_stm32.c ****         /* SCK 下降沿 -> 拉低 SCK */
+ 176              		.loc 1 87 10 view .LVU29
+  87:../Bsp/NFC/rc522_platform_stm32.c ****         /* SCK 下降沿 -> 拉低 SCK */
+ 177              		.loc 1 87 17 is_stmt 0 view .LVU30
+ 178 0008 0725     		movs	r5, #7
+ 179              	.LBE2:
+  81:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 180              		.loc 1 81 13 view .LVU31
+ 181 000a 0026     		movs	r6, #0
+ 182              	.LBB3:
+  87:../Bsp/NFC/rc522_platform_stm32.c ****         /* SCK 下降沿 -> 拉低 SCK */
+ 183              		.loc 1 87 5 view .LVU32
+ 184 000c 20E0     		b	.L16
+ 185              	.LVL17:
+ 186              	.L24:
+  94:../Bsp/NFC/rc522_platform_stm32.c ****         } else {
+ 187              		.loc 1 94 13 is_stmt 1 view .LVU33
+ 188 000e 0122     		movs	r2, #1
+ 189 0010 1146     		mov	r1, r2
+ 190 0012 2148     		ldr	r0, .L25
+ 191 0014 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 192              	.LVL18:
+ 193              	.L18:
+  98:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 194              		.loc 1 98 9 view .LVU34
+ 195 0018 0120     		movs	r0, #1
+ 196 001a FFF7FEFF 		bl	delay_us
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc5bu24L.s 			page 7
+
+
+ 197              	.LVL19:
+ 101:../Bsp/NFC/rc522_platform_stm32.c ****         delay_us(1);
+ 198              		.loc 1 101 9 view .LVU35
+ 199 001e 0122     		movs	r2, #1
+ 200 0020 4FF40071 		mov	r1, #512
+ 201 0024 1D48     		ldr	r0, .L25+4
+ 202 0026 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 203              	.LVL20:
+ 102:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 204              		.loc 1 102 9 view .LVU36
+ 205 002a 0120     		movs	r0, #1
+ 206 002c FFF7FEFF 		bl	delay_us
+ 207              	.LVL21:
+ 105:../Bsp/NFC/rc522_platform_stm32.c ****         if (HAL_GPIO_ReadPin(NFC_MISO_GPIO_Port, NFC_MISO_Pin) == GPIO_PIN_SET) {
+ 208              		.loc 1 105 9 view .LVU37
+ 105:../Bsp/NFC/rc522_platform_stm32.c ****         if (HAL_GPIO_ReadPin(NFC_MISO_GPIO_Port, NFC_MISO_Pin) == GPIO_PIN_SET) {
+ 209              		.loc 1 105 12 is_stmt 0 view .LVU38
+ 210 0030 7600     		lsls	r6, r6, #1
+ 211              	.LVL22:
+ 105:../Bsp/NFC/rc522_platform_stm32.c ****         if (HAL_GPIO_ReadPin(NFC_MISO_GPIO_Port, NFC_MISO_Pin) == GPIO_PIN_SET) {
+ 212              		.loc 1 105 12 view .LVU39
+ 213 0032 F6B2     		uxtb	r6, r6
+ 214              	.LVL23:
+ 106:../Bsp/NFC/rc522_platform_stm32.c ****             rx |= 0x01;
+ 215              		.loc 1 106 9 is_stmt 1 view .LVU40
+ 106:../Bsp/NFC/rc522_platform_stm32.c ****             rx |= 0x01;
+ 216              		.loc 1 106 13 is_stmt 0 view .LVU41
+ 217 0034 4FF40051 		mov	r1, #8192
+ 218 0038 1948     		ldr	r0, .L25+8
+ 219 003a FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 220              	.LVL24:
+ 106:../Bsp/NFC/rc522_platform_stm32.c ****             rx |= 0x01;
+ 221              		.loc 1 106 12 discriminator 1 view .LVU42
+ 222 003e 0128     		cmp	r0, #1
+ 223 0040 1AD0     		beq	.L22
+ 224              	.LVL25:
+ 225              	.L19:
+ 109:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 226              		.loc 1 109 9 is_stmt 1 view .LVU43
+ 227 0042 0120     		movs	r0, #1
+ 228 0044 FFF7FEFF 		bl	delay_us
+ 229              	.LVL26:
+ 111:../Bsp/NFC/rc522_platform_stm32.c ****     }
+ 230              		.loc 1 111 9 view .LVU44
+ 111:../Bsp/NFC/rc522_platform_stm32.c ****     }
+ 231              		.loc 1 111 14 is_stmt 0 view .LVU45
+ 232 0048 6400     		lsls	r4, r4, #1
+ 233              	.LVL27:
+ 111:../Bsp/NFC/rc522_platform_stm32.c ****     }
+ 234              		.loc 1 111 14 view .LVU46
+ 235 004a E4B2     		uxtb	r4, r4
+ 236              	.LVL28:
+  87:../Bsp/NFC/rc522_platform_stm32.c ****         /* SCK 下降沿 -> 拉低 SCK */
+ 237              		.loc 1 87 33 is_stmt 1 discriminator 2 view .LVU47
+ 238 004c 013D     		subs	r5, r5, #1
+ 239              	.LVL29:
+  87:../Bsp/NFC/rc522_platform_stm32.c ****         /* SCK 下降沿 -> 拉低 SCK */
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc5bu24L.s 			page 8
+
+
+ 240              		.loc 1 87 33 is_stmt 0 discriminator 2 view .LVU48
+ 241 004e 6DB2     		sxtb	r5, r5
+ 242              	.LVL30:
+ 243              	.L16:
+  87:../Bsp/NFC/rc522_platform_stm32.c ****         /* SCK 下降沿 -> 拉低 SCK */
+ 244              		.loc 1 87 26 is_stmt 1 discriminator 1 view .LVU49
+ 245 0050 002D     		cmp	r5, #0
+ 246 0052 14DB     		blt	.L23
+  89:../Bsp/NFC/rc522_platform_stm32.c ****         delay_us(1);
+ 247              		.loc 1 89 9 view .LVU50
+ 248 0054 0022     		movs	r2, #0
+ 249 0056 4FF40071 		mov	r1, #512
+ 250 005a 1048     		ldr	r0, .L25+4
+ 251 005c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 252              	.LVL31:
+  90:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 253              		.loc 1 90 9 view .LVU51
+ 254 0060 0120     		movs	r0, #1
+ 255 0062 FFF7FEFF 		bl	delay_us
+ 256              	.LVL32:
+  93:../Bsp/NFC/rc522_platform_stm32.c ****             HAL_GPIO_WritePin(NFC_MOSI_GPIO_Port, NFC_MOSI_Pin, GPIO_PIN_SET);
+ 257              		.loc 1 93 9 view .LVU52
+  93:../Bsp/NFC/rc522_platform_stm32.c ****             HAL_GPIO_WritePin(NFC_MOSI_GPIO_Port, NFC_MOSI_Pin, GPIO_PIN_SET);
+ 258              		.loc 1 93 12 is_stmt 0 view .LVU53
+ 259 0066 14F0800F 		tst	r4, #128
+ 260 006a D0D1     		bne	.L24
+  96:../Bsp/NFC/rc522_platform_stm32.c ****         }
+ 261              		.loc 1 96 13 is_stmt 1 view .LVU54
+ 262 006c 0022     		movs	r2, #0
+ 263 006e 0121     		movs	r1, #1
+ 264 0070 0948     		ldr	r0, .L25
+ 265 0072 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 266              	.LVL33:
+ 267 0076 CFE7     		b	.L18
+ 268              	.L22:
+ 107:../Bsp/NFC/rc522_platform_stm32.c ****         }
+ 269              		.loc 1 107 13 view .LVU55
+ 107:../Bsp/NFC/rc522_platform_stm32.c ****         }
+ 270              		.loc 1 107 16 is_stmt 0 view .LVU56
+ 271 0078 46F00106 		orr	r6, r6, #1
+ 272              	.LVL34:
+ 107:../Bsp/NFC/rc522_platform_stm32.c ****         }
+ 273              		.loc 1 107 16 view .LVU57
+ 274 007c E1E7     		b	.L19
+ 275              	.LVL35:
+ 276              	.L23:
+ 107:../Bsp/NFC/rc522_platform_stm32.c ****         }
+ 277              		.loc 1 107 16 view .LVU58
+ 278              	.LBE3:
+ 115:../Bsp/NFC/rc522_platform_stm32.c ****     delay_us(1);
+ 279              		.loc 1 115 5 is_stmt 1 view .LVU59
+ 280 007e 0022     		movs	r2, #0
+ 281 0080 4FF40071 		mov	r1, #512
+ 282 0084 0548     		ldr	r0, .L25+4
+ 283 0086 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 284              	.LVL36:
+ 116:../Bsp/NFC/rc522_platform_stm32.c **** 
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc5bu24L.s 			page 9
+
+
+ 285              		.loc 1 116 5 view .LVU60
+ 286 008a 0120     		movs	r0, #1
+ 287 008c FFF7FEFF 		bl	delay_us
+ 288              	.LVL37:
+ 118:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 289              		.loc 1 118 5 view .LVU61
+ 290 0090 FFF7FEFF 		bl	vPortExitCritical
+ 291              	.LVL38:
+ 120:../Bsp/NFC/rc522_platform_stm32.c **** }
+ 292              		.loc 1 120 5 view .LVU62
+ 121:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 293              		.loc 1 121 1 is_stmt 0 view .LVU63
+ 294 0094 3046     		mov	r0, r6
+ 295 0096 70BD     		pop	{r4, r5, r6, pc}
+ 296              	.LVL39:
+ 297              	.L26:
+ 121:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 298              		.loc 1 121 1 view .LVU64
+ 299              		.align	2
+ 300              	.L25:
+ 301 0098 00000240 		.word	1073872896
+ 302 009c 000C0240 		.word	1073875968
+ 303 00a0 00040240 		.word	1073873920
+ 304              		.cfi_endproc
+ 305              	.LFE245:
+ 307              		.section	.text.RC522_Platform_Init,"ax",%progbits
+ 308              		.align	1
+ 309              		.global	RC522_Platform_Init
+ 310              		.syntax unified
+ 311              		.thumb
+ 312              		.thumb_func
+ 314              	RC522_Platform_Init:
+ 315              	.LFB247:
+ 131:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 132:../Bsp/NFC/rc522_platform_stm32.c **** /* ======================================================
+ 133:../Bsp/NFC/rc522_platform_stm32.c ****  *  平台 IO 接口实例
+ 134:../Bsp/NFC/rc522_platform_stm32.c ****  * ====================================================== */
+ 135:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 136:../Bsp/NFC/rc522_platform_stm32.c **** /** RC522 平台 IO 接口，供 RC522_Init() 使用 */
+ 137:../Bsp/NFC/rc522_platform_stm32.c **** static const RC522_IO_t s_rc522_io = {
+ 138:../Bsp/NFC/rc522_platform_stm32.c ****     .cs_control   = cs_control,
+ 139:../Bsp/NFC/rc522_platform_stm32.c ****     .rst_control  = rst_control,
+ 140:../Bsp/NFC/rc522_platform_stm32.c ****     .spi_transfer = spi_transfer_byte,
+ 141:../Bsp/NFC/rc522_platform_stm32.c ****     .delay_us     = delay_us,
+ 142:../Bsp/NFC/rc522_platform_stm32.c ****     .delay_ms     = delay_ms
+ 143:../Bsp/NFC/rc522_platform_stm32.c **** };
+ 144:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 145:../Bsp/NFC/rc522_platform_stm32.c **** /* ======================================================
+ 146:../Bsp/NFC/rc522_platform_stm32.c ****  *  公开 API
+ 147:../Bsp/NFC/rc522_platform_stm32.c ****  * ====================================================== */
+ 148:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 149:../Bsp/NFC/rc522_platform_stm32.c **** /**
+ 150:../Bsp/NFC/rc522_platform_stm32.c ****  * @brief 初始化 RC522 STM32 平台
+ 151:../Bsp/NFC/rc522_platform_stm32.c ****  * @note  此函数完成:
+ 152:../Bsp/NFC/rc522_platform_stm32.c ****  *        1. DWT 定时器初始化 (微秒延时)
+ 153:../Bsp/NFC/rc522_platform_stm32.c ****  *        2. NFC 模块接地引脚拉低 (如果有定义)
+ 154:../Bsp/NFC/rc522_platform_stm32.c ****  *        3. 调用 RC522_Init() 初始化 RC522 芯片
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc5bu24L.s 			page 10
+
+
+ 155:../Bsp/NFC/rc522_platform_stm32.c ****  *
+ 156:../Bsp/NFC/rc522_platform_stm32.c ****  *        在 FreeRTOS 任务中调用此函数前需确保 HAL_Init()
+ 157:../Bsp/NFC/rc522_platform_stm32.c ****  *        和 MX_GPIO_Init() 等系统初始化已完成。
+ 158:../Bsp/NFC/rc522_platform_stm32.c ****  */
+ 159:../Bsp/NFC/rc522_platform_stm32.c **** void RC522_Platform_Init(void)
+ 160:../Bsp/NFC/rc522_platform_stm32.c **** {
+ 316              		.loc 1 160 1 is_stmt 1 view -0
+ 317              		.cfi_startproc
+ 318              		@ args = 0, pretend = 0, frame = 0
+ 319              		@ frame_needed = 0, uses_anonymous_args = 0
+ 320 0000 08B5     		push	{r3, lr}
+ 321              		.cfi_def_cfa_offset 8
+ 322              		.cfi_offset 3, -8
+ 323              		.cfi_offset 14, -4
+ 161:../Bsp/NFC/rc522_platform_stm32.c ****     /* 初始化公共微秒延时服务 */
+ 162:../Bsp/NFC/rc522_platform_stm32.c ****     delay_us_init();
+ 324              		.loc 1 162 5 view .LVU66
+ 325 0002 FFF7FEFF 		bl	delay_us_init
+ 326              	.LVL40:
+ 163:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 164:../Bsp/NFC/rc522_platform_stm32.c ****     /* 拉低 NFC_GND 引脚，为模块提供参考地 */
+ 165:../Bsp/NFC/rc522_platform_stm32.c **** #if defined(NFC_GND_Pin) && defined(NFC_GND_GPIO_Port)
+ 166:../Bsp/NFC/rc522_platform_stm32.c ****     HAL_GPIO_WritePin(NFC_GND_GPIO_Port, NFC_GND_Pin, GPIO_PIN_RESET);
+ 327              		.loc 1 166 5 view .LVU67
+ 328 0006 0022     		movs	r2, #0
+ 329 0008 4FF48061 		mov	r1, #1024
+ 330 000c 0348     		ldr	r0, .L29
+ 331 000e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 332              	.LVL41:
+ 167:../Bsp/NFC/rc522_platform_stm32.c **** #endif
+ 168:../Bsp/NFC/rc522_platform_stm32.c **** 
+ 169:../Bsp/NFC/rc522_platform_stm32.c ****     /* 初始化 RC522 芯片 (传递平台 IO 接口) */
+ 170:../Bsp/NFC/rc522_platform_stm32.c ****     RC522_Init((RC522_IO_t *)&s_rc522_io);
+ 333              		.loc 1 170 5 view .LVU68
+ 334 0012 0348     		ldr	r0, .L29+4
+ 335 0014 FFF7FEFF 		bl	RC522_Init
+ 336              	.LVL42:
+ 171:../Bsp/NFC/rc522_platform_stm32.c **** }
+ 337              		.loc 1 171 1 is_stmt 0 view .LVU69
+ 338 0018 08BD     		pop	{r3, pc}
+ 339              	.L30:
+ 340 001a 00BF     		.align	2
+ 341              	.L29:
+ 342 001c 00040240 		.word	1073873920
+ 343 0020 00000000 		.word	s_rc522_io
+ 344              		.cfi_endproc
+ 345              	.LFE247:
+ 347              		.section	.rodata.s_rc522_io,"a"
+ 348              		.align	2
+ 351              	s_rc522_io:
+ 352 0000 00000000 		.word	cs_control
+ 353 0004 00000000 		.word	rst_control
+ 354 0008 00000000 		.word	spi_transfer_byte
+ 355 000c 00000000 		.word	delay_us
+ 356 0010 00000000 		.word	delay_ms
+ 357              		.text
+ 358              	.Letext0:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc5bu24L.s 			page 11
+
+
+ 359              		.file 2 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_default_t
+ 360              		.file 3 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h"
+ 361              		.file 4 "../Bsp/NFC/rc522.h"
+ 362              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 363              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 364              		.file 7 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h"
+ 365              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 366              		.file 9 "../Bsp/delay/delay_us.h"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\cc5bu24L.s 			page 12
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 rc522_platform_stm32.c
+C:\Users\fish\AppData\Local\Temp\cc5bu24L.s:21     .text.rst_control:00000000 $t
+C:\Users\fish\AppData\Local\Temp\cc5bu24L.s:26     .text.rst_control:00000000 rst_control
+C:\Users\fish\AppData\Local\Temp\cc5bu24L.s:67     .text.rst_control:00000020 $d
+C:\Users\fish\AppData\Local\Temp\cc5bu24L.s:72     .text.cs_control:00000000 $t
+C:\Users\fish\AppData\Local\Temp\cc5bu24L.s:77     .text.cs_control:00000000 cs_control
+C:\Users\fish\AppData\Local\Temp\cc5bu24L.s:118    .text.cs_control:00000020 $d
+C:\Users\fish\AppData\Local\Temp\cc5bu24L.s:123    .text.delay_ms:00000000 $t
+C:\Users\fish\AppData\Local\Temp\cc5bu24L.s:128    .text.delay_ms:00000000 delay_ms
+C:\Users\fish\AppData\Local\Temp\cc5bu24L.s:149    .text.spi_transfer_byte:00000000 $t
+C:\Users\fish\AppData\Local\Temp\cc5bu24L.s:154    .text.spi_transfer_byte:00000000 spi_transfer_byte
+C:\Users\fish\AppData\Local\Temp\cc5bu24L.s:301    .text.spi_transfer_byte:00000098 $d
+C:\Users\fish\AppData\Local\Temp\cc5bu24L.s:308    .text.RC522_Platform_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\cc5bu24L.s:314    .text.RC522_Platform_Init:00000000 RC522_Platform_Init
+C:\Users\fish\AppData\Local\Temp\cc5bu24L.s:342    .text.RC522_Platform_Init:0000001c $d
+C:\Users\fish\AppData\Local\Temp\cc5bu24L.s:351    .rodata.s_rc522_io:00000000 s_rc522_io
+C:\Users\fish\AppData\Local\Temp\cc5bu24L.s:348    .rodata.s_rc522_io:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_WritePin
+HAL_Delay
+vPortEnterCritical
+delay_us
+HAL_GPIO_ReadPin
+vPortExitCritical
+delay_us_init
+RC522_Init

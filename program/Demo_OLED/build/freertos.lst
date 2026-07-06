@@ -1,0 +1,522 @@
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccAbwQar.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"freertos.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/freertos.c"
+  20              		.section	.rodata.StartOledTask.str1.4,"aMS",%progbits,1
+  21              		.align	2
+  22              	.LC0:
+  23 0000 25303464 		.ascii	"%04d-%02d-%02d %s\000"
+  23      2D253032 
+  23      642D2530 
+  23      32642025 
+  23      7300
+  24 0012 0000     		.align	2
+  25              	.LC1:
+  26 0014 44617465 		.ascii	"Date:\000"
+  26      3A00
+  27 001a 0000     		.align	2
+  28              	.LC2:
+  29 001c 25303264 		.ascii	"%02d:%02d:%02d\000"
+  29      3A253032 
+  29      643A2530 
+  29      326400
+  30 002b 00       		.align	2
+  31              	.LC3:
+  32 002c 54696D65 		.ascii	"Time:\000"
+  32      3A00
+  33              		.section	.text.StartOledTask,"ax",%progbits
+  34              		.align	1
+  35              		.global	StartOledTask
+  36              		.syntax unified
+  37              		.thumb
+  38              		.thumb_func
+  40              	StartOledTask:
+  41              	.LVL0:
+  42              	.LFB247:
+   1:Core/Src/freertos.c **** /* USER CODE BEGIN Header */
+   2:Core/Src/freertos.c **** /**
+   3:Core/Src/freertos.c ****   ******************************************************************************
+   4:Core/Src/freertos.c ****   * File Name          : freertos.c
+   5:Core/Src/freertos.c ****   * Description        : Code for freertos applications
+   6:Core/Src/freertos.c ****   ******************************************************************************
+   7:Core/Src/freertos.c ****   * @attention
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccAbwQar.s 			page 2
+
+
+   8:Core/Src/freertos.c ****   *
+   9:Core/Src/freertos.c ****   * Copyright (c) 2026 STMicroelectronics.
+  10:Core/Src/freertos.c ****   * All rights reserved.
+  11:Core/Src/freertos.c ****   *
+  12:Core/Src/freertos.c ****   * This software is licensed under terms that can be found in the LICENSE file
+  13:Core/Src/freertos.c ****   * in the root directory of this software component.
+  14:Core/Src/freertos.c ****   * If no LICENSE file comes with this software, it is provided AS-IS.
+  15:Core/Src/freertos.c ****   *
+  16:Core/Src/freertos.c ****   ******************************************************************************
+  17:Core/Src/freertos.c ****   */
+  18:Core/Src/freertos.c **** /* USER CODE END Header */
+  19:Core/Src/freertos.c **** 
+  20:Core/Src/freertos.c **** /* Includes ------------------------------------------------------------------*/
+  21:Core/Src/freertos.c **** #include "FreeRTOS.h"
+  22:Core/Src/freertos.c **** #include "task.h"
+  23:Core/Src/freertos.c **** #include "main.h"
+  24:Core/Src/freertos.c **** #include "cmsis_os.h"
+  25:Core/Src/freertos.c **** #include "ssd1306.h"
+  26:Core/Src/freertos.c **** #include "gui.h"
+  27:Core/Src/freertos.c **** #include <stdio.h>
+  28:Core/Src/freertos.c **** 
+  29:Core/Src/freertos.c **** /* Private includes ----------------------------------------------------------*/
+  30:Core/Src/freertos.c **** /* USER CODE BEGIN Includes */
+  31:Core/Src/freertos.c **** #include "rtc.h"
+  32:Core/Src/freertos.c **** #include "bsp_rtc.h"
+  33:Core/Src/freertos.c **** /* USER CODE END Includes */
+  34:Core/Src/freertos.c **** 
+  35:Core/Src/freertos.c **** /* Private typedef -----------------------------------------------------------*/
+  36:Core/Src/freertos.c **** /* USER CODE BEGIN PTD */
+  37:Core/Src/freertos.c **** 
+  38:Core/Src/freertos.c **** /* USER CODE END PTD */
+  39:Core/Src/freertos.c **** 
+  40:Core/Src/freertos.c **** /* Private define ------------------------------------------------------------*/
+  41:Core/Src/freertos.c **** /* USER CODE BEGIN PD */
+  42:Core/Src/freertos.c **** 
+  43:Core/Src/freertos.c **** /* USER CODE END PD */
+  44:Core/Src/freertos.c **** 
+  45:Core/Src/freertos.c **** /* Private macro -------------------------------------------------------------*/
+  46:Core/Src/freertos.c **** /* USER CODE BEGIN PM */
+  47:Core/Src/freertos.c **** 
+  48:Core/Src/freertos.c **** /* USER CODE END PM */
+  49:Core/Src/freertos.c **** 
+  50:Core/Src/freertos.c **** /* Private variables ---------------------------------------------------------*/
+  51:Core/Src/freertos.c **** /* USER CODE BEGIN Variables */
+  52:Core/Src/freertos.c **** 
+  53:Core/Src/freertos.c **** /* USER CODE END Variables */
+  54:Core/Src/freertos.c **** 
+  55:Core/Src/freertos.c **** /* Definitions for oledTask */
+  56:Core/Src/freertos.c **** osThreadId_t oledTaskHandle;
+  57:Core/Src/freertos.c **** const osThreadAttr_t oledTask_attributes = {
+  58:Core/Src/freertos.c ****   .name = "oledTask",
+  59:Core/Src/freertos.c ****   .stack_size = 512 * 4,
+  60:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityNormal,
+  61:Core/Src/freertos.c **** };
+  62:Core/Src/freertos.c **** 
+  63:Core/Src/freertos.c **** /* Private function prototypes -----------------------------------------------*/
+  64:Core/Src/freertos.c **** /* USER CODE BEGIN FunctionPrototypes */
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccAbwQar.s 			page 3
+
+
+  65:Core/Src/freertos.c **** 
+  66:Core/Src/freertos.c **** /* USER CODE END FunctionPrototypes */
+  67:Core/Src/freertos.c **** 
+  68:Core/Src/freertos.c **** void StartOledTask(void *argument);
+  69:Core/Src/freertos.c **** 
+  70:Core/Src/freertos.c **** void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+  71:Core/Src/freertos.c **** 
+  72:Core/Src/freertos.c **** /**
+  73:Core/Src/freertos.c ****   * @brief  FreeRTOS initialization
+  74:Core/Src/freertos.c ****   * @param  None
+  75:Core/Src/freertos.c ****   * @retval None
+  76:Core/Src/freertos.c ****   */
+  77:Core/Src/freertos.c **** void MX_FREERTOS_Init(void) {
+  78:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
+  79:Core/Src/freertos.c **** 
+  80:Core/Src/freertos.c ****   /* USER CODE END Init */
+  81:Core/Src/freertos.c **** 
+  82:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_MUTEX */
+  83:Core/Src/freertos.c ****   /* add mutexes, ... */
+  84:Core/Src/freertos.c ****   /* USER CODE END RTOS_MUTEX */
+  85:Core/Src/freertos.c **** 
+  86:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_SEMAPHORES */
+  87:Core/Src/freertos.c ****   /* add semaphores, ... */
+  88:Core/Src/freertos.c ****   /* USER CODE END RTOS_SEMAPHORES */
+  89:Core/Src/freertos.c **** 
+  90:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_TIMERS */
+  91:Core/Src/freertos.c ****   /* start timers, add new ones, ... */
+  92:Core/Src/freertos.c ****   /* USER CODE END RTOS_TIMERS */
+  93:Core/Src/freertos.c **** 
+  94:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_QUEUES */
+  95:Core/Src/freertos.c ****   /* add queues, ... */
+  96:Core/Src/freertos.c ****   /* USER CODE END RTOS_QUEUES */
+  97:Core/Src/freertos.c **** 
+  98:Core/Src/freertos.c ****   /* Create the thread(s) */
+  99:Core/Src/freertos.c ****   /* creation of oledTask */
+ 100:Core/Src/freertos.c ****   oledTaskHandle = osThreadNew(StartOledTask, NULL, &oledTask_attributes);
+ 101:Core/Src/freertos.c **** 
+ 102:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_THREADS */
+ 103:Core/Src/freertos.c ****   /* add threads, ... */
+ 104:Core/Src/freertos.c ****   /* USER CODE END RTOS_THREADS */
+ 105:Core/Src/freertos.c **** 
+ 106:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_EVENTS */
+ 107:Core/Src/freertos.c ****   /* add events, ... */
+ 108:Core/Src/freertos.c ****   /* USER CODE END RTOS_EVENTS */
+ 109:Core/Src/freertos.c **** 
+ 110:Core/Src/freertos.c **** }
+ 111:Core/Src/freertos.c **** 
+ 112:Core/Src/freertos.c **** /* USER CODE BEGIN Header_StartOledTask */
+ 113:Core/Src/freertos.c **** /**
+ 114:Core/Src/freertos.c ****   * @brief  Function implementing the oledTask thread.
+ 115:Core/Src/freertos.c ****   * @param  argument: Not used
+ 116:Core/Src/freertos.c ****   * @retval None
+ 117:Core/Src/freertos.c ****   */
+ 118:Core/Src/freertos.c **** /* USER CODE END Header_StartOledTask */
+ 119:Core/Src/freertos.c **** void StartOledTask(void *argument)
+ 120:Core/Src/freertos.c **** {
+  43              		.loc 1 120 1 view -0
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccAbwQar.s 			page 4
+
+
+  44              		.cfi_startproc
+  45              		@ Volatile: function does not return.
+  46              		@ args = 0, pretend = 0, frame = 40
+  47              		@ frame_needed = 0, uses_anonymous_args = 0
+  48              		.loc 1 120 1 is_stmt 0 view .LVU1
+  49 0000 00B5     		push	{lr}
+  50              	.LCFI0:
+  51              		.cfi_def_cfa_offset 4
+  52              		.cfi_offset 14, -4
+  53 0002 8DB0     		sub	sp, sp, #52
+  54              	.LCFI1:
+  55              		.cfi_def_cfa_offset 56
+ 121:Core/Src/freertos.c ****   /* USER CODE BEGIN StartOledTask */
+ 122:Core/Src/freertos.c ****   BSP_RTC_DateTime_t dt;
+  56              		.loc 1 122 3 is_stmt 1 view .LVU2
+ 123:Core/Src/freertos.c ****   char buf[24];
+  57              		.loc 1 123 3 view .LVU3
+ 124:Core/Src/freertos.c ****   static const char *week_str[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+  58              		.loc 1 124 3 view .LVU4
+ 125:Core/Src/freertos.c **** 
+ 126:Core/Src/freertos.c ****   /* 初始化 OLED 显示屏和 GUI */
+ 127:Core/Src/freertos.c ****   GUI_Init();
+  59              		.loc 1 127 3 view .LVU5
+  60 0004 FFF7FEFF 		bl	GUI_Init
+  61              	.LVL1:
+ 128:Core/Src/freertos.c ****   GUI_SetFont(&GUI_Font8_ASCII);
+  62              		.loc 1 128 3 view .LVU6
+  63 0008 2C48     		ldr	r0, .L6
+  64 000a FFF7FEFF 		bl	GUI_SetFont
+  65              	.LVL2:
+ 129:Core/Src/freertos.c **** 
+ 130:Core/Src/freertos.c ****   /* 首次上电时设置默认时间, 验证日期时间设置功能 */
+ 131:Core/Src/freertos.c ****   if (BSP_RTC_IsFirstPowerOn())
+  66              		.loc 1 131 3 view .LVU7
+  67              		.loc 1 131 7 is_stmt 0 view .LVU8
+  68 000e FFF7FEFF 		bl	BSP_RTC_IsFirstPowerOn
+  69              	.LVL3:
+  70              		.loc 1 131 6 discriminator 1 view .LVU9
+  71 0012 0028     		cmp	r0, #0
+  72 0014 3CD1     		bne	.L5
+  73              	.L3:
+ 132:Core/Src/freertos.c ****   {
+ 133:Core/Src/freertos.c ****     BSP_RTC_SetDateTime(&(BSP_RTC_DateTime_t){
+ 134:Core/Src/freertos.c ****         .year = 2026, .month = 6, .day = 19,
+ 135:Core/Src/freertos.c ****         .hour = 12, .minute = 0, .second = 0
+ 136:Core/Src/freertos.c ****     });
+ 137:Core/Src/freertos.c ****     BSP_RTC_MarkInitialized();
+ 138:Core/Src/freertos.c ****   }
+ 139:Core/Src/freertos.c **** 
+ 140:Core/Src/freertos.c ****   /* Infinite loop */
+ 141:Core/Src/freertos.c ****   for(;;)
+  74              		.loc 1 141 3 is_stmt 1 view .LVU10
+ 142:Core/Src/freertos.c ****   {
+ 143:Core/Src/freertos.c ****     /* 读取 RTC 日期时间, 同时更新全局变量 g_rtc_datetime 供其他任务使用 */
+ 144:Core/Src/freertos.c ****     BSP_RTC_GetDateTime(&dt);
+  75              		.loc 1 144 5 view .LVU11
+  76 0016 08A8     		add	r0, sp, #32
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccAbwQar.s 			page 5
+
+
+  77 0018 FFF7FEFF 		bl	BSP_RTC_GetDateTime
+  78              	.LVL4:
+ 145:Core/Src/freertos.c **** 
+ 146:Core/Src/freertos.c ****     /* 清屏并显示 */
+ 147:Core/Src/freertos.c ****     GUI_Clear();
+  79              		.loc 1 147 5 view .LVU12
+  80 001c FFF7FEFF 		bl	GUI_Clear
+  81              	.LVL5:
+ 148:Core/Src/freertos.c **** 
+ 149:Core/Src/freertos.c ****     /* 显示日期: YYYY-MM-DD Week */
+ 150:Core/Src/freertos.c ****     sprintf(buf, "%04d-%02d-%02d %s", dt.year, dt.month, dt.day, week_str[dt.weekday]);
+  82              		.loc 1 150 5 view .LVU13
+  83              		.loc 1 150 60 is_stmt 0 view .LVU14
+  84 0020 9DF82330 		ldrb	r3, [sp, #35]	@ zero_extendqisi2
+  85              		.loc 1 150 77 view .LVU15
+  86 0024 9DF82410 		ldrb	r1, [sp, #36]	@ zero_extendqisi2
+  87              		.loc 1 150 5 view .LVU16
+  88 0028 02AC     		add	r4, sp, #8
+  89 002a 254A     		ldr	r2, .L6+4
+  90 002c 52F82120 		ldr	r2, [r2, r1, lsl #2]
+  91 0030 0192     		str	r2, [sp, #4]
+  92 0032 0093     		str	r3, [sp]
+  93 0034 9DF82230 		ldrb	r3, [sp, #34]	@ zero_extendqisi2
+  94 0038 BDF82020 		ldrh	r2, [sp, #32]
+  95 003c 2149     		ldr	r1, .L6+8
+  96 003e 2046     		mov	r0, r4
+  97 0040 FFF7FEFF 		bl	sprintf
+  98              	.LVL6:
+ 151:Core/Src/freertos.c ****     GUI_DispStringAt("Date:", 0, 0);
+  99              		.loc 1 151 5 is_stmt 1 view .LVU17
+ 100 0044 0022     		movs	r2, #0
+ 101 0046 1146     		mov	r1, r2
+ 102 0048 1F48     		ldr	r0, .L6+12
+ 103 004a FFF7FEFF 		bl	GUI_DispStringAt
+ 104              	.LVL7:
+ 152:Core/Src/freertos.c ****     GUI_DispStringAt(buf, 0, 10);
+ 105              		.loc 1 152 5 view .LVU18
+ 106 004e 0A22     		movs	r2, #10
+ 107 0050 0021     		movs	r1, #0
+ 108 0052 2046     		mov	r0, r4
+ 109 0054 FFF7FEFF 		bl	GUI_DispStringAt
+ 110              	.LVL8:
+ 153:Core/Src/freertos.c **** 
+ 154:Core/Src/freertos.c ****     /* 显示时间: HH:MM:SS */
+ 155:Core/Src/freertos.c ****     sprintf(buf, "%02d:%02d:%02d", dt.hour, dt.minute, dt.second);
+ 111              		.loc 1 155 5 view .LVU19
+ 112              		.loc 1 155 58 is_stmt 0 view .LVU20
+ 113 0058 9DF82730 		ldrb	r3, [sp, #39]	@ zero_extendqisi2
+ 114              		.loc 1 155 5 view .LVU21
+ 115 005c 0093     		str	r3, [sp]
+ 116 005e 9DF82630 		ldrb	r3, [sp, #38]	@ zero_extendqisi2
+ 117 0062 9DF82520 		ldrb	r2, [sp, #37]	@ zero_extendqisi2
+ 118 0066 1949     		ldr	r1, .L6+16
+ 119 0068 2046     		mov	r0, r4
+ 120 006a FFF7FEFF 		bl	sprintf
+ 121              	.LVL9:
+ 156:Core/Src/freertos.c ****     GUI_DispStringAt("Time:", 0, 24);
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccAbwQar.s 			page 6
+
+
+ 122              		.loc 1 156 5 is_stmt 1 view .LVU22
+ 123 006e 1822     		movs	r2, #24
+ 124 0070 0021     		movs	r1, #0
+ 125 0072 1748     		ldr	r0, .L6+20
+ 126 0074 FFF7FEFF 		bl	GUI_DispStringAt
+ 127              	.LVL10:
+ 157:Core/Src/freertos.c ****     GUI_DispStringAt(buf, 0, 34);
+ 128              		.loc 1 157 5 view .LVU23
+ 129 0078 2222     		movs	r2, #34
+ 130 007a 0021     		movs	r1, #0
+ 131 007c 2046     		mov	r0, r4
+ 132 007e FFF7FEFF 		bl	GUI_DispStringAt
+ 133              	.LVL11:
+ 158:Core/Src/freertos.c **** 
+ 159:Core/Src/freertos.c ****     /* 刷新 OLED 显示 */
+ 160:Core/Src/freertos.c ****     SSD1306_UpdateScreen();
+ 134              		.loc 1 160 5 view .LVU24
+ 135 0082 FFF7FEFF 		bl	SSD1306_UpdateScreen
+ 136              	.LVL12:
+ 161:Core/Src/freertos.c **** 
+ 162:Core/Src/freertos.c ****     /* 每隔 1 秒更新一次 */
+ 163:Core/Src/freertos.c ****     osDelay(1000);
+ 137              		.loc 1 163 5 discriminator 1 view .LVU25
+ 138 0086 4FF47A70 		mov	r0, #1000
+ 139 008a FFF7FEFF 		bl	osDelay
+ 140              	.LVL13:
+ 141:Core/Src/freertos.c ****   {
+ 141              		.loc 1 141 3 view .LVU26
+ 142 008e C2E7     		b	.L3
+ 143              	.L5:
+ 144              	.LBB2:
+ 133:Core/Src/freertos.c ****         .year = 2026, .month = 6, .day = 19,
+ 145              		.loc 1 133 5 view .LVU27
+ 133:Core/Src/freertos.c ****         .year = 2026, .month = 6, .day = 19,
+ 146              		.loc 1 133 46 is_stmt 0 view .LVU28
+ 147 0090 0AA8     		add	r0, sp, #40
+ 148 0092 0023     		movs	r3, #0
+ 149 0094 0A93     		str	r3, [sp, #40]
+ 150 0096 4360     		str	r3, [r0, #4]
+ 151 0098 40F2EA73 		movw	r3, #2026
+ 152 009c ADF82830 		strh	r3, [sp, #40]	@ movhi
+ 153 00a0 0623     		movs	r3, #6
+ 154 00a2 8DF82A30 		strb	r3, [sp, #42]
+ 155 00a6 1323     		movs	r3, #19
+ 156 00a8 8DF82B30 		strb	r3, [sp, #43]
+ 157 00ac 0C23     		movs	r3, #12
+ 158 00ae 8DF82D30 		strb	r3, [sp, #45]
+ 133:Core/Src/freertos.c ****         .year = 2026, .month = 6, .day = 19,
+ 159              		.loc 1 133 5 view .LVU29
+ 160 00b2 FFF7FEFF 		bl	BSP_RTC_SetDateTime
+ 161              	.LVL14:
+ 137:Core/Src/freertos.c ****   }
+ 162              		.loc 1 137 5 is_stmt 1 view .LVU30
+ 163 00b6 FFF7FEFF 		bl	BSP_RTC_MarkInitialized
+ 164              	.LVL15:
+ 165 00ba ACE7     		b	.L3
+ 166              	.L7:
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccAbwQar.s 			page 7
+
+
+ 167              		.align	2
+ 168              	.L6:
+ 169 00bc 00000000 		.word	GUI_Font8_ASCII
+ 170 00c0 00000000 		.word	week_str.0
+ 171 00c4 00000000 		.word	.LC0
+ 172 00c8 14000000 		.word	.LC1
+ 173 00cc 1C000000 		.word	.LC2
+ 174 00d0 2C000000 		.word	.LC3
+ 175              	.LBE2:
+ 176              		.cfi_endproc
+ 177              	.LFE247:
+ 179              		.section	.text.MX_FREERTOS_Init,"ax",%progbits
+ 180              		.align	1
+ 181              		.global	MX_FREERTOS_Init
+ 182              		.syntax unified
+ 183              		.thumb
+ 184              		.thumb_func
+ 186              	MX_FREERTOS_Init:
+ 187              	.LFB246:
+  77:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
+ 188              		.loc 1 77 29 view -0
+ 189              		.cfi_startproc
+ 190              		@ args = 0, pretend = 0, frame = 0
+ 191              		@ frame_needed = 0, uses_anonymous_args = 0
+ 192 0000 08B5     		push	{r3, lr}
+ 193              	.LCFI2:
+ 194              		.cfi_def_cfa_offset 8
+ 195              		.cfi_offset 3, -8
+ 196              		.cfi_offset 14, -4
+ 100:Core/Src/freertos.c **** 
+ 197              		.loc 1 100 3 view .LVU32
+ 100:Core/Src/freertos.c **** 
+ 198              		.loc 1 100 20 is_stmt 0 view .LVU33
+ 199 0002 044A     		ldr	r2, .L10
+ 200 0004 0021     		movs	r1, #0
+ 201 0006 0448     		ldr	r0, .L10+4
+ 202 0008 FFF7FEFF 		bl	osThreadNew
+ 203              	.LVL16:
+ 100:Core/Src/freertos.c **** 
+ 204              		.loc 1 100 18 discriminator 1 view .LVU34
+ 205 000c 034B     		ldr	r3, .L10+8
+ 206 000e 1860     		str	r0, [r3]
+ 110:Core/Src/freertos.c **** 
+ 207              		.loc 1 110 1 view .LVU35
+ 208 0010 08BD     		pop	{r3, pc}
+ 209              	.L11:
+ 210 0012 00BF     		.align	2
+ 211              	.L10:
+ 212 0014 00000000 		.word	oledTask_attributes
+ 213 0018 00000000 		.word	StartOledTask
+ 214 001c 00000000 		.word	oledTaskHandle
+ 215              		.cfi_endproc
+ 216              	.LFE246:
+ 218              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 219              		.align	2
+ 220              	.LC4:
+ 221 0000 53756E00 		.ascii	"Sun\000"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccAbwQar.s 			page 8
+
+
+ 222              		.align	2
+ 223              	.LC5:
+ 224 0004 4D6F6E00 		.ascii	"Mon\000"
+ 225              		.align	2
+ 226              	.LC6:
+ 227 0008 54756500 		.ascii	"Tue\000"
+ 228              		.align	2
+ 229              	.LC7:
+ 230 000c 57656400 		.ascii	"Wed\000"
+ 231              		.align	2
+ 232              	.LC8:
+ 233 0010 54687500 		.ascii	"Thu\000"
+ 234              		.align	2
+ 235              	.LC9:
+ 236 0014 46726900 		.ascii	"Fri\000"
+ 237              		.align	2
+ 238              	.LC10:
+ 239 0018 53617400 		.ascii	"Sat\000"
+ 240              		.section	.rodata.week_str.0,"a"
+ 241              		.align	2
+ 244              	week_str.0:
+ 245 0000 00000000 		.word	.LC4
+ 246 0004 04000000 		.word	.LC5
+ 247 0008 08000000 		.word	.LC6
+ 248 000c 0C000000 		.word	.LC7
+ 249 0010 10000000 		.word	.LC8
+ 250 0014 14000000 		.word	.LC9
+ 251 0018 18000000 		.word	.LC10
+ 252              		.global	oledTask_attributes
+ 253              		.section	.rodata.str1.4
+ 254              		.align	2
+ 255              	.LC11:
+ 256 001c 6F6C6564 		.ascii	"oledTask\000"
+ 256      5461736B 
+ 256      00
+ 257              		.section	.rodata.oledTask_attributes,"a"
+ 258              		.align	2
+ 261              	oledTask_attributes:
+ 262 0000 1C000000 		.word	.LC11
+ 263 0004 00000000 		.space	16
+ 263      00000000 
+ 263      00000000 
+ 263      00000000 
+ 264 0014 00080000 		.word	2048
+ 265 0018 18000000 		.word	24
+ 266 001c 00000000 		.space	8
+ 266      00000000 
+ 267              		.global	oledTaskHandle
+ 268              		.section	.bss.oledTaskHandle,"aw",%nobits
+ 269              		.align	2
+ 272              	oledTaskHandle:
+ 273 0000 00000000 		.space	4
+ 274              		.text
+ 275              	.Letext0:
+ 276              		.file 2 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/machine/_default_t
+ 277              		.file 3 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/sys/_stdint.h"
+ 278              		.file 4 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccAbwQar.s 			page 9
+
+
+ 279              		.file 5 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 280              		.file 6 "../Bsp/OLED/gui.h"
+ 281              		.file 7 "../Bsp/RTC/bsp_rtc.h"
+ 282              		.file 8 "C:/STM32/arm-none-eabi-gcc/14.2.1-1.1.1/.content/arm-none-eabi/include/stdio.h"
+ 283              		.file 9 "../Bsp/OLED/ssd1306.h"
+ARM GAS  C:\Users\fish\AppData\Local\Temp\ccAbwQar.s 			page 10
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 freertos.c
+C:\Users\fish\AppData\Local\Temp\ccAbwQar.s:21     .rodata.StartOledTask.str1.4:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccAbwQar.s:34     .text.StartOledTask:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccAbwQar.s:40     .text.StartOledTask:00000000 StartOledTask
+C:\Users\fish\AppData\Local\Temp\ccAbwQar.s:169    .text.StartOledTask:000000bc $d
+C:\Users\fish\AppData\Local\Temp\ccAbwQar.s:244    .rodata.week_str.0:00000000 week_str.0
+C:\Users\fish\AppData\Local\Temp\ccAbwQar.s:180    .text.MX_FREERTOS_Init:00000000 $t
+C:\Users\fish\AppData\Local\Temp\ccAbwQar.s:186    .text.MX_FREERTOS_Init:00000000 MX_FREERTOS_Init
+C:\Users\fish\AppData\Local\Temp\ccAbwQar.s:212    .text.MX_FREERTOS_Init:00000014 $d
+C:\Users\fish\AppData\Local\Temp\ccAbwQar.s:261    .rodata.oledTask_attributes:00000000 oledTask_attributes
+C:\Users\fish\AppData\Local\Temp\ccAbwQar.s:272    .bss.oledTaskHandle:00000000 oledTaskHandle
+C:\Users\fish\AppData\Local\Temp\ccAbwQar.s:219    .rodata.str1.4:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccAbwQar.s:241    .rodata.week_str.0:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccAbwQar.s:258    .rodata.oledTask_attributes:00000000 $d
+C:\Users\fish\AppData\Local\Temp\ccAbwQar.s:269    .bss.oledTaskHandle:00000000 $d
+
+UNDEFINED SYMBOLS
+GUI_Init
+GUI_SetFont
+BSP_RTC_IsFirstPowerOn
+BSP_RTC_GetDateTime
+GUI_Clear
+sprintf
+GUI_DispStringAt
+SSD1306_UpdateScreen
+osDelay
+BSP_RTC_SetDateTime
+BSP_RTC_MarkInitialized
+GUI_Font8_ASCII
+osThreadNew
