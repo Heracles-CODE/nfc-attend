@@ -1,8 +1,9 @@
-# NFCAttend v1.0 Phase1 — 项目文档
+# NFCAttend v2.0 Phase2 — 项目文档
 
-> STM32F407VET6 + FreeRTOS + RC522 + OLED + W25Q128 + ESP01S(N/A Phase1)
+> STM32F407VET6 + FreeRTOS + RC522 + OLED + W25Q128 + ESP01S(N/A)
 > 编译工具链: `arm-none-eabi-gcc 14.2.1` (位于 `STM32/arm-none-eabi-gcc/`)
 > 烧录工具: `OpenOCD 0.12.0` (位于 `STM32/openocd/`)
+> PC 工具: `NFCAttend_PC_Tool.py` (Python 3.8+ tkinter)
 
 ---
 
@@ -201,24 +202,85 @@ make -f STM32Make.make flash
 
 ---
 
-## 八、已修复的 Bug (v1.0.1 patch)
+## 八、已修复的 Bug (v1.0.1 → v2.0)
 
 | # | 问题 | 根因 | 修复 |
 |---|---|---|---|
-| 1 | OLED 卡在 startup 不切换 | `HAL_GetTick()` 在 `osKernelStart()` 前 SysTick 被 FreeRTOS 重配,计时不递增 | 改用 `s_startup_calls` 纯计数,约2秒后切换 |
-| 2 | 系统反复重启 | `RC522_Platform_Init()` 在调度器启动前调用,RC522不存在时阻塞;`taskENTER_CRITICAL()` 在调度器未运行时行为不确定 | 全部硬件初始化推迟到各自任务首次执行 |
-| 3 | RTC 时间 2000-01-01 每次上电都"首次上电" | RTC Alarm A 在 backup domain 断电后首次上电立即触发 Alarm 中断,导致复位 | `disable_rtc_alarm()` 在 RTC 初始化后立即禁用 Alarm A 并清除标志 |
-| 4 | 蜂鸣器一直响,OLED 闪烁 | 卡持续在位时 INVALID 事件每100ms重复触发,`MIDI_Beep()` 叠加蜂鸣且每次都触发 `DISP_SetState` 清屏 | 加 `s_notified_invalid/valid` 标志,卡在场时不重复触发;DISP_CARD_INFO 内容不变时不重复 `GUI_Clear` |
-| 5 | 卡片移开时 INVALID 快速循环 | `RC522_Halt()` 让卡休眠,但100ms后下一轮 scan 又唤醒它 | 去掉 `RC522_Halt()`,卡保持在场,同一 UID 在"卡在场"分支处理,离开后连续3次检测失败才判 LEAVE |
+| 1 | OLED 卡在 startup | HAL_GetTick 在调度前不工作 | 改用计数 |
+| 2 | 系统反复重启 | 调度前初始化阻塞 | 推迟到任务 |
+| 3 | RTC 2000年 | Alarm A 触发复位 | disable_rtc_alarm() |
+| 4 | 蜂鸣器/OLED 闪烁 | INVALID 重复触发 | 防重入标志 |
+| 5 | INVALID 循环 | Halt+Scan 冲突 | 3次失联确认 |
+| **6** | **蜂鸣器移卡后持续响** | **CARD_LEAVE 未调 MIDI_Stop()** | **加 MIDI_Stop() 在所有事件分支** |
 
 ---
 
-## 九、Phase2 计划
+## 九、PC 上位机卡片管理工具
+
+### 9.1 启动方法
+```bash
+cd "c:/Users/Heracles/Downloads/STM32"
+python NFCAttend_PC_Tool.py
+```
+
+### 9.2 功能
+- **串口连接**: 选择 COM 端口,115200 8N1
+- **读卡 (READ)**: 放卡后读取 UID/SID/TYPE/PTS
+- **发卡 (ISSUE)**: 输入工号/姓名/部门/点数/类型,点发卡自动写 Block1
+- **写头像 (IMGA00~23)**: 加载 48×64 单色图片,自动写入扇区1~8
+- **写姓名 (IMGN00~09)**: 加载 80×16 单色图片,自动写入扇区9~11
+- **写部门 (IMGD00~09)**: 加载 80×16 单色图片,自动写入扇区12~15
+- **清卡 (CLEAR)**: 清除 Block1
+- **图像预览**: 3 个 Canvas 实时预览头像/姓名/部门位图
+
+### 9.3 PC↔STM32 协议(USART1 115200)
+```
+PC → STM32:   READ\n                        读卡
+PC → STM32:   ISSUE:CID_HEX,SID,PTS,CTYPE\n   发卡头
+PC → STM32:   IMGAxx:HEX32\n                  头像块
+PC → STM32:   IMGNxx:HEX32\n                  姓名块
+PC → STM32:   IMGDxx:HEX32\n                  部门块
+PC → STM32:   UPDATEIMG\n                     完成图像
+PC → STM32:   CLEAR:UID_HEX\n                 清卡
+STM32 → PC:   OK\n / ERR:XXX\n                响应
+```
+
+## 十、OLED 显示界面(v2.0)
+
+### 启动画面(2秒)
+```
+  NFC考勤系统 v2.0
+  专业实践综合设计II
+  HDU 杭州电子科技大学
+  Loading 40/40
+```
+
+### 待机时钟
+```
+2026-07-07 Mon
+    14:30:45
+DEV:1  NFC Attend
+K6:Set
+```
+
+### 刷卡(已发卡)
+```
+SID:0012345  OK
+─────────────
+Name:-------
+Dept:-------
+T:1 PTS:100   14:30:45
+```
+(头像框右上角 48×64 预留,Phase2 后续从卡读取图像块显示)
+
+---
+
+## 十一、Phase3 计划
 
 - [ ] ESP01S WiFi 连接 + NTP 校时 → RTC
 - [ ] TCP 透传考勤记录到 PC 服务器
 - [ ] W25Q128 考勤记录落盘 + 断网续传
-- [ ] PC 端 Qt 发卡工具(ISSUE/IMGA/IMGN/IMGD/UPDATEIMG 命令)
+- [ ] OLED 头像/姓名/部门图像解码显示
 - [ ] AES 加密通讯
 
 ---

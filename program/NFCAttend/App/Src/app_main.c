@@ -38,9 +38,9 @@ void on_nfc_event(NFC_Event_t evt, const uint8_t uid[4], const CardInfo_t *info)
     case NFC_EVT_CARD_VALID:
         LED_SetLeds(0);
         LED_On(0);  /* L1 = 成功 */
-        MIDI_Beep(1, 100);  /* C5 */
+        MIDI_Stop(); MIDI_Beep(1, 100);  /* C5,先停旧音 */
         if (uid && info) DISP_ShowCardResult((uint8_t *)uid, info, 1);
-        printf("[NFC] OK UID=%02X%02X%02X%02X SID=%05u T=%u\n",
+        printf("[NFC] OK UID=%02X%02X%02X%02X SID=%05u T=%u\r\n",
                uid[0], uid[1], uid[2], uid[3],
                (unsigned)info->sid, (unsigned)info->type);
         break;
@@ -48,16 +48,17 @@ void on_nfc_event(NFC_Event_t evt, const uint8_t uid[4], const CardInfo_t *info)
     case NFC_EVT_CARD_INVALID:
         LED_SetLeds(0);
         LED_On(1);  /* L2 = 失败 */
-        MIDI_Beep(6, 200);  /* A4 */
+        MIDI_Stop(); MIDI_Beep(6, 200);  /* A4,先停旧音 */
         if (uid) DISP_ShowCardResult((uint8_t *)uid, NULL, 0);
-        printf("[NFC] ERR UID=%02X%02X%02X%02X\n",
+        printf("[NFC] ERR UID=%02X%02X%02X%02X\r\n",
                uid[0], uid[1], uid[2], uid[3]);
         break;
 
     case NFC_EVT_CARD_LEAVE:
         LED_SetLeds(0);
+        MIDI_Stop();  /* 停蜂鸣器,防止移卡后持续响 */
         DISP_ClearCardResult();
-        printf("[NFC] LEAVE\n");
+        printf("[NFC] LEAVE\r\n");
         break;
 
     default: break;

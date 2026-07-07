@@ -14,10 +14,14 @@
 #include "display.h"
 #include "key_proc.h"
 #include "nfc_app.h"
+#include "protocol.h"
 #include "led.h"
 #include "midi.h"
 #include "main.h"
+#include "usart.h"
 #include <stdio.h>
+
+extern UART_HandleTypeDef huart1;  /* 调试/命令串口 */
 
 /* defaultTask:占位 + 周期性 printf */
 void StartDefaultTask(void *argument)
@@ -54,11 +58,19 @@ void StartTaskKey(void *argument)
     }
 }
 
-/* uartTask:占位(后续接 ESP01S 命令解析) */
+/* uartTask: 接收 PC 命令(USART1),喂入协议解析器 */
 void StartTaskUart(void *argument)
 {
+    PROTOCOL_Init();
+    printf("[UART] protocol ready, waiting for PC commands...\r\n");
+
     for (;;) {
-        osDelay(100);
+        /* 轮询 USART1 RX,逐字节读入协议解析器 */
+        while (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE)) {
+            uint8_t ch = (uint8_t)(huart1.Instance->DR & 0xFF);
+            PROTOCOL_FeedByte(ch);
+        }
+        osDelay(10);  /* 10ms 轮询周期 */
     }
 }
 

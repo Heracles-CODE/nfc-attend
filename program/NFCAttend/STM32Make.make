@@ -94,6 +94,7 @@ App/Src/card_format.c \
 App/Src/display.c \
 App/Src/key_proc.c \
 App/Src/nfc_app.c \
+App/Src/protocol.c \
 App/Src/storage.c \
 Core/Src/adc.c \
 Core/Src/dac.c \
