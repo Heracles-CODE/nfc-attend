@@ -1,0 +1,4 @@
+# environment variable file used by stm32-for-vscode and the STM32Make.make makefile
+
+ARM_GCC_PATH = C:\Users\Heracles\Downloads\STM32\arm-none-eabi-gcc\.content\bin
+OPENOCD = C:\Users\Heracles\Downloads\STM32\openocd\.content\bin\openocd.exe
